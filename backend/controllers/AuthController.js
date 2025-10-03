@@ -4,11 +4,11 @@ import { JWT_SECRET } from "../config/jwt.js";
 
 const loginController = async (req, res) => {
   const { login, senha } = req.body;
-
-  try {
+  
+  try { 
     const usuario = await read(
       "usuarios",
-      `email = '${login}'` || `cpf = ${login}` || `id = ${login}`
+      `email = '${login}'`
     );
 
     if (!usuario) {
@@ -16,13 +16,14 @@ const loginController = async (req, res) => {
     }
 
     const senhaCorreta = await compare(senha, usuario.senha);
+    console.log(senhaCorreta)
 
     if (!senhaCorreta) {
       return res.status(404).json({ mensagem: "Senha incorreta" });
     }
 
     const token = jwt.sign({ id: usuario.id, tipo: usuario.tipo }, JWT_SECRET, {
-      expiresIn: "1h",
+      expiresIn: "24h",
     });
 
     res.json({ mensagem: "Login realizado com sucesso", token });
