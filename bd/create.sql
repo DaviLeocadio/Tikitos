@@ -116,7 +116,7 @@ CREATE TABLE `empresas` (
   `endereco` varchar(200) DEFAULT NULL,
   `status` enum('ativo','inativo') DEFAULT 'ativo',
   PRIMARY KEY (`id_empresa`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=203 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -125,6 +125,7 @@ CREATE TABLE `empresas` (
 
 LOCK TABLES `empresas` WRITE;
 /*!40000 ALTER TABLE `empresas` DISABLE KEYS */;
+INSERT INTO `empresas` VALUES (100,'Tikitos Matriz','matriz','R. Boa Vista, 825 - Boa Vista, São Caetano do Sul - SP, 09572-300','ativo'),(200,'Tikitos Mooca','filial','R. do Oratório, 215 - Mooca, São Paulo - SP, 03117-000','ativo'),(201,'Tikitos Baeta Neves','filial','Av. Pereira Barreto, 456 - Baeta Neves, São Bernardo do Campo - SP, 09751-000','ativo'),(202,'Tikitos Ipiranguinha','filial','Av. Santos Dumont, 300 - Ipiranguinha, Santo André - SP, 09015-320','ativo');
 /*!40000 ALTER TABLE `empresas` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -278,7 +279,7 @@ CREATE TABLE `usuarios` (
   UNIQUE KEY `cpf` (`cpf`),
   KEY `id_empresa` (`id_empresa`),
   CONSTRAINT `usuarios_ibfk_1` FOREIGN KEY (`id_empresa`) REFERENCES `empresas` (`id_empresa`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=101 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -287,6 +288,7 @@ CREATE TABLE `usuarios` (
 
 LOCK TABLES `usuarios` WRITE;
 /*!40000 ALTER TABLE `usuarios` DISABLE KEYS */;
+INSERT INTO `usuarios` VALUES (100,'Bernardo de Souza Madureira','bernardomadureira.souza@gmail.com','5511993001135','47806468803','Rua Maurício Jacquey, 308, Bloco 5, Apto. 81 - Vila Helena, São Bernardo do Campo - SP, 09635-080','admin','deve_mudar','2008-01-24',100,'ativo');
 /*!40000 ALTER TABLE `usuarios` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -361,4 +363,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-10-03  8:30:04
+-- Dump completed on 2025-10-03 16:34:35
