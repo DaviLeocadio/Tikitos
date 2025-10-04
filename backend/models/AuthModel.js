@@ -10,7 +10,7 @@ const encontrarUsuario = async (email) => {
  
 const definirSenha = async (email, senha) => {
     try {
-        return await update('usuarios', senha `email = ${email}`)
+        return await update('usuarios', senha, `email = '${email}'`)
     } catch (error) {
         console.error('Erro ao definir senha do usuario: ', error)
     }

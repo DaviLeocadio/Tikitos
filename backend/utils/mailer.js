@@ -1,29 +1,44 @@
-import nodemailer from "nodemailer"
- 
-const sendMail = async (email, text) => {
-    // Create a test account or replace with real credentials.
-    const transporter = nodemailer.createTransport({
-        host: "smtp.ethereal.email",
-        port: 587,
-        secure: false, // true for 465, false for other ports
-        auth: {
-            user: "maddison53@ethereal.email",
-            pass: "jn7jnAPss4f63QBp6D",
-        },
-    });
- 
-    // Wrap in an async IIFE so we can use await.
-    (async () => {
-        const info = await transporter.sendMail({
-            from: '"Maddison Foo Koch" <maddison53@ethereal.email>',
-            to: email,
-            subject: "Hello ✔",
-            text: text, // plain‑text body
-            html: "<b>Hello world?</b>", // HTML body
+import nodemailer from "nodemailer";
+import dotenv from "dotenv";
+
+dotenv.config();
+
+const sendMail = async (email, subject, message) => {
+    try {
+        const transporter = nodemailer.createTransport({
+            host: "smtp.gmail.com",
+            port: 587,
+            secure: false, // true para 465, false para 587
+            auth: {
+                user: process.env.MAIL_USER, // e-mail da Tikitos
+                pass: process.env.MAIL_PASS, // senha de app do Gmail
+            },
         });
- 
-        console.log("Message sent:", info.messageId);
-    })();
-}
- 
-export { sendMail }
+
+        const info = await transporter.sendMail({
+            from: '"Tikitos Brinquedos" <' + process.env.MAIL_USER + '>',
+            to: email,
+            subject,
+            text: message,
+            html: `
+                <div style="font-family: Arial; padding: 15px; border: 1px solid #eee;">
+                    <h2 style="color: #ff7a00;">Tikitos Brinquedos</h2>
+                    <p>${message}</p>
+                    <hr>
+                    <p style="font-size: 12px; color: #666;">
+                        Esta mensagem foi enviada automaticamente pelo sistema da Tikitos.
+                        <br>Por favor, não responda este e-mail.
+                    </p>
+                </div>
+            `,
+        });
+
+        console.log("📩 E-mail enviado com sucesso:", info.messageId);
+        return info;
+    } catch (error) {
+        console.error("❌ Erro ao enviar e-mail:", error);
+        throw error;
+    }
+};
+
+export { sendMail };

@@ -1,8 +1,8 @@
 import jwt from "jsonwebtoken";
 import { read, compare } from "../config/database.js";
 import { JWT_SECRET } from "../config/jwt.js";
-import { encontrarUsuario } from "../models/AuthModel.js";
-import {sendMail} from "../utils/mailer.js";
+import { encontrarUsuario, definirSenha } from "../models/AuthModel.js";
+import { sendMail } from "../utils/mailer.js";
 import { generateHashedPassword } from "../hashPassword.js";
 
 
@@ -11,10 +11,15 @@ import fs from "fs";
 let codes = {};
 
 
-if (fs.existsSync("../codes.json")) {
-  codes = JSON.parse(fs.readFileSync("../codes.json", 'utf8'))
+try {
+  if (fs.existsSync("./codes.json")) {
+    const data = fs.readFileSync("./codes.json", "utf8");
+    codes = JSON.parse(data || "{}");
+  }
+} catch (err) {
+  console.error("Erro ao ler codes.json:", err);
+  codes = {};
 }
-
 // checar se email existe
 
 const checkEmailController = async (req, res) => {
@@ -32,9 +37,14 @@ const checkEmailController = async (req, res) => {
         code,
         expires: Date.now() + 15 * 60 * 1000 // 15 minutos
       }
-      fs.writeFileSync("../codes.json", JSON.stringify(codes, null, 2));
+      fs.writeFileSync("./codes.json", JSON.stringify(codes, null, 2));
 
-      await sendMail(email, `Seu código de acesso: ${code}`);
+      await sendMail(
+        email,
+        "Código de Acesso - Tikitos",
+        `Seu código de acesso é: ${code}. Use-o para entrar no sistema da Tikitos.`
+      );
+
       return res.status(200).json({ step: 'definir_senha' })
     }
 
@@ -54,16 +64,18 @@ const definirSenhaController = async (req, res) => {
     if (!email || !code || !novaSenha || !confirmarSenha) return res.status(400).json({ error: 'Insira todos os parâmetros obrigatórios' });
 
     const record = codes[email];
-    if (!record || record.code !== code) return res.status(400).json({ error: 'Código inválido.' });
-    if (Date.now > record.expires) return res.status(400).json({ error: 'O código expirou.' });
-    if (novaSenha !== confirmarSenha) return res.status(400).json({ error: 'As senhas não coincidem' })
+    if (Date.now() > record.expires) return res.status(410).json({ error: 'O código expirou.' });
+    if (!record || parseInt(record.code) !== parseInt(code)) return res.status(400).json({ error: 'Código inválido.' });
+    if (novaSenha !== confirmarSenha) return res.status(401).json({ error: 'As senhas não coincidem' })
 
     const senhaCriptografada = await generateHashedPassword(novaSenha)
 
-    await definirSenhaController(email, { senha: senhaCriptografada });
+    await definirSenha(email, { senha: senhaCriptografada });
+    res.status(200).json({ mensagem: "Senha definida com sucesso" });
+
   } catch (error) {
     console.error('Erro ao definir senha: ', error);
-    res.status(500).json({ mensagem: 'Erro ao definir sneha.' })
+    res.status(500).json({ mensagem: 'Erro ao definir senha.' })
   }
 }
 
