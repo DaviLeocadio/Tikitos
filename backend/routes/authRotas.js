@@ -1,7 +1,11 @@
 import express from 'express';
-import { loginController } from '../controllers/AuthController.js';
+import { checkEmailController, definirSenhaController, loginController } from '../controllers/AuthController.js';
 
 const router = express.Router();
+
+router.post('/checar_email', checkEmailController);
+
+router.post('/definir_senha', definirSenhaController)
 
 router.post('/login', loginController);
 
