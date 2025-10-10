@@ -1,10 +1,15 @@
 import express from 'express';
-import { checkEmailController, definirSenhaController, loginController } from '../controllers/AuthController.js';
+import { checkEmailController, definirSenhaController, loginController, verificarTokenController } from '../controllers/AuthController.js';
 
 const router = express.Router();
 
+//Verifica se o email existe no bd
 router.post('/checar_email', checkEmailController);
 
+//Verifica token criado para definição de senha
+router.post('/verificar_token', verificarTokenController)
+
+// Define a senha de uma conta que tem senha indefinida
 router.post('/definir_senha', definirSenhaController)
 
 router.post('/login', loginController);

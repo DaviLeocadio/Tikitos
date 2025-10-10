@@ -13,8 +13,13 @@ const sendMail = async (email, subject, message) => {
                 user: process.env.MAIL_USER, // e-mail da Tikitos
                 pass: process.env.MAIL_PASS, // senha de app do Gmail
             },
+            // connectionTimeout: 10_000,
+            // greetingTimeout: 10_000,
+            // socketTimeout: 10_000
         });
 
+        console.log("Enviando email para: ", email);
+    
         const info = await transporter.sendMail({
             from: '"Tikitos Brinquedos" <' + process.env.MAIL_USER + '>',
             to: email,
@@ -33,10 +38,12 @@ const sendMail = async (email, subject, message) => {
             `,
         });
 
-        console.log("📩 E-mail enviado com sucesso:", info.messageId);
+        console.log("E-mail enviado com sucesso: ", info.messageId);
+       
         return info;
+        
     } catch (error) {
-        console.error("❌ Erro ao enviar e-mail:", error);
+        console.error("Erro ao enviar e-mail: ", error);
         throw error;
     }
 };
