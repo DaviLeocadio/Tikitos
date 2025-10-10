@@ -19,6 +19,18 @@ export default function Home() {
                 required=""
               />
             </div>
+          </form>
+          <form className={styles.form}>
+            <div className={styles.formGroup}>
+              <label htmlFor="email">Email</label>
+              <input
+                type="text"
+                id="email"
+                name="email"
+                placeholder="Enter your email"
+                required=""
+              />
+            </div>
             <button className={`${styles.formSubmitBtn}`} type="submit">
               Send Email
             </button>
