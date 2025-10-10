@@ -17,7 +17,7 @@ const listarUsuarios = async (whereClause = null) => {
 
 const obterUsuarioPorId = async (id) => {
   try {
-    return await read("usuarios", `id = ${id}`);
+    return await read("usuarios", `id_usuario = ${id}`);
   } catch (err) {
     console.error("Erro ao obter usuario por ID: ", err);
     throw err;
@@ -35,7 +35,7 @@ const criarUsuario = async (usuarioData) => {
 
 const atualizarUsuario = async (id, usuarioData) => {
   try {
-    await update("usuarios", usuarioData, `id = ${id}`);
+    await update("usuarios", usuarioData, `id_usuario = ${id}`);
   } catch (err) {
     console.error("Erro ao atualizar usuario: ", err);
     throw err;

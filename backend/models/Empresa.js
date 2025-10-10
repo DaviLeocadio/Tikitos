@@ -15,9 +15,9 @@ const listarEmpresas = async (whereClause = null) => {
   }
 };
 
-const obterEmpresaPorId = async (id) => {
+const obterEmpresaPorId = async (empresaId) => {
   try {
-    return await read("empresas", `id = ${id}`);
+    return await read("empresas", `id_empresa = ${empresaId}`);
   } catch (err) {
     console.error("Erro ao obter empresa por ID: ", err);
     throw err;
@@ -33,13 +33,18 @@ const criarEmpresa = async (empresaData) => {
   }
 };
 
-const atual = async (id, usuarioData) => {
+const atualizarEmpresa = async (empresaId, empresaData) => {
   try {
-    await update("usuarios", usuarioData, `id = ${id}`);
+    await update("empresas", empresaData, `id_empresa = ${empresaId}`);
   } catch (err) {
-    console.error("Erro ao atualizar usuario: ", err);
+    console.error("Erro ao atualizar empresa: ", err);
     throw err;
   }
 };
 
-export { listarUsuarios, obterUsuarioPorId, criarUsuario, atualizarUsuario };
+export { 
+    listarEmpresas,
+    obterEmpresaPorId,
+    criarEmpresa, 
+    atualizarEmpresa
+};

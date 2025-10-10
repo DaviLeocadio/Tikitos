@@ -15,9 +15,9 @@ const listarProdutos = async (whereClause = null) => {
   }
 };
 
-const obterProdutoPorId = async (id) => {
+const obterProdutoPorId = async (produtoId) => {
   try {
-    return await read("produtos", `id = ${id}`);
+    return await read("produtos", `id_produto = ${produtoId}`);
   } catch (err) {
     console.error("Erro ao obter produto por ID: ", err);
     throw err;
@@ -26,16 +26,16 @@ const obterProdutoPorId = async (id) => {
 
 const criarProduto = async (produtoData) => {
   try {
-    return await create("produtos" produtoData);
+    return await create("produtos", produtoData);
   } catch (err) {
     console.error("Erro ao criar produto: ", err);
     throw err;
   }
 };
 
-const atualizarProduto = async (id, produtoData) => {
+const atualizarProduto = async (produtoId, produtoData) => {
   try {
-    await update("produtos" produtoData, `id = ${id}`);
+    await update("produtos", produtoData, `id = ${produtoId}`);
   } catch (err) {
     console.error("Erro ao atualizar produto: ", err);
     throw err;

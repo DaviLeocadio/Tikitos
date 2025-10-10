@@ -23,7 +23,7 @@ try {
 
 // Checar se email existe
 const checkEmailController = async (req, res) => {
-  const email = req.body.email;
+  const { email } = req.body;
 
   try {
     // Procura email no bd
@@ -123,7 +123,7 @@ const loginController = async (req, res) => {
 
     const token = jwt.sign(
       {
-        id: usuario.id,
+        id: usuario.id_usuario,
         email: usuario.email,
         perfil: usuario.perfil,
         id_empresa: usuario.id_empresa,
@@ -132,9 +132,9 @@ const loginController = async (req, res) => {
       { expiresIn: "1h" }
     );
 
-    res.status(200).json({ message: "Login Realizado com Sucesso", token });
+    res.status(200).json({ message: "Login realizado com sucesso", token });
   } catch (error) {
-    console.error("Erro ao Fazer login: ", error);
+    console.error("Erro ao fazer login: ", error);
     res.status(500).json({ message: "Erro ao fazer login." });
   }
 };
