@@ -9,12 +9,14 @@ const AbrirCaixaController = async (req, res) => {
     const { idVendedor } = req.params;
     const { idEmpresa } = req.body;
 
+    //Verifica se a variavel está certo
     if (!idVendedor || !idEmpresa) {
       return res
         .status(400)
         .json({ mensagem: "ID do vendedor e ID da empresa são obrigatórios" });
     }
 
+    //Verifica se há algum caixa aberto para o vendedor
     const caixaExistente = await LerCaixaPorVendedor(idVendedor);
     if (caixaExistente) {
       return res
@@ -36,6 +38,7 @@ const AbrirCaixaController = async (req, res) => {
       new Date().getSeconds();
     const valorInicial = 100.0;
 
+    //Dados da abertura do caixa
     const caixaData = {
       id_usuario: idVendedor,
       id_empresa: idEmpresa,
@@ -58,21 +61,21 @@ const FecharCaixaController = async (req, res) => {
     const { idVendedor } = req.params;
     const { valorFinal } = req.body;
 
+    //Verrifica se há valores para as variáveis
     if (!idVendedor || !valorFinal) {
       return res
         .status(400)
         .json({ mensagem: "ID do vendedor e valor final são obrigatórios" });
     }
 
+    //Verifica se há um caixa aberto para fechar
     const caixaExistente = await LerCaixaPorVendedor(idVendedor);
     const caixaExistenteStatus = caixaExistente.status;
 
     if (caixaExistenteStatus !== "aberto") {
-      return res
-        .status(400)
-        .json({
-          mensagem: "Nenhum caixa aberto encontrado para este vendedor",
-        });
+      return res.status(400).json({
+        mensagem: "Nenhum caixa aberto encontrado para este vendedor",
+      });
     }
 
     const fechamento =
@@ -88,12 +91,14 @@ const FecharCaixaController = async (req, res) => {
       ":" +
       new Date().getSeconds();
 
+    //Dados do fechamento
     const caixaData = {
       fechamento: fechamento,
       valor_final: valorFinal,
       status: "fechado",
     };
 
+    //Fechamento
     const caixaFechado = await FecharCaixa(caixaData, idVendedor);
     res
       .status(200)

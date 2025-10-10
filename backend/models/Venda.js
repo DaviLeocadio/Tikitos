@@ -1,6 +1,6 @@
 import { read, readAll, update, create } from "../config/database.js";
 
-const listarVendas = async (whereClause = null) => {
+const listarVendas = async () => {
   try {
     return await readAll("vendas");
   } catch (err) {
@@ -49,7 +49,7 @@ const excluirVenda = async (vendaId) => {
 export {
   listarVendas,
   obterVendaPorId,
-  criarLivro,
-  atualizarLivro,
-  excluirLivro,
+  criarVenda,
+  atualizarVenda,
+  excluirVenda
 };
