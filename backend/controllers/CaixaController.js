@@ -1,4 +1,8 @@
-import { AbrirCaixa, LerCaixaPorVendedor,FecharCaixa } from "../models/Caixa.js";
+import {
+  AbrirCaixa,
+  LerCaixaPorVendedor,
+  FecharCaixa,
+} from "../models/Caixa.js";
 
 const AbrirCaixaController = async (req, res) => {
   try {
@@ -6,67 +10,98 @@ const AbrirCaixaController = async (req, res) => {
     const { idEmpresa } = req.body;
 
     if (!idVendedor || !idEmpresa) {
-      return res.status(400).json({ mensagem: "ID do vendedor e ID da empresa são obrigatórios" });
+      return res
+        .status(400)
+        .json({ mensagem: "ID do vendedor e ID da empresa são obrigatórios" });
     }
 
     const caixaExistente = await LerCaixaPorVendedor(idVendedor);
     if (caixaExistente) {
-      return res.status(400).json({ mensagem: "Caixa já está aberto para este vendedor" });
+      return res
+        .status(400)
+        .json({ mensagem: "Caixa já está aberto para este vendedor" });
     }
 
-    const abertura = new Date().getFullYear() + '/' + (new Date().getMonth() + 1) + '/' + new Date().getDay() + ' ' + new Date().getHours() + ':' + new Date().getMinutes() + ':' + new Date().getSeconds();
-    const valorInicial = 100.00;
+    const abertura =
+      new Date().getFullYear() +
+      "/" +
+      (new Date().getMonth() + 1) +
+      "/" +
+      new Date().getDay() +
+      " " +
+      new Date().getHours() +
+      ":" +
+      new Date().getMinutes() +
+      ":" +
+      new Date().getSeconds();
+    const valorInicial = 100.0;
 
     const caixaData = {
       id_usuario: idVendedor,
       id_empresa: idEmpresa,
       abertura: abertura,
       valor_inicial: valorInicial,
-      status: 'aberto'
+      status: "aberto",
     };
 
     const novoCaixa = await AbrirCaixa(caixaData);
- 
-    res.status(201).json(novoCaixa);
+
+    res.status(200).json({ mensagem: "Caixa aberto com sucesso", novoCaixa });
   } catch (err) {
     console.error("Erro ao abrir caixa: ", err);
     res.status(500).json({ mensagem: "Erro ao abrir caixa" });
   }
-}
+};
 
 const FecharCaixaController = async (req, res) => {
-  try{
-    const {idVendedor} = req.params;
-    const {valorFinal} = req.body;
+  try {
+    const { idVendedor } = req.params;
+    const { valorFinal } = req.body;
 
-    if(!idVendedor || !valorFinal){
-      return res.status(400).json({ mensagem: "ID do vendedor e valor final são obrigatórios" });
+    if (!idVendedor || !valorFinal) {
+      return res
+        .status(400)
+        .json({ mensagem: "ID do vendedor e valor final são obrigatórios" });
     }
-
-    const fechamento = new Date().getFullYear() + '/' + (new Date().getMonth() + 1) + '/' + new Date().getDay() + ' ' + new Date().getHours() + ':' + new Date().getMinutes() + ':' + new Date().getSeconds();
-
-    console.log("Fechamento: ", fechamento);
-    console.log("Valor Final: ", valorFinal);
-  
-    const caixaData = {
-      fechamento: fechamento,
-      valor_final: valorFinal,
-      status: 'fechado'
-    };
 
     const caixaExistente = await LerCaixaPorVendedor(idVendedor);
     const caixaExistenteStatus = caixaExistente.status;
 
-    if(caixaExistenteStatus !== 'aberto'){
-      return res.status(400).json({ mensagem: "Nenhum caixa aberto encontrado para este vendedor" });
+    if (caixaExistenteStatus !== "aberto") {
+      return res
+        .status(400)
+        .json({
+          mensagem: "Nenhum caixa aberto encontrado para este vendedor",
+        });
     }
 
+    const fechamento =
+      new Date().getFullYear() +
+      "/" +
+      (new Date().getMonth() + 1) +
+      "/" +
+      new Date().getDay() +
+      " " +
+      new Date().getHours() +
+      ":" +
+      new Date().getMinutes() +
+      ":" +
+      new Date().getSeconds();
+
+    const caixaData = {
+      fechamento: fechamento,
+      valor_final: valorFinal,
+      status: "fechado",
+    };
+
     const caixaFechado = await FecharCaixa(caixaData, idVendedor);
-    res.status(200).json(caixaFechado);
-  } catch(err){
+    res
+      .status(200)
+      .json({ mensagem: "Caixa aberto com sucesso", caixaFechado });
+  } catch (err) {
     console.error("Erro ao fechar caixa: ", err);
     res.status(500).json({ mensagem: "Erro ao fechar caixa" });
   }
-}
+};
 
 export { AbrirCaixaController, FecharCaixaController };

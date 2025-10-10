@@ -4,7 +4,7 @@ import bcrypt from 'bcryptjs';
 const pool = mysql.createPool({
   host: 'localhost',
   user: 'root',
-  password: 'Santanaquantum89',
+  password: '',
   database: 'tikitos',
   waitForConnections: true,
   connectionLimit: 10,

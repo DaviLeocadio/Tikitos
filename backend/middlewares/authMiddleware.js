@@ -33,7 +33,7 @@ const authMiddleware = (funcoesPermitidas = []) => {
     } catch (error) {
       return res
         .status(403)
-        .json({ mensagem: "Não autorizado: Token inválido" });
+        .json({ mensagem: "Não autorizado: token inválido" });
     }
   };
 };

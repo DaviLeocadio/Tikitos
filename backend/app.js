@@ -5,7 +5,6 @@ dotenv.config();
 
 const app = express();
 const port = process.env.PORT;
-import livroRotas from "./routes/livroRotas.js";
 import authRotas from "./routes/authRotas.js";
 import vendedorRotas from "./routes/vendedorRotas.js";
 import authMiddleware from "./middlewares/authMiddleware.js";
@@ -14,8 +13,6 @@ import cors from 'cors';
 app.use(cors());
 app.use(express.json());
 
-
-app.use("/livros", livroRotas);
 app.use('/auth', authRotas);
 app.use('/vendedor', authMiddleware(["vendedor"]), vendedorRotas);
 
