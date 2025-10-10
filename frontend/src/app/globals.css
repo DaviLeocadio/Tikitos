@@ -3,9 +3,16 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* @theme {
-  
-} */
+@theme {
+  --color-lilasclaro: #e8c5f1;
+  --color-lilasescuro: #d695e7;
+  --color-roxo: #924187;
+  --color-roxoescuro: #76196c;
+  --color-verdao: #4f6940;
+  --color-verdinho: #9bf377;
+  --color-verdefundo: #9bf377;
+  --color-verdefolha: #75ba51;
+}
 
 @theme inline {
   --color-background: var(--background);
