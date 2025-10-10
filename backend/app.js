@@ -15,6 +15,8 @@ app.use(express.json());
 
 app.use('/auth', authRotas);
 app.use('/vendedor', authMiddleware(["vendedor"]), vendedorRotas);
+app.use('/gerente', authMiddleware(["gerente"]), gerenteRotas);
+app.use('/admin', authMiddleware(["admin"]), adminRotas);
 
 app.options("/", (req, res) => {
   res.setHeader("Allow", "GET, OPTIONS");
