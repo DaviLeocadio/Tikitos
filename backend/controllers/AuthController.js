@@ -29,7 +29,7 @@ const checkEmailController = async (req, res) => {
     // Procura email no bd
     const usuario = await encontrarUsuario(email);
     if (!usuario)
-      return res.status(404).json({ message: "Email não encontrado" });
+      return res.status(404).json({ mensagem: "Email não encontrado" });
 
     // Se for o primeiro acesso do usuário, a senha será 'deve_mudar'.
     if (usuario.senha === "deve_mudar") {
@@ -55,7 +55,7 @@ const checkEmailController = async (req, res) => {
     return res.status(200).json({ step: "login" }); // manda fazer login
   } catch (error) {
     console.error("Erro ao buscar email: ", error);
-    res.status(500).json({ message: "Erro ao buscar email." });
+    res.status(500).json({ mensagem: "Erro ao buscar email." });
   }
 };
 
@@ -72,7 +72,7 @@ const definirSenhaController = async (req, res) => {
     // Verifica se email existe no bd
     const usuario = await encontrarUsuario(email);
     if (!usuario)
-      return res.status(404).json({ message: "Email não encontrado" });
+      return res.status(404).json({ mensagem: "Email não encontrado" });
 
     const record = codes[email]; // Pega código atrelado ao email
 
@@ -98,10 +98,10 @@ const definirSenhaController = async (req, res) => {
     await definirSenha(email, { senha: senhaCriptografada });
     res
       .status(200)
-      .json({ message: "Senha definida com sucesso", step: "login" });
+      .json({ mensagem: "Senha definida com sucesso", step: "login" });
   } catch (error) {
     console.error("Erro ao definir senha: ", error);
-    res.status(500).json({ message: "Erro ao definir senha." });
+    res.status(500).json({ mensagem: "Erro ao definir senha." });
   }
 };
 
@@ -113,12 +113,12 @@ const loginController = async (req, res) => {
     const usuario = await read("usuarios", `email = '${email}'`);
 
     if (!usuario) {
-      return res.status(404).json({ message: "Usuário não encontrado" });
+      return res.status(404).json({ mensagem: "Usuário não encontrado" });
     }
 
     const senhaCorreta = await compare(senha, usuario.senha);
     if (!senhaCorreta) {
-      return res.status(401).json({ message: "Senha incorreta" });
+      return res.status(401).json({ mensagem: "Senha incorreta" });
     }
 
     const token = jwt.sign(
@@ -132,10 +132,10 @@ const loginController = async (req, res) => {
       { expiresIn: "1h" }
     );
 
-    res.status(200).json({ message: "Login realizado com sucesso", token });
+    res.status(200).json({ mensagem: "Login realizado com sucesso", token });
   } catch (error) {
     console.error("Erro ao fazer login: ", error);
-    res.status(500).json({ message: "Erro ao fazer login." });
+    res.status(500).json({ mensagem: "Erro ao fazer login." });
   }
 };
 

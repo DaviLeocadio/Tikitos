@@ -10,9 +10,9 @@ import { criarItensVenda } from "../models/ItensVenda.js";
 const listarVendasController = async (req, res) => {
   try {
     const vendas = listarVendas();
-    res.status(200).json({ message: "Listagem de vendas realizada", vendas });
+    res.status(200).json({ mensagem: "Listagem de vendas realizada", vendas });
   } catch (err) {
-    res.status(500).json({ message: "Erro ao listar vendas: ", err });
+    res.status(500).json({ mensagem: "Erro ao listar vendas: ", err });
   }
 };
 

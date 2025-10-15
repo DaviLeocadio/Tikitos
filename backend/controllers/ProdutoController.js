@@ -5,6 +5,12 @@ import {
   atualizarProduto,
 } from "../models/Produto.js";
 
+import { fileURLToPath } from 'url';
+import path from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 
 const listarProdutosController = async (req, res) => {
   try {
@@ -45,6 +51,13 @@ const criarProdutoController = async (req, res) => {
 
     const preco = custo * (1 + lucro / 100);
 
+    let logoPath = null;
+    if (req.file) {
+      logoPath = `/img/produtos/${req.file.filename}`;
+
+    }
+
+
     const produtoData = {
       id_empresa: idEmpresa,
       id_categoria: idCategoria,
@@ -54,14 +67,14 @@ const criarProdutoController = async (req, res) => {
       custo: custo,
       lucro: lucro,
       preco: preco,
-      imagem: imagem,
+      imagem: imagemPath,
     };
 
     const produto = criarProduto(produtoData);
     res.status(201).json({ mensagem: "Produto criado com sucesso", produto });
-  } catch (err) {
-    console.error("Erro ao criar o produto: ", err);
-    res.status(500).json({ mensagem: "Erro ao criar o produto desejado" });
+  } catch (error) {
+    console.error("Erro ao criar o produto: ", error);
+    res.status(500).json({ error: "Erro ao criar o produto desejado" });
   }
 };
 
@@ -75,9 +88,15 @@ const atualizarProdutoController = async (req, res) => {
       nome,
       descricao,
       custo,
-      lucro,
-      imagem,
+      lucro
     } = req.body;
+
+    const preco = custo * (1 + lucro / 100);
+
+    let imagemPath = null;
+    if (req.file) {
+      imagemPath = req.file.path.replace(__dirname.replace('\\controllers', ''), '');
+    }
 
     const produtoData = {
       id_empresa: idEmpresa,
@@ -88,7 +107,7 @@ const atualizarProdutoController = async (req, res) => {
       custo: custo,
       lucro: lucro,
       preco: preco,
-      imagem: imagem,
+      imagem: imagemPath,
     };
 
     const produto = await atualizarProduto(idProduto, produtoData);
