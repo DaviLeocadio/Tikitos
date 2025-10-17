@@ -61,6 +61,8 @@ const FecharCaixaController = async (req, res) => {
     const { idVendedor } = req.params;
     const { valorFinal } = req.body;
 
+    //Calcular valor final pelas 
+
     //Verrifica se há valores para as variáveis
     if (!idVendedor || !valorFinal) {
       return res
@@ -102,7 +104,7 @@ const FecharCaixaController = async (req, res) => {
     const caixaFechado = await FecharCaixa(caixaData, idVendedor);
     res
       .status(200)
-      .json({ mensagem: "Caixa aberto com sucesso", caixaFechado });
+      .json({ mensagem: "Caixa fechado com sucesso", caixaFechado });
   } catch (err) {
     console.error("Erro ao fechar caixa: ", err);
     res.status(500).json({ mensagem: "Erro ao fechar caixa" });

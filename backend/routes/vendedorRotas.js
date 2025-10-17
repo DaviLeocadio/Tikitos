@@ -8,6 +8,8 @@ import {
   listarVendasController,
   criarVendaController,
 } from "../controllers/VendaController.js";
+import { listarProdutosController, obterProdutoPorIdController } from "../controllers/ProdutoController.js";
+
 
 dotenv.config();
 
@@ -19,11 +21,27 @@ router.post("/caixa/:idVendedor", AbrirCaixaController);
 //Rota para fechar caixa
 router.put("/caixa/:idVendedor", FecharCaixaController);
 
-//Rota para listar as vendas
-router.get("/venda", listarVendasController);
-
 //Rota para a criação de vendas
-router.post("/venda", criarVendaController);
+router.post("/vendas", criarVendaController);
+
+//Rota para listar as vendas
+router.get("/vendas", listarVendasController);
+
+// Listar produtos
+router.get("/produtos", listarProdutosController);
+
+// Detalhes de uma unidade de produto
+router.get("/produtos/:idProduto", obterProdutoPorIdController);
+
+// Resumo do dia
+// router.get("/:idVendedor/vendas", controller do resumo de vendas);
+
+// Resumo do caixa (Total de vendas, pagamento, saldo)
+// router.get("/caixa/:idCaixa/resumo", controller do resumo de caixa);
+
+// Cancelar uma venda (pode exigir validação de gerente
+// router.delete("/vendas/:idVenda", controller de deeletar venda)
+
 
 router.options("/caixa/:idVendedor", (req, res) => {
   res.setHeader("Allow", "POST, OPTIONS");

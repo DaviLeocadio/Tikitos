@@ -17,12 +17,12 @@ const authMiddleware = (funcoesPermitidas = []) => {
     try {
       const decoded = jwt.verify(token, JWT_SECRET);
       req.usuarioId = decoded.id;
-      req.usuarioFuncao = decoded.funcao;
+      req.usuarioPerfil = decoded.perfil;
 
       // Se funções foram passadas, valida
       if (
         funcoesPermitidas.length > 0 &&
-        !funcoesPermitidas.includes(decoded.funcao)
+        !funcoesPermitidas.includes(decoded.perfil)
       ) {
         return res
           .status(403)
