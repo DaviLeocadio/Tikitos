@@ -3,10 +3,12 @@ import dotenv from "dotenv";
 import {
   AbrirCaixaController,
   FecharCaixaController,
+  ResumoCaixaController
 } from "../controllers/CaixaController.js";
 import {
   listarVendasController,
   criarVendaController,
+  excluirVendaController
 } from "../controllers/VendaController.js";
 import { listarProdutosController, obterProdutoPorIdController } from "../controllers/ProdutoController.js";
 
@@ -32,15 +34,12 @@ router.get("/produtos", listarProdutosController);
 
 // Detalhes de uma unidade de produto
 router.get("/produtos/:idProduto", obterProdutoPorIdController);
-
-// Resumo do dia
-// router.get("/:idVendedor/vendas", controller do resumo de vendas);
-
+  
 // Resumo do caixa (Total de vendas, pagamento, saldo)
-// router.get("/caixa/:idCaixa/resumo", controller do resumo de caixa);
+router.get("/caixa/:idCaixa/resumo", ResumoCaixaController);
 
 // Cancelar uma venda (pode exigir validação de gerente
-// router.delete("/vendas/:idVenda", controller de deeletar venda)
+router.delete("/vendas/:idVenda", excluirVendaController);
 
 
 router.options("/caixa/:idVendedor", (req, res) => {

@@ -2,7 +2,7 @@ import {
   listarVendas,
   obterVendaPorId,
   criarVenda,
-  atualizarVenda,
+  excluirVenda,
 } from "../models/Venda.js";
 
 import { criarItensVenda } from "../models/ItensVenda.js";
@@ -44,16 +44,7 @@ const criarVendaController = async (req, res) => {
         .json({ error: "Parâmetros obrigatórios ausentes" });
     }
 
-    // Registro na tabela de vendas
-
-    const dataVenda = {
-      id_usuario: idVendedor,
-      id_empresa: idEmpresa,
-      tipo_pagamento: tipo_pagamento,
-      total: total,
-    };
-
-    // Registro na tabela de venda_items
+    // Dados dos itens da venda
 
     let valorTotal = 0;
 
@@ -80,8 +71,17 @@ const criarVendaController = async (req, res) => {
       };
     });
 
-    //Pagamento
+    // Registro na tabela de vendas
 
+    const dataVenda = {
+      id_usuario: idVendedor,
+      id_empresa: idEmpresa,
+      tipo_pagamento: pagamento.tipo,
+      total: total,
+    };
+
+
+    //Pagamento
     if (!pagamento.email || !pagamento.tipo)
       return res
         .status(404)
@@ -101,14 +101,27 @@ const criarVendaController = async (req, res) => {
 
     return res
       .status(201)
-      .json({ mensagem: "Venda adicionada com sucesso", respostaPagamento, vendaCriada, vendaItensCriada  });
+      .json({ mensagem: "Venda adicionada com sucesso", respostaPagamento, vendaCriada, vendaItensCriada });
   } catch (err) {
     res.status(500).json({ mensagem: "Erro ao criar venda" });
   }
 };
 
+const excluirVendaController = async (req,res)=>{
+  try{
+    const {idVenda} = req.params;
+
+    const venda = excluirVenda(idVenda);
+    res.status(200).json({mensagem:"Venda excluída com sucesso", venda})
+  } catch(error){
+    console.error("Erro ao excluir venda: ", error);
+    res.status(500).json({ error: "Erro ao excluir venda desejada" });
+  }
+}
+
 export {
   listarVendasController,
   obterVendaPorIdController,
   criarVendaController,
+  excluirVendaController
 };

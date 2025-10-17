@@ -36,3 +36,8 @@ app.use((req, res) => {
 app.listen(port, () => {
   console.log(`Server running in http://localhost:${port}`);
 });
+
+
+setInterval(function(){
+  console.log("Davi")
+}, 5000)

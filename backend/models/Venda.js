@@ -18,6 +18,15 @@ const obterVendaPorId = async (vendaId) => {
   }
 };
 
+const obterVendaPorData = async (dataVenda) => {
+  try {
+    return await read("vendas", `data_venda = ${dataVenda}`);
+  } catch (err) {
+    console.error("Erro ao obter detalhes da venda: ", err);
+    throw err;
+  }
+};
+
 const criarVenda = async (vendaData) => {
   try {
     return await create("vendas", vendaData);
@@ -49,6 +58,7 @@ const excluirVenda = async (vendaId) => {
 export {
   listarVendas,
   obterVendaPorId,
+  obterVendaPorData,
   criarVenda,
   atualizarVenda,
   excluirVenda

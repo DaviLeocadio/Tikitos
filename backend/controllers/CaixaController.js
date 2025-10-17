@@ -4,6 +4,8 @@ import {
   FecharCaixa,
 } from "../models/Caixa.js";
 
+import { obterVendaPorData } from "../models/Venda.js";
+
 const AbrirCaixaController = async (req, res) => {
   try {
     const { idVendedor } = req.params;
@@ -61,7 +63,7 @@ const FecharCaixaController = async (req, res) => {
     const { idVendedor } = req.params;
     const { valorFinal } = req.body;
 
-    //Calcular valor final pelas 
+    //Calcular valor final pelas vendas
 
     //Verrifica se há valores para as variáveis
     if (!idVendedor || !valorFinal) {
@@ -111,4 +113,28 @@ const FecharCaixaController = async (req, res) => {
   }
 };
 
-export { AbrirCaixaController, FecharCaixaController };
+const ResumoCaixaController = async (req, res) => {
+  try {
+    //Verifica os dados de venda de um certo dia
+    const date = `${new Date().getDate()}/${new Date().getMonth}/${new Date().getFullYear}`;
+    const vendas = await obterVendaPorData(date);
+
+    //Adiciona o valor da venda num array
+    let valorTotal = [];
+    vendas.forEach(venda => {
+      valorTotal.push(venda.total)
+    });
+
+    //Soma todos os valores dentro do array valorTotal
+    const valorTotalVendas = valorTotal.reduce((ultimoValor, valorAtual) => ultimoValor + valorAtual, 0);
+
+    //Total de vendas
+    const totalVendas = Object.keys(vendas).length;
+    res.status(200).json({ mensagem: "Resumo do caixa enviado com sucesso",valorTotalVendas, totalVendas })
+  } catch (error) {
+    console.error("Erro ao demonstrar o resumo do caixa no dia", error);
+    res.status(500).json({ error: "Erro ao demonstrar o resumo do caixa" })
+  }
+}
+
+export { AbrirCaixaController, FecharCaixaController, ResumoCaixaController };

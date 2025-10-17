@@ -1,24 +1,38 @@
 import jwt from "jsonwebtoken";
-import { read, compare } from "../config/database.js";
+import { read, compare, create } from "../config/database.js";
 import { JWT_SECRET } from "../config/jwt.js";
 import { encontrarUsuario, definirSenha } from "../models/AuthModel.js";
 import { sendMail } from "../utils/mailer.js";
 import { generateHashedPassword } from "../utils/hashPassword.js";
-import { AbrirCaixaController } from "./CaixaController.js";
+import { buscarToken, editarToken, registrarToken } from "../models/Token.js";
 
-import fs from "fs";
 
-let codes = {};
+const generateCode = async (usuarioId, email) => {
 
-// Leitura sincronizada com arquivo que contém os códigos
-try {
-  if (fs.existsSync("./codes.json")) {
-    const data = fs.readFileSync("./codes.json", "utf8");
-    codes = JSON.parse(data || "{}");
+  //gerar token de verificação
+  const token = Math.floor(100000 + Math.random() * 900000);
+  const decriptedToken = await generateHashedPassword(String(token));
+
+  const agora = new Date();
+  const limite = 15 * 60 * 1000 // 15 minutos em ms;
+  const expiraEm = new Date(agora.getTime() + limite);
+
+  const tokenData = {
+    id_usuario: usuarioId,
+    codigo: decriptedToken,
+    expira_em: expiraEm,
+    verificado: false
   }
-} catch (err) {
-  console.error("Erro ao ler codes.json:", err);
-  codes = {};
+
+  // Salva token no banco
+  await registrarToken(tokenData);
+
+  // Manda email com token para o usuário
+  await sendMail(
+    email,
+    "Código de Acesso - Tikitos",
+    `Seu código de acesso é: ${token}. Use-o para definir sua senha.`
+  );
 }
 
 // Checar se email existe
@@ -26,117 +40,147 @@ const checkEmailController = async (req, res) => {
   const { email } = req.body;
 
   try {
+    if (!email) {
+      return res.status(400).json({ error: 'Email não informado' })
+    }
     // Procura email no bd
     const usuario = await encontrarUsuario(email);
-    if (!usuario)
-      return res.status(404).json({ mensagem: "Email não encontrado" });
+    if (!usuario) return res.status(404).json({ error: 'Email não encontrado' });
 
     // Se for o primeiro acesso do usuário, a senha será 'deve_mudar'.
-    if (usuario.senha === "deve_mudar") {
-      //gerar token de verificação
-      const code = Math.floor(100000 + Math.random() * 900000);
-      codes[email] = {
-        code,
-        expires: Date.now() + 15 * 60 * 1000, // 15 minutos
-      };
-      // Salva token no arquivo de codigos
-      fs.writeFileSync("./codes.json", JSON.stringify(codes, null, 2));
-
-      // Manda email com token para o usuário
-      await sendMail(
-        email,
-        "Código de Acesso - Tikitos",
-        `Seu código de acesso é: ${code}. Use-o para entrar no sistema da Tikitos.`
-      );
-
-      return res.status(200).json({ step: "definir_senha" }); // manda definir senha
+    if (usuario.senha === 'deve_mudar') {
+      await generateCode(usuario.id_usuario, email);
+      return res.status(200).json({ type: 'success', step: 'verificar_token' }); // verifica token
     }
 
-    return res.status(200).json({ step: "login" }); // manda fazer login
+    return res.status(200).json({ type: 'success', step: 'login' }) // manda fazer login
+
   } catch (error) {
-    console.error("Erro ao buscar email: ", error);
-    res.status(500).json({ mensagem: "Erro ao buscar email." });
+    console.error('Erro ao buscar email: ', error);
+    res.status(500).json({ error: 'Erro ao buscar email.' })
   }
-};
+}
 
-// Confirmar código e adicionar senha
-const definirSenhaController = async (req, res) => {
-  const { email, code, novaSenha, confirmarSenha } = req.body;
 
+
+
+const verificarTokenController = async (req, res) => {
+
+  const { email, token } = req.body;
   try {
-    if (!email || !code || !novaSenha || !confirmarSenha)
-      return res
-        .status(400)
-        .json({ error: "Insira todos os parâmetros obrigatórios" });
+    if (!email || !token) return res.status(400).json({ error: 'Insira todos os parâmetros obrigatórios' });
 
-    // Verifica se email existe no bd
     const usuario = await encontrarUsuario(email);
-    if (!usuario)
-      return res.status(404).json({ mensagem: "Email não encontrado" });
+    if (!usuario) return res.status(404).json({ error: 'Email não encontrado' });
 
-    const record = codes[email]; // Pega código atrelado ao email
+    // Busca o token no banco
+    const record = await buscarToken(usuario.id_usuario);
+
+    if (!record) return res.status(404).json({ error: 'Nenhum token foi encontrado no email fornecido' });
 
     // Verifica se está expirado
-    if (Date.now() > record.expires) {
-      return res.status(410).json({ error: "O código expirou." });
+    if (Date.now() > new Date(record.expira_em)) {
+      return res.status(410).json({ error: 'O código expirou.' });
     }
 
     // Verifica se o código coincide
-    if (!record || parseInt(record.code) !== parseInt(code)) {
-      return res.status(400).json({ error: "Código inválido." });
+    const tokenCorreto = await compare(token, record.codigo);
+    if (!tokenCorreto) {
+      return res.status(401).json({ error: 'Código inválido' })
     }
+
+    const tokenAtualizado = await editarToken({ verificado: true }, record.id_token);
+
+    return res.status(200).json(
+      {
+        type: 'success',
+        step: 'definir_senha',
+        mensagem: 'Token verificado com sucesso',
+        tokenAtualizado
+      }
+    )
+
+
+  } catch (error) {
+    console.error('Erro ao verificar token: ', error);
+    res.status(500).json({ error: 'Erro ao definir senha.' })
+  }
+}
+
+
+// Confirmar código e adicionar senha
+const definirSenhaController = async (req, res) => {
+  const { email, novaSenha, confirmarSenha } = req.body;
+
+  try {
+    if (!email || !novaSenha || !confirmarSenha) return res.status(400).json({ error: 'Insira todos os parâmetros obrigatórios' });
+
+    // Verifica se email existe no bd
+    const usuario = await encontrarUsuario(email);
+    if (!usuario) return res.status(404).json({ error: 'Email não encontrado' });
+
+
 
     // Verifica se as duas senhas coincidem
     if (novaSenha !== confirmarSenha) {
-      return res.status(401).json({ error: "As senhas não coincidem" });
+      return res.status(401).json({ error: 'As senhas não coincidem' })
     }
 
     // Gera hash da senha
-    const senhaCriptografada = await generateHashedPassword(novaSenha);
+    const senhaCriptografada = await generateHashedPassword(novaSenha)
 
     // Seta nova senha e manda fazer login
     await definirSenha(email, { senha: senhaCriptografada });
-    res
-      .status(200)
-      .json({ mensagem: "Senha definida com sucesso", step: "login" });
+    res.status(200).json({ mensagem: "Senha definida com sucesso", step: 'login' });
+
   } catch (error) {
-    console.error("Erro ao definir senha: ", error);
-    res.status(500).json({ mensagem: "Erro ao definir senha." });
+    console.error('Erro ao definir senha: ', error);
+    res.status(500).json({ error: 'Erro ao definir senha.' })
   }
-};
+}
 
 //Login
 const loginController = async (req, res) => {
   const { email, senha } = req.body;
 
   try {
-    const usuario = await read("usuarios", `email = '${email}'`);
+    const usuario = await read('usuarios', `email = '${email}'`);
 
     if (!usuario) {
-      return res.status(404).json({ mensagem: "Usuário não encontrado" });
+      return res.status(404).json({ error: 'Usuário não encontrado' })
     }
 
     const senhaCorreta = await compare(senha, usuario.senha);
     if (!senhaCorreta) {
-      return res.status(401).json({ mensagem: "Senha incorreta" });
+      return res.status(401).json({ error: 'Senha incorreta' })
     }
 
     const token = jwt.sign(
       {
-        id: usuario.id_usuario,
+        id: usuario.id,
         email: usuario.email,
         perfil: usuario.perfil,
-        id_empresa: usuario.id_empresa,
+        id_empresa: usuario.id_empresa
       },
       JWT_SECRET,
-      { expiresIn: "1h" }
+      { expiresIn: '1h' }
     );
 
-    res.status(200).json({ mensagem: "Login realizado com sucesso", token });
-  } catch (error) {
-    console.error("Erro ao fazer login: ", error);
-    res.status(500).json({ mensagem: "Erro ao fazer login." });
-  }
-};
+    res.status(200).json({ mensagem: 'Login Realizado com Sucesso', token });
 
-export { loginController, checkEmailController, definirSenhaController };
+
+  } catch (error) {
+    console.error('Erro ao Fazer login: ', error);
+    res.status(500).json({ error: 'Erro ao fazer login.' })
+  }
+}
+
+
+
+
+export {
+  loginController,
+  checkEmailController,
+  definirSenhaController,
+  verificarTokenController
+}
