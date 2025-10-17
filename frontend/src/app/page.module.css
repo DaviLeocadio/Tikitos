@@ -2,6 +2,8 @@
 .login_fundo{
   background-image: url("/img/login/login_fundo.png");
   margin: 0;
+  height: 100% !important;
+  background-size: cover;
 }
 
 /* formulario login */
@@ -26,7 +28,7 @@
 .form_container .logo_container {
   text-align: center;
   font-weight: 600;
-  font-size: 18px;
+  /* font-size: 18px; */
 }
 
 .form_container .form {

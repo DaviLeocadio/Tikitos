@@ -5,30 +5,29 @@ import Link from 'next/link';
 export default function Home() {
   return (
     <>
-      <div className={`grid grid-cols-1 lg:grid-cols-2 gap-1 ${styles.login_fundo}`}>
+      <div className={`grid grid-cols-1 lg:grid-cols-2 gap-1 min-h-screen ${styles.login_fundo}`}>
 
         <div className="hidden lg:block m-0 p-0">
-          {/* imagem das crianças ao lado do login */}
           <img className="m-0 p-0 w-full h-auto" src="/img/login/login_imagem.png" alt="" />
         </div>
 
         {/* TÍTULO DE LOGIN E TEXTINHO */}
-        <div className="p-20 sm:p-20 md:p-20 flex flex-col justify-center">
-          <div className="pb-5 pl-0 ml-0">
+        <div className="p-17 sm:p-15 md:p-18 flex flex-col justify-center">
+          <div className="pb-5 pl-0 ml-0 sm:p-7 md:p-10 sm:pb-15 md:pb-7 md:pt-0">
 
-            <div className=" block lg:hidden p-15 pt-0 pb-0 sm:p-0 sm:mt-0 md:mt-0">
+            <div className=" block lg:hidden ">
               {/* imagem logo Tikitos */}
-              <img className="m-0 p-0 w-full h-auto" src="/img/login/logo_comprida.png" alt="" />
+              <img className="w-full h-auto" src="/img/login/logo_comprida.png" alt="" />
             </div>
 
             <img src="/img/login/login_titulo.png" className="w-full h-auto" alt="" />
 
             <div className="relative flex flex-col items-center">
-              <h3 className="text-[15px] z-10 text-center text-[var(--color-verdao)]">
-                Acesse e continue espalhando encanto!
+              <h3 className={`text-[14px] xs:text-[17px] sm:text-[23px] md:text-[26px] lg:text-[14px] xl:text-[17px] leading-tight z-10 text-center text-[var(--color-verdao)] `}>
+                Acesse e continue espalhando encanto! 
               </h3>
 
-              <div className="hidden md:block absolute bottom-0 left-1/2 -translate-x-1/2 bg-[#E5B8F1] rounded-lg h-3 w-85 z-0"></div>
+              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 bg-[#E5B8F1] rounded-lg h-3 z-0 w-0 xs:w-92 sm:w-120 md:w-136 lg:w-80 xl:w-90"></div>
             </div>
           </div>
 
@@ -53,7 +52,7 @@ export default function Home() {
               <div className={styles.form_group}>
                 <label className={`text-[var(--color-verdao)] `} htmlFor="email">Insira a sua senha:</label>
                 <input
-                  type="text"
+                  type="password"
                   id="email"
                   name="email"
                   placeholder="Senha"
@@ -93,10 +92,6 @@ export default function Home() {
           </p>
         </div>
       </div>
-
-
-
-
     </>
   );
 }
