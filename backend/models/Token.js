@@ -21,7 +21,7 @@ const registrarToken = async (tokenData) => {
 
 const editarToken = async (idToken, tokenData) => {
     try {
-        return await update('tokens', tokenData, `token = ${idToken}`)
+        return await update('tokens', tokenData, `id_token = ${idToken}`)
     } catch (err) {
         console.error('Erro ao editar token: ', err);
         throw err;

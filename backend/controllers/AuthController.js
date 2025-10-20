@@ -84,12 +84,12 @@ const verificarTokenController = async (req, res) => {
     }
 
     // Verifica se o código coincide
-    const tokenCorreto = await compare(token, record.codigo);
+    const tokenCorreto = await compare(String(token), record.codigo);
     if (!tokenCorreto) {
       return res.status(401).json({ error: 'Código inválido' })
     }
 
-    const tokenAtualizado = await editarToken({ verificado: true }, record.id_token);
+    const tokenAtualizado = await editarToken( record.id_token,{ verificado: true });
 
     return res.status(200).json(
       {
@@ -103,7 +103,7 @@ const verificarTokenController = async (req, res) => {
 
   } catch (error) {
     console.error('Erro ao verificar token: ', error);
-    res.status(500).json({ error: 'Erro ao definir senha.' })
+    res.status(500).json({ error: 'Erro ao verificar token.' })
   }
 }
 
@@ -119,6 +119,12 @@ const definirSenhaController = async (req, res) => {
     const usuario = await encontrarUsuario(email);
     if (!usuario) return res.status(404).json({ error: 'Email não encontrado' });
 
+    // Busca o token no banco
+    const record = await buscarToken(usuario.id_usuario);
+
+    if (!record) return res.status(404).json({ error: 'Nenhum token foi encontrado no email fornecido' });
+
+    if(token.verificado !== true) return res.status(403).json({error: 'O token não foi verificado'});
 
 
     // Verifica se as duas senhas coincidem
