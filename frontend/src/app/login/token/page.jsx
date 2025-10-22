@@ -63,54 +63,70 @@ export default function Home() {
                     </div>
 
                     {/* ÁREA DOS INPUTS COM TODOS OS DETALHES */}
-                    {/* INPUT DE EMAIL */}
-                    <div className="grid gap-5">
-                        <div className={`flex flex-col gap-6 bg-[#9CD089] ${styles.form_container}`}>
-                            <form className={styles.form}>
-                                <div className={styles.form_group}>
-                                    <label className={`text-[var(--color-verdao)]`} htmlFor="email">Insira o seu e-mail:</label>
-                                    <input
-                                        type="text"
-                                        id="email"
-                                        name="email"
-                                        placeholder="E-mail"
-                                        required=""
-                                        className={`bg-[#DABCE1] focus:border-color[#9CD089]`}
-                                    />
-                                </div>
-                            </form>
+                    <div className="flex items-start gap-6">
+                        {/* LINHA LATERAL (01 → 02) */}
+                        <div className="flex flex-col items-center mt-2">
+                            <img
+                                src="/img/token/token_linha.png"
+                                alt="Linha com etapas"
+                                className="h-full w-10 object-contain"
+                            />
                         </div>
-                        //sasasas
 
-                        {/* INPUT DE VERIFICAÇÃO */}
-                        <div className={`bg-[#9CD089] p-4 rounded-3xl flex justify-center ${styles.form_container}`}>
-                            <form className={`flex flex-col items-center ${styles.form}`}>
-                                <div className={styles.form_group}>
-                                    <label className={`text-[var(--color-verdao)] mb-2 block`} htmlFor="number">
-                                        Digite o código de validação:
-                                    </label>
-
-                                    <div className="grid grid-cols-3 sm:flex sm:flex-nowrap justify-center gap-3 transition-all duration-300 ease-in-out ">
-                                        {Array.from({ length: 6 }).map((_, i) => (
-                                            <input
-                                                key={i}
-                                                ref={(el) => (inputsRef.current[i] = el)}
-                                                type="text"
-                                                maxLength="1"
-                                                onChange={(e) => handleChange(e, i)}
-                                                onKeyDown={(e) => handleKeyDown(e, i)}
-                                                className="w-8 h-12 text-center text-lg font-semibold bg-[#DABCE1] border-2 border-dashed border-[#7C3A82] rounded-full focus:outline-none focus:border-[#7C3A82] text-[var(--color-verdao)] transition-all duration-300 ease-in-out"
-                                            />
-                                        ))}
+                        {/* CONTEÚDO DOS FORMULÁRIOS */}
+                        <div className="flex flex-col gap-4">
+                            {/* INPUT DE E-MAIL */}
+                            <div className={`flex flex-col gap-4 bg-[#9CD089] p-4 rounded-3xl ${styles.form_container}`}>
+                                <form className={styles.form}>
+                                    <div className={styles.form_group}>
+                                        <label
+                                            className="text-[var(--color-verdao)]"
+                                            htmlFor="email"
+                                        >
+                                            Insira o seu e-mail:
+                                        </label>
+                                        <input
+                                            type="text"
+                                            id="email"
+                                            name="email"
+                                            placeholder="E-mail"
+                                            required
+                                            className="bg-[#DABCE1] border-2 border-dashed border-[#7C3A82] rounded-2xl px-4 py-2 text-[var(--color-verdao)] focus:outline-none focus:border-[#7C3A82] w-full"
+                                        />
                                     </div>
-                                </div>
-                            </form>
+                                </form>
+                            </div>
+
+                            {/* INPUT DE VERIFICAÇÃO (FUNCIONAL E RESPONSIVO) */}
+                            <div className={`bg-[#9CD089] p-4 rounded-3xl flex justify-center ${styles.form_container}`}>
+                                <form className={`flex flex-col items-center ${styles.form}`}>
+                                    <div className={styles.form_group}>
+                                        <label
+                                            className="text-[var(--color-verdao)] mb-2 block"
+                                            htmlFor="number"
+                                        >
+                                            Digite o código de validação:
+                                        </label>
+
+                                        {/* 6 inputs - 1 linha no desktop / 2 linhas no mobile */}
+                                        <div className="grid grid-cols-6 sm:flex sm:flex-nowrap justify-center gap-3 transition-all duration-300 ease-in-out">
+                                            {Array.from({ length: 6 }).map((_, i) => (
+                                                <input
+                                                    key={i}
+                                                    ref={(el) => (inputsRef.current[i] = el)}
+                                                    type="text"
+                                                    maxLength="1"
+                                                    onChange={(e) => handleChange(e, i)}
+                                                    onKeyDown={(e) => handleKeyDown(e, i)}
+                                                    className="w-10 h-12 text-center text-lg font-semibold bg-[#DABCE1] border-2 border-dashed border-[#7C3A82] rounded-xl focus:outline-none focus:border-[#7C3A82] text-[var(--color-verdao)] transition-all duration-300 ease-in-out"
+                                                />
+                                            ))}
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
                     </div>
-
-
-
-
 
 
 

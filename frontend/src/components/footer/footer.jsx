@@ -6,7 +6,7 @@ export default function Footer() {
     return (
         <>
             <div className={`grid grid-cols-1 lg:grid-cols-3 gap-1 rounded-t-[150px] ${styles.rodape_fundo}`}>
-                <div className={`p-40`}>
+                <div className={`flex m-auto p-25`}>
                     <img
                         className="m-0 w-full h-auto"
                         src="/img/logos/logo_comprimida.png"
@@ -68,7 +68,7 @@ export default function Footer() {
                     </div>
                 </div>
 
-                <div className={`pt-18 px-10`}>
+                <div className={`pt-20 px-10`}>
                     <img
                         className="m-0 p-0 w-full h-auto"
                         src="/img/rodape/crianca_rodape.png"
@@ -78,7 +78,7 @@ export default function Footer() {
             </div>
 
             <div>
-                <div className="h-5 bg-[#8C3E82] border-b-4 border-dashed border-[#d594e6]"></div>
+                <div className="h-4 bg-[#8C3E82] border-b-4 border-dashed border-[#d594e6]"></div>
                 <div className="flex items-center justify-center bg-[#8C3E82]">
                     <p className="text-[#ebc7f5] p-5">Desenvolvido por Tikitos®, 2025 - Todos os direitos reservados.</p>
                 </div>
