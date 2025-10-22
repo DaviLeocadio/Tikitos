@@ -43,5 +43,8 @@ const atualizarCategoria = async (idCategoria, categoriaData) => {
 };
 
 export {
-  listarCategorias
+  listarCategorias,
+  obterCategoriaPorId,
+  criarCategoria,
+  atualizarCategoria
 };

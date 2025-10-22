@@ -151,15 +151,18 @@ const ResumoCaixaController = async (req, res) => {
       itensVenda.push(...itens);
     }
 
+    //Pega as quantidades e coloca numa array
     let produtos = [];
     itensVenda.map((item) => {
       produtos.push(item.quantidade);
     });
 
+    //Soma os valores
     const totalProdutos = produtos.reduce(
       (numeroAnterior, numeroAtual) => numeroAnterior + numeroAtual,
       0
     );
+
     //Soma todos os valores dentro do array valorTotal
     const valorTotalVendas = valorTotal.reduce(
       (ultimoValor, valorAtual) =>
