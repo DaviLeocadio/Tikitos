@@ -19,7 +19,7 @@ const listarProdutosController = async (req, res) => {
     const produtos = await listarProdutos();
     const produtosFormatados = await Promise.all(
       produtos.map( async(produto) => {
-        const categoria = await obterCategoriaPorId();
+        const categoria = await obterCategoriaPorId(produto.id_categoria);
         const produtoLoja = await obterProdutoLojaPorId(
           produto.id_produto,
           usuarioEmpresa
