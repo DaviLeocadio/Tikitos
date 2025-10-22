@@ -96,8 +96,6 @@ export default function Home() {
             </Link>
           </div>
 
-<img src="/img/login/bbbb.png" alt="" />
-
 
           {/* ESCRITA COM O LINK */}
           <p className={`mt-5 mb-0 pb-0 text-center text-[#76216d]  ${styles.signup_link}`}>
