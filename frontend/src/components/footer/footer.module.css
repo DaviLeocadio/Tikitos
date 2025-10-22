@@ -1,0 +1,6 @@
+.rodape_fundo{
+  background-image: url("/img/rodape/fundo_rodape.png");
+  margin: 0;
+  height: 100% !important;
+  background-size: cover;
+}
