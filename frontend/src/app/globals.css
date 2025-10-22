@@ -16,7 +16,11 @@
   --color-verdefolha: #75ba51;
 
   --breakpoint-xs: 30rem;
+  --breakpoint-surface: 64rem; 
+  --breakpoint-mac: 69.625rem;
 }
+
+
 
 @theme inline {
   --color-background: var(--background);
