@@ -6,6 +6,8 @@ import {
 
 import { obterVendaPorData } from "../models/Venda.js";
 
+import { listarItensVenda } from "../models/ItensVenda.js";
+
 const AbrirCaixaController = async (req, res) => {
   try {
     const { idVendedor } = req.params;
@@ -38,14 +40,14 @@ const AbrirCaixaController = async (req, res) => {
       new Date().getMinutes() +
       ":" +
       new Date().getSeconds();
-    const valorInicial = 100.0;
 
     //Dados da abertura do caixa
     const caixaData = {
       id_usuario: idVendedor,
       id_empresa: idEmpresa,
       abertura: abertura,
-      valor_inicial: valorInicial,
+      valor_inicial: 100.0,
+      valor_final: 100.0,
       status: "aberto",
     };
 
@@ -87,7 +89,7 @@ const FecharCaixaController = async (req, res) => {
       "/" +
       (new Date().getMonth() + 1) +
       "/" +
-      new Date().getDay() +
+      new Date().getDate() +
       " " +
       new Date().getHours() +
       ":" +
@@ -115,26 +117,68 @@ const FecharCaixaController = async (req, res) => {
 
 const ResumoCaixaController = async (req, res) => {
   try {
+    const { idCaixa } = req.params;
+    const { idEmpresa } = req.body;
+
+    if (!idCaixa) {
+      return res
+        .status(400)
+        .json({ mensagem: "Parâmetros necessários incompletos" });
+    }
+
     //Verifica os dados de venda de um certo dia
-    const date = `${new Date().getDate()}/${new Date().getMonth}/${new Date().getFullYear}`;
-    const vendas = await obterVendaPorData(date);
+    const date =
+      new Date().getFullYear() +
+      "/" +
+      (new Date().getMonth() + 1) +
+      "/" +
+      new Date().getDate();
+
+    const vendas = await obterVendaPorData(date, idCaixa, idEmpresa);
 
     //Adiciona o valor da venda num array
-    let valorTotal = [];
-    vendas.forEach(venda => {
-      valorTotal.push(venda.total)
+    const valorTotal = vendas.map((venda) => venda.total);
+
+    //Adiciona o id da venda num array
+    const idVenda = vendas.map((venda) => venda.id_venda);
+
+    console.log(idVenda);
+    //Para cada id da venda, ele verifica se há itens desse id
+    let itensVenda = [];
+    for (const id of idVenda) {
+      const itens = await listarItensVenda(id);
+
+      itensVenda.push(...itens);
+    }
+
+    let produtos = [];
+    itensVenda.map((item) => {
+      produtos.push(item.quantidade);
     });
 
+    const totalProdutos = produtos.reduce(
+      (numeroAnterior, numeroAtual) => numeroAnterior + numeroAtual,
+      0
+    );
     //Soma todos os valores dentro do array valorTotal
-    const valorTotalVendas = valorTotal.reduce((ultimoValor, valorAtual) => ultimoValor + valorAtual, 0);
+    const valorTotalVendas = valorTotal.reduce(
+      (ultimoValor, valorAtual) =>
+        parseFloat(ultimoValor) + parseFloat(valorAtual),
+      0
+    );
 
     //Total de vendas
-    const totalVendas = Object.keys(vendas).length;
-    res.status(200).json({ mensagem: "Resumo do caixa enviado com sucesso",valorTotalVendas, totalVendas })
+    const totalVendas = valorTotal.length;
+    res.status(200).json({
+      mensagem: "Resumo do caixa enviado com sucesso",
+      valorTotalVendas,
+      totalVendas,
+      totalProdutos,
+    });
   } catch (error) {
     console.error("Erro ao demonstrar o resumo do caixa no dia", error);
-    res.status(500).json({ error: "Erro ao demonstrar o resumo do caixa" })
+    res.status(500).json({ error: "Erro ao demonstrar o resumo do caixa" });
   }
-}
+};
 
 export { AbrirCaixaController, FecharCaixaController, ResumoCaixaController };

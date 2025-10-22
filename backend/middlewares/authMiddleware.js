@@ -16,24 +16,28 @@ const authMiddleware = (funcoesPermitidas = []) => {
 
     try {
       const decoded = jwt.verify(token, JWT_SECRET);
-      req.usuarioId = decoded.id;
+
+      req.usuarioId = decoded.id_usuario;
       req.usuarioPerfil = decoded.perfil;
+      req.usuarioEmail = decoded.email;
+      req.usuarioEmpresa = decoded.id_empresa;
 
       // Se funções foram passadas, valida
       if (
         funcoesPermitidas.length > 0 &&
         !funcoesPermitidas.includes(decoded.perfil)
       ) {
-        return res
-          .status(403)
-          .json({ mensagem: "Não autorizado: Permissão insuficiente" });
+        return res.status(403).json({
+          mensagem:
+            "Não autorizado: Sua permissão não concede acesso à essa rota",
+        });
       }
 
       next();
     } catch (error) {
       return res
         .status(403)
-        .json({ mensagem: "Não autorizado: token inválido" });
+        .json({ mensagem: "Não autorizado: Token inválido" });
     }
   };
 };

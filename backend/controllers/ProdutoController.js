@@ -5,12 +5,11 @@ import {
   atualizarProduto,
 } from "../models/Produto.js";
 
-import { fileURLToPath } from 'url';
-import path from 'path';
+import { fileURLToPath } from "url";
+import path from "path";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
 
 const listarProdutosController = async (req, res) => {
   try {
@@ -29,7 +28,7 @@ const obterProdutoPorIdController = async (req, res) => {
   try {
     const { idProduto } = req.params;
 
-    const produto = obterProdutoPorId(idProduto);
+    const produto = await obterProdutoPorId(idProduto);
     res.status(200).json({ mensagem: "Produto obtido com sucesso", produto });
   } catch (err) {
     console.error("Erro ao obter o produto pelo ID: ", err);
@@ -54,9 +53,7 @@ const criarProdutoController = async (req, res) => {
     let logoPath = null;
     if (req.file) {
       logoPath = `/img/produtos/${req.file.filename}`;
-
     }
-
 
     const produtoData = {
       id_empresa: idEmpresa,
@@ -88,14 +85,17 @@ const atualizarProdutoController = async (req, res) => {
       nome,
       descricao,
       custo,
-      lucro
+      lucro,
     } = req.body;
 
     const preco = custo * (1 + lucro / 100);
 
     let imagemPath = null;
     if (req.file) {
-      imagemPath = req.file.path.replace(__dirname.replace('\\controllers', ''), '');
+      imagemPath = req.file.path.replace(
+        __dirname.replace("\\controllers", ""),
+        ""
+      );
     }
 
     const produtoData = {

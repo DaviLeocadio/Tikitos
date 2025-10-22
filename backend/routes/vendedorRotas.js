@@ -27,7 +27,7 @@ router.put("/caixa/:idVendedor", FecharCaixaController);
 router.post("/vendas", criarVendaController);
 
 //Rota para listar as vendas
-router.get("/vendas", listarVendasController);
+router.get("/:idVendedor/vendas", listarVendasController);
 
 // Listar produtos
 router.get("/produtos", listarProdutosController);
@@ -38,8 +38,10 @@ router.get("/produtos/:idProduto", obterProdutoPorIdController);
 // Resumo do caixa (Total de vendas, pagamento, saldo)
 router.get("/caixa/:idCaixa/resumo", ResumoCaixaController);
 
-// Cancelar uma venda (pode exigir validação de gerente
+// Cancelar uma venda 
 router.delete("/vendas/:idVenda", excluirVendaController);
+
+// Extra: Relatório de vendas, métricas, tarefas
 
 
 router.options("/caixa/:idVendedor", (req, res) => {

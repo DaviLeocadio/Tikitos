@@ -9,6 +9,15 @@ const listarVendas = async () => {
   }
 };
 
+const listarVendasPorCaixa = async (caixaId) => {
+  try {
+    return await readAll("vendas", `id_caixa = ${caixaId}`);
+  } catch (error) {
+    console.error("Erro ao listar vendas por caixa: ", err);
+    throw err;
+  }
+};
+
 const obterVendaPorId = async (vendaId) => {
   try {
     return await read("vendas", `id_venda = ${vendaId}`);
@@ -18,9 +27,12 @@ const obterVendaPorId = async (vendaId) => {
   }
 };
 
-const obterVendaPorData = async (dataVenda) => {
+const obterVendaPorData = async (dataCaixa, idCaixa, idEmpresa) => {
   try {
-    return await read("vendas", `data_venda = ${dataVenda}`);
+    return await readAll(
+      "vendas",
+      `DATE(data_venda) = '${dataCaixa}' AND id_caixa = ${idCaixa} AND id_empresa = ${idEmpresa}`
+    );
   } catch (err) {
     console.error("Erro ao obter detalhes da venda: ", err);
     throw err;
@@ -54,12 +66,12 @@ const excluirVenda = async (vendaId) => {
   }
 };
 
-
 export {
   listarVendas,
+  listarVendasPorCaixa,
   obterVendaPorId,
   obterVendaPorData,
   criarVenda,
   atualizarVenda,
-  excluirVenda
+  excluirVenda,
 };

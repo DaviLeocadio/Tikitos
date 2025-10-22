@@ -38,6 +38,6 @@ app.listen(port, () => {
 });
 
 
-setInterval(function(){
+setInterval(function () {
   console.log("Davi")
-}, 5000)
+}, 10 * 60 * 1000)
