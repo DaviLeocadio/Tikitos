@@ -44,36 +44,40 @@ export default function Home() {
             </div>
           </div>
 
-          {/* INPUT DE EMAIL */}
-          <div className={`bg-[#9CD089]  ${styles.form_container}`}>
-            <form className={styles.form}>
-              <div className={styles.form_group}>
-                <label className={`text-[var(--color-verdao)]`} htmlFor="email">Digite uma nova senha:</label>
-                <input
-                  type="text"
-                  id="email"
-                  name="email"
-                  placeholder="E-mail"
-                  required=""
-                  className={`bg-[#DABCE1] focus:border-color[#9CD089]`}
-                />
-              </div>
-            </form>
+          <div className="flex flex-col gap-4">
+            {/* INPUT DE NOVA SENHA */}
+            <div className={`flex flex-col gap-4 bg-[#9CD089]  ${styles.form_container}`}>
+              <form className={styles.form}>
+                <div className={styles.form_group}>
+                  <label className={`text-[var(--color-verdao)]`} htmlFor="email">3°: Digite uma nova senha:</label>
+                  <input
+                    type="text"
+                    id="email"
+                    name="email"
+                    placeholder="E-mail"
+                    required=""
+                    className={`bg-[#DABCE1] focus:border-color[#9CD089]`}
+                  />
+                </div>
+              </form>
+            </div>
 
-            {/* INPUT DE VERIFICAÇÃO */}
-            <form className={styles.form}>
-              <div className={styles.form_group}>
-                <label className={`text-[var(--color-verdao)] `} htmlFor="email">Confirme sua nova senha:</label>
-                <input
-                  type="password"
-                  id="email"
-                  name="email"
-                  placeholder="Senha"
-                  required=""
-                  className={`bg-[#DABCE1]`}
-                />
-              </div>
-            </form>
+            {/* INPUT DE CONFIMAÇÃO DA NOVA SENHA */}
+            <div className={`bg-[#9CD089]  ${styles.form_container}`}>
+              <form className={styles.form}>
+                <div className={styles.form_group}>
+                  <label className={`text-[var(--color-verdao)] `} htmlFor="email">4°: Confirme sua nova senha:</label>
+                  <input
+                    type="password"
+                    id="email"
+                    name="email"
+                    placeholder="Senha"
+                    required=""
+                    className={`bg-[#DABCE1]`}
+                  />
+                </div>
+              </form>
+            </div>
           </div>
 
           {/* BOTÃO DE ENVIAR */}
