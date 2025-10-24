@@ -1,8 +1,37 @@
-import Image from "next/image";
+'use client';
 import styles from './page.module.css';
 import Link from 'next/link';
+import { useState } from "react";
+import { setCookie, getCookie } from 'cookies-next/client';
 
 export default function Home() {
+  const [email, setEmail] = useState('');
+  const [senha, setSenha] = useState('');
+
+  async function login() {
+    try {
+      const response = await fetch("http://localhost:8080/auth/login", {
+        method: 'POST',
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email, senha: senha })
+      })
+
+      const data = await response.json();
+      if (response.ok) {
+        setCookie('email', data.usuario.email);
+        setCookie('empresa', data.usuario.empresa);
+        setCookie('perfil', data.usuario.perfil);
+
+        console.log("Login realizado com sucesso: ");
+      } else {
+        console.log("Erro ao realizar login")
+      }
+    } catch (error) {
+      console.error("Erro na requisição", error)
+    }
+
+  }
   return (
     <>
       <div className={`grid grid-cols-1 lg:grid-cols-2 gap-1 min-h-screen ${styles.login_fundo}`}>
@@ -45,8 +74,8 @@ export default function Home() {
             </div>
           </div>
 
-          {/* INPUT DE EMAIL */}
           <div className={`bg-[#9CD089]  ${styles.form_container}`}>
+            {/* INPUT DE EMAIL */}
             <form className={styles.form}>
               <div className={styles.form_group}>
                 <label className={`text-[var(--color-verdao)]`} htmlFor="email">Insira o seu e-mail:</label>
@@ -57,6 +86,8 @@ export default function Home() {
                   placeholder="E-mail"
                   required=""
                   className={`bg-[#DABCE1] focus:border-color[#9CD089]`}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
             </form>
@@ -72,6 +103,8 @@ export default function Home() {
                   placeholder="Senha"
                   required=""
                   className={`bg-[#DABCE1]`}
+                  value={senha}
+                  onChange={(e) => setSenha(e.target.value)}
                 />
               </div>
             </form>
@@ -82,6 +115,7 @@ export default function Home() {
             <Link href="#">
               <button
                 className="group cursor-pointer transition-all duration-200 mt-5 rounded-full border border-transparent flex items-center justify-center gap-2 whitespace-nowrap bg-[#D6B9E2] text-[var(--color-verdao)] font-light hover:bg-[#db90e4] active:scale-95 px-8 py-3 text-[15px] sm:px-10 sm:text-[16px] md:px-14 md:text-[15px] lg:px-16 lg:text-[15px] xl:px-19"
+                onClick={login}
               >
                 <span className="text-end">Entre clicando aqui!</span>
                 <svg

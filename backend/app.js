@@ -11,10 +11,17 @@ import vendedorRotas from "./routes/vendedorRotas.js";
 // import adminRotas from "./routes/adminRotas.js";
 import authMiddleware from "./middlewares/authMiddleware.js";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 import { metaController } from "./controllers/MetaController.js";
 
-app.use(cors());
 app.use(express.json());
+app.use(cookieParser());
+
+//Configurações das permissões do cors
+app.use(cors({
+  origin: "http://localhost:3000", // Frontend Next.js
+  credentials: true, // Permite envio de cookies
+}));
 
 app.use("/auth", authRotas);
 

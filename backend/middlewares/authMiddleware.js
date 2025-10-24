@@ -4,7 +4,7 @@ import { JWT_SECRET } from "../config/jwt.js"; // Importar a chave secreta
 // Middleware genérico que recebe funções permitidas como parâmetro
 const authMiddleware = (funcoesPermitidas = []) => {
   return (req, res, next) => {
-    const authHeader = req.headers.authorization;
+    const authHeader = req.cookies.token;
 
     if (!authHeader) {
       return res

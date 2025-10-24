@@ -178,15 +178,46 @@ const loginController = async (req, res) => {
       { expiresIn: usuario.perfil === "vendedor" ? "12h" : "1h" }
     );
 
-    res.status(200).json({ mensagem: "Login Realizado com Sucesso", token });
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: false, // true em produção (https)
+      sameSite: "lax",
+      maxAge: usuario.perfil === "vendedor" ? 12 * 60 * 60 * 1000 : 1 * 60 * 60 * 1000
+    })
+
+    res.status(200).json({
+      mensagem: "Login Realizado com Sucesso", usuario: {
+        id: usuario.id,
+        email: usuario.email,
+        perfil: usuario.perfil,
+        empresa: usuario.id_empresa
+      }
+    });
   } catch (error) {
     console.error("Erro ao Fazer login: ", error);
     res.status(500).json({ error: "Erro ao fazer login." });
   }
 };
 
+const logoutController = async (req, res) => {
+  try {
+    res.cookie("token", "", {
+      httpOnly: true,
+      secure: false, // true em produção
+      sameSite: "lax",
+      maxAge: 0
+    })
+
+    res.status(200).json({ mensagem: "Logout realizado com sucesso" });
+  } catch (error) {
+    console.error("Erro ao realizar logout: ", error)
+    res.status(500).json({ error: "Erro ao fazer logout." });
+  }
+}
+
 export {
   loginController,
+  logoutController,
   checkEmailController,
   definirSenhaController,
   verificarTokenController,

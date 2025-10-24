@@ -11,7 +11,7 @@ import { listarItensVenda } from "../models/ItensVenda.js";
 const AbrirCaixaController = async (req, res) => {
   try {
     const { idVendedor } = req.params;
-    const { idEmpresa } = req.body;
+    const idEmpresa = req.usuarioEmpresa;
 
     //Verifica se a variavel está certo
     if (!idVendedor || !idEmpresa) {
@@ -118,8 +118,9 @@ const FecharCaixaController = async (req, res) => {
 const ResumoCaixaController = async (req, res) => {
   try {
     const { idCaixa } = req.params;
-    const { idEmpresa } = req.body;
+    const idEmpresa = req.usuarioEmpresa;
 
+    console.log(req.usuarioEmpresa)
     if (!idCaixa) {
       return res
         .status(400)
