@@ -8,7 +8,7 @@ import {
 import { fileURLToPath } from "url";
 import path from "path";
 import { obterCategoriaPorId } from "../models/Categorias.js";
-import { obterProdutoLojaPorId } from "../models/ProdutoLoja.js";
+import { obterProdutoLoja } from "../models/ProdutoLoja.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -20,7 +20,7 @@ const listarProdutosController = async (req, res) => {
     const produtosFormatados = await Promise.all(
       produtos.map( async(produto) => {
         const categoria = await obterCategoriaPorId(produto.id_categoria);
-        const produtoLoja = await obterProdutoLojaPorId(
+        const produtoLoja = await obterProdutoLoja(
           produto.id_produto,
           usuarioEmpresa
         );
@@ -47,6 +47,14 @@ const obterProdutoPorIdController = async (req, res) => {
     const { idProduto } = req.params;
 
     const produto = await obterProdutoPorId(idProduto);
+
+    if(!produto || produto.length === 0 ) {
+      return res
+        .status(404)
+        .json({
+          mensagem: "Produto não encontrado"
+        })
+    }
     res.status(200).json({ mensagem: "Produto obtido com sucesso", produto });
   } catch (err) {
     console.error("Erro ao obter o produto pelo ID: ", err);

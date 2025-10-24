@@ -4,6 +4,8 @@ import { JWT_SECRET } from "../config/jwt.js"; // Importar a chave secreta
 // Middleware genérico que recebe funções permitidas como parâmetro
 const authMiddleware = (funcoesPermitidas = []) => {
   return (req, res, next) => {
+    // Cookies that have been signed
+
     const authHeader = req.cookies.token;
 
     if (!authHeader) {
@@ -12,10 +14,8 @@ const authMiddleware = (funcoesPermitidas = []) => {
         .json({ mensagem: "Não autorizado: Token não fornecido" });
     }
 
-    const [, token] = authHeader.split(" ");
-
     try {
-      const decoded = jwt.verify(token, JWT_SECRET);
+      const decoded = jwt.verify(authHeader, JWT_SECRET);
 
       req.usuarioId = decoded.id_usuario;
       req.usuarioPerfil = decoded.perfil;

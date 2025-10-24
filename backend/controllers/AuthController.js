@@ -37,6 +37,10 @@ const generateCode = async (usuarioId, email) => {
 const checkEmailController = async (req, res) => {
   const { email } = req.body;
 
+   // Verifica de há excesso de caracteres para proteção contra ataques
+   if (email.length > 100) {
+    return res.status(400).json({ mensagem: "Máximo de caracteres excedido" });
+  }
   try {
     if (!email) {
       return res.status(400).json({ error: "Email não informado" });
@@ -61,6 +65,11 @@ const checkEmailController = async (req, res) => {
 
 const verificarTokenController = async (req, res) => {
   const { email, token } = req.body;
+
+  // Verifica de há excesso de caracteres para proteção contra ataques
+  if (email.length > 100 || token.length != 6) {
+    return res.status(400).json({ mensagem: "Máximo de caracteres excedido" });
+  }
   try {
     if (!email || !token)
       return res
@@ -81,7 +90,7 @@ const verificarTokenController = async (req, res) => {
 
     // Verifica se está expirado
     if (Date.now() > new Date(record.expira_em)) {
-      return res.status(410).json({ error: "O código expirou." });
+      return res.status(401).json({ error: "O código expirou." });
     }
 
     // Verifica se o código coincide
@@ -109,7 +118,14 @@ const verificarTokenController = async (req, res) => {
 // Confirmar código e adicionar senha
 const definirSenhaController = async (req, res) => {
   const { email, novaSenha, confirmarSenha } = req.body;
-
+  // Verifica de há excesso de caracteres para proteção contra ataques
+  if (
+    email.length > 100 ||
+    novaSenha.length > 25 ||
+    confirmarSenha.length > 25
+  ) {
+    return res.status(400).json({ mensagem: "Máximo de caracteres excedido" });
+  }
   try {
     if (!email || !novaSenha || !confirmarSenha)
       return res
@@ -155,6 +171,10 @@ const definirSenhaController = async (req, res) => {
 const loginController = async (req, res) => {
   const { email, senha } = req.body;
 
+  // Verifica de há excesso de caracteres para proteção contra ataques
+  if (email.length > 100 || senha.length > 25) {
+    return res.status(400).json({ mensagem: "Máximo de caracteres excedido" });
+  }
   try {
     const usuario = await read("usuarios", `email = '${email}'`);
 
@@ -182,16 +202,21 @@ const loginController = async (req, res) => {
       httpOnly: true,
       secure: false, // true em produção (https)
       sameSite: "lax",
-      maxAge: usuario.perfil === "vendedor" ? 12 * 60 * 60 * 1000 : 1 * 60 * 60 * 1000
-    })
+      maxAge:
+        usuario.perfil === "vendedor"
+          ? 12 * 60 * 60 * 1000
+          : 1 * 60 * 60 * 1000,
+    });
 
     res.status(200).json({
-      mensagem: "Login Realizado com Sucesso", usuario: {
+      mensagem: "Login Realizado com Sucesso",
+      usuario: {
         id: usuario.id,
+        nome: usuario.nome,
         email: usuario.email,
         perfil: usuario.perfil,
-        empresa: usuario.id_empresa
-      }
+        empresa: usuario.id_empresa,
+      },
     });
   } catch (error) {
     console.error("Erro ao Fazer login: ", error);
@@ -205,15 +230,15 @@ const logoutController = async (req, res) => {
       httpOnly: true,
       secure: false, // true em produção
       sameSite: "lax",
-      maxAge: 0
-    })
+      maxAge: 0,
+    });
 
     res.status(200).json({ mensagem: "Logout realizado com sucesso" });
   } catch (error) {
-    console.error("Erro ao realizar logout: ", error)
+    console.error("Erro ao realizar logout: ", error);
     res.status(500).json({ error: "Erro ao fazer logout." });
   }
-}
+};
 
 export {
   loginController,

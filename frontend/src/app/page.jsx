@@ -1,41 +1,60 @@
-'use client';
-import styles from './page.module.css';
-import Link from 'next/link';
+"use client";
+import styles from "./page.module.css";
+import Link from "next/link";
 import { useState } from "react";
-import { setCookie, getCookie } from 'cookies-next/client';
+import { setCookie, getCookie } from "cookies-next/client";
 
-export default function Home() {
-  const [email, setEmail] = useState('');
-  const [senha, setSenha] = useState('');
+export default function Login() {
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
 
-  async function login() {
+  async function loginUser() {
+    // Verifica de há excesso de caracteres para proteção contra ataques
+    if (email.length > 100 || senha.length > 25) return;
+
     try {
       const response = await fetch("http://localhost:8080/auth/login", {
-        method: 'POST',
+        method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email, senha: senha })
-      })
+        body: JSON.stringify({ email: email, senha: senha }),
+      });
 
       const data = await response.json();
       if (response.ok) {
-        setCookie('email', data.usuario.email);
-        setCookie('empresa', data.usuario.empresa);
-        setCookie('perfil', data.usuario.perfil);
+        // Colocando informações nos cookies
+        setCookie("email", data.usuario.email);
+        setCookie("nome", data.usuario.nome);
+        setCookie("empresa", data.usuario.empresa);
+        setCookie("perfil", data.usuario.perfil);
 
-        console.log("Login realizado com sucesso: ");
+        const perfil = getCookie("perfil");
+
+        if (perfil == "vendedor") {
+          return (window.location.href = "/login/senha");
+        }
+        if (perfil == "gerente") {
+          return (window.location.href = "/");
+        }
+        if (perfil == "administrador") {
+          return (window.location.href = "/");
+        }
+
+        return console.log("Login completo");
       } else {
-        console.log("Erro ao realizar login")
+        console.log("Erro ao realizar login");
+        return console.log("Login incompleto");
       }
     } catch (error) {
-      console.error("Erro na requisição", error)
+      return console.error("Erro na requisição", error);
     }
-
   }
+
   return (
     <>
-      <div className={`grid grid-cols-1 lg:grid-cols-2 gap-1 min-h-screen ${styles.login_fundo}`}>
-
+      <div
+        className={`grid grid-cols-1 lg:grid-cols-2 gap-1 min-h-screen ${styles.login_fundo}`}
+      >
         {/* IMAGEM DA MENINA PULANDO */}
         <div className="hidden lg:block m-0 p-0">
           <img
@@ -53,20 +72,28 @@ export default function Home() {
           />
         </div>
 
-
         {/* TÍTULO DE LOGIN E TEXTINHO */}
         <div className="p-17 sm:p-15 md:p-18 flex flex-col justify-center">
           <div className="pb-5 pl-0 ml-0 sm:p-7 md:p-10 sm:pb-15 md:pb-7 md:pt-0">
-
             <div className=" block lg:hidden ">
               {/* imagem logo Tikitos */}
-              <img className="w-full h-auto" src="/img/logos/logo_comprida.png" alt="" />
+              <img
+                className="w-full h-auto"
+                src="/img/logos/logo_comprida.png"
+                alt=""
+              />
             </div>
 
-            <img src="/img/login/login_titulo.png" className="w-full h-auto" alt="" />
+            <img
+              src="/img/login/login_titulo.png"
+              className="w-full h-auto"
+              alt=""
+            />
 
             <div className="relative flex flex-col items-center">
-              <h3 className={`text-[14px] xs:text-[17px] sm:text-[23px] md:text-[26px] lg:text-[14px] xl:text-[17px] leading-tight z-10 text-center text-[var(--color-verdao)] `}>
+              <h3
+                className={`text-[14px] xs:text-[17px] sm:text-[23px] md:text-[26px] lg:text-[14px] xl:text-[17px] leading-tight z-10 text-center text-[var(--color-verdao)] `}
+              >
                 Acesse e continue espalhando encanto!
               </h3>
 
@@ -78,7 +105,9 @@ export default function Home() {
             {/* INPUT DE EMAIL */}
             <form className={styles.form}>
               <div className={styles.form_group}>
-                <label className={`text-[var(--color-verdao)]`} htmlFor="email">Insira o seu e-mail:</label>
+                <label className={`text-[var(--color-verdao)]`} htmlFor="email">
+                  Insira o seu e-mail:
+                </label>
                 <input
                   type="text"
                   id="email"
@@ -95,7 +124,12 @@ export default function Home() {
             {/* INPUT DE SENHA */}
             <form className={styles.form}>
               <div className={styles.form_group}>
-                <label className={`text-[var(--color-verdao)] `} htmlFor="email">Insira a sua senha:</label>
+                <label
+                  className={`text-[var(--color-verdao)] `}
+                  htmlFor="email"
+                >
+                  Insira a sua senha:
+                </label>
                 <input
                   type="password"
                   id="email"
@@ -114,8 +148,8 @@ export default function Home() {
           <div className="flex justify-center">
             <Link href="#">
               <button
-                className="group cursor-pointer transition-all duration-200 mt-5 rounded-full border border-transparent flex items-center justify-center gap-2 whitespace-nowrap bg-[#D6B9E2] text-[var(--color-verdao)] font-light hover:bg-[#db90e4] active:scale-95 px-8 py-3 text-[15px] sm:px-10 sm:text-[16px] md:px-14 md:text-[15px] lg:px-16 lg:text-[15px] xl:px-19"
-                onClick={login}
+                className="group cursor-pointer transition-all duration-200 mt-5 rounded-full border border-transparent flex items-center justify-center gap-2 whitespace-nowrap bg-[#D6B9E2] text-[var(--color-verdao)] font-light hover:bg-[#db90e4] active:scale-95 px-8 py-3 text-[15px] sm:px-10 sm:text-[16px] md:px-14 md:text-[15px] lg:px-16 lg:text-[15px] xl:px-29"
+                onClick={loginUser}
               >
                 <span className="text-end">Entre clicando aqui!</span>
                 <svg
@@ -130,11 +164,15 @@ export default function Home() {
             </Link>
           </div>
 
-
           {/* ESCRITA COM O LINK */}
-          <p className={`mt-5 mb-0 pb-0 text-center text-[#76216d]  ${styles.signup_link}`}>
+          <p
+            className={`mt-5 mb-0 pb-0 text-center text-[#76216d]  ${styles.signup_link}`}
+          >
             Esqueceu ou não tem senha?
-            <Link href="/login/token" className={`no-underline hover:underline mx-1 ${styles.signup_link} ${styles.link}`}>
+            <Link
+              href="/login/token"
+              className={`no-underline hover:underline mx-1 ${styles.signup_link} ${styles.link}`}
+            >
               Clique aqui!
             </Link>
           </p>

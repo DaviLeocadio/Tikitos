@@ -1,4 +1,10 @@
-import { read, readAll, update, create } from "../config/database.js";
+import {
+  deleteRecord,
+  read,
+  readAll,
+  update,
+  create,
+} from "../config/database.js";
 
 const listarVendas = async () => {
   try {

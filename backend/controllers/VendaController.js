@@ -15,6 +15,11 @@ import {
 import { obterProdutoPorId } from "../models/Produto.js";
 import { AtualizarCaixa, LerCaixaPorVendedor } from "../models/Caixa.js";
 
+import {
+  obterProdutoLoja,
+  atualizarProdutoLoja,
+} from "../models/ProdutoLoja.js";
+
 const listarVendasController = async (req, res) => {
   try {
     const { idVendedor } = req.params;
@@ -54,11 +59,12 @@ const obterVendaPorIdController = async (req, res) => {
 const criarVendaController = async (req, res) => {
   try {
     const {
-      idEmpresa,
-      idVendedor,
       produtos,
       pagamento, // Tipo de pagamento e email do pagante
     } = req.body;
+
+    const idVendedor = req.usuarioId;
+    const idEmpresa = req.usuarioEmpresa;
 
     if (!idEmpresa || !idVendedor || !produtos || !pagamento) {
       return res
@@ -90,6 +96,22 @@ const criarVendaController = async (req, res) => {
         return res
           .status(404)
           .json({ error: `Produto com ID ${p.id_produto} não encontrado` });
+
+      // Verificar estoque
+      const produtoLoja = await obterProdutoLoja(p.id_produto, idEmpresa);
+
+      const novoEstoque = produtoLoja.estoque - p.quantidade;
+      if (novoEstoque < 0) {
+        return res.status(404).json({
+          error: `Não há ${p.quantidade} unidades de ${p.nome}, apenas ${produtoLoja.quantidade}`,
+        });
+      }
+
+      // Atualizar estoque
+      const produtoAtualizado = await atualizarProdutoLoja(
+        produtoLoja.id_produto_loja,
+        { estoque: novoEstoque }
+      );
 
       const subtotal = parseFloat(p.quantidade) * parseFloat(produto.preco);
       valorTotal += subtotal;
@@ -147,30 +169,41 @@ const excluirVendaController = async (req, res) => {
   try {
     const { idVenda } = req.params;
     const usuarioId = req.usuarioId;
+    const idEmpresa = req.usuarioEmpresa;
 
     const vendaExistente = await obterVendaPorId(idVenda);
     if (!vendaExistente)
       return res.status(404).json({ error: "Venda não encontrada." });
 
-    if (vendaExistente.id_usuario !== usuarioId) {
+    if (vendaExistente.id_usuario != usuarioId) {
       return res.status(403).json({
         error: "A venda não foi feita pelo usuário que fez a requisição",
       });
     }
 
-    const itensVendaExistente = await listarItensVenda(idVenda);
-    
-    // Repor estoque  
+    const itensVenda = await listarItensVenda(idVenda);
 
-    // const itensVendaExcluidos = await Promise.all(
-    //   itensVendaExistente.map((item) => {
-    //     excluirItensVenda(item.id_item);
-    //   })
-    // );
+    // Repor estoque
+    let estoqueReposto = [];
 
-    // const vendaExcluida = await excluirVenda(idVenda);
+    for (const item of itensVenda) {
+      const produtoLoja = await obterProdutoLoja(item.id_produto, idEmpresa);
+      const novoEstoque = produtoLoja.estoque + item.quantidade;
+      const resposta = await atualizarProdutoLoja(produtoLoja.id_produto_loja, {
+        estoque: novoEstoque,
+      });
 
-    // const venda = excluirVenda(idVenda);
+      estoqueReposto.push(resposta);
+    }
+
+    const caixa = await LerCaixaPorVendedor(usuarioId);
+    const novoValor = caixa.valor_final - vendaExistente.total;
+    const caixaAtualizado = await AtualizarCaixa(caixa.id_caixa, {
+      valor_final: novoValor,
+    });
+
+    const itensVendaExcluidos = await excluirItensVenda(idVenda);
+    const vendaExcluida = await excluirVenda(idVenda);
 
     res.status(200).json({ mensagem: "Venda excluída com sucesso" });
   } catch (error) {

@@ -1,4 +1,4 @@
-import { read, readAll, update, create } from "../config/database.js";
+import { deleteRecord, read, readAll, update, create } from "../config/database.js";
 
 const listarItensVenda = async (vendaId) => {
   try {
@@ -20,9 +20,9 @@ const criarItensVenda = async (itensVendaData) => {
 };
 
 
-const excluirItensVenda = async (itensVendaId) => {
+const excluirItensVenda = async (vendaId) => {
   try {
-    await deleteRecord("venda_itens", `id_item = ${itensVendaId}`);
+    await deleteRecord("venda_itens", `id_venda = ${vendaId}`);
   } catch (err) {
     console.error("Erro ao excluir itens da venda", err);
     throw err;

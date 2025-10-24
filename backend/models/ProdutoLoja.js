@@ -15,7 +15,7 @@ const listarProdutosLoja = async (whereClause = null) => {
   }
 };
 
-const obterProdutoLojaPorId = async (idProduto, idEmpresa) => {
+const obterProdutoLoja = async (idProduto, idEmpresa) => {
   try {
     return await read(
       "produto_loja",
@@ -41,7 +41,7 @@ const atualizarProdutoLoja = async (idProdutoLoja, produtoLojaData) => {
     return await update(
       "produto_loja",
       produtoLojaData,
-      `id = ${idProdutoLoja}`
+      `id_produto_loja = ${idProdutoLoja}`
     );
   } catch (err) {
     console.error("Erro ao atualizar produto: ", err);
@@ -61,10 +61,24 @@ const deletarProdutoLoja = async (idProdutoLoja) => {
   }
 };
 
+const verificarEstoque = async(idProduto, idEmpresa) => {
+  try {
+    const produto = await read(
+      "produto_loja", 
+      `id_produto = ${idProduto} AND id_empresa = ${idEmpresa}`
+    );
+    return produto.estoque;
+  } catch (error) {
+        console.error("Erro ao consuçtar estoque de produto: ", err);
+    throw err;
+  }
+}
+
 export {
   listarProdutosLoja,
-  obterProdutoLojaPorId,
+  obterProdutoLoja,
   criarProdutoLoja,
   atualizarProdutoLoja,
   deletarProdutoLoja,
+  verificarEstoque
 };
