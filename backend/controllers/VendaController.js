@@ -19,6 +19,8 @@ import {
   obterProdutoLoja,
   atualizarProdutoLoja,
 } from "../models/ProdutoLoja.js";
+import { registrarMovimento } from "../models/MovimentoEstoque.js";
+import { formatarNome, primeiroNome } from "../utils/formatadorNome.js";
 
 const listarVendasController = async (req, res) => {
   try {
@@ -153,6 +155,24 @@ const criarVendaController = async (req, res) => {
       valor_final: valorCaixa,
     });
 
+    // Registrar movimentação de estoque
+
+    for (const p of produtos) {
+      const nomeVendedor = await primeiroNome(req.usuarioNome);
+
+      const movimentoEstoqueData = {
+        id_produto: p.id_produto,
+        id_empresa: idEmpresa,
+        tipo: "saída",
+        quantidade: p.quantidade,
+        origem: `Venda #${vendaCriada} - Caixa ${caixa.id_caixa} (${nomeVendedor})`,
+      };
+
+      const movimentoEstoqueRegistrado = await registrarMovimento(
+        movimentoEstoqueData
+      );
+    }
+
     return res.status(201).json({
       mensagem: "Venda adicionada com sucesso",
       vendaCriada,
@@ -183,6 +203,9 @@ const excluirVendaController = async (req, res) => {
 
     const itensVenda = await listarItensVenda(idVenda);
 
+    const caixa = await LerCaixaPorVendedor(usuarioId);
+    const novoValor = caixa.valor_final - vendaExistente.total;
+    
     // Repor estoque
     let estoqueReposto = [];
 
@@ -194,10 +217,23 @@ const excluirVendaController = async (req, res) => {
       });
 
       estoqueReposto.push(resposta);
+
+
+      const nomeVendedor = await primeiroNome(req.usuarioNome);
+
+      const movimentoEstoqueData = {
+        id_produto: item.id_produto,
+        id_empresa: idEmpresa,
+        tipo: "entrada",
+        quantidade: item.quantidade,
+        origem: `Estorno #${vendaExistente.id_venda} - Caixa ${caixa.id_caixa} (${nomeVendedor})`,
+      };
+
+      const movimentoEstoqueRegistrado = await registrarMovimento(
+        movimentoEstoqueData
+      );
     }
 
-    const caixa = await LerCaixaPorVendedor(usuarioId);
-    const novoValor = caixa.valor_final - vendaExistente.total;
     const caixaAtualizado = await AtualizarCaixa(caixa.id_caixa, {
       valor_final: novoValor,
     });

@@ -120,7 +120,6 @@ const ResumoCaixaController = async (req, res) => {
     const { idCaixa } = req.params;
     const idEmpresa = req.usuarioEmpresa;
 
-    console.log(req.usuarioEmpresa)
     if (!idCaixa) {
       return res
         .status(400)
@@ -143,7 +142,6 @@ const ResumoCaixaController = async (req, res) => {
     //Adiciona o id da venda num array
     const idVenda = vendas.map((venda) => venda.id_venda);
 
-    console.log(idVenda);
     //Para cada id da venda, ele verifica se há itens desse id
     let itensVenda = [];
     for (const id of idVenda) {

@@ -10,7 +10,7 @@ const listarMovimento = async (whereClause = null) => {
   try {
     return await readAll("movimento_estoque", whereClause);
   } catch (err) {
-    console.error("Erro ao listar produtos: ", err);
+    console.error("Erro ao listar movimento de estoque: ", err);
     throw err;
   }
 };
@@ -19,16 +19,16 @@ const obterMovimentoPorId = async (idMovimento) => {
   try {
     return await read("movimento_estoque", `id_movimento = ${idMovimento}`);
   } catch (err) {
-    console.error("Erro ao obter produto por ID: ", err);
+    console.error("Erro ao obter movimento de estoque por ID: ", err);
     throw err;
   }
 };
 
-const criarMovimento = async (despesaData) => {
+const registrarMovimento = async (movimentoData) => {
   try {
-    return await create("movimento_estoque", despesaData);
+    return await create("movimento_estoque", movimentoData);
   } catch (err) {
-    console.error("Erro ao criar produto: ", err);
+    console.error("Erro ao registrar movimento de estoque: ", err);
     throw err;
   }
 };
@@ -37,7 +37,7 @@ const atualizarMovimento = async (idMovimento, movimentoData) => {
   try {
     return await update("movimento_estoque", movimentoData, `id_movimento = ${idMovimento}`);
   } catch (err) {
-    console.error("Erro ao atualizar produto: ", err);
+    console.error("Erro ao atualizar movimento de estoque: ", err);
     throw err;
   }
 };
@@ -45,6 +45,6 @@ const atualizarMovimento = async (idMovimento, movimentoData) => {
 export {
   listarMovimento,
   obterMovimentoPorId,
-  criarMovimento,
+  registrarMovimento,
   atualizarMovimento,
 };

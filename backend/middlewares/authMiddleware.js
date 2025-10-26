@@ -18,6 +18,7 @@ const authMiddleware = (funcoesPermitidas = []) => {
       const decoded = jwt.verify(authHeader, JWT_SECRET);
 
       req.usuarioId = decoded.id_usuario;
+      req.usuarioNome = decoded.nome;
       req.usuarioPerfil = decoded.perfil;
       req.usuarioEmail = decoded.email;
       req.usuarioEmpresa = decoded.id_empresa;

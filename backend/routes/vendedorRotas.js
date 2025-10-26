@@ -23,11 +23,15 @@ router.post("/caixa/:idVendedor", AbrirCaixaController);
 //Rota para fechar caixa
 router.put("/caixa/:idVendedor", FecharCaixaController);
 
-//Rota para a criação de vendas
-router.post("/vendas", criarVendaController);
 
 //Rota para listar as vendas
 router.get("/:idVendedor/vendas", listarVendasController);
+
+//Rota para a criação de vendas
+router.post("/vendas", criarVendaController);
+
+// Cancelar uma venda 
+router.delete("/vendas/:idVenda", excluirVendaController);
 
 // Listar produtos
 router.get("/produtos", listarProdutosController);
@@ -38,8 +42,6 @@ router.get("/produtos/:idProduto", obterProdutoPorIdController);
 // Resumo do caixa (Total de vendas, pagamento, saldo)
 router.get("/caixa/:idCaixa/resumo", ResumoCaixaController);
 
-// Cancelar uma venda 
-router.delete("/vendas/:idVenda", excluirVendaController);
 
 // Extra: Relatório de vendas, métricas, tarefas
 

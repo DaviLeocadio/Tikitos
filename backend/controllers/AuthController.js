@@ -37,8 +37,8 @@ const generateCode = async (usuarioId, email) => {
 const checkEmailController = async (req, res) => {
   const { email } = req.body;
 
-   // Verifica de há excesso de caracteres para proteção contra ataques
-   if (email.length > 100) {
+  // Verifica de há excesso de caracteres para proteção contra ataques
+  if (email.length > 100) {
     return res.status(400).json({ mensagem: "Máximo de caracteres excedido" });
   }
   try {
@@ -190,6 +190,7 @@ const loginController = async (req, res) => {
     const token = jwt.sign(
       {
         id_usuario: usuario.id_usuario,
+        nome: usuario.nome,
         email: usuario.email,
         perfil: usuario.perfil,
         id_empresa: usuario.id_empresa,
