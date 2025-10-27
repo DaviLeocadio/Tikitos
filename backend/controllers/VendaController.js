@@ -1,3 +1,5 @@
+import PDFDocument from "pdfkit";
+
 import {
   listarVendas,
   obterVendaPorId,
@@ -173,12 +175,62 @@ const criarVendaController = async (req, res) => {
       );
     }
 
-    return res.status(201).json({
-      mensagem: "Venda adicionada com sucesso",
-      vendaCriada,
-      vendaItensCriada,
-      caixaAtualizado,
+    // Geração do comprovante
+    const doc = new PDFDocument({ margin: 40, size: "A5" });
+    const buffers = [];
+
+    doc.on("data", buffers.push.bind(buffers));
+    doc.on("end", () => {
+      const pdfData = Buffer.concat(buffers);
+
+      // Retorna o JSON com o PDF em base64
+      return res.status(201).json({
+        mensagem: "Venda adicionada com sucesso",
+        vendaCriada,
+        vendaItensCriada,
+        caixaAtualizado,
+        pdf: pdfData.toString("base64"),
+      });
     });
+
+    // Conteúdo do PDF
+    doc.fontSize(16).text("Tikitos Brinquedos", { align: "center" });
+    doc
+      .fontSize(10)
+      .text("Pequenos momentos, grandes sorrisos", { align: "center" });
+    doc.moveDown();
+
+    doc.fontSize(10).text(`Filial: ${idEmpresa}`);
+    doc.text(`Caixa: ${caixa.id_caixa}`);
+    doc.text(`Vendedor: ${await primeiroNome(req.usuarioNome)}`);
+    doc.text(`Data: ${new Date().toLocaleString()}`);
+    doc.text(`Forma de pagamento: ${pagamento.tipo}`);
+    doc.text(`Cliente: ${pagamento.email}`);
+    doc.moveDown();
+
+    doc.fontSize(12).text("Itens:", { underline: true });
+    vendaItemsData.forEach((item) => {
+      doc
+        .fontSize(10)
+        .text(
+          `${item.quantidade}x Produto #${item.id_produto}  R$${Number(
+            item.preco_unitario
+          ).toFixed(2)}  =  R$${Number(item.subtotal).toFixed(2)}`
+        );
+    });
+
+    doc.moveDown();
+    doc
+      .fontSize(12)
+      .text(`Total: R$${Number(valorTotal).toFixed(2)}`, { align: "right" });
+    doc.moveDown();
+    doc.text("-------------------------------", { align: "center" });
+    doc
+      .fontSize(10)
+      .text("Obrigado por comprar com a Tikitos", { align: "center" });
+    doc.text("Pequenos momentos, grandes sorrisos!", { align: "center" });
+
+    doc.end();
   } catch (err) {
     console.error("Erro ao criar venda: ", err);
     res.status(500).json({ mensagem: "Erro ao criar venda" });
@@ -205,7 +257,7 @@ const excluirVendaController = async (req, res) => {
 
     const caixa = await LerCaixaPorVendedor(usuarioId);
     const novoValor = caixa.valor_final - vendaExistente.total;
-    
+
     // Repor estoque
     let estoqueReposto = [];
 
@@ -217,7 +269,6 @@ const excluirVendaController = async (req, res) => {
       });
 
       estoqueReposto.push(resposta);
-
 
       const nomeVendedor = await primeiroNome(req.usuarioNome);
 
