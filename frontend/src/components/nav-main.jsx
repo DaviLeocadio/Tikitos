@@ -39,7 +39,7 @@ export function NavMain({
             <SidebarMenuItem key={item.title}>
               <SidebarMenuButton tooltip={item.title}>
                 {item.icon && <item.icon />}
-                <span>{item.title}</span>
+                <span className="group-data-[collapsible=icon]:hidden">{item.title}</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
           ))}

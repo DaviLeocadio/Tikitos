@@ -118,7 +118,7 @@ function SidebarProvider({
             }
           }
           className={cn(
-            "group/sidebar-wrapper has-data-[variant=inset]:bg-sidebar flex min-h-svh w-full",
+            "group/sidebar-wrapper rounded-2xl has-data-[variant=inset]:bg-sidebar flex min-h-svh w-full",
             className
           )}
           {...props}>
@@ -144,7 +144,7 @@ function Sidebar({
       <div
         data-slot="sidebar"
         className={cn(
-          "bg-sidebar text-sidebar-foreground flex h-full w-(--sidebar-width) flex-col",
+          "bg-sidebar rounded-2xl text-sidebar-foreground flex h-full w-(--sidebar-width) flex-col",
           className
         )}
         {...props}>
@@ -153,6 +153,7 @@ function Sidebar({
     );
   }
 
+  // ISSO DEIXA A SIDEBAR APARECER NA HORA DO MOBILE
   if (isMobile) {
     return (
       <Sheet open={openMobile} onOpenChange={setOpenMobile} {...props}>
@@ -177,6 +178,7 @@ function Sidebar({
     );
   }
 
+  // AQUI É O QUE DEIXA A SIDEBAR APARECER SEM SER ABERTA
   return (
     <div
       className="group peer text-sidebar-foreground hidden md:block"
