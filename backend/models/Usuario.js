@@ -8,7 +8,9 @@ import {
 
 const listarUsuarios = async (whereClause = null) => {
   try {
-    return await readAll("usuarios", whereClause);
+    const vendedores = await readAll("usuarios", whereClause);
+    vendedores.forEach((vendedor) => delete vendedor.senha);
+    return vendedores;
   } catch (err) {
     console.error("Erro ao listar usuários: ", err);
     throw err;
@@ -42,9 +44,4 @@ const atualizarUsuario = async (id, usuarioData) => {
   }
 };
 
-export {
-  listarUsuarios,
-  obterUsuarioPorId,
-  criarUsuario,
-  atualizarUsuario
-};
+export { listarUsuarios, obterUsuarioPorId, criarUsuario, atualizarUsuario };

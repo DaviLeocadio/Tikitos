@@ -1,11 +1,11 @@
 import express from "express";
-// import {
-//   listarVendedoresController,
-//   obterVendedorPorIdController,
-//   criarVendedorController,
-//   atualizarVendedorController,
-//   excluirVendedorController,
-// } from "../controllers/VendedorController.js";
+import {
+  listarVendedoresController,
+  obterVendedorPorIdController,
+  criarVendedorController,
+  atualizarVendedorController,
+  excluirVendedorController,
+} from "../controllers/VendedorController.js";
 
 
 // const ProdutoController = require('../controllers/ProdutoController');
@@ -21,13 +21,14 @@ const router = express.Router();
 /* ===== Vendedores ===== */
 
 // Adiciona um funcionário (vendedor)
-// router.post('/vendedores', criarVendedorController);
+router.post('/vendedores', criarVendedorController);
 
-// // Visualiza todos os vendedores
-// router.get('/vendedores', VendedorController.listarVendedores);
+// Visualiza todos os vendedores
+router.get('/vendedores', listarVendedoresController);
+
 
 // // Altera informações de um vendedor específico
-// router.put('/vendedores/:id', VendedorController.editarVendedor);
+router.put('/vendedores/:vendedorId', obterVendedorPorIdController);
 
 
 /* ===== Produtos e Estoque ===== */

@@ -1,9 +1,5 @@
 import express from 'express';
-<<<<<<< HEAD
-import { checkEmailController, definirSenhaController, loginController, verificarTokenController } from '../controllers/AuthController.js';
-=======
 import { checkEmailController, definirSenhaController, loginController, verificarTokenController, logoutController } from '../controllers/AuthController.js';
->>>>>>> main
 
 const router = express.Router();
 
