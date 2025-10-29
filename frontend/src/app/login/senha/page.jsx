@@ -10,7 +10,7 @@ export default function Home() {
 
   async function senhaNova() {
     const email = getCookie("email");
-    console.log(email, senha, confirmarSenha);
+   
     try {
       const response = await fetch("http://localhost:8080/auth/definir_senha", {
         method: "POST",

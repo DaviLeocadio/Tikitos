@@ -43,7 +43,7 @@ const checkEmailController = async (req, res) => {
   }
   try {
     if (!email) {
-      return res.status(400).json({ error: "Email não informado" });
+      return res.status(401).json({ error: "Email não informado" });
     }
     // Procura email no bd
     const usuario = await encontrarUsuario(email);
@@ -70,6 +70,7 @@ const verificarTokenController = async (req, res) => {
   if (email.length > 100 || token.length != 6) {
     return res.status(400).json({ mensagem: "Máximo de caracteres excedido" });
   }
+  
   try {
     if (!email || !token)
       return res
