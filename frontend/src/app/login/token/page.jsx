@@ -1,15 +1,13 @@
-"use client";
+  "use client";
 
 import { setCookie } from "cookies-next/client";
 import styles from "./token.module.css";
-import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, use } from "react";
 
 export default function Home() {
   const [email, setEmail] = useState("");
   const [emailIncorreto, setEmailIncorreto] = useState(false);
   const [emailCorreto, setEmailCorreto] = useState(false);
-  const [token, setToken] = useState();
   const inputsRef = useRef([]);
 
   const handleChange = (e, index) => {
@@ -26,6 +24,7 @@ export default function Home() {
     }
   };
 
+  //Junta todos os valores dos inputs em 1
   const obterTokenCompleto = () => {
     return inputsRef.current.map((input) => input.value).join("");
   };
@@ -39,6 +38,7 @@ export default function Home() {
   useEffect(() => {
     if (!email) return;
 
+    console.log(email)
     //Verificar Email
     const temporizador = setTimeout(async () => {
       try {
@@ -54,12 +54,10 @@ export default function Home() {
         const data = await response.json();
 
         if (response.status == 404) {
-          console.log("oi");
           setEmailIncorreto(true);
         }
 
         if (response.status == 200) {
-          console.log("ola");
           setEmailCorreto(true);
         }
         console.log(data);

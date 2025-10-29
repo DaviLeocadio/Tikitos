@@ -1,17 +1,42 @@
 "use client";
 import styles from "./page.module.css";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { setCookie, getCookie } from "cookies-next/client";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
+  const [caracterExcedidoSenha, setCaracterExcedidoSenha] = useState(false);
+  const [caracterExcedidoEmail, setCaracterExcedidoEmail] = useState(false);
+  const [cadastroIncorreto, setCadastroIncorreto] = useState(false);
+  const [camposVazios, setCamposVazios] = useState(false);
+
+  useEffect(() => {
+    // Verifica de há excesso de caracteres para proteção contra ataques
+    const temporizador = setTimeout(() => {
+      if (email.length > 100) {
+        setCaracterExcedidoEmail(true);
+        return;
+      }
+
+      if (senha.length > 25) {
+        setCaracterExcedidoSenha(true);
+        return;
+      }
+
+      //Assim que o usuario digita ou apaga some a mensagem de erro
+      setCaracterExcedidoSenha(false);
+      setCaracterExcedidoEmail(false);
+      setCadastroIncorreto(false);
+      setCamposVazios(false);
+    }, 100);
+
+    return () => clearTimeout(temporizador);
+  }, [email, senha]);
 
   async function loginUser() {
-    // Verifica de há excesso de caracteres para proteção contra ataques
-    if (email.length > 100 || senha.length > 25) return;
-
+    if (!email || !senha) return setCamposVazios(true);
     try {
       const response = await fetch("http://localhost:8080/auth/login", {
         method: "POST",
@@ -21,6 +46,12 @@ export default function Login() {
       });
 
       const data = await response.json();
+
+      //Tratamento de erro caso o email ou a senha estiver incorreta
+      if (response.status == 404 || response.status == 401) {
+        return setCadastroIncorreto(true);
+      }
+
       if (response.ok) {
         // Colocando informações nos cookies
         setCookie("email", data.usuario.email);
@@ -142,26 +173,46 @@ export default function Login() {
                 />
               </div>
             </form>
+
+            {/* Resposta do excesso de caracteres */}
+            {caracterExcedidoEmail ? (
+              <div>
+                <p>Caracteres excedido</p>
+              </div>
+            ) : caracterExcedidoSenha ? (
+              <div>
+                <p>Caracteres excedido</p>
+              </div>
+            ) : (
+              ""
+            )}
+
+            {/* Resposta de cadastro incorreto */}
+            {cadastroIncorreto ? (
+              <div>
+                <p>Email ou senha incorretos</p>
+              </div>
+            ) : (
+              ""
+            )}
           </div>
 
           {/* BOTÃO DE ENVIAR */}
           <div className="flex justify-center">
-            <Link href="#">
-              <button
-                className="group cursor-pointer transition-all duration-200 mt-5 rounded-full border border-transparent flex items-center justify-center gap-2 whitespace-nowrap bg-[#D6B9E2] text-[var(--color-verdao)] font-light hover:bg-[#db90e4] active:scale-95 px-8 py-3 text-[15px] sm:px-10 sm:text-[16px] md:px-14 md:text-[15px] lg:px-16 lg:text-[15px] xl:px-29"
-                onClick={loginUser}
+            <button
+              className="group cursor-pointer transition-all duration-200 mt-5 rounded-full border border-transparent flex items-center justify-center gap-2 whitespace-nowrap bg-[#D6B9E2] text-[var(--color-verdao)] font-light hover:bg-[#db90e4] active:scale-95 px-8 py-3 text-[15px] sm:px-10 sm:text-[16px] md:px-14 md:text-[15px] lg:px-16 lg:text-[15px] xl:px-29"
+              onClick={loginUser}
+            >
+              <span className="text-end">Entre clicando aqui!</span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 16 16"
+                fill="currentColor"
+                className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7 text-[#6a0d75] transition-transform duration-300 ease-in-out group-hover:translate-x-[3px]"
               >
-                <span className="text-end">Entre clicando aqui!</span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 16 16"
-                  fill="currentColor"
-                  className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7 text-[#6a0d75] transition-transform duration-300 ease-in-out group-hover:translate-x-[3px]"
-                >
-                  <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z" />
-                </svg>
-              </button>
-            </Link>
+                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z" />
+              </svg>
+            </button>
           </div>
 
           {/* ESCRITA COM O LINK */}

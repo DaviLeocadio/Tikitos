@@ -1,17 +1,27 @@
-// import express from "express";
-// const VendedorController = require('../controllers/VendedorController');
+import express from "express";
+// import {
+//   listarVendedoresController,
+//   obterVendedorPorIdController,
+//   criarVendedorController,
+//   atualizarVendedorController,
+//   excluirVendedorController,
+// } from "../controllers/VendedorController.js";
+
+
 // const ProdutoController = require('../controllers/ProdutoController');
-// const GastoController = require('../controllers/GastoController');
-// const CaixaController = require('../controllers/CaixaController');
 // const RelatorioController = require('../controllers/RelatorioController');
+// const CaixaController = require('../controllers/CaixaController');
 // const VendaController = require('../controllers/VendaController');
 
-// const router = express.Router();
+const router = express.Router();
 
-// /* ===================== ROTAS GERENTE ===================== */
+/* ===================== ROTAS GERENTE ===================== */
 
-// // Adiciona um funcionário (vendedor)
-// router.post('/vendedores', VendedorController.adicionarVendedor);
+
+/* ===== Vendedores ===== */
+
+// Adiciona um funcionário (vendedor)
+// router.post('/vendedores', criarVendedorController);
 
 // // Visualiza todos os vendedores
 // router.get('/vendedores', VendedorController.listarVendedores);
@@ -19,7 +29,8 @@
 // // Altera informações de um vendedor específico
 // router.put('/vendedores/:id', VendedorController.editarVendedor);
 
-// /* ===================== ROTAS DE PRODUTO E ESTOQUE  ===================== */
+
+/* ===== Produtos e Estoque ===== */
 
 // // Lista todos os produtos
 // router.get('/produtos', ProdutoController.listarProdutos);
@@ -33,7 +44,8 @@
 // // Lista produtos com estoque abaixo do mínimo (alerta)
 // router.get('/estoque-baixo', ProdutoController.estoqueBaixo);
 
-// /* ===================== ROTAS GASTOS ===================== */
+
+/* ===== Despesas ===== */
 
 // // Informações de gastos da filial
 // router.get('/gastos', GastoController.listarGastos);
@@ -47,7 +59,8 @@
 // // Exclui um gasto
 // router.delete('/gastos/:id', GastoController.excluirGasto);
 
-// /* ===================== ROTAS DE CAIXA, VENDAS, RELATORIOS ===================== */
+
+/* ===== Caixa, Vendas e relatórios ===== */
 
 // // Visualiza valores obtidos do fluxo de caixa de cada dia
 // router.get('/caixa', CaixaController.fluxoCaixaDiario);
@@ -62,5 +75,5 @@
 // router.get('/vendas', VendaController.listarVendas);
 
 
-// export default router;
+export default router;
 

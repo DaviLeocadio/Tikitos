@@ -5,11 +5,13 @@ import {
   FecharCaixaController,
   ResumoCaixaController
 } from "../controllers/CaixaController.js";
+
 import {
   listarVendasController,
   criarVendaController,
   excluirVendaController
 } from "../controllers/VendaController.js";
+
 import { listarProdutosController, obterProdutoPorIdController } from "../controllers/ProdutoController.js";
 
 
