@@ -1,5 +1,9 @@
 import express from 'express';
+<<<<<<< HEAD
 import { checkEmailController, definirSenhaController, loginController, verificarTokenController } from '../controllers/AuthController.js';
+=======
+import { checkEmailController, definirSenhaController, loginController, verificarTokenController, logoutController } from '../controllers/AuthController.js';
+>>>>>>> main
 
 const router = express.Router();
 
@@ -12,9 +16,13 @@ router.post('/verificar_token', verificarTokenController)
 // Define a senha de uma conta que tem senha indefinida
 router.post('/definir_senha', definirSenhaController)
 
+// Login
 router.post('/login', loginController);
 
-router.options('/login', (req, res) => {
+// Logout
+router.post('/logout', logoutController)
+
+router.options('/', (req, res) => {
   res.setHeader('Allow', 'POST, OPTIONS');
   res.status(204).send();
 });

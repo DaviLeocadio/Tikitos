@@ -2,8 +2,13 @@ import { deleteRecord, read, update, create } from '../config/database.js';
 
 const buscarToken = async (usuarioId) => {
     try {
+<<<<<<< HEAD
         return await read('tokens', `id_usuario = ${usuarioId}`)
     } catch (error) {
+=======
+        return await read('tokens', `id_usuario = ${usuarioId} ORDER BY expira_em DESC`)
+    } catch (err) {
+>>>>>>> main
         console.error('Erro ao buscar token: ', err);
         throw err;
     }
@@ -19,10 +24,17 @@ const registrarToken = async (tokenData) => {
     }
 };
 
+<<<<<<< HEAD
 const editarToken = async (usuarioId, tokenData) => {
     try {
         return await update('tokens', tokenData, `id_usuario = ${usuarioId}`)
     } catch (error) {
+=======
+const editarToken = async (idToken, tokenData) => {
+    try {
+        return await update('tokens', tokenData, `id_token = ${idToken}`)
+    } catch (err) {
+>>>>>>> main
         console.error('Erro ao editar token: ', err);
         throw err;
     }

@@ -1,24 +1,36 @@
 import express from "express";
-import dotenv from 'dotenv'
+import dotenv from "dotenv";
 
 dotenv.config();
 
 const app = express();
 const port = process.env.PORT;
-import livroRotas from "./routes/livroRotas.js";
 import authRotas from "./routes/authRotas.js";
-import cors from 'cors';
+import vendedorRotas from "./routes/vendedorRotas.js";
+import gerenteRotas from "./routes/gerenteRotas.js";
 
-app.use(cors());
+// import adminRotas from "./routes/adminRotas.js";
+import authMiddleware from "./middlewares/authMiddleware.js";
+import cors from "cors";
+import cookieParser from "cookie-parser";
+import { metaController } from "./controllers/MetaController.js";
+
 app.use(express.json());
+app.use(cookieParser());
 
+//Configurações das permissões do cors
+app.use(cors({
+  origin: "http://localhost:3000", // Frontend Next.js
+  credentials: true, // Permite envio de cookies
+}));
 
-app.use("/livros", livroRotas);
-app.use('/auth', authRotas);
+app.use("/auth", authRotas);
 
-app.get("/", (req, res) => {
-  res.status(200).send("API de Biblioteca");
-});
+app.use("/vendedor", authMiddleware(["vendedor"]), vendedorRotas);
+app.use('/gerente', authMiddleware(["gerente"]), gerenteRotas);
+// app.use('/admin', authMiddleware(["admin"]), adminRotas);
+
+// app.post("/meta", authMiddleware["vendedor", "gerente", "admin"], metaController);
 
 app.options("/", (req, res) => {
   res.setHeader("Allow", "GET, OPTIONS");
@@ -32,3 +44,8 @@ app.use((req, res) => {
 app.listen(port, () => {
   console.log(`Server running in http://localhost:${port}`);
 });
+
+
+setInterval(function () {
+  console.log("Davi")
+}, 10 * 60 * 1000)
