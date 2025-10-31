@@ -1,20 +1,25 @@
-import express from "express";
-import {
-  checkEmailController,
-  definirSenhaController,
-  loginController,
-} from "../controllers/AuthController.js";
+import express from 'express';
+import { checkEmailController, definirSenhaController, loginController, verificarTokenController, logoutController } from '../controllers/AuthController.js';
 
 const router = express.Router();
 
-router.post("/checar_email", checkEmailController);
+//Verifica se o email existe no bd
+router.post('/checar_email', checkEmailController);
 
-router.post("/definir_senha", definirSenhaController);
+//Verifica token criado para definição de senha
+router.post('/verificar_token', verificarTokenController)
 
-router.post("/login", loginController);
+// Define a senha de uma conta que tem senha indefinida
+router.post('/definir_senha', definirSenhaController)
 
-router.options("/login", (req, res) => {
-  res.setHeader("Allow", "POST, OPTIONS");
+// Login
+router.post('/login', loginController);
+
+// Logout
+router.post('/logout', logoutController)
+
+router.options('/', (req, res) => {
+  res.setHeader('Allow', 'POST, OPTIONS');
   res.status(204).send();
 });
 

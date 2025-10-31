@@ -9,9 +9,16 @@ import authRotas from "./routes/authRotas.js";
 import vendedorRotas from "./routes/vendedorRotas.js";
 import authMiddleware from "./middlewares/authMiddleware.js";
 import cors from 'cors';
+import cookieParser from "cookie-parser";
 
-app.use(cors());
 app.use(express.json());
+app.use(cookieParser());
+
+app.use(cors({
+  credentials: true,
+  origin:"http://localhost:3000"
+}));
+
 
 app.use('/auth', authRotas);
 app.use('/vendedor', authMiddleware(["vendedor"]), vendedorRotas);

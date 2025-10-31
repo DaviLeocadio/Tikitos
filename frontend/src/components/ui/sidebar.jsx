@@ -118,7 +118,7 @@ function SidebarProvider({
             }
           }
           className={cn(
-            "group/sidebar-wrapper rounded-2xl has-data-[variant=inset]:bg-sidebar flex min-h-svh w-full",
+            "group/sidebar-wrapper has-data-[variant=inset]:bg-sidebar flex min-h-svh w-full",
             className
           )}
           {...props}>
@@ -144,7 +144,7 @@ function Sidebar({
       <div
         data-slot="sidebar"
         className={cn(
-          "bg-sidebar rounded-2xl text-sidebar-foreground flex h-full w-(--sidebar-width) flex-col",
+          "bg-sidebar text-sidebar-foreground flex h-full w-(--sidebar-width) flex-col",
           className
         )}
         {...props}>
@@ -153,7 +153,7 @@ function Sidebar({
     );
   }
 
-  // ISSO DEIXA A SIDEBAR APARECER NA HORA DO MOBILE
+  // ISSO AQUI É A SIDEBAR NA HORA DO MOBILE
   if (isMobile) {
     return (
       <Sheet open={openMobile} onOpenChange={setOpenMobile} {...props}>
@@ -161,7 +161,7 @@ function Sidebar({
           data-sidebar="sidebar"
           data-slot="sidebar"
           data-mobile="true"
-          className="bg-sidebar text-sidebar-foreground w-(--sidebar-width) p-0 [&>button]:hidden"
+          className="bg-sidebar rounded-2xl border-3 border-dashed border-[#924187] text-sidebar-foreground w-(--sidebar-width) p-0 [&>button]:hidden"
           style={
             {
               "--sidebar-width": SIDEBAR_WIDTH_MOBILE
@@ -215,7 +215,7 @@ function Sidebar({
         <div
           data-sidebar="sidebar"
           data-slot="sidebar-inner"
-          className="bg-sidebar group-data-[variant=floating]:border-sidebar-border flex h-full w-full flex-col group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:shadow-sm">
+          className="bg-sidebar rounded-2xl border-3 border-dashed border-[#924187] group-data-[variant=floating]:border-sidebar-border flex h-[100%] w-full flex-col group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:shadow-sm">
           {children}
         </div>
       </div>
@@ -223,6 +223,8 @@ function Sidebar({
   );
 }
 
+
+// AQUI É O MENU QUE FAZ A SIDEBAR EXPANDIR AO CLICAR
 function SidebarTrigger({
   className,
   onClick,
@@ -359,6 +361,8 @@ function SidebarContent({
   );
 }
 
+
+// AQUI SÃO AS PÁGINAS QUE FICAM NA SIDEBAR
 function SidebarGroup({
   className,
   ...props
@@ -367,7 +371,7 @@ function SidebarGroup({
     <div
       data-slot="sidebar-group"
       data-sidebar="group"
-      className={cn("relative flex w-full min-w-0 flex-col p-2", className)}
+      className={cn("relative flex w-full min-w-0 flex-col p-1.5", className)}
       {...props} />
   );
 }

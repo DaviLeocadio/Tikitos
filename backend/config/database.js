@@ -2,9 +2,9 @@ import mysql from 'mysql2/promise.js';
 import bcrypt from 'bcryptjs';
 
 const pool = mysql.createPool({
-  host: 'localhost',
-  user: 'root',
-  password: '',
+  host: '10.189.80.92',
+  user: 'nicoly',
+  password: 'tikitos123',
   database: 'tikitos',
   waitForConnections: true,
   connectionLimit: 10,
