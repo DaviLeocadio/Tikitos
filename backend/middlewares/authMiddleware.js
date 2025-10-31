@@ -15,6 +15,7 @@ const authMiddleware = (funcoesPermitidas = []) => {
     }
 
     try {
+
       const decoded = jwt.verify(authHeader, JWT_SECRET);
 
       req.usuarioId = decoded.id_usuario;
@@ -22,6 +23,7 @@ const authMiddleware = (funcoesPermitidas = []) => {
       req.usuarioPerfil = decoded.perfil;
       req.usuarioEmail = decoded.email;
       req.usuarioEmpresa = decoded.id_empresa;
+
 
       // Se funções foram passadas, valida
       if (

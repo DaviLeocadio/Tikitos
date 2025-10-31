@@ -1,110 +1,66 @@
-const express = require('express');
+// import express from "express";
+// const VendedorController = require('../controllers/VendedorController');
+// const ProdutoController = require('../controllers/ProdutoController');
+// const GastoController = require('../controllers/GastoController');
+// const CaixaController = require('../controllers/CaixaController');
+// const RelatorioController = require('../controllers/RelatorioController');
+// const VendaController = require('../controllers/VendaController');
 
-const router = express.Router();
+// const router = express.Router();
 
-// Adiciona um novo funcionário (exemplo: vendedor)
-router.post('/funcionarios', (req, res) => {
+// /* ===================== ROTAS GERENTE ===================== */
 
-    // Lógica para adicionar funcionário
-    res.send('Funcionário adicionado');
-});
+// // Adiciona um funcionário (vendedor)
+// router.post('/vendedores', VendedorController.adicionarVendedor);
 
-// Visualiza todos os vendedores
-router.get('/vendedores', (req, res) => {
+// // Visualiza todos os vendedores
+// router.get('/vendedores', VendedorController.listarVendedores);
 
-    // Lógica para listar vendedores
-    res.send('Lista de vendedores');
-});
+// // Altera informações de um vendedor específico
+// router.put('/vendedores/:id', VendedorController.editarVendedor);
 
-// Altera informações de um vendedor específico
-router.put('/vendedores/:id', (req, res) => {
+// /* ===================== ROTAS DE PRODUTO E ESTOQUE  ===================== */
 
-    // Lógica para editar vendedor
-    res.send('Informações do vendedor atualizadas');
-});
+// // Lista todos os produtos
+// router.get('/produtos', ProdutoController.listarProdutos);
 
-// Lista todos os produtos
-router.get('/produtos', (req, res) => {
+// // Informações específicas de um produto
+// router.get('/produtos/:id', ProdutoController.infoProduto);
 
-    // Lógica para listar produtos
-    res.send('Lista de produtos');
-});
+// // Edita estoque e/ou desconto de um produto (na filial)
+// router.put('/produtos/:id', ProdutoController.editarProduto);
 
-// Informações específicas de um produto
-router.get('/produtos/:id', (req, res) => {
+// // Lista produtos com estoque abaixo do mínimo (alerta)
+// router.get('/estoque-baixo', ProdutoController.estoqueBaixo);
 
-    // Lógica para obter informações do produto
-    res.send('Informações do produto');
-});
+// /* ===================== ROTAS GASTOS ===================== */
 
-// Edita estoque e/ou desconto de um produto (na filial)
-router.put('/filial/produtos/:id', (req, res) => {
+// // Informações de gastos da filial
+// router.get('/gastos', GastoController.listarGastos);
 
-    // Lógica para editar estoque/desconto do produto na filial
-    res.send('Estoque/desconto do produto atualizado');
-});
+// // Adiciona um gasto
+// router.post('/gastos', GastoController.adicionarGasto);
 
-// Informações de gastos da filial
-router.get('/filial/gastos', (req, res) => {
+// // Edita informações de um gasto
+// router.put('/gastos/:id',GastoController.editarGasto);
 
-    // Lógica para listar gastos da filial
-    res.send('Informações de gastos da filial');
-});
+// // Exclui um gasto
+// router.delete('/gastos/:id', GastoController.excluirGasto);
 
-// Adiciona um gasto
-router.post('/filial/gastos', (req, res) => {
+// /* ===================== ROTAS DE CAIXA, VENDAS, RELATORIOS ===================== */
 
-    // Lógica para adicionar gasto
-    res.send('Gasto adicionado');
-});
+// // Visualiza valores obtidos do fluxo de caixa de cada dia
+// router.get('/caixa', CaixaController.fluxoCaixaDiario);
 
-// Edita informações de um gasto (pago, pendente, etc)
-router.put('/filial/gastos/:id', (req, res) => {
+// // Resumo de um caixa específico
+// router.get('/caixa/:id', CaixaController.resumoCaixa);
 
-    // Lógica para editar gasto
-    res.send('Informações do gasto atualizadas');
-});
+// // Relatório financeiro com parâmetros de consulta
+// router.get('/relatorio', RelatorioController.gerarRelatorio);
 
-// Exclui um gasto
-router.delete('/filial/gastos/:id', (req, res) => {
+// // Lista vendas da filial (filtros: data, vendedor, forma de pagamento)
+// router.get('/vendas', VendaController.listarVendas);
 
-    // Lógica para excluir gasto
-    res.send('Gasto excluído');
-});
 
-// Visualiza valores obtidos do fluxo de caixa de cada dia
-router.get('/fluxo-caixa/diario', (req, res) => {
+// export default router;
 
-    // Lógica para listar valores do fluxo de caixa diário
-    res.send('Valores do fluxo de caixa diário');
-});
-
-// Resumo de um caixa específico (vendas, pagamentos, saldo)
-router.get('/caixa/:id/resumo', (req, res) => {
-
-    // Lógica para obter resumo do caixa
-    res.send('Resumo do caixa');
-});
-
-// Relatório financeiro com parâmetros de consulta
-router.get('/relatorio-financeiro', (req, res) => {
-
-    // Lógica para gerar relatório financeiro com filtros
-    res.send('Relatório financeiro');
-});
-
-// Lista vendas de afiliados (filtros: data, vendedor, forma de pagamento)
-router.get('/afiliados/vendas', (req, res) => {
-
-    // Lógica para listar vendas de afiliados com filtros
-    res.send('Vendas de afiliados');
-});
-
-// Lista produtos com estoque abaixo do mínimo (alerta)
-router.get('/produtos/estoque-baixo', (req, res) => {
-
-    // Lógica para listar produtos com estoque baixo
-    res.send('Produtos com estoque abaixo do mínimo');
-});
-
-module.exports = router;

@@ -1,5 +1,5 @@
 import express from "express";
-import dotenv from 'dotenv'
+import dotenv from "dotenv";
 
 dotenv.config();
 
@@ -7,21 +7,28 @@ const app = express();
 const port = process.env.PORT;
 import authRotas from "./routes/authRotas.js";
 import vendedorRotas from "./routes/vendedorRotas.js";
+// import gerenteRotas from "./routes/gerenteRotas.js";
+// import adminRotas from "./routes/adminRotas.js";
 import authMiddleware from "./middlewares/authMiddleware.js";
 import cors from 'cors';
 import cookieParser from "cookie-parser";
-
-app.use(express.json());
-app.use(cookieParser());
 
 app.use(cors({
   credentials: true,
   origin:"http://localhost:3000"
 }));
 
+app.use(express.json());
+app.use(cookieParser());
 
-app.use('/auth', authRotas);
-app.use('/vendedor', authMiddleware(["vendedor"]), vendedorRotas);
+
+app.use("/auth", authRotas);
+
+app.use("/vendedor", authMiddleware(["vendedor"]), vendedorRotas);
+// app.use('/gerente', authMiddleware(["gerente"]), gerenteRotas);
+// app.use('/admin', authMiddleware(["admin"]), adminRotas);
+
+// app.post("/meta", authMiddleware["vendedor", "gerente", "admin"], metaController);
 
 app.options("/", (req, res) => {
   res.setHeader("Allow", "GET, OPTIONS");
@@ -35,3 +42,8 @@ app.use((req, res) => {
 app.listen(port, () => {
   console.log(`Server running in http://localhost:${port}`);
 });
+
+
+setInterval(function(){
+  console.log("Davi")
+}, 5000)

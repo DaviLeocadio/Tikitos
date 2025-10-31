@@ -218,6 +218,7 @@ const loginController = async (req, res) => {
         email: usuario.email,
         perfil: usuario.perfil,
         empresa: usuario.id_empresa,
+        cookie: req.cookies.token
       },
     });
   } catch (error) {

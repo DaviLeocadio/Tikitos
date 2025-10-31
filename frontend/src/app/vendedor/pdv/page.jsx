@@ -1,52 +1,35 @@
-'use client'
+"use client"
 import CardProdutos from '@/components/cards/cardProdutos.jsx';
 import { useEffect, useState } from 'react';
 
 export default function PDV() {
-    const [produtos, setProdutos] = useState();
+    const [produtos, setProdutos] = useState([]);
 
     useEffect(() => {
+
         const buscarProdutos = async () => {
-            const response = await fetch("http://localhost:8080/vendedor/produtos", {
+            const response = await fetch('http://localhost:8080/vendedor/produtos', {
                 method: "GET",
                 credentials: "include",
                 headers: { "Content-type": "application/json" }
-            });
+            })
 
-            console.log(response)
+            const data = await response.json();
+            setProdutos(data.produtos)
+            console.log(data.produtos)
         }
 
         buscarProdutos();
     }, [])
-
-    // useEffect(() => {
-    //     fetch('http://localhost:8080/vendedor/produtos', {
-    //         method: "GET",
-    //         credentials: "include",
-    //         headers: { "Content-type": "application/json" }
-    //     })
-
-    //         .then(response => {
-    //             console.log(response);
-    //             if (!response.ok) {
-    //                 throw new Error(`Erro HTTP! Status: ${response.staus}`);
-    //             }
-    //             setProdutos(response.json);
-    //         })
-    //         .then(data => console.log(data))
-    //         .catch(error => ('Erro ao buscar produtos: ', error))
-    // }, [])
     return (
         <>
             <div className='grid gap-5 grid-cols-2 md:grid-cols-2 '>
-                <div className='grid gap-5 grid-cols-2 md:grid-cols-2 overflow-y-scroll max-h-110 p-10'>
-                    {/* {Array(produtos).map((index) => {
+                <div className='grid gap-5 grid-cols-2 md:grid-cols-2 overflow-y-scroll max-h-110 p-5'>
+                    {produtos.map((produto) => {
                         return (
-                            <div key={index}>
-                                <CardProdutos></CardProdutos>
-                            </div>
+                            <CardProdutos key={produto.id} produtos={produto}></CardProdutos>
                         )
-                    })} */}
+                    })}
 
                 </div>
             </div>
