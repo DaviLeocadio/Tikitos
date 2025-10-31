@@ -104,20 +104,27 @@ const criarVendedorController = async (req, res) => {
 
 const atualizarVendedorController = async (req, res) => {
   try {
+    const { vendedorId } = req.params;
     const { nome, email, telefone, cpf, endereco, data_nasc } = req.body;
-    const { idUsario } = req.params;
-    
+
     if (!nome || !email || !telefone || !cpf || !endereco || !data_nasc)
       return res
         .status(404)
         .json({ error: "Parâmetros obrigatórios ausentes." });
 
-    const emailExistente = await encontrarUsuario(email);
+    const usuarioExistente = await obterUsuarioPorId(vendedorId);
 
-    if (!emailExistente)
-      return res
-        .status(404)
-        .json({ error: "Já existe um cadastro com o email informado." });
+    if (!usuarioExistente)
+      return res.status(404).json({ error: "Usuário não encontrado." });
+
+    if (email != usuarioExistente.email) {
+      const emailExistente = await encontrarUsuario(email);
+
+      if (emailExistente)
+        return res
+          .status(409)
+          .json({ error: "Já existe um cadastro com o email informado." });
+    }
 
     const telefoneFormatado = telefone.replace(/\D/g, "");
     if (telefoneFormatado.lenght < 10 || telefoneFormatado.lenght > 11)
@@ -148,18 +155,21 @@ const atualizarVendedorController = async (req, res) => {
       cpf: cpfFormatado,
       endereco: enderecoFormatado,
       perfil: "vendedor",
-      senha: "deve_mudar",
       data_nasc,
       id_empresa: req.usuarioEmpresa,
     };
 
-    const vendendorId = await criarUsuario(vendendorData);
-    return res
-      .status(201)
-      .json({ mensagem: "Vendendor criado com sucesso", vendendorId });
+    const vendendorAtualizado = await atualizarUsuario(
+      vendedorId,
+      vendendorData
+    );
+    return res.status(201).json({
+      mensagem: "Vendendor atualizado com sucesso",
+      vendendorAtualizado,
+    });
   } catch (error) {
-    console.error("Erro ao criar vendendor:", error);
-    return res.status(500).json({ mensagem: "Erro ao criar vendendor" });
+    console.error("Erro ao atualizar vendendor:", error);
+    return res.status(500).json({ mensagem: "Erro ao atualizar vendendor" });
   }
 };
 

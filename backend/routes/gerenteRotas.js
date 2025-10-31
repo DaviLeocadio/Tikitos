@@ -7,6 +7,14 @@ import {
   excluirVendedorController,
 } from "../controllers/VendedorController.js";
 
+import {
+  listarProdutosController,
+  obterProdutoPorIdController,
+  criarProdutoController,
+  atualizarProdutoController,
+} from "../controllers/ProdutoController.js";
+
+import { atualizarProdutoLojaController, estoqueBaixoController } from "../controllers/ProdutoLojaController.js";
 
 // const ProdutoController = require('../controllers/ProdutoController');
 // const RelatorioController = require('../controllers/RelatorioController');
@@ -17,34 +25,30 @@ const router = express.Router();
 
 /* ===================== ROTAS GERENTE ===================== */
 
-
 /* ===== Vendedores ===== */
 
 // Adiciona um funcionário (vendedor)
-router.post('/vendedores', criarVendedorController);
+router.post("/vendedores", criarVendedorController);
 
 // Visualiza todos os vendedores
-router.get('/vendedores', listarVendedoresController);
-
+router.get("/vendedores", listarVendedoresController);
 
 // // Altera informações de um vendedor específico
-router.put('/vendedores/:vendedorId', obterVendedorPorIdController);
-
+router.put("/vendedores/:vendedorId", atualizarVendedorController);
 
 /* ===== Produtos e Estoque ===== */
 
-// // Lista todos os produtos
-// router.get('/produtos', ProdutoController.listarProdutos);
+// Lista todos os produtos
+router.get('/produtos', listarProdutosController);
 
-// // Informações específicas de um produto
-// router.get('/produtos/:id', ProdutoController.infoProduto);
+// Informações específicas de um produto
+router.get('/produtos/:idProduto', obterProdutoPorIdController);
 
-// // Edita estoque e/ou desconto de um produto (na filial)
-// router.put('/produtos/:id', ProdutoController.editarProduto);
+// Edita estoque e/ou desconto de um produto (na filial)
+router.put('/produtos/:id', atualizarProdutoLojaController);
 
-// // Lista produtos com estoque abaixo do mínimo (alerta)
-// router.get('/estoque-baixo', ProdutoController.estoqueBaixo);
-
+// Lista produtos com estoque abaixo do mínimo (alerta)
+router.get('/estoque-baixo', estoqueBaixoController);
 
 /* ===== Despesas ===== */
 
@@ -60,7 +64,6 @@ router.put('/vendedores/:vendedorId', obterVendedorPorIdController);
 // // Exclui um gasto
 // router.delete('/gastos/:id', GastoController.excluirGasto);
 
-
 /* ===== Caixa, Vendas e relatórios ===== */
 
 // // Visualiza valores obtidos do fluxo de caixa de cada dia
@@ -75,6 +78,4 @@ router.put('/vendedores/:vendedorId', obterVendedorPorIdController);
 // // Lista vendas da filial (filtros: data, vendedor, forma de pagamento)
 // router.get('/vendas', VendaController.listarVendas);
 
-
 export default router;
-

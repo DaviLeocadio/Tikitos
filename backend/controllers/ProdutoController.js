@@ -9,6 +9,8 @@ import { fileURLToPath } from "url";
 import path from "path";
 import { obterCategoriaPorId } from "../models/Categorias.js";
 import { obterProdutoLoja } from "../models/ProdutoLoja.js";
+import { mascaraDinheiro } from "../utils/formatadorNumero.js";
+import { formatarProduto, formatarProdutos } from "../utils/formatarProdutos.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -16,21 +18,11 @@ const __dirname = path.dirname(__filename);
 const listarProdutosController = async (req, res) => {
   try {
     const usuarioEmpresa = req.usuarioEmpresa;
+    const usuarioPerfil = req.usuarioPerfil;
     const produtos = await listarProdutos();
-    const produtosFormatados = await Promise.all(
-      produtos.map( async(produto) => {
-        const categoria = await obterCategoriaPorId(produto.id_categoria);
-        const produtoLoja = await obterProdutoLoja(
-          produto.id_produto,
-          usuarioEmpresa
-        );
-
-        return {
-          ...produto,
-          categoria: categoria.nome,
-          estoque: produtoLoja.estoque,
-        };
-      })
+    const produtosFormatados = await formatarProdutos(
+      produtos,
+      usuarioPerfil !== "admin" ? usuarioEmpresa : null
     );
     res.status(200).json({
       mensagem: "Listagem de produtos realizada com sucesso",
@@ -46,15 +38,21 @@ const obterProdutoPorIdController = async (req, res) => {
   try {
     const { idProduto } = req.params;
 
-    const produto = await obterProdutoPorId(idProduto);
+    let produto = await obterProdutoPorId(idProduto);
 
-    if(!produto || produto.length === 0 ) {
-      return res
-        .status(404)
-        .json({
-          mensagem: "Produto não encontrado"
-        })
+    if (!produto || produto.length === 0) {
+      return res.status(404).json({
+        mensagem: "Produto não encontrado",
+      });
     }
+    const usuarioEmpresa = req.usuarioEmpresa;
+    const usuarioPerfil = req.usuarioPerfil;
+
+    produto = await formatarProduto(
+      produto,
+      usuarioPerfil !== "admin" ? usuarioEmpresa : null
+    );
+
     res.status(200).json({ mensagem: "Produto obtido com sucesso", produto });
   } catch (err) {
     console.error("Erro ao obter o produto pelo ID: ", err);
