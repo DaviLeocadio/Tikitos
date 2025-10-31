@@ -12,7 +12,10 @@ import {
   excluirVendaController
 } from "../controllers/VendaController.js";
 
-import { listarProdutosController, obterProdutoPorIdController } from "../controllers/ProdutoController.js";
+import { 
+  listarProdutosController,
+  obterProdutoPorIdController 
+} from "../controllers/ProdutoController.js";
 
 
 dotenv.config();

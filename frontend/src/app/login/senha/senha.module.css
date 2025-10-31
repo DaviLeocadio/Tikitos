@@ -104,3 +104,7 @@
 .form_container .link:hover {
   text-decoration: underline;
 }
+
+.login_ioio{
+  transition: all 0.2s;
+}

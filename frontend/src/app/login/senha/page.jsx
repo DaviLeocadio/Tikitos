@@ -8,6 +8,7 @@ import { toast, ToastContainer, Bounce } from "react-toastify";
 export default function Home() {
   const [senha, setSenha] = useState("");
   const [confirmarSenha, setConfirmarSenha] = useState("");
+  const [ioio, setIoio] = useState(false);
 
   async function senhaNova() {
     const email = getCookie("email");
@@ -25,26 +26,33 @@ export default function Home() {
 
       const data = await response.json();
       if (response.status == 400) {
-        // if (data.code == "FALTA_DADOS") {
-        //   toast("⚠️ Preencha todos os campos obrigatórios!", {
-        //     position: "top-right",
-        //     autoClose: 4000,
-        //     hideProgressBar: false,
-        //     closeOnClick: true,
-        //     pauseOnHover: true,
-        //     style: { backgroundColor: "#4f6940", color: "#fff" },
-           
-        //     transition: Bounce,
-        //   });
-        //   console.log("FALTA_DADOS");
-        // }
+        if (data.code == "FALTA_DADOS") {
+          setIoio(true);
+          toast("Preencha todos os campos!", {
+            icon: (
+              <img
+                src="/img/toast/logo_ioio.png"
+                alt="logo"
+                className="w-22 h-7"
+              />
+            ),
+            position: "top-right",
+            autoClose: 4000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            style: { backgroundColor: "#924187", color: "#fff" },
+            transition: Bounce,
+          });
+          console.log("FALTA_DADOS", ioio);
+        }
 
         if (data.code == "CARACTER_EXCEDIDO") {
-          console.log("CARACTER_EXCEDIDO")
+          console.log("CARACTER_EXCEDIDO");
         }
 
         if (data.code == "SENHA_DIFERENTE") {
-          console.log("SENHA_DIFERENTE")
+          console.log("SENHA_DIFERENTE");
         }
       }
 
@@ -57,6 +65,22 @@ export default function Home() {
   }
   return (
     <>
+      <ToastContainer />
+      {ioio ? (
+        <div className="flex justify-end">
+          <img
+            src="/img/toast/logo_ioio.png"
+            className={`w-10 absolute me-85 mt-7 ${styles.login_ioio}`}
+          />
+        </div>
+      ) : (
+        <div className="flex justify-end">
+          <img
+            src="/img/toast/logo_ioio.png"
+            className={`w-10 absolute ps-20 ${styles.login_ioio}`}
+          />
+        </div>
+      )}
       <div
         className={`grid grid-cols-1 lg:grid-cols-2 gap-1 min-h-screen ${styles.login_fundo}`}
       >
@@ -175,7 +199,6 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <ToastContainer />
     </>
   );
 }

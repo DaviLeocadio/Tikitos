@@ -183,4 +183,8 @@ const ResumoCaixaController = async (req, res) => {
   }
 };
 
-export { AbrirCaixaController, FecharCaixaController, ResumoCaixaController };
+export { 
+  AbrirCaixaController, 
+  FecharCaixaController, 
+  ResumoCaixaController
+};
