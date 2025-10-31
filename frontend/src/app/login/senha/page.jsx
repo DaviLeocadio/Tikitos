@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import styles from "./senha.module.css";
 import Link from "next/link";
 import { getCookie } from "cookies-next/client";
+import { toast, ToastContainer, Bounce } from "react-toastify";
 
 export default function Home() {
   const [senha, setSenha] = useState("");
@@ -10,7 +11,7 @@ export default function Home() {
 
   async function senhaNova() {
     const email = getCookie("email");
-   
+
     try {
       const response = await fetch("http://localhost:8080/auth/definir_senha", {
         method: "POST",
@@ -21,6 +22,31 @@ export default function Home() {
           confirmarSenha: confirmarSenha,
         }),
       });
+
+      const data = await response.json();
+      if (response.status == 400) {
+        // if (data.code == "FALTA_DADOS") {
+        //   toast("⚠️ Preencha todos os campos obrigatórios!", {
+        //     position: "top-right",
+        //     autoClose: 4000,
+        //     hideProgressBar: false,
+        //     closeOnClick: true,
+        //     pauseOnHover: true,
+        //     style: { backgroundColor: "#4f6940", color: "#fff" },
+           
+        //     transition: Bounce,
+        //   });
+        //   console.log("FALTA_DADOS");
+        // }
+
+        if (data.code == "CARACTER_EXCEDIDO") {
+          console.log("CARACTER_EXCEDIDO")
+        }
+
+        if (data.code == "SENHA_DIFERENTE") {
+          console.log("SENHA_DIFERENTE")
+        }
+      }
 
       if (response.ok) {
         window.location.href = "/";
@@ -149,6 +175,7 @@ export default function Home() {
           </div>
         </div>
       </div>
+      <ToastContainer />
     </>
   );
 }

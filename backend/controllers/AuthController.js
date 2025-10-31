@@ -70,7 +70,7 @@ const verificarTokenController = async (req, res) => {
   if (email.length > 100 || token.length != 6) {
     return res.status(400).json({ mensagem: "Máximo de caracteres excedido" });
   }
-  
+
   try {
     if (!email || !token)
       return res
@@ -119,24 +119,24 @@ const verificarTokenController = async (req, res) => {
 // Confirmar código e adicionar senha
 const definirSenhaController = async (req, res) => {
   const { email, novaSenha, confirmarSenha } = req.body;
-  // Verifica de há excesso de caracteres para proteção contra ataques
-  if (
-    email.length > 100 ||
-    novaSenha.length > 25 ||
-    confirmarSenha.length > 25
-  ) {
-    return res.status(400).json({ mensagem: "Máximo de caracteres excedido" });
-  }
   try {
     if (!email || !novaSenha || !confirmarSenha)
       return res
         .status(400)
-        .json({ error: "Insira todos os parâmetros obrigatórios" });
+        .json({ error: "Insira todos os parâmetros obrigatórios", code:"FALTA_DADOS" });
 
     // Verifica se email existe no bd
     const usuario = await encontrarUsuario(email);
     if (!usuario)
       return res.status(404).json({ error: "Email não encontrado" });
+
+    // Verifica de há excesso de caracteres para proteção contra ataques
+    if (
+      novaSenha.length > 25 ||
+      confirmarSenha.length > 25
+    ) {
+      return res.status(400).json({ mensagem: "Máximo de caracteres excedido", code:"CARACTER_EXCEDIDO" });
+    }
 
     // Busca o token no banco
     const record = await buscarToken(usuario.id_usuario);
@@ -151,7 +151,7 @@ const definirSenhaController = async (req, res) => {
 
     // Verifica se as duas senhas coincidem
     if (novaSenha !== confirmarSenha) {
-      return res.status(401).json({ error: "As senhas não coincidem" });
+      return res.status(400).json({ error: "As senhas não coincidem", code:"SENHA_DIFERENTE" });
     }
 
     // Gera hash da senha
