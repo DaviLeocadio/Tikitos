@@ -10,7 +10,7 @@ export default function ClientOnlyUI() {
   return (
     <>
       <ToastContainer />
-      <SessaoExpiradaModal />
+      {/* <SessaoExpiradaModal /> */}
     </>
   );
 }

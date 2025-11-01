@@ -4,11 +4,21 @@ import {
   readAll,
   update,
   create,
+  readRaw,
 } from "../config/database.js";
 
 const listarDespesas = async (whereClause = null) => {
   try {
-    return await readAll("despesas", whereClause);
+    let query = `SELECT d.*, f.nome AS fornecedor\n      FROM despesas d\n      LEFT JOIN fornecedores f ON d.id_fornecedor = f.id_fornecedor`;
+
+    if (whereClause) {
+      // controller may pass a WHERE fragment that already contains ORDER BY
+      query += ` WHERE ${whereClause}`;
+    } else {
+      query += ` ORDER BY data_pag DESC`;
+    }
+
+    return await readRaw(query);
   } catch (err) {
     console.error("Erro ao listar despesas: ", err);
     throw err;

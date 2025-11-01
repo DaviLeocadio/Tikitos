@@ -11,17 +11,40 @@ import {
 import { Button } from "@/components/ui/button";
 import { CheckCircle, Trash } from "lucide-react";
 import InputDataMask from "@/components/inputMasks/InputDataMask";
-import {aparecerToast} from "@/utils/toast.js";
-
+import { aparecerToast } from "@/utils/toast.js";
 
 // Modal Adicionar Despesa
 export default function ModalAdicionarDespesa({ open, onClose }) {
   const [descricao, setDescricao] = useState("");
   const [preco, setPreco] = useState("");
-
+  const [fornecedores, setFornecedores] = useState([]);
+  const [fornecedorEscolhido, setFornecedorEscolhido] = useState(null);
   const [dataPag, setDataPag] = useState("");
   const [status, setStatus] = useState("pendente");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!open) return;
+
+    const buscarFornecedores = async () => {
+      try {
+        const res = await fetch("http://localhost:8080/admin/meta/?fornecedoresSup=true", {
+          method: "GET",
+          credentials: "include",
+        });
+
+        if (!res.ok) throw new Error("Erro ao buscar fornecedores");
+
+        const data = await res.json();
+        console.log(data);
+        setFornecedores(data.fornecedoresSup);
+      } catch (err) {
+        console.error("Erro ao buscar fornecedores", err);
+      }
+    };
+
+    buscarFornecedores();
+  }, [open]);
 
   const handleSalvar = async () => {
     if (!descricao || !preco) {
@@ -42,6 +65,7 @@ export default function ModalAdicionarDespesa({ open, onClose }) {
           descricao,
           preco: Number(preco),
           data_pag: dataPag,
+          id_fornecedor: fornecedorEscolhido,
           status,
         }),
       });
@@ -68,7 +92,6 @@ export default function ModalAdicionarDespesa({ open, onClose }) {
   };
 
   return (
-    
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md bg-[#e8c5f1] border-3 border-[#924187] border-dashed rounded-3xl">
         <DialogHeader>
@@ -133,6 +156,24 @@ export default function ModalAdicionarDespesa({ open, onClose }) {
                 <option value="pago">Pago</option>
               </select>
             </div>
+          </div>
+          <div>
+            <label className="text-sm text-[#8c3e82] font-semibold block mb-2">
+              Fornecedor:
+            </label>
+            <select
+              value={fornecedorEscolhido ?? ""}
+              onChange={(e) => setFornecedorEscolhido(e.target.value || null)}
+              className="w-full p-3 rounded-lg border-2 border-[#b478ab] text-[#76196c] font-semibold focus:outline-none focus:border-[#76196c] cursor-pointer"
+            >
+              <option value="">Nenhum fornecedor</option>
+
+              {fornecedores.map((f) => (
+                <option key={f.id_fornecedor} value={f.id_fornecedor}>
+                  {f.nome}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
 

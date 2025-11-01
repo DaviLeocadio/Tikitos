@@ -76,7 +76,7 @@ export default function CardProduto({ produto }) {
         setCardSelecionado(false);
       } else {
         if (inativo) {
-          return aparecerToast("Produto Inativo")
+          return aparecerToast("Produto Inativo");
         }
         // não selecionado -> adicionar
         adicionarAoCarrinho(produto);
@@ -172,7 +172,7 @@ export default function CardProduto({ produto }) {
         );
 
         if (produtoEstoque.length > 0) {
-          setEstoqueBaixo(true)
+          setEstoqueBaixo(true);
         }
       }
     };
@@ -230,9 +230,10 @@ export default function CardProduto({ produto }) {
     <Card
       // ALTERAÇÃO APLICADA AQUI: Estilização condicional para hover/seleção
       className={`group min-w-53 shadow-none gap-0 pt-0 pb-0 border-[3px] border-dashed border-[#75ba51] rounded-[50px] p-2 transition cursor-pointer
-        ${cardSelecionado
-          ? "bg-[#C8FDB4] shadow-md hover:shadow-lg" // SELECIONADO: Fundo destacado + feedback de hover por sombra
-          : "bg-[#D8F1DC] hover:bg-[#C8FDB4]" // NÃO SELECIONADO: Fundo normal + feedback de hover por destaque de cor
+        ${
+          cardSelecionado
+            ? "bg-[#C8FDB4] shadow-md hover:shadow-lg" // SELECIONADO: Fundo destacado + feedback de hover por sombra
+            : "bg-[#D8F1DC] hover:bg-[#C8FDB4]" // NÃO SELECIONADO: Fundo normal + feedback de hover por destaque de cor
         }
         ${inativo ? "grayscale-80 opacity-85" : ""}`}
       onClick={handleClickCard}
@@ -300,10 +301,10 @@ export default function CardProduto({ produto }) {
                 </AlertDialogDescription>
               </AlertDialogHeader>
 
-              <AlertDialogFooter className="mt-2 sm:justify-center">
-                <AlertDialogCancel className="bg-[#65745A] rounded-[50px] mt-2 py-2 px-5 text-[#caf4b7] text-sm font-semibold w-50 h-13 flex gap-3 justify-center items-center transform transition-all duration-300 ease-out group-hover:scale-110 hover:bg-[#74816b] hover:scale-97">
-                  Fechar
-                </AlertDialogCancel>
+              <AlertDialogFooter className="sm:justify-center">
+                <AlertDialogCancel className="bg-[#65745A] rounded-[50px] mt-2 py-2 px-5 text-[#caf4b7] text-sm font-semibold w-50 h-13 flex gap-3 justify-center items-center transform transition-all duration-300 ease-out group-hover:scale-110 hover:bg-[#74816b] hover:scale-97 hover:text-[#caf4b7]">
+                    Fechar
+                  </AlertDialogCancel>
                 <button className="bg-[#65745A] rounded-[50px] mt-2 py-2 px-5 text-[#caf4b7] text-sm font-semibold w-50 h-13 flex gap-3 justify-center items-center transform transition-all duration-300 ease-out group-hover:scale-110 hover:bg-[#74816b] hover:scale-97">
                   Relatar erro
                 </button>
@@ -317,8 +318,9 @@ export default function CardProduto({ produto }) {
               <TooltipTrigger asChild>
                 <AlertDialogTrigger asChild>
                   <i
-                    className={`bi bi-exclamation-circle-fill text-[16px] hover:scale-95 transition cursor-pointer ${estoqueBaixo ? " text-[#76196c]" : " text-[#4f6940]"
-                      }`}
+                    className={`bi bi-exclamation-circle-fill text-[16px] hover:scale-95 transition cursor-pointer ${
+                      estoqueBaixo ? " text-[#76196c]" : " text-[#4f6940]"
+                    }`}
                   ></i>
                 </AlertDialogTrigger>
               </TooltipTrigger>
@@ -334,38 +336,51 @@ export default function CardProduto({ produto }) {
             <AlertDialogContent className="bg-[#edd5f4]">
               <AlertDialogHeader className="items-center">
                 <AlertDialogTitle>
-                  <div className="mb-2 mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10">
+                  <div
+                    className={`mb-2 mx-auto flex h-16 w-16 items-center justify-center rounded-full 
+    ${estoqueBaixo ? "bg-destructive/10" : "bg-[#9ad979]"}`}
+                  >
                     {estoqueBaixo ? (
                       <OctagonAlert className="h-7 w-7 text-destructive" />
                     ) : (
                       <CircleCheckBig className="h-7 w-7 text-[#4f6940]" />
                     )}
                   </div>
-                  Situação do Estoque
-                  <p className="flex flex-col items-center  text-center">
-                    <span className="text-3xl text-roxoescuro">
-                      {produto.estoque}
-                    </span>
-                    <span className="text-sm text-roxo">Unidades disponíveis</span>
-                  </p>
+                  <div className="flex flex-col justify-center items-center text-sm/6">
+                    <h4 className="text-[14px] text-[#76196c]">SITUAÇÃO DO</h4>
+                    <h1 className="font-bold mt-[-7px] text-[20px] text-[#6aa949]">
+                      estoque
+                    </h1>
+                  </div>
+                  <p
+  className={`flex flex-col items-center pt-2 text-center 
+  ${estoqueBaixo ? "text-destructive" : "text-[#4f6940]"}`}
+>
+  <span className="text-3xl font-bold">
+    {produto.estoque}
+  </span>
+  <span className="text-sm">
+    Unidades disponíveis
+  </span>
+</p>
+
                 </AlertDialogTitle>
-                <AlertDialogDescription className="text-[15px] text-center">
+                {/* <AlertDialogDescription className="text-[15px] text-center">
                   Aqui você pode informar a classificação do estoque, níveis
                   críticos, previsão de reposição, etc.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-
-              <AlertDialogFooter className="mt-2 sm:justify-center">
-                <AlertDialogCancel className="bg-[#65745A] rounded-[50px] mt-2 py-2 px-5 text-[#caf4b7] text-sm font-semibold w-30 h-13 flex gap-3 justify-center items-center transform transition-all duration-300 ease-out group-hover:scale-110 hover:bg-[#74816b] hover:scale-97">
-                  Fechar
-                </AlertDialogCancel>
-                <button className="bg-[#65745A] rounded-[50px] mt-2 py-2 px-5 text-[#caf4b7] text-sm font-semibold w-40 h-13 flex gap-3 justify-center items-center transform transition-all duration-300 ease-out group-hover:scale-110 hover:bg-[#74816b] hover:scale-97">
-                  Relatar defeito
-                </button>
-                <button className="bg-[#65745A] rounded-[50px] mt-2 py-2 px-5 text-[#caf4b7] text-sm font-semibold w-40 h-13 flex gap-3 justify-center items-center transform transition-all duration-300 ease-out group-hover:scale-110 hover:bg-[#74816b] hover:scale-97">
+                </AlertDialogDescription> */}
+                <AlertDialogFooter className="sm:justify-center">
+                  <AlertDialogCancel className="bg-[#65745A] rounded-[50px] mt-2 py-2 px-5 text-[#caf4b7] text-sm font-semibold w-50 h-13 flex gap-3 justify-center items-center transform transition-all duration-300 ease-out group-hover:scale-110 hover:bg-[#74816b] hover:scale-97 hover:text-[#caf4b7]">
+                    Fechar
+                  </AlertDialogCancel>
+                  <button className="bg-[#65745A] rounded-[50px] mt-2 py-2 px-5 text-[#caf4b7] text-sm font-semibold w-50 h-13 flex gap-3 justify-center items-center transform transition-all duration-300 ease-out group-hover:scale-110 hover:bg-[#74816b] hover:scale-97 hover:text-[#caf4b7]">
+                    Relatar defeito
+                  </button>
+                  {/* <button className="bg-[#65745A] rounded-[50px] mt-2 py-2 px-5 text-[#caf4b7] text-sm font-semibold w-40 h-13 flex gap-3 justify-center items-center transform transition-all duration-300 ease-out group-hover:scale-110 hover:bg-[#74816b] hover:scale-97">
                   Lista de espera
-                </button>
-              </AlertDialogFooter>
+                </button> */}
+                </AlertDialogFooter>
+              </AlertDialogHeader>
             </AlertDialogContent>
           </AlertDialog>
         </div>

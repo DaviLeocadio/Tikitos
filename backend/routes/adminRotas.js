@@ -41,7 +41,8 @@ import {
   despesasPendentesController,
   criarDespesaController,
   listarDespesasController,
-  pagarDespesaController
+  pagarDespesaController,
+  deletarDespesaController,
 } from "../controllers/DespesasController.js";
 
 /* ==== Fornecedores ==== */
@@ -50,7 +51,7 @@ import {
   listarFornecedoresController,
   obterFornecedorPorIdController,
   atualizarFornecedorController,
-  desativarFornecedorController,
+  deletarFornecedorController,
 } from "../controllers/FornecedorController.js";
 
 /* ==== Produto Loja ==== */
@@ -162,6 +163,7 @@ router.get("/despesas-pendentes", despesasPendentesController);
 router.post("/despesas", criarDespesaController);
 router.get("/despesas", listarDespesasController);
 router.put("/despesas/:despesaId", pagarDespesaController)
+router.delete("/despesas/:despesaId", deletarDespesaController);
 
 /* ===================== PRODUTOS ===================== */
 
@@ -178,7 +180,7 @@ router.post("/fornecedores", criarFornecedorController);
 router.get("/fornecedores", listarFornecedoresController);
 router.get("/fornecedores/:id", obterFornecedorPorIdController);
 router.put("/fornecedores/:id", atualizarFornecedorController);
-router.delete("/fornecedores/:id", desativarFornecedorController);
+router.delete("/fornecedores/:id", deletarFornecedorController);
 
 /* ===================== VENDAS ===================== */
 

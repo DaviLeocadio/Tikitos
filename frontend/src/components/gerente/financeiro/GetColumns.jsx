@@ -11,6 +11,14 @@ export function GetColumns({ setDialogExcluir, setDialogMarcarPago }) {
         <div className="font-semibold text-[#4f6940]">{row.getValue("descricao")}</div>
       ),
     },
+    {
+      accessorKey: "fornecedor",
+      header: "Fornecedor",
+      cell: ({ row }) => {
+        const f = row.getValue("fornecedor");
+        return <div className="text-gray-600">{f ? f : "--"}</div>;
+      },
+    },
     
 
     {

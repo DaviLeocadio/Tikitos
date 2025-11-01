@@ -11,6 +11,8 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
 import { useSearchParams } from "next/navigation";
 import ModalEditarProduto from "@/components/admin/produtos/ModalEditarProduto";
 import ModalDesativarProduto from "@/components/admin/produtos/ModalDesativarProduto";
+import { PlusCircle } from "lucide-react";
+import Link from "next/link";
 
 export default function AdminProduto() {
   const [sorting, setSorting] = useState([]);
@@ -71,12 +73,21 @@ export default function AdminProduto() {
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div>
-          <h1 className="text-3xl lg:text-4xl font-bold text-[#76196c]">
-            <SidebarTrigger /> Gerenciar Produtos
-          </h1>
+          <div className="flex justify-between">
+
+            <h1 className="text-3xl lg:text-4xl font-bold text-[#76196c]">
+              <SidebarTrigger /> Gerenciar Produtos
+            </h1>
+            <Link
+              href="/admin/produtos/cadastrar"
+              className="flex gap-2 px-3 py-2 rounded-lg bg-roxo hover:bg-roxoescuro text-white transition hover:scale-97">
+              <PlusCircle /> Cadastrar Produto</Link>
+
+          </div>
           <p className="text-lg text-[#8c3e82] mt-1">
             {produtosFiltrados.length} produtos encontrados
           </p>
+
         </div>
 
         {/* Filtros */}

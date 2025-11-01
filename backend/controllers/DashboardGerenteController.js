@@ -13,6 +13,7 @@ const dashboardGerenteController = async (req, res) => {
   try {
     const idEmpresa = req.usuarioEmpresa;
     const { periodo = "mes" } = req.query;
+    console.log(periodo)
 
     // Valida período
     const periodosValidos = ["hoje", "semana", "mes", "ano"];

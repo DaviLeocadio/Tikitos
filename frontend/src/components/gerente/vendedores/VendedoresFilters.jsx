@@ -18,12 +18,12 @@ const VendedoresFilters = memo(function VendedoresFilters({
             Buscar vendedor
           </label>
           <div className="relative">
-            <i className="bi bi-search absolute left-3 top-1/2 -translate-y-1/2 text-[#92EF6C]"></i>
+            <i className="bi bi-search absolute left-3 top-1/2 -translate-y-1/2 text-[#76216D]"></i>
             <input
               type="text"
               value={globalFilter}
               onChange={(e) => setGlobalFilter(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 rounded-lg text-[#75BA51] border-1 border-[#C5FFAD] focus:outline-none focus:border-[#75BA51]"
+              className="w-full pl-10 pr-4 py-2 rounded-lg bg-[#EBC7F5] text-[#76216D] border-1 border-[#C5FFAD] focus:outline-none focus:border-[#75BA51]"
               placeholder="Nome, ID ou email"
             />
           </div>
@@ -37,7 +37,7 @@ const VendedoresFilters = memo(function VendedoresFilters({
           <select
             value={statusFiltro}
             onChange={(e) => setStatusFiltro(e.target.value)}
-            className="w-full p-2 rounded-lg border-1 text-[#75BA51] bg-[#9D4E92] border-[#C5FFAD] focus:outline-none focus:border-[#75BA51]"
+            className="w-full p-2 rounded-lg border-1 text-[#76216D] bg-[#EBC7F5] border-[#C5FFAD] focus:outline-none focus:border-[#75BA51]"
           >
             <option value="todos">Todos</option>
             <option value="ativo">Ativos</option>

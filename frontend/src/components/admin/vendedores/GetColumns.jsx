@@ -118,12 +118,29 @@ export default function GetColumns({ setModalVendedor, setModalDesativar, setMod
         return (
           <div className="flex gap-2">
 
+              <button
+              onClick={() => setModalVendedor({ open: true, vendedor})}
+              className="px-3 py-1 bg-[#76196c] text-white rounded-lg text-sm font-semibold hover:bg-[#924187] transition cursor-pointer"
+              title="Editar vendedor"
+            >
+              <i className="bi bi-person"></i>
+            </button>
             <button
               onClick={() => setModalTransfer && setModalTransfer({ open: true, funcionario: vendedor })}
               className="px-3 py-1 bg-[#3b82f6] text-white rounded-lg text-sm font-semibold hover:bg-[#2563eb] transition cursor-pointer"
               title="Transferir funcionário"
             >
               <i className="bi bi-arrow-left-right"></i>
+            </button>
+            <button
+              onClick={() => setModalDesativar({ open: true, vendedor})}
+              className={`px-3 py-1 text-white rounded-lg text-sm font-semibold transition cursor-pointer ${vendedor.status === "ativo"
+                  ? "bg-[#ff6b35] hover:bg-[#e55a2b]"
+                  : "bg-[#569a33] hover:bg-[#4f6940]"
+                }`}
+              title={vendedor.status === "ativo" ? "Desativar vendedor" : "Reativar vendedor"}
+            >
+              <i className={`bi bi-power ${vendedor.status === "ativo" ? "" : ""}`}></i>
             </button>
           </div>
         );

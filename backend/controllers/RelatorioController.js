@@ -24,7 +24,7 @@ const gerarRelatorioGerenteController = async (req, res) => {
     let gastosWhere = `id_empresa = ${idEmpresa}`;
     if (inicio && fim) {
       // Usamos >= inicio e < fim (o frontend já costuma enviar fim+1 quando necessário)
-      gastosWhere += ` AND DATE(data_adicionado) >= '${inicio}' AND DATE(data_adicionado) < '${fim}'`;
+      gastosWhere += ` AND DATE(d.data_adicionado) >= '${inicio}' AND DATE(d.data_adicionado) < '${fim}'`;
     }
     const gastos = await listarDespesas(gastosWhere);
 

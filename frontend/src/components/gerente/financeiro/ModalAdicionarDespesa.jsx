@@ -1,5 +1,5 @@
 "use client";
-import { memo, useState } from "react";
+import { memo, useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -13,6 +13,8 @@ import InputDataMask from "@/components/inputMasks/InputDataMask";
 const ModalAdicionarDespesa = memo(function ModalAdicionarDespesa({ open, onClose, onSalvar }) {
   const [descricao, setDescricao] = useState("");
   const [preco, setPreco] = useState("");
+  const [fornecedores, setFornecedores] = useState([]);
+  const [fornecedorEscolhido, setFornecedorEscolhido] = useState(null);
   const [dataPag, setDataPag] = useState("");
   const [status, setStatus] = useState("pendente");
   const [loading, setLoading] = useState(false);
@@ -29,14 +31,38 @@ const ModalAdicionarDespesa = memo(function ModalAdicionarDespesa({ open, onClos
       preco: parseFloat(preco),
       data_pag: dataPag,
       status,
+      id_fornecedor: fornecedorEscolhido ? Number(fornecedorEscolhido) : null,
     });
     setLoading(false);
     setDescricao("");
     setPreco("");
     setDataPag("");
     setStatus("pendente");
+    setFornecedorEscolhido(null);
     onClose();
   };
+
+  useEffect(() => {
+    if (!open) return;
+
+    const buscarFornecedores = async () => {
+      try {
+        const res = await fetch("http://localhost:8080/gerente/meta?fornecedoresSup=true", {
+          method: "GET",
+          credentials: "include",
+        });
+
+        if (!res.ok) throw new Error("Erro ao buscar fornecedores");
+
+        const data = await res.json();
+        setFornecedores(data.fornecedoresSup || []);
+      } catch (err) {
+        console.error("Erro ao buscar fornecedores", err);
+      }
+    };
+
+    buscarFornecedores();
+  }, [open]);
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -104,6 +130,22 @@ const ModalAdicionarDespesa = memo(function ModalAdicionarDespesa({ open, onClos
               </select>
             </div>
           </div>
+        </div>
+
+        <div>
+          <label className="text-sm text-[#8c3e82] font-semibold block mb-2">Fornecedor:</label>
+          <select
+            value={fornecedorEscolhido ?? ""}
+            onChange={(e) => setFornecedorEscolhido(e.target.value || null)}
+            className="w-full p-3 rounded-lg border-2 border-[#b478ab] text-[#76196c] font-semibold focus:outline-none focus:border-[#76196c] cursor-pointer"
+          >
+            <option value="">Nenhum fornecedor</option>
+            {fornecedores.map((f) => (
+              <option key={f.id_fornecedor} value={f.id_fornecedor}>
+                {f.nome}
+              </option>
+            ))}
+          </select>
         </div>
 
         <DialogFooter className="mt-4">

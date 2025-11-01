@@ -135,7 +135,7 @@ const resumoVendasCaixa = async (idCaixa) => {
 
 const listarCaixa = async ()=>{
   try {
-    return await readAll("caixa");
+    return await readAll("caixa", `id_caixa > 0 ORDER BY abertura DESC`);
   } catch (err) {
     console.error("Erro ao obter listagem do caixa: ", err);
     throw err;

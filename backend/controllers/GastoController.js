@@ -37,11 +37,11 @@ const listarGastosController = async (req, res) => {
     
     where += ` ORDER BY 
       CASE 
-        WHEN status = 'pendente' THEN 0
-        WHEN status = 'pago' THEN 1
+        WHEN d.status = 'pendente' THEN 0
+        WHEN d.status = 'pago' THEN 1
         ELSE 2
       END,
-      DATE(data_adicionado) DESC`;
+      DATE(d.data_adicionado) DESC`;
 
     const gastos = await listarDespesas(where);
     

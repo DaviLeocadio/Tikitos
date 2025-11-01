@@ -10,7 +10,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, ChevronLeft, ChevronRight } from "lucide-react";
+import { CheckCircle, ChevronLeft, ChevronRight, Trash } from "lucide-react";
 import InputDataMask from "@/components/inputMasks/InputDataMask";
 import ModalAdicionarDespesa from "@/components/admin/financeiro/ModalAdicionarDespesa";
 
@@ -19,25 +19,25 @@ const Paginacao = ({ paginaAtual, totalPaginas, onMudarPagina, variant = "roxo" 
   const gerarPaginas = () => {
     const paginas = [];
     const maxPaginas = 5;
-    
+
     let inicio = Math.max(1, paginaAtual - Math.floor(maxPaginas / 2));
     let fim = Math.min(totalPaginas, inicio + maxPaginas - 1);
-    
+
     if (fim - inicio < maxPaginas - 1) {
       inicio = Math.max(1, fim - maxPaginas + 1);
     }
-    
+
     for (let i = inicio; i <= fim; i++) {
       paginas.push(i);
     }
-    
+
     return paginas;
   };
 
   if (totalPaginas <= 1) return null;
 
   const corAtiva = variant === "verde" ? "bg-[#569a33] text-white" : "bg-[#76196c] text-white";
-  const corInativa = variant === "verde" 
+  const corInativa = variant === "verde"
     ? "bg-white border-2 border-[#569a33] text-[#569a33] hover:bg-[#e8f5e8]"
     : "bg-white border-2 border-[#76196c] text-[#76196c] hover:bg-[#f0e5f5]";
   const corBotoes = variant === "verde"
@@ -58,9 +58,8 @@ const Paginacao = ({ paginaAtual, totalPaginas, onMudarPagina, variant = "roxo" 
         <button
           key={pagina}
           onClick={() => onMudarPagina(pagina)}
-          className={`px-4 py-2 rounded-lg font-semibold transition cursor-pointer ${
-            paginaAtual === pagina ? corAtiva : corInativa
-          }`}
+          className={`px-4 py-2 rounded-lg font-semibold transition cursor-pointer ${paginaAtual === pagina ? corAtiva : corInativa
+            }`}
         >
           {pagina}
         </button>
@@ -79,6 +78,7 @@ const Paginacao = ({ paginaAtual, totalPaginas, onMudarPagina, variant = "roxo" 
 
 export default function AdminFinanceiro() {
   const [loading, setLoading] = useState(true);
+  const [dialogExcluir, setDialogExcluir] = useState({ open: false, id: null });
   const [totalVendas, setTotalVendas] = useState(0);
   const [despesas, setDespesas] = useState([]);
   const [fluxoCaixa, setFluxoCaixa] = useState([]);
@@ -253,7 +253,7 @@ export default function AdminFinanceiro() {
         method: "GET",
         credentials: "include",
       });
-      
+
       if (responseList.ok) {
         const data = await responseList.json();
         setDespesas(data.despesasListadas);
@@ -262,6 +262,35 @@ export default function AdminFinanceiro() {
       console.error("Erro ao pagar despesa", err);
     } finally {
       setDialogMarcarPago({ open: false, despesa: null });
+    }
+  };
+
+  const confirmarExcluir = async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/admin/despesas/${dialogExcluir.id}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+
+      if (!response.ok) {
+        console.error("Erro ao excluir despesa", response.status);
+        return;
+      }
+
+      // Recarregar lista de despesas
+      const responseList = await fetch("http://localhost:8080/admin/despesas", {
+        method: "GET",
+        credentials: "include",
+      });
+
+      if (responseList.ok) {
+        const data = await responseList.json();
+        setDespesas(data.despesasListadas);
+      }
+    } catch (err) {
+      console.error("Erro ao excluir despesa", err);
+    } finally {
+      setDialogExcluir({ open: false, id: null });
     }
   };
 
@@ -342,7 +371,7 @@ export default function AdminFinanceiro() {
                     Total de vendas
                   </p>
                   <p className="text-3xl font-bold text-[#569a33]">
-                    R$ {totalVendas}
+                    R$ {Number(totalVendas).toFixed(2).replace(".", ",")}
                   </p>
                 </div>
                 <i className="bi bi-arrow-up-circle text-3xl text-[#569a33]"></i>
@@ -356,7 +385,7 @@ export default function AdminFinanceiro() {
                     Despesas pagas
                   </p>
                   <p className="text-3xl font-bold text-[#ff6b6b]">
-                    R$ {despesasPagas}
+                    R$ {Number(despesasPagas).toFixed(2).replace(".", ",")}
                   </p>
                 </div>
                 <i className="bi bi-arrow-down-circle text-3xl text-[#ff6b6b]"></i>
@@ -370,7 +399,7 @@ export default function AdminFinanceiro() {
                     A Pagar
                   </p>
                   <p className="text-3xl font-bold text-[#ff9800]">
-                    R$ {despesasPendentes}
+                    R$ {Number(despesasPendentes).toFixed(2).replace(".", ",")}
                   </p>
                 </div>
                 <i className="bi bi-clock-history text-3xl text-[#ff9800]"></i>
@@ -384,11 +413,11 @@ export default function AdminFinanceiro() {
                     Saldo
                   </p>
                   <p
-                    className={`text-3xl font-bold ${
-                      resumo.saldo >= 0 ? "text-[#569a33]" : "text-[#ff6b6b]"
-                    }`}
+                    className={`text-3xl font-bold ${resumo.saldo >= 0 ? "text-[#569a33]" : "text-[#ff6b6b]"
+                      }`}
                   >
-                    R$ {(totalVendas - despesasPagas).toFixed(2)}
+                    R$ {Number(totalVendas - despesasPagas).toFixed(2).replace(".", ",")}
+
                   </p>
                 </div>
                 <i className="bi bi-wallet2 text-3xl text-[#76196c]"></i>
@@ -408,11 +437,10 @@ export default function AdminFinanceiro() {
                   <button
                     key={status}
                     onClick={() => setFiltroStatus(status)}
-                    className={`px-4 py-2 rounded-lg font-semibold text-sm transition cursor-pointer ${
-                      filtroStatus === status
-                        ? "bg-[#76196c] text-white"
-                        : "bg-white text-[#76196c] hover:bg-[#f0e5f5]"
-                    }`}
+                    className={`px-4 py-2 rounded-lg font-semibold text-sm transition cursor-pointer ${filtroStatus === status
+                      ? "bg-[#76196c] text-white"
+                      : "bg-white text-[#76196c] hover:bg-[#f0e5f5]"
+                      }`}
                   >
                     {status.charAt(0).toUpperCase() + status.slice(1)}
                   </button>
@@ -429,6 +457,9 @@ export default function AdminFinanceiro() {
                     Descrição
                   </th>
                   <th className="p-4 text-left text-[#76196c] font-bold">
+                    Fornecedor
+                  </th>
+                  <th className="p-4 text-left text-[#76196c] font-bold">
                     Valor
                   </th>
                   <th className="p-4 text-left text-[#76196c] font-bold">
@@ -441,7 +472,7 @@ export default function AdminFinanceiro() {
                     Status
                   </th>
                   <th className="p-4 text-left text-[#76196c] font-bold">
-                    Pagar
+                    Ações
                   </th>
                 </tr>
               </thead>
@@ -473,6 +504,9 @@ export default function AdminFinanceiro() {
                       <td className="p-4 font-semibold text-[#4f6940]">
                         {despesa.descricao}
                       </td>
+                      <td className="p-4 text-gray-600">
+                        {despesa.fornecedor || "--"}
+                      </td>
                       <td className="p-4 font-bold text-[#ff6b6b]">
                         R${" "}
                         {parseFloat(despesa.preco).toFixed(2).replace(".", ",")}
@@ -485,17 +519,16 @@ export default function AdminFinanceiro() {
                       <td className="p-4 text-gray-600">
                         {despesa.data_pag
                           ? new Date(despesa.data_pag).toLocaleDateString(
-                              "pt-BR"
-                            )
+                            "pt-BR"
+                          )
                           : "-"}
                       </td>
                       <td className="p-4">
                         <span
-                          className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                            despesa.status === "pago"
-                              ? "bg-green-100 text-green-700"
-                              : "bg-orange-100 text-orange-700"
-                          }`}
+                          className={`px-3 py-1 rounded-full text-xs font-semibold ${despesa.status === "pago"
+                            ? "bg-green-100 text-green-700"
+                            : "bg-orange-100 text-orange-700"
+                            }`}
                         >
                           {despesa.status === "pago" ? "Pago" : "Pendente"}
                         </span>
@@ -513,6 +546,14 @@ export default function AdminFinanceiro() {
                               <CheckCircle size={16} />
                             </button>
                           )}
+
+                          <button
+                            onClick={() => setDialogExcluir({ open: true, id: despesa.id_despesa })}
+                            className="px-3 py-1 bg-[#ff6b6b] text-white rounded-lg text-sm font-semibold hover:bg-[#ff5252] transition cursor-pointer"
+                            title="Excluir"
+                          >
+                            <Trash size={16} />
+                          </button>
                         </div>
                       </td>
                     </tr>
@@ -548,7 +589,7 @@ export default function AdminFinanceiro() {
               Fluxo de Caixa Diário
             </h2>
           </div>
-          
+
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead className="bg-[#e8f5e8]">
@@ -584,20 +625,23 @@ export default function AdminFinanceiro() {
                         {new Date(fluxo.abertura).toLocaleDateString("pt-BR")}
                       </td>
                       <td className="p-3 font-semibold text-[#4f6940]">
-                        {new Date(fluxo.fechamento).toLocaleDateString("pt-BR")}
+                        {fluxo.fechamento
+                          ? new Date(fluxo.fechamento).toLocaleDateString("pt-BR")
+                          : "--"}
                       </td>
                       <td className="p-3 font-bold text-[#569a33]">
                         R${" "}
-                        {parseFloat(fluxo.valor_final)
+                        {fluxo.fechamento
+                        ? parseFloat(fluxo.valor_final - fluxo.valor_inicial)
                           .toFixed(2)
-                          .replace(".", ",")}
+                          .replace(".", ",")
+                        : "--"}
                       </td>
                       <td className="p-3">
-                        <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                          fluxo.status.toLowerCase() === 'fechado' 
-                            ? 'bg-red-100 text-red-700' 
-                            : 'bg-green-100 text-green-700'
-                        }`}>
+                        <span className={`px-3 py-1 rounded-full text-xs font-semibold ${fluxo.status.toLowerCase() === 'fechado'
+                          ? 'bg-red-100 text-red-700'
+                          : 'bg-green-100 text-green-700'
+                          }`}>
                           {fluxo.status}
                         </span>
                       </td>
@@ -665,6 +709,39 @@ export default function AdminFinanceiro() {
               onClick={() => pagarDespesa(dialogMarcarPago.despesa.id_despesa)}
             >
               Confirmar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog Excluir */}
+      <Dialog
+        open={dialogExcluir.open}
+        onOpenChange={(open) => setDialogExcluir({ open, id: null })}
+      >
+        <DialogContent className="sm:max-w-md bg-[#F1B8E8] border-2 border-[#c61f1f] rounded-3xl">
+          <DialogHeader>
+            <DialogTitle className="text-[#c61f1f] font-extrabold text-xl">
+              Confirmar Exclusão
+            </DialogTitle>
+          </DialogHeader>
+          <p className="text-[#c61f1f] font-semibold py-4">
+            Tem certeza que deseja excluir esta despesa? Esta ação não pode ser
+            desfeita.
+          </p>
+          <DialogFooter className="flex gap-2">
+            <Button
+              variant="secondary"
+              className="flex-1 bg-[#C5FFAD] text-gray-700 hover:bg-[#C5FFAD] font-bold"
+              onClick={() => setDialogExcluir({ open: false, id: null })}
+            >
+              Cancelar
+            </Button>
+            <Button
+              className="flex-1 bg-[#c61f1f] text-[#F1B8E8] hover:bg-[#ff5252] font-bold"
+              onClick={confirmarExcluir}
+            >
+              Excluir
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -2,9 +2,9 @@
 
 import { useMask } from '@react-input/mask';
 
-export default function InputTelefoneMask(props) {
+export default function InputCNPJMask(props) {
   const inputRef = useMask({
-    mask: '(__) _____-____', // mascara do telefone
+    mask: '__.___.___/____-__', // mascara do cnpj
     replacement: { _: /\d/ },
   });
 

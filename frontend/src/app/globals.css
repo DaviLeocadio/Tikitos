@@ -15,8 +15,7 @@
   --color-verdinho: #9bf377;
   --color-verdefundo: #9bf377;
   --color-verdefolha: #75ba51;
-  --color-verdeclaro: #caf4b7;  
- 
+  --color-verdeclaro: #caf4b7;
  
   --breakpoint-xs: 30rem;
   --breakpoint-surface: 64rem;
@@ -174,4 +173,24 @@ button {
  
 button:hover {
     transform: scale(0.97);
+}
+
+.custom-scroll::-webkit-scrollbar {
+  width: 10px;
+}
+
+.custom-scroll::-webkit-scrollbar-track {
+  background: #e8f5e8;
+  border-radius: 20px;
+}
+
+/* --- AQUI diminui a altura do scroll --- */
+.custom-scroll::-webkit-scrollbar-thumb {
+  background: #4a0d3c;
+  border-radius: 20px;
+  min-height: 40px;   /* 🔥 controla o tamanho mínimo */
+}
+
+.custom-scroll::-webkit-scrollbar-thumb:hover {
+  background: #32062a;
 }

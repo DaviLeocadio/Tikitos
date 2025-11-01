@@ -22,7 +22,6 @@ export default function ModalEditarFornecedor({
 }) {
   const [fornecedorInfo, setFornecedorInfo] = useState({
     nome: "",
-    tipo: "",
     cnpj: "",
     email: "",
     telefone: "",
@@ -41,7 +40,6 @@ export default function ModalEditarFornecedor({
         setFornecedorInfo({
           id_fornecedor: fornecedor.id_fornecedor,
           nome: fornecedor.nome || "",
-          tipo: fornecedor.tipo || "",
           cnpj: fornecedor.cnpj || "",
           email: fornecedor.email || "",
           telefone: fornecedor.telefone || "",
@@ -54,7 +52,6 @@ export default function ModalEditarFornecedor({
         // Modo Criação (Limpar campos)
         setFornecedorInfo({
           nome: "",
-          tipo: "",
           cnpj: "",
           email: "",
           telefone: "",
@@ -178,28 +175,6 @@ export default function ModalEditarFornecedor({
               required
             />
           </div>
-          {/* Tipo (mercadorias / suprimentos) */}
-          <div className="mb-2 flex flex-col">
-            <label
-              htmlFor="tipo"
-              className="text-sm text-[#569a33] font-semibold"
-            >
-              Tipo:
-            </label>
-            <select
-              id="tipo"
-              name="tipo"
-              className="text-md font-semibold focus-visible:outline-none text-[#76196c] bg-verdeclaro px-2 py-1 rounded-lg border-1 border-dashed border-roxoescuro"
-              value={fornecedorInfo.tipo}
-              onChange={handleChange}
-              required
-            >
-              <option value="">Selecione</option>
-              <option value="mercadorias">Mercadorias</option>
-              <option value="suprimentos">Suprimentos</option>
-            </select>
-          </div>
-          
 
           {/* CNPJ */}
           <div className="mb-2 flex flex-col">

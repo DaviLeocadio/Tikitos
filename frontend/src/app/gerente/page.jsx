@@ -58,7 +58,7 @@ function DashboardSkeleton() {
         {[...Array(4)].map((_, i) => (
           <div
             key={i}
-            className="bg-white rounded-xl border-2 border-gray-200 p-6 h-32"
+            className="bg-[#C5FFAD] rounded-xl border-2 border-gray-200 p-6 h-32"
           ></div>
         ))}
       </div>
@@ -66,7 +66,7 @@ function DashboardSkeleton() {
         {[...Array(2)].map((_, i) => (
           <div
             key={i}
-            className="bg-white rounded-xl border-2 border-gray-200 p-6 h-64"
+            className="bg-[#C5FFAD] rounded-xl border-2 border-gray-200 p-6 h-64"
           ></div>
         ))}
       </div>
@@ -104,6 +104,13 @@ export default function GerenteDashboard() {
   const [nomeGerente, setNomeGerente] = useState("");
   const [periodo, setPeriodo] = useState("mes");
   const [erro, setErro] = useState(null);
+
+  const periodos = [
+    { value: "hoje", label: "Hoje" },
+    { value: "semana", label: "Semana" },
+    { value: "mes", label: "Mês" }, // label com acento, value sem acento
+    { value: "ano", label: "Ano" },
+  ];
 
   useEffect(() => {
     const nome = getCookie("nome");
@@ -169,17 +176,17 @@ export default function GerenteDashboard() {
 
             {/* Filtro de período */}
             <div className="flex gap-2 bg-[#C97FDA] rounded-xl p-1 border-3">
-              {["hoje", "semana", "mês", "ano"].map((p) => (
+              {periodos.map((p) => (
                 <button
-                  key={p}
-                  onClick={() => setPeriodo(p)}
+                  key={p.value}
+                  onClick={() => setPeriodo(p.value)}
                   className={`px-4 py-2 rounded-lg font-semibold text-sm transition-all ${
-                    periodo === p
+                    periodo === p.value
                       ? "bg-[#76196c] text-[#9BF377]"
                       : "text-[#76196c] hover:bg-[#EBC7F5]"
                   }`}
                 >
-                  {p.charAt(0).toUpperCase() + p.slice(1)}
+                  {p.label}
                 </button>
               ))}
             </div>
@@ -331,8 +338,9 @@ export default function GerenteDashboard() {
 
                   {/* IMAGEM SOBREPOSTA */}
                   <img
-                    src="/img/gerente_dashboard/gerente_dashboardCriancas.png"
-                    className="w-70 sm:w-48 md:w-130 absolute left-1/2 -translate-x-1/2 bottom-[-27px] pointer-events-none"/>
+                    src="/img/gerente_dashboard/gerente_dashboard/gerente_dashboardCriancas.png"
+                    className="hidden lg:block w-70 sm:w-48 md:w-130 absolute left-1/2 -translate-x-1/2 bottom-[-14px] pointer-events-none"
+                  />
                 </div>
 
                 {/* Melhor Vendedor e Destaques */}
@@ -412,10 +420,10 @@ export default function GerenteDashboard() {
                       <i className="bi bi-qr-code text-3xl text-[#C5FFAD]"></i>
                     </div>
                   </div>
-                  <div className="p-4 bg-[#fff5e6] rounded-lg">
+                  <div className="p-4 bg-[#FFEDD4] rounded-lg">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm text-gray-600 mb-1">Dinheiro</p>
+                        <p className="text-sm text-[#ff9800] mb-1">Dinheiro</p>
                         <p className="text-2xl font-bold text-[#ff9800]">
                           R${" "}
                           {dashboardData.vendas.porTipoPagamento.dinheiro
@@ -426,10 +434,10 @@ export default function GerenteDashboard() {
                       <i className="bi bi-cash-coin text-3xl text-[#ff9800]"></i>
                     </div>
                   </div>
-                  <div className="p-4 bg-[#f0e5f5] rounded-lg">
+                  <div className="p-4 bg-[#E8C5F1] rounded-lg">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm text-gray-600 mb-1">Cartão</p>
+                        <p className="text-sm text-[#76196c] mb-1">Cartão</p>
                         <p className="text-2xl font-bold text-[#76196c]">
                           R${" "}
                           {dashboardData.vendas.porTipoPagamento.cartao

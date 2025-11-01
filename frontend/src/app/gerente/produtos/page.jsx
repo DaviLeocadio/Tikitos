@@ -69,69 +69,67 @@ export default function GerenteProdutos() {
 
   return (
     <>
-    <div className="flex m-5 gap-2 items-center">
-        <SidebarTrigger />
+      <div className="flex m-5 gap-2 items-center">
+        <h1 className="text-3xl lg:text-4xl font-bold text-[#76196c] flex items-center gap-2">
+          <SidebarTrigger /> Gerenciar produtos
+        </h1>
       </div>
 
-    <div className="min-h-screen p-5 lg:p-8">
-      <div className="max-w-7xl mx-auto space-y-6">
-        {/* Header */}
-        <div>
-          <img
-            src="/img/gerenciar_produtos/gerenciar_produtos.png"
-            className="md:p-3 md:w-[60%] mx-auto md:mb-[7%]"
-          />
-          <div className="flex justify-end">
-            <p className="text-md text-[#9D4E92] font-semibold md:mb-[-30%] xs:text-center">
-              {produtosFiltrados.length} produtos encontrados
-            </p>
+      <div className="min-h-screen p-5 lg:p-8">
+        <div className="max-w-7xl mx-auto space-y-6">
+          {/* Header */}
+          <div>
+            <div className="flex justify-end">
+              <p className="text-md text-[#9D4E92] font-semibold md:mb-[-30%] xs:text-center">
+                {produtosFiltrados.length} produtos encontrados
+              </p>
+            </div>
           </div>
+
+          {/* Filtros */}
+          <ProdutosFilters
+            globalFilter={globalFilter}
+            setGlobalFilter={setGlobalFilter}
+            categoriaFiltro={categoriaFiltro}
+            setCategoriaFiltro={setCategoriaFiltro}
+            statusFiltro={statusFiltro}
+            setStatusFiltro={setStatusFiltro}
+            categorias={categorias}
+          />
+
+          {/* Tabela */}
+          <ProdutosTable
+            data={produtosFiltrados}
+            columns={columns}
+            loading={loading}
+            globalFilter={globalFilter}
+            setGlobalFilter={setGlobalFilter}
+            sorting={sorting}
+            setSorting={setSorting}
+          />
         </div>
 
-        {/* Filtros */}
-        <ProdutosFilters
-          globalFilter={globalFilter}
-          setGlobalFilter={setGlobalFilter}
-          categoriaFiltro={categoriaFiltro}
-          setCategoriaFiltro={setCategoriaFiltro}
-          statusFiltro={statusFiltro}
-          setStatusFiltro={setStatusFiltro}
-          categorias={categorias}
+        {/* Modals */}
+        <ModalEditarDesconto
+          produto={modalDesconto.produto}
+          open={modalDesconto.open}
+          onClose={() => {
+            setModalDesconto({ open: false, produto: null });
+            buscarProdutos();
+          }}
+          onSalvar={handleSalvarDesconto}
         />
 
-        {/* Tabela */}
-        <ProdutosTable
-          data={produtosFiltrados}
-          columns={columns}
-          loading={loading}
-          globalFilter={globalFilter}
-          setGlobalFilter={setGlobalFilter}
-          sorting={sorting}
-          setSorting={setSorting}
+        <ModalPedidoFornecedor
+          produto={modalPedido.produto}
+          open={modalPedido.open}
+          onClose={() => {
+            setModalPedido({ open: false, produto: null });
+            buscarProdutos();
+          }}
+          onSalvar={handleFazerPedido}
         />
       </div>
-
-      {/* Modals */}
-      <ModalEditarDesconto
-        produto={modalDesconto.produto}
-        open={modalDesconto.open}
-        onClose={() => {
-          setModalDesconto({ open: false, produto: null });
-          buscarProdutos();
-        }}
-        onSalvar={handleSalvarDesconto}
-      />
-
-      <ModalPedidoFornecedor
-        produto={modalPedido.produto}
-        open={modalPedido.open}
-        onClose={() => {
-          setModalPedido({ open: false, produto: null });
-          buscarProdutos();
-        }}
-        onSalvar={handleFazerPedido}
-      />
-    </div>
     </>
   );
 }

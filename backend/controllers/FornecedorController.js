@@ -4,11 +4,12 @@ import {
   criarFornecedor,
   atualizarFornecedor,
   desativarFornecedor,
+  deletarFornecedor,
 } from "../models/Fornecedor.js";
 
 const listarFornecedoresController = async (req, res) => {
   try {
-    const fornecedores = await listarFornecedor();
+    const fornecedores = await listarFornecedor(`id_fornecedor > 0 ORDER BY FIELD(status, 'ativo', 'inativo') ASC`);
     res
       .status(200)
       .json({ mensagem: "Fornecedores listado com sucesso!", fornecedores });
@@ -20,9 +21,9 @@ const listarFornecedoresController = async (req, res) => {
 
 const obterFornecedorPorIdController = async (req, res) => {
   try {
-    const { idFornecedor } = req.params;
+    const { id } = req.params;
 
-    const fornecedor = obterFornecedorPorId(idFornecedor);
+    const fornecedor = await obterFornecedorPorId(id);
     res
       .status(200)
       .json({ mensagem: "Fornecedor obtido a partir do ID", fornecedor });
@@ -34,10 +35,18 @@ const obterFornecedorPorIdController = async (req, res) => {
 
 const criarFornecedorController = async (req, res) => {
   try {
-    const { nome } = req.body;
+    const { nome, tipo, cnpj, telefone, email, endereco, cidade, estado } =
+      req.body;
 
     const fornecedorData = {
-      nome: nome,
+      nome,
+      tipo,
+      cnpj,
+      telefone,
+      email,
+      endereco,
+      cidade,
+      estado,
       status: "ativo",
     };
 
@@ -53,18 +62,32 @@ const criarFornecedorController = async (req, res) => {
 
 const atualizarFornecedorController = async (req, res) => {
   try {
-    const { idFornecedor } = req.params;
-    const { nome, status } = req.body;
+    const { id } = req.params;
+    const {
+      nome,
+      tipo,
+      cnpj,
+      telefone,
+      email,
+      endereco,
+      cidade,
+      estado,
+      status,
+    } = req.body;
 
     const fornecedorData = {
-      nome: nome,
-      status: status,
+      nome,
+      tipo,
+      cnpj,
+      telefone,
+      email,
+      endereco,
+      cidade,
+      estado,
+      status,
     };
 
-    const fornecedorAtualizado = await atualizarFornecedor(
-      idFornecedor,
-      fornecedorData
-    );
+    const fornecedorAtualizado = await atualizarFornecedor(id, fornecedorData);
     res.status(200).json({
       mensagem: "Fornecedor atualizado com sucesso!",
       fornecedorAtualizado,
@@ -74,14 +97,14 @@ const atualizarFornecedorController = async (req, res) => {
     res.status(500).json({ mensagem: "Erro ao atualizar o fornecedor" });
   }
 };
-const desativarFornecedorController = async (req, res) => {
+const deletarFornecedorController = async (req, res) => {
   try {
     const { id } = req.params;
-    await desativarFornecedor(id);
-    res.status(200).json({ mensagem: "Fornecedor desativado com sucesso!" });
+    await deletarFornecedor(id);
+    res.status(200).json({ mensagem: "Fornecedor deletado com sucesso!" });
   } catch (err) {
-    console.error("Erro ao desativar o fornecedor: ", err);
-    res.status(500).json({ mensagem: "Erro ao desativar o fornecedor" });
+    console.error("Erro ao deletar o fornecedor: ", err);
+    res.status(500).json({ mensagem: "Erro ao deletar o fornecedor" });
   }
 };
 export {
@@ -89,5 +112,5 @@ export {
   listarFornecedoresController,
   obterFornecedorPorIdController,
   atualizarFornecedorController,
-  desativarFornecedorController,
+  deletarFornecedorController,
 };

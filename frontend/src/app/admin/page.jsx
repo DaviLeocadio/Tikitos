@@ -310,11 +310,11 @@ export default function AdminDashboard() {
                             ? `Existem ${dashboardData.produtos.baixoEstoque} produtos críticos na rede.` 
                             : 'Todos os níveis de estoque estão saudáveis.'}
                     </p>
-                    {dashboardData.produtos.baixoEstoque > 0 && (
+                    {/* {dashboardData.produtos.baixoEstoque > 0 && (
                         <Link href="/admin/alertas" className="text-sm font-semibold text-orange-700 hover:text-orange-900 underline">
                             Resolver agora
                         </Link>
-                    )}
+                    )} */}
                 </div>
               </div>
 
@@ -330,7 +330,7 @@ export default function AdminDashboard() {
                   title="Nova Loja"
                   description="Cadastrar filial"
                   icon="shop"
-                  href="/admin/lojas"
+                  href="/admin/lojas/cadastrar"
                   color="[#76196c]"
                 />
                 <QuickActionCard

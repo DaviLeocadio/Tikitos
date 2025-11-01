@@ -12,7 +12,7 @@ import ModalDesativarVendedor from "@/components/admin/vendedores/ModalDesativar
 import ModalTransferirFuncionario from "@/components/admin/gerentes/ModalTransferirFuncionario";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 
-export default function AdminEquipes() {
+export default function AdminVendedores() {
   const [sorting, setSorting] = useState([]);
   const [globalFilter, setGlobalFilter] = useState("");
   const [statusFiltro, setStatusFiltro] = useState("todos");
@@ -81,18 +81,13 @@ export default function AdminEquipes() {
         {/* Header */}
         <div>
           <h1 className="text-3xl lg:text-4xl font-bold text-[#76196c]">
-            <SidebarTrigger /> Gerenciar Equipe
+            <SidebarTrigger /> Gerenciar Vendedores
           </h1>
           <p className="text-lg text-[#8c3e82] mt-1">
             {vendedoresFiltrados.length} integrantes
             encontrados
           </p>
 
-          <div className="mt-3 p-3 bg-yellow-50 border border-yellow-200 rounded">
-            <p className="text-sm text-yellow-800">
-              Observação: O controle de funcionários (criação/edição) é feito pelo gerente da empresa.
-            </p>
-          </div>
         </div>
 
         {/* Filtros */}

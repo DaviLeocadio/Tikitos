@@ -5,7 +5,7 @@ import { listarProdutos } from "../models/Produto.js";
 
 const metaAdminController = async (req, res) => {
   try {
-    const {categorias, fornecedores, filiais, produtos} = req.query;
+    const {categorias, fornecedores, filiais, produtos, fornecedoresSup, todosFornecedores} = req.query;
     let response = {};
 
     if(categorias) {
@@ -14,9 +14,18 @@ const metaAdminController = async (req, res) => {
     }
 
     if(fornecedores){
+        const listaFornecedores = await listarFornecedor(`status = 'ativo' AND tipo = 'mercadorias'`);
+        response.fornecedores = listaFornecedores;
+    }
+    if(fornecedoresSup){
+        const listaFornecedores = await listarFornecedor(`status = 'ativo' AND tipo = 'suprimentos'`);
+        response.fornecedoresSup = listaFornecedores;
+    }
+    if(todosFornecedores){
         const listaFornecedores = await listarFornecedor(`status = 'ativo'`);
         response.fornecedores = listaFornecedores;
     }
+
     if(filiais){
         const listaFiliais = await listarEmpresas(`tipo = 'filial'`);
         response.filiais = listaFiliais;
@@ -25,8 +34,6 @@ const metaAdminController = async (req, res) => {
         const listaProdutos = await listarProdutos(`status = 'ativo'`);
         response.produtos = listaProdutos;
     }
-
-
 
     response.mensagem = "Dados de formulário obtidos com sucesso!";
 

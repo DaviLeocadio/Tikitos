@@ -101,10 +101,14 @@ ORDER BY valor_total DESC, total_vendas DESC;
   // Produtos com baixo estoque (consolidado)
   async getProdutosBaixoEstoque() {
     const sql = `
-      SELECT COUNT(*) as total
+      SELECT COUNT(*) AS total
       FROM produto_loja p
-      WHERE p.estoque <= ${process.env.ESTOQUE_MINIMO}
-    `;
+      INNER JOIN empresas e 
+      ON e.id_empresa = p.id_empresa
+      WHERE 
+      p.estoque < ${process.env.ESTOQUE_MINIMO}
+      AND e.status = 'Ativo';
+`;
 
     const resultado = await readRaw(sql);
     return resultado[0]?.total || 0;
