@@ -167,7 +167,13 @@ export default function CardProduto({ produto }) {
       if (response.ok) {
         const data = await response.json();
 
-        const produtoEstoque = data.produtosComEstoqueBaixo.filter(
+        const produtosComEstoqueBaixo = Array.isArray(
+          data?.produtosComEstoqueBaixo
+        )
+          ? data.produtosComEstoqueBaixo
+          : [];
+
+        const produtoEstoque = produtosComEstoqueBaixo.filter(
           (p) => p.id_produto === produto.id_produto
         );
 
