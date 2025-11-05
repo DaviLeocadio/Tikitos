@@ -88,9 +88,12 @@ const estoqueBaixoController = async (req, res) => {
       })
     );
 
-    const usuarioEmpresa = req.usuarioEmpresa
+    const usuarioEmpresa = req.usuarioEmpresa;
 
-    produtosComEstoqueBaixo = await formatarProdutos(produtosComEstoqueBaixo, usuarioEmpresa)
+    produtosComEstoqueBaixo = await formatarProdutos(
+      produtosComEstoqueBaixo,
+      usuarioEmpresa
+    );
 
     return res.status(200).json({
       mensagem: "Produtos com estoque baixo consultados com sucesso",
@@ -101,6 +104,29 @@ const estoqueBaixoController = async (req, res) => {
     res
       .status(500)
       .json({ mensagem: "Erro ao consultar produtos com estoque baixo" });
+  }
+};
+
+const visualizarEstoqueController = async (req, res) => {
+  try {
+    const { idFilial } = req.body;
+
+    if (!idFilial)
+      return res
+        .status(401)
+        .json({ mensagem: "Parâmetros obrigatórios não preenchidos!" });
+        
+    const produtosLoja = listarProdutosLoja(`id_empresa = ${idFilial}`);
+
+    return res.status(200).json({
+      mensagem: "Estoque listado com sucesso!",
+      produtos: produtosLoja,
+    });
+  } catch (err) {
+    console.error("Erro ao consultar produtos com estoque baixo: ", err);
+    res
+      .status(500)
+      .json({ err: "Erro ao consultar produtos com estoque baixo" });
   }
 };
 

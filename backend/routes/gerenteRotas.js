@@ -14,7 +14,16 @@ import {
   atualizarProdutoController,
 } from "../controllers/ProdutoController.js";
 
-import { atualizarProdutoLojaController, estoqueBaixoController } from "../controllers/ProdutoLojaController.js";
+import {
+  atualizarProdutoLojaController,
+  estoqueBaixoController,
+} from "../controllers/ProdutoLojaController.js";
+import {
+  fluxoCaixaDiarioController,
+  obterResumoCaixaController,
+} from "../controllers/CaixaController.js";
+import { listarVendasGerenteController } from "../controllers/VendaController.js";
+import { gerarRelatorioGerenteController } from "../controllers/RelatorioController.js";
 
 // const ProdutoController = require('../controllers/ProdutoController');
 // const RelatorioController = require('../controllers/RelatorioController');
@@ -39,16 +48,16 @@ router.put("/vendedores/:vendedorId", atualizarVendedorController);
 /* ===== Produtos e Estoque ===== */
 
 // Lista todos os produtos
-router.get('/produtos', listarProdutosController);
+router.get("/produtos", listarProdutosController);
 
 // Informações específicas de um produto
-router.get('/produtos/:idProduto', obterProdutoPorIdController);
+router.get("/produtos/:idProduto", obterProdutoPorIdController);
 
 // Edita estoque e/ou desconto de um produto (na filial)
-router.put('/produtos/:id', atualizarProdutoLojaController);
+router.put("/produtos/:id", atualizarProdutoLojaController);
 
 // Lista produtos com estoque abaixo do mínimo (alerta)
-router.get('/estoque-baixo', estoqueBaixoController);
+router.get("/estoque-baixo", estoqueBaixoController);
 
 /* ===== Despesas ===== */
 
@@ -64,18 +73,18 @@ router.get('/estoque-baixo', estoqueBaixoController);
 // // Exclui um gasto
 // router.delete('/gastos/:id', GastoController.excluirGasto);
 
-/* ===== Caixa, Vendas e relatórios ===== */
+/* ===== Caixa, Vendas e Relatórios ===== */
 
-// // Visualiza valores obtidos do fluxo de caixa de cada dia
-// router.get('/caixa', CaixaController.fluxoCaixaDiario);
+// Visualiza valores obtidos do fluxo de caixa de cada dia
+router.get("/caixa", fluxoCaixaDiarioController);
 
-// // Resumo de um caixa específico
-// router.get('/caixa/:id', CaixaController.resumoCaixa);
+// Resumo de um caixa específico
+router.get("/caixa/:idCaixa", obterResumoCaixaController);
 
-// // Relatório financeiro com parâmetros de consulta
-// router.get('/relatorio', RelatorioController.gerarRelatorio);
+// Relatório financeiro com parâmetros de consulta
+router.get("/relatorio", gerarRelatorioGerenteController);
 
-// // Lista vendas da filial (filtros: data, vendedor, forma de pagamento)
-// router.get('/vendas', VendaController.listarVendas);
+// Lista vendas da filial (filtros: data, vendedor, forma de pagamento)
+router.get("/vendas", listarVendasGerenteController);
 
 export default router;

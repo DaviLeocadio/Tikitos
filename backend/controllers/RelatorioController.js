@@ -1,90 +1,75 @@
-// import { 
-// listarRelatorios,
-// obterRelatorioPorId,
-// criarRelatorio,
-// atualizarRelatorio,
-// excluirRelatorio,
-// } from '../models/Relatorio.js';
-// import { fileURLToPath } from 'url';
-// import path from 'path';
+import { gerarRelatorioFinanceiroGerente } from "../models/Relatorio.js";
+import { listarVendas } from "../models/Venda.js";
 
+const gerarRelatorioGerenteController = async (req, res) => {
+  try {
+    const { inicio, fim, idCaixa, pagamento, detalhado } = req.query;
+    const idEmpresa = req.usuarioEmpresa;
+    
+    let relatorio = await gerarRelatorioFinanceiroGerente(
+      idEmpresa,
+      inicio || null,
+      fim || null,
+      idCaixa || null
+    );
 
+    //Buscar dados dos gastos
 
-// const __filename = fileURLToPath(import.meta.url);
-// const __dirname = path.dirname(__filename);
+    if (pagamento) {
+      const filtroQuantidade = `quantidade_${pagamento}`;
+      const filtroValor = `valor_${pagamento}`;
+      
+      relatorio = relatorio.map((linha) => ({
+        data: linha.data,
+        total_vendas: linha[filtroQuantidade],
+        saldo_total: linha[filtroValor],
+        media_por_venda:
+        linha[filtroQuantidade] > 0
+        ? linha[filtroValor] / linha[filtroQuantidade]
+        : 0,
+      }));
+    }
+    
+    let vendas = null;
 
-// const listarRelatoriosController = async (req, res) => {
-// try {
-//     const relatorios = await listarRelatorios();
-//     res.status(200).json(relatorios);
-// } catch (err) {
-//     console.error('Erro ao listar relatórios: ', err);
-//     res.status(500).json({ mensagem: 'Erro ao listar relatórios' });
-// }
-// };
+    if (detalhado) {
+      let conditions = [];
+      conditions.push(`id_empresa = ${idEmpresa}`);
+      if (inicio && fim)
+        conditions.push(`DATE(data_venda) BETWEEN '${inicio}' AND ${fim}`);
+      if (pagamento) conditions.push(`tipo_pagamento = '${pagamento}'`);
+      
+      const query = conditions.join(" AND ");
+      
+      vendas = await listarVendas(query);
 
-// const obterRelatorioPorIdController = async (req, res) => {
-// try {
-//     const relatorio = await obterRelatorioPorId(req.params.id);
-//     if (relatorio) {
-//         res.json(relatorio);
-//     } else {
-//         res.status(404).json({ mensagem: 'Relatório não encontrado' });
-//     }
-// } catch (err) {
-//     console.error('Erro ao obter relatório por ID: ', err);
-//     res.status(500).json({ mensagem: 'Erro ao obter relatório por ID' });
-// }
-// };
+      console.log(vendas)
+    }
+    
+    relatorio = relatorio.filter(linha => (parseFloat(linha.total_vendas) !== 0));
 
-// const criarRelatorioController = async (req, res) => {
-// try {
-//     const { titulo, descricao, data } = req.body;
-//     const relatorioData = {
-//         titulo,
-//         descricao,
-//         data,
-//     };
-//     const relatorioId = await criarRelatorio(relatorioData);
-//     res.status(201).json({ mensagem: 'Relatório criado com sucesso', relatorioId });
-// } catch (error) {
-//     console.error('Erro ao criar relatório:', error);
-//     res.status(500).json({ mensagem: 'Erro ao criar relatório' });
-// }
-// };
+    relatorio = relatorio.map((linha) => {
+      const mediaPorVenda = parseFloat(linha.media_por_venda).toFixed(2);
+      return {
+        ...linha,
+        media_por_venda: mediaPorVenda
+      }
+      
+    });
+    
+    let retorno = {};
+    retorno.resumo = relatorio;
+    if(vendas) retorno.vendas = vendas;
 
-// const atualizarRelatorioController = async (req, res) => {
-// try {
-//     const relatorioId = req.params.id;
-//     const { titulo, descricao, data } = req.body;
-//     const relatorioData = {
-//         titulo,
-//         descricao,
-//         data,
-//     };
-//     await atualizarRelatorio(relatorioId, relatorioData);
-//     res.status(200).json({ mensagem: 'Relatório atualizado com sucesso' });
-// } catch (error) {
-//     console.error('Erro ao atualizar relatório:', error);
-//     res.status(500).json({ mensagem: 'Erro ao atualizar relatório' });
-// }
-// };
+    console.log(retorno)
+    return res.status(200).json({
+      mensagem: "Relatório financeiro para gerente realizado com sucesso",
+      retorno
+    });
+  } catch (err) {
+    console.error("Erro ao gerar relatório para gerente: ", err);
+    res.status(500).json({ mensagem: "Erro ao gerar relatório para gerente" });
+  }
+};
 
-// const excluirRelatorioController = async (req, res) => {
-// try {
-//     const relatorioId = req.params.id;
-//     await excluirRelatorio(relatorioId);
-//     res.status(200).json({ mensagem: 'Relatório excluído com sucesso' });
-// } catch (err) {
-//     console.error('Erro ao excluir relatório:', err);
-//     res.status(500).json({ mensagem: 'Erro ao excluir relatório' });
-// }
-// };
-
-// export {
-// obterRelatorioPorIdController,
-// listarRelatoriosController,
-// excluirRelatorioController,
-// atualizarRelatorioController,
-// criarRelatorioController,
-// };
+export { gerarRelatorioGerenteController };

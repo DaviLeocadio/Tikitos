@@ -6,9 +6,9 @@ import {
   create,
 } from "../config/database.js";
 
-const listarVendas = async () => {
+const listarVendas = async (query = null) => {
   try {
-    return await readAll("vendas");
+    return await readAll("vendas", query);
   } catch (err) {
     console.error("Erro ao listar vendas: ", err);
     throw err;

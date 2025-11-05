@@ -299,9 +299,39 @@ const excluirVendaController = async (req, res) => {
   }
 };
 
+const listarVendasGerenteController = async (req, res) => {
+  try {
+    const { data, idVendedor, pagamento } = req.query;
+    const idEmpresa = req.usuarioEmpresa;
+
+    let conditions = [];
+
+    conditions.push(`id_empresa = ${idEmpresa}`)
+    if(data) conditions.push(`DATE(data_venda) = '${data}'`);
+    if(idVendedor) conditions.push (`id_usuario = ${idVendedor}`);
+    if(pagamento) conditions.push(`tipo_pagamento = '${pagamento}'`);
+
+    const query = conditions.join(" AND ");
+
+    const vendas = await listarVendas(query);
+
+    if (!vendas || vendas.lenght === 0) {
+      return res
+        .status(404)
+        .json({ mensagem: "Nenhuma venda encontrada" });
+    }
+
+    return res.status(200).json({ mensagem: "Listagem de vendas realizada", vendas });
+  } catch (err) {
+    console.error("Erro ao excluir venda: ", err);
+    res.status(500).json({ mensagem: "Erro ao listar vendas: ", err });
+  }
+};
+
 export {
   listarVendasController,
   obterVendaPorIdController,
   criarVendaController,
   excluirVendaController,
+  listarVendasGerenteController,
 };
