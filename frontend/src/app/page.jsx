@@ -89,7 +89,7 @@ export default function Login() {
         {/* IMAGEM DA MENINA PULANDO */}
         <div className="hidden lg:block m-0 p-0">
           <img
-            className="m-0 p-0 w-full h-full"
+            className="m-0 p-0 w-full h-full "
             src="/img/login/login_imagem.png"
             alt="Imagem grande"
           />

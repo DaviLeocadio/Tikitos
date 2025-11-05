@@ -1,4 +1,4 @@
-  "use client";
+"use client";
 
 import { setCookie } from "cookies-next/client";
 import styles from "./token.module.css";
@@ -8,10 +8,13 @@ export default function Home() {
   const [email, setEmail] = useState("");
   const [emailIncorreto, setEmailIncorreto] = useState(false);
   const [emailCorreto, setEmailCorreto] = useState(false);
+  const [caracterExcedido, setCaracterExcedido] = useState(false);
+  const [cadastroIncorreto, setCadastroIncorreto] = useState(false);
   const inputsRef = useRef([]);
 
   const handleChange = (e, index) => {
     const value = e.target.value;
+    if (value.length > 1) return;
 
     // Vai para o próximo se digitou algo
     if (value && inputsRef.current[index + 1]) {
@@ -38,7 +41,7 @@ export default function Home() {
   useEffect(() => {
     if (!email) return;
 
-    console.log(email)
+    console.log(email);
     //Verificar Email
     const temporizador = setTimeout(async () => {
       try {
@@ -51,18 +54,30 @@ export default function Home() {
           }
         );
 
-        const data = await response.json();
+        // TRATAMENTO DE ERROS
+        //Caso tente enviar um email vazio
+        if (response.status == 401) {
+          return;
+        }
 
+        if (response.status == 400) {
+          return setCaracterExcedido(true);
+        }
+
+        //Vendo se o email está correto de acordo com o banco
         if (response.status == 404) {
           setEmailIncorreto(true);
         }
-
         if (response.status == 200) {
           setEmailCorreto(true);
         }
-        console.log(data);
-      } catch (error) {}
+      } catch (error) {
+        return console.log("Erro ao verificar email: ", error);
+      }
     }, 2000);
+
+    //Tirando as mensagens de erro
+    setCaracterExcedido(false);
     return () => clearTimeout(temporizador);
   }, [email]);
 
@@ -79,6 +94,10 @@ export default function Home() {
           body: JSON.stringify({ email: email, token: codigo }),
         }
       );
+
+      if (response.status == 401) {
+         return setCadastroIncorreto(true);
+      }
 
       if (response.ok) {
         setCookie("email", email);
@@ -204,6 +223,13 @@ export default function Home() {
                     </div>
                   </div>
                 </form>
+                {caracterExcedido ? (
+                  <div>
+                    <p>Número de caracteres excedido</p>
+                  </div>
+                ) : (
+                  ""
+                )}
               </div>
 
               {/* INPUT DE VERIFICAÇÃO */}
@@ -229,7 +255,9 @@ export default function Home() {
                           ref={(el) => (inputsRef.current[i] = el)}
                           type="text"
                           maxLength="1"
-                          onChange={(e) => {handleChange(e, i)}}
+                          onChange={(e) => {
+                            handleChange(e, i);
+                          }}
                           onKeyDown={(e) => handleKeyDown(e, i)}
                           className={`w-12 h-14 sm:w-10 sm:h-10 min-w-[2.95rem] min-h-[3.55rem] text-center text-lg font-semibold bg-[#DABCE1] border-2 border-dashed border-[#7C3A82] rounded-full focus:outline-none focus:border-[#7C3A82] text-[var(--color-verdao)] transition-all duration-300 ease-in-out ${styles.validation_inputs}`}
                         />
@@ -237,6 +265,13 @@ export default function Home() {
                     </div>
                   </div>
                 </form>
+                {cadastroIncorreto ? (
+                  <div>
+                    <p>Token Incorreto</p>
+                  </div>
+                ) : (
+                  ""
+                )}
               </div>
             </div>
           </div>

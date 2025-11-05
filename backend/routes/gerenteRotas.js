@@ -24,11 +24,8 @@ import {
 } from "../controllers/CaixaController.js";
 import { listarVendasGerenteController } from "../controllers/VendaController.js";
 import { gerarRelatorioGerenteController } from "../controllers/RelatorioController.js";
+import { adicionarGastoController, listarGastosController } from "../controllers/GastoController.js";
 
-// const ProdutoController = require('../controllers/ProdutoController');
-// const RelatorioController = require('../controllers/RelatorioController');
-// const CaixaController = require('../controllers/CaixaController');
-// const VendaController = require('../controllers/VendaController');
 
 const router = express.Router();
 
@@ -59,19 +56,19 @@ router.put("/produtos/:id", atualizarProdutoLojaController);
 // Lista produtos com estoque abaixo do mínimo (alerta)
 router.get("/estoque-baixo", estoqueBaixoController);
 
-/* ===== Despesas ===== */
+/* ======== Despesas ======== */
 
-// // Informações de gastos da filial
-// router.get('/gastos', GastoController.listarGastos);
+// Informações de gastos da filial
+router.get('/gastos', listarGastosController);
 
-// // Adiciona um gasto
-// router.post('/gastos', GastoController.adicionarGasto);
+// Adiciona um gasto
+ router.post('/gastos', adicionarGastoController);
 
 // // Edita informações de um gasto
-// router.put('/gastos/:id',GastoController.editarGasto);
+//  router.put('/gastos/:id',GastoController.editarGasto);
 
 // // Exclui um gasto
-// router.delete('/gastos/:id', GastoController.excluirGasto);
+//  router.delete('/gastos/:id', GastoController.excluirGasto);
 
 /* ===== Caixa, Vendas e Relatórios ===== */
 
