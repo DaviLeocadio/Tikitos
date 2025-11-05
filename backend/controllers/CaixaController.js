@@ -106,7 +106,7 @@ const FecharCaixaController = async (req, res) => {
 
     //Fechamento
     const caixaFechado = await FecharCaixa(caixaData, idVendedor);
-    res
+    return res
       .status(200)
       .json({ mensagem: "Caixa fechado com sucesso", caixaFechado });
   } catch (err) {

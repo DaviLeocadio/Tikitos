@@ -5,10 +5,24 @@ import {
   update,
   create,
 } from "../config/database.js";
+import { mascaraCpf, mascaraTelefone } from "../utils/formatadorNumero.js";
 
 const listarUsuarios = async (whereClause = null) => {
   try {
-    return await readAll("usuarios", whereClause);
+    const usuarios = await readAll("usuarios", whereClause);
+    const usuariosFormatados = usuarios.map((usuario) => {
+      return {
+        ...usuario,
+        cpf: mascaraCpf(usuario.cpf),
+        telefone: mascaraTelefone(usuario.telefone),
+      };
+    });
+
+    usuariosFormatados.forEach((usuario) => {
+      delete usuario.senha;
+    });
+
+    return usuariosFormatados;
   } catch (err) {
     console.error("Erro ao listar usuários: ", err);
     throw err;
@@ -17,7 +31,15 @@ const listarUsuarios = async (whereClause = null) => {
 
 const obterUsuarioPorId = async (id) => {
   try {
-    return await read("usuarios", `id_usuario = ${id}`);
+    const usuario = await read("usuarios", `id_usuario = ${id}`);
+    delete usuario.senha;
+
+    return {
+      ...usuario,
+      cpf: mascaraCpf(usuario.cpf),
+      telefone: mascaraTelefone(usuario.telefone),
+    };
+    
   } catch (err) {
     console.error("Erro ao obter usuario por ID: ", err);
     throw err;
@@ -42,9 +64,4 @@ const atualizarUsuario = async (id, usuarioData) => {
   }
 };
 
-export {
-  listarUsuarios,
-  obterUsuarioPorId,
-  criarUsuario,
-  atualizarUsuario
-};
+export { listarUsuarios, obterUsuarioPorId, criarUsuario, atualizarUsuario };
