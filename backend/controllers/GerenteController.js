@@ -1,3 +1,4 @@
+import { json } from "express";
 import {
   listarUsuarios,
   obterUsuarioPorId,
@@ -56,10 +57,52 @@ const criarGerenteController = async (req, res) => {
 
     const gerenteCriado = await criarUsuario(gerenteData);
 
-    res.status(201).json({mensagem: "Gerente criado com sucesso!", gerenteCriado});
+    res
+      .status(201)
+      .json({ mensagem: "Gerente criado com sucesso!", gerenteCriado });
   } catch (err) {
     res.status(500).json({ err: "Erro ao criar gerente" });
   }
 };
 
-export { listarGerentesController, obterGerentePorIdController };
+const atualizarGerenteController = async (req, res) => {
+  try {
+    const { idGerente } = req.params;
+    const {
+      nome,
+      email,
+      telefone,
+      cpf,
+      endereco,
+      perfil,
+      data_nasc,
+      idEmpresa,
+    } = req.body;
+
+    const gerenteData = {
+      nome: nome,
+      email: email,
+      telefone: telefone,
+      cpf: cpf,
+      endereco,
+      endereco,
+      perfil: perfil,
+      data_nasc: data_nasc,
+      id_empresa: idEmpresa,
+    };
+
+    const gerenteAtualizado = atualizarUsuario(idGerente, gerenteData);
+
+    res
+      .status(200)
+      .json({ mensagem: "Gerente atualizado com sucesso!", gerenteAtualizado });
+  } catch (err) {
+    res.status(500).json({ err: "Não foi possível atualizar o gerente" });
+  }
+};
+
+export {
+  listarGerentesController,
+  obterGerentePorIdController,
+  criarGerenteController,
+};
