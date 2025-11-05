@@ -5,7 +5,6 @@ import { JWT_SECRET } from "../config/jwt.js"; // Importar a chave secreta
 const authMiddleware = (funcoesPermitidas = []) => {
   return (req, res, next) => {
     // Cookies that have been signed
-
     const authHeader = req.cookies.token;
 
     if (!authHeader) {

@@ -51,7 +51,7 @@ const checkEmailController = async (req, res) => {
       return res.status(404).json({ error: "Email não encontrado" });
 
     // Se for o primeiro acesso do usuário, a senha será 'deve_mudar'.
-    if (usuario.senha === "deve_mudar") { 
+    if (usuario.senha === "deve_mudar") {
       await generateCode(usuario.id_usuario, email);
       return res.status(200).json({ type: "success", step: "verificar_token" }); // verifica token
     }
@@ -67,16 +67,27 @@ const verificarTokenController = async (req, res) => {
   const { email, token } = req.body;
 
   // Verifica de há excesso de caracteres para proteção contra ataques
-  if (email.length > 100 || token.length != 6) {
-    return res.status(400).json({ mensagem: "Máximo de caracteres excedido" });
+  if (email.length > 100) {
+    return res
+      .status(400)
+      .json({
+        mensagem: "Máximo de caracteres excedido",
+        code: "CARACTER_EXCEDIDO",
+      });
   }
 
   try {
     if (!email || !token)
       return res
         .status(400)
-        .json({ error: "Insira todos os parâmetros obrigatórios" });
+        .json({
+          error: "Insira todos os parâmetros obrigatórios",
+          code: "FALTA_DADOS",
+        });
 
+    if(token.length != 6){
+      return res.status(400).json({error: "Token incorreto", code:"TOKEN_INCORRETO"})
+    }
     const usuario = await encontrarUsuario(email);
     if (!usuario)
       return res.status(404).json({ error: "Email não encontrado" });
@@ -91,13 +102,13 @@ const verificarTokenController = async (req, res) => {
 
     // Verifica se está expirado
     if (Date.now() > new Date(record.expira_em)) {
-      return res.status(401).json({ error: "O código expirou." });
+      return res.status(401).json({ error: "O código expirou.", code:"CODIGO_EXPIROU" });
     }
 
     // Verifica se o código coincide
     const tokenCorreto = await compare(String(token), record.codigo);
     if (!tokenCorreto) {
-      return res.status(401).json({ error: "Código inválido" });
+      return res.status(401).json({ error: "Código inválido", code:"CODIGO_INVALIDO" });
     }
 
     const tokenAtualizado = await editarToken(record.id_token, {
@@ -121,9 +132,10 @@ const definirSenhaController = async (req, res) => {
   const { email, novaSenha, confirmarSenha } = req.body;
   try {
     if (!email || !novaSenha || !confirmarSenha)
-      return res
-        .status(400)
-        .json({ error: "Insira todos os parâmetros obrigatórios", code:"FALTA_DADOS" });
+      return res.status(400).json({
+        error: "Insira todos os parâmetros obrigatórios",
+        code: "FALTA_DADOS",
+      });
 
     // Verifica se email existe no bd
     const usuario = await encontrarUsuario(email);
@@ -131,11 +143,11 @@ const definirSenhaController = async (req, res) => {
       return res.status(404).json({ error: "Email não encontrado" });
 
     // Verifica de há excesso de caracteres para proteção contra ataques
-    if (
-      novaSenha.length > 25 ||
-      confirmarSenha.length > 25
-    ) {
-      return res.status(400).json({ mensagem: "Máximo de caracteres excedido", code:"CARACTER_EXCEDIDO" });
+    if (novaSenha.length > 25 || confirmarSenha.length > 25) {
+      return res.status(400).json({
+        mensagem: "Máximo de caracteres excedido",
+        code: "CARACTER_EXCEDIDO",
+      });
     }
 
     // Busca o token no banco
@@ -151,7 +163,9 @@ const definirSenhaController = async (req, res) => {
 
     // Verifica se as duas senhas coincidem
     if (novaSenha !== confirmarSenha) {
-      return res.status(400).json({ error: "As senhas não coincidem", code:"SENHA_DIFERENTE" });
+      return res
+        .status(400)
+        .json({ error: "As senhas não coincidem", code: "SENHA_DIFERENTE" });
     }
 
     // Gera hash da senha
@@ -204,10 +218,9 @@ const loginController = async (req, res) => {
       httpOnly: true,
       secure: false, // true em produção (https)
       sameSite: "lax",
+      path: "/",
       maxAge:
-        usuario.perfil === "vendedor"
-          ? 12 * 60 * 60 * 1000
-          : 1 * 60 * 60 * 1000,
+        usuario.perfil == "vendedor" ? 12 * 60 * 60 * 1000 : 1 * 60 * 60 * 1000,
     });
 
     res.status(200).json({
@@ -218,6 +231,7 @@ const loginController = async (req, res) => {
         email: usuario.email,
         perfil: usuario.perfil,
         empresa: usuario.id_empresa,
+        cookie: token,
       },
     });
   } catch (error) {

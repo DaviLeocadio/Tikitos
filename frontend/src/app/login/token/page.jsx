@@ -2,14 +2,14 @@
 
 import { setCookie } from "cookies-next/client";
 import styles from "./token.module.css";
-import { useEffect, useRef, useState, use } from "react";
+import { useEffect, useRef, useState } from "react";
+import { toast, ToastContainer, Bounce } from "react-toastify";
 
 export default function Home() {
   const [email, setEmail] = useState("");
   const [emailIncorreto, setEmailIncorreto] = useState(false);
   const [emailCorreto, setEmailCorreto] = useState(false);
   const [caracterExcedido, setCaracterExcedido] = useState(false);
-  const [cadastroIncorreto, setCadastroIncorreto] = useState(false);
   const inputsRef = useRef([]);
 
   const handleChange = (e, index) => {
@@ -61,13 +61,64 @@ export default function Home() {
         }
 
         if (response.status == 400) {
-          return setCaracterExcedido(true);
+          return toast("Número de caracteres excedido!", {
+            icon: (
+              <img
+                src="/img/toast/logo_ioio.png"
+                alt="logo"
+                className="w-22 h-7"
+              />
+            ),
+            position: "top-right",
+            autoClose: 4000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            style: { backgroundColor: "#924187", color: "#fff" },
+            transition: Bounce,
+          });
         }
 
         //Vendo se o email está correto de acordo com o banco
         if (response.status == 404) {
           setEmailIncorreto(true);
+          return toast("Email incorreto!", {
+            icon: (
+              <img
+                src="/img/toast/logo_ioio.png"
+                alt="logo"
+                className="w-22 h-7"
+              />
+            ),
+            position: "top-right",
+            autoClose: 4000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            style: { backgroundColor: "#924187", color: "#fff" },
+            transition: Bounce,
+          });
         }
+
+        if(response.status == 400){
+          return toast("Número de caracteres excedido!", {
+            icon: (
+              <img
+                src="/img/toast/logo_ioio.png"
+                alt="logo"
+                className="w-22 h-7"
+              />
+            ),
+            position: "top-right",
+            autoClose: 4000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            style: { backgroundColor: "#924187", color: "#fff" },
+            transition: Bounce,
+          });
+        }
+
         if (response.status == 200) {
           setEmailCorreto(true);
         }
@@ -95,8 +146,105 @@ export default function Home() {
         }
       );
 
+      const data = await response.json();
+
+      console.log(data.code);
+
       if (response.status == 401) {
-         return setCadastroIncorreto(true);
+        switch (data.code) {
+          case "CODIGO_EXPIROU":
+            return toast("O seu código expirou!", {
+              icon: (
+                <img
+                  src="/img/toast/logo_ioio.png"
+                  alt="logo"
+                  className="w-22 h-7"
+                />
+              ),
+              position: "top-right",
+              autoClose: 4000,
+              hideProgressBar: true,
+              closeOnClick: true,
+              pauseOnHover: true,
+              style: { backgroundColor: "#924187", color: "#fff" },
+              transition: Bounce,
+            });
+
+          case "CODIGO_INVALIDO":
+            return toast("Código inválido!", {
+              icon: (
+                <img
+                  src="/img/toast/logo_ioio.png"
+                  alt="logo"
+                  className="w-22 h-7"
+                />
+              ),
+              position: "top-right",
+              autoClose: 4000,
+              hideProgressBar: true,
+              closeOnClick: true,
+              pauseOnHover: true,
+              style: { backgroundColor: "#924187", color: "#fff" },
+              transition: Bounce,
+            });
+        }
+      }
+
+      if (response.status == 400) {
+        switch (data.code) {
+          case "CARACTER_EXCEDIDO":
+            return toast("Número de caracteres excedido!", {
+              icon: (
+                <img
+                  src="/img/toast/logo_ioio.png"
+                  alt="logo"
+                  className="w-22 h-7"
+                />
+              ),
+              position: "top-right",
+              autoClose: 4000,
+              hideProgressBar: true,
+              closeOnClick: true,
+              pauseOnHover: true,
+              style: { backgroundColor: "#924187", color: "#fff" },
+              transition: Bounce,
+            });
+
+          case "FALTA_DADOS":
+            return toast("Preencha todos os campos!", {
+              icon: (
+                <img
+                  src="/img/toast/logo_ioio.png"
+                  alt="logo"
+                  className="w-22 h-7"
+                />
+              ),
+              position: "top-right",
+              autoClose: 4000,
+              hideProgressBar: true,
+              closeOnClick: true,
+              pauseOnHover: true,
+              style: { backgroundColor: "#924187", color: "#fff" },
+              transition: Bounce,
+            });
+          case "TOKEN_INCORRETO":
+            return toast("Token inválido!", {
+              icon: (
+                <img
+                  src="/img/toast/logo_ioio.png"
+                  alt="logo"
+                  className="w-22 h-7"
+                />
+              ),
+              position: "top-right",
+              autoClose: 4000,
+              hideProgressBar: true,
+              closeOnClick: true,
+              pauseOnHover: true,
+              style: { backgroundColor: "#924187", color: "#fff" },
+              transition: Bounce,
+            });
+        }
       }
 
       if (response.ok) {
@@ -110,6 +258,7 @@ export default function Home() {
 
   return (
     <>
+      <ToastContainer />
       <div
         className={`grid grid-cols-1 lg:grid-cols-2 gap-1 min-h-screen ${styles.login_fundo}`}
       >
@@ -161,12 +310,12 @@ export default function Home() {
 
           {/* ÁREA DOS INPUTS COM TODOS OS DETALHES */}
           <div className="flex items-start gap-6">
-            {/* LINHA LATERAL (01 → 02) */}
-            {/* <div className="flex flex-col items-center mt-2">
+            {/* imagem da linha com os números */}
+            {/* {/* <div className="flex flex-col items-center mt-2">
               <img
                 src="/img/token/token_linha.png"
                 alt="Linha com etapas"
-                className="h-full w-10 object-contain"
+                className="h-full w-90 z-10 m-0 p-0 object-contain"
               />
             </div> */}
 
@@ -232,19 +381,17 @@ export default function Home() {
                 )}
               </div>
 
-              {/* INPUT DE VERIFICAÇÃO */}
+              {/* INPUT DE VERIFICAÇÃO (FUNCIONAL E RESPONSIVO) */}
               <div
                 className={`bg-[#9CD089] p-4 rounded-3xl flex justify-center ${styles.form_container}`}
               >
-                <form
-                  className={`flex flex-col items-center md:px-4 xl:p-1 ${styles.form}`}
-                >
+                <form className={`flex flex-col items-center ${styles.form}`}>
                   <div className={styles.form_group}>
                     <label
                       className="text-[var(--color-verdao)] mb-2 block"
                       htmlFor="number"
                     >
-                      2°: Digite o código de validação:
+                      Digite o código de validação:
                     </label>
 
                     {/* ÁREA DOS INPUTZINHOS DE VERIFICAÇÃO */}
@@ -265,13 +412,6 @@ export default function Home() {
                     </div>
                   </div>
                 </form>
-                {cadastroIncorreto ? (
-                  <div>
-                    <p>Token Incorreto</p>
-                  </div>
-                ) : (
-                  ""
-                )}
               </div>
             </div>
           </div>

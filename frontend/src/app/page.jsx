@@ -3,6 +3,7 @@ import styles from "./page.module.css";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { setCookie, getCookie } from "cookies-next/client";
+import { ToastContainer, toast, Bounce } from "react-toastify";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -36,7 +37,21 @@ export default function Login() {
   }, [email, senha]);
 
   async function loginUser() {
-    if (!email || !senha) return setCamposVazios(true);
+    if (!email || !senha)
+      return toast("Preencha todos os campos!", {
+        icon: (
+          <img src="/img/toast/logo_ioio.png" alt="logo" className="w-22 h-7" />
+        ),
+        position: "top-right",
+        autoClose: 4000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        style: { backgroundColor: "#924187", color: "#fff" },
+        transition: Bounce,
+      });
+
+      
     try {
       const response = await fetch("http://localhost:8080/auth/login", {
         method: "POST",
@@ -49,7 +64,22 @@ export default function Login() {
 
       //Tratamento de erro caso o email ou a senha estiver incorreta
       if (response.status == 404 || response.status == 401) {
-        return setCadastroIncorreto(true);
+        return toast("Email ou senha incorretos!", {
+          icon: (
+            <img
+              src="/img/toast/logo_ioio.png"
+              alt="logo"
+              className="w-22 h-7"
+            />
+          ),
+          position: "top-right",
+          autoClose: 4000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          style: { backgroundColor: "#924187", color: "#fff" },
+          transition: Bounce,
+        });
       }
 
       if (response.ok) {
@@ -83,6 +113,7 @@ export default function Login() {
 
   return (
     <>
+      <ToastContainer />
       <div
         className={`grid grid-cols-1 lg:grid-cols-2 gap-1 min-h-screen ${styles.login_fundo}`}
       >
@@ -173,28 +204,6 @@ export default function Login() {
                 />
               </div>
             </form>
-
-            {/* Resposta do excesso de caracteres */}
-            {caracterExcedidoEmail ? (
-              <div>
-                <p>Caracteres excedido</p>
-              </div>
-            ) : caracterExcedidoSenha ? (
-              <div>
-                <p>Caracteres excedido</p>
-              </div>
-            ) : (
-              ""
-            )}
-
-            {/* Resposta de cadastro incorreto */}
-            {cadastroIncorreto ? (
-              <div>
-                <p>Email ou senha incorretos</p>
-              </div>
-            ) : (
-              ""
-            )}
           </div>
 
           {/* BOTÃO DE ENVIAR */}

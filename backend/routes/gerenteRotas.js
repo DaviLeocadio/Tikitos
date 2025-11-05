@@ -29,37 +29,24 @@ const router = express.Router();
 
 // Adiciona um funcionário (vendedor)
  router.post('/vendedores', criarVendedorController);
-router.post("/vendedores", criarVendedorController);
 
-// // Visualiza todos os vendedores
-router.get('/vendedores', VendedorController.listarVendedores);
 // Visualiza todos os vendedores
 router.get("/vendedores", listarVendedoresController);
 
 // // Altera informações de um vendedor específico
- router.put('/vendedores/:id', VendedorController.editarVendedor);
-
 router.put("/vendedores/:vendedorId", atualizarVendedorController);
 
 /* ===== Produtos e Estoque ===== */
 
-// // Lista todos os produtos
-router.get('/produtos', ProdutoController.listarProdutos);
 // Lista todos os produtos
 router.get('/produtos', listarProdutosController);
 
-// // Informações específicas de um produto
-router.get('/produtos/:id', ProdutoController.infoProduto);
+
 // Informações específicas de um produto
 router.get('/produtos/:idProduto', obterProdutoPorIdController);
 
-// // Edita estoque e/ou desconto de um produto (na filial)
- router.put('/produtos/:id', ProdutoController.editarProduto);
 // Edita estoque e/ou desconto de um produto (na filial)
 router.put('/produtos/:id', atualizarProdutoLojaController);
-
-// // Lista produtos com estoque abaixo do mínimo (alerta)
- router.get('/estoque-baixo', ProdutoController.estoqueBaixo);
 
 // Lista produtos com estoque abaixo do mínimo (alerta)
 router.get('/estoque-baixo', estoqueBaixoController);
@@ -67,29 +54,29 @@ router.get('/estoque-baixo', estoqueBaixoController);
 /* ======== Despesas ======== */
 
 // // Informações de gastos da filial
-router.get('/gastos', GastoController.listarGastos);
+// router.get('/gastos', GastoController.listarGastos);
 
-// // Adiciona um gasto
- router.post('/gastos', GastoController.adicionarGasto);
+// // // Adiciona um gasto
+//  router.post('/gastos', GastoController.adicionarGasto);
 
-// // Edita informações de um gasto
- router.put('/gastos/:id',GastoController.editarGasto);
+// // // Edita informações de um gasto
+//  router.put('/gastos/:id',GastoController.editarGasto);
 
-// // Exclui um gasto
- router.delete('/gastos/:id', GastoController.excluirGasto);
+// // // Exclui um gasto
+//  router.delete('/gastos/:id', GastoController.excluirGasto);
 
-/* ===== Caixa, Vendas e relatórios ===== */
+// /* ===== Caixa, Vendas e relatórios ===== */
 
-// // Visualiza valores obtidos do fluxo de caixa de cada dia
-router.get('/caixa', CaixaController.fluxoCaixaDiario);
+// // // Visualiza valores obtidos do fluxo de caixa de cada dia
+// router.get('/caixa', CaixaController.fluxoCaixaDiario);
 
-// // Resumo de um caixa específico
- router.get('/caixa/:id', CaixaController.resumoCaixa);
+// // // Resumo de um caixa específico
+//  router.get('/caixa/:id', CaixaController.resumoCaixa);
 
-// // Relatório financeiro com parâmetros de consulta
-router.get('/relatorio', RelatorioController.gerarRelatorio);
+// // // Relatório financeiro com parâmetros de consulta
+// router.get('/relatorio', RelatorioController.gerarRelatorio);
 
-// // Lista vendas da filial (filtros: data, vendedor, forma de pagamento)
-router.get('/vendas', VendaController.listarVendas);
+// // // Lista vendas da filial (filtros: data, vendedor, forma de pagamento)
+// router.get('/vendas', VendaController.listarVendas);
 
 export default router;

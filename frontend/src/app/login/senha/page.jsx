@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
 import styles from "./senha.module.css";
-import Link from "next/link";
 import { getCookie } from "cookies-next/client";
 import { toast, ToastContainer, Bounce } from "react-toastify";
 
@@ -49,10 +48,42 @@ export default function Home() {
 
         if (data.code == "CARACTER_EXCEDIDO") {
           console.log("CARACTER_EXCEDIDO");
+          toast("Número de caracteres excedido!", {
+            icon: (
+              <img
+                src="/img/toast/logo_ioio.png"
+                alt="logo"
+                className="w-22 h-7"
+              />
+            ),
+            position: "top-right",
+            autoClose: 4000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            style: { backgroundColor: "#924187", color: "#fff" },
+            transition: Bounce,
+          });
         }
 
         if (data.code == "SENHA_DIFERENTE") {
           console.log("SENHA_DIFERENTE");
+          toast("Confirmar a senha tem que ser igual ao campo de senha!", {
+            icon: (
+              <img
+                src="/img/toast/logo_ioio.png"
+                alt="logo"
+                className="w-22 h-7"
+              />
+            ),
+            position: "top-right",
+            autoClose: 4000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            style: { backgroundColor: "#924187", color: "#fff" },
+            transition: Bounce,
+          });
         }
       }
 
@@ -63,10 +94,11 @@ export default function Home() {
       console.log("Erro ao criar nova senha: ", error);
     }
   }
+
   return (
     <>
       <ToastContainer />
-      {ioio ? (
+      {/* {ioio ? (
         <div className="flex justify-end">
           <img
             src="/img/toast/logo_ioio.png"
@@ -80,7 +112,7 @@ export default function Home() {
             className={`w-10 absolute ps-20 ${styles.login_ioio}`}
           />
         </div>
-      )}
+      )} */}
       <div
         className={`grid grid-cols-1 lg:grid-cols-2 gap-1 min-h-screen ${styles.login_fundo}`}
       >
@@ -131,16 +163,11 @@ export default function Home() {
           </div>
 
           <div className="flex flex-col gap-4">
-            {/* INPUT DE EMAIL */}
-            <div className={`bg-[#9CD089]  ${styles.form_container}`}>
+            {/* INPUT DE NOVA SENHA */}
+            <div className={`flex flex-col gap-4 bg-[#9CD089]  ${styles.form_container}`}>
               <form className={styles.form}>
                 <div className={styles.form_group}>
-                  <label
-                    className={`text-[var(--color-verdao)]`}
-                    htmlFor="email"
-                  >
-                    3°: Digite uma nova senha:
-                  </label>
+                  <label className={`text-[var(--color-verdao)]`} htmlFor="email">3°: Digite uma nova senha:</label>
                   <input
                     type="text"
                     id="email"
@@ -154,17 +181,12 @@ export default function Home() {
                 </div>
               </form>
             </div>
-
-            {/* INPUT DE VERIFICAÇÃO */}
+              
+            {/* INPUT DE CONFIMAÇÃO DA NOVA SENHA */}
             <div className={`bg-[#9CD089]  ${styles.form_container}`}>
               <form className={styles.form}>
                 <div className={styles.form_group}>
-                  <label
-                    className={`text-[var(--color-verdao)] `}
-                    htmlFor="email"
-                  >
-                    4° Confirme sua nova senha:
-                  </label>
+                  <label className={`text-[var(--color-verdao)] `} htmlFor="email">4°: Confirme sua nova senha:</label>
                   <input
                     type="password"
                     id="email"
