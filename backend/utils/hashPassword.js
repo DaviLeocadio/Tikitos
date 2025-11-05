@@ -8,6 +8,6 @@ export async function generateHashedPassword(senha) {
     return await bcrypt.hash(senha, salt);
   } catch (error) {
     console.error("Erro ao hashear a senha:", error);
-    return error;
+    throw error;
   }
 }

@@ -41,12 +41,12 @@ export function NavUser({
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
               size="lg"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
+              className="data-[state=open]:bg-[#924187] data-[state=open]:text-[#75BA51] hover:bg-[#924187]">
               <Avatar className="h-8 w-8 rounded-lg grayscale">
                 <AvatarImage src={user.avatar} alt={user.name} />
                 <AvatarFallback className="rounded-lg">CN</AvatarFallback>
               </Avatar>
-              <div className="grid flex-1 text-left text-sm leading-tight">
+              <div className="grid flex-1 text-left text-sm leading-tight  hover:text-[#75BA51]">
                 <span className="truncate font-medium">{user.name}</span>
                 <span className="text-muted-foreground truncate text-xs">
                   {user.email}
@@ -75,8 +75,8 @@ export function NavUser({
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
+            {/* <DropdownMenuGroup> */}
+              {/* <DropdownMenuItem>
                 <IconUserCircle />
                 Account
               </DropdownMenuItem>
@@ -88,12 +88,12 @@ export function NavUser({
                 <IconNotification />
                 Notifications
               </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
+            </DropdownMenuGroup>*/}
+             {/* <DropdownMenuSeparator /> */}
             <DropdownMenuItem>
               <IconLogout />
               Log out
-            </DropdownMenuItem>
+            </DropdownMenuItem> 
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>

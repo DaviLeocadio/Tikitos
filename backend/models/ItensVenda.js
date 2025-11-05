@@ -33,5 +33,5 @@ const excluirItensVenda = async (itensVendaId) => {
 export {
  listarItensVenda,
  criarItensVenda,
- ExcluirItensVenda
+ excluirItensVenda
 };

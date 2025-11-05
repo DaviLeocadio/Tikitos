@@ -1,6 +1,6 @@
 import { read, readAll, update, create } from "../config/database.js";
 
-const listarVendas = async (whereClause = null) => {
+const listarVendas = async () => {
   try {
     return await readAll("vendas");
   } catch (err) {
@@ -12,6 +12,15 @@ const listarVendas = async (whereClause = null) => {
 const obterVendaPorId = async (vendaId) => {
   try {
     return await read("vendas", `id_venda = ${vendaId}`);
+  } catch (err) {
+    console.error("Erro ao obter detalhes da venda: ", err);
+    throw err;
+  }
+};
+
+const obterVendaPorData = async (dataVenda) => {
+  try {
+    return await read("vendas", `data_venda = ${dataVenda}`);
   } catch (err) {
     console.error("Erro ao obter detalhes da venda: ", err);
     throw err;
@@ -49,7 +58,8 @@ const excluirVenda = async (vendaId) => {
 export {
   listarVendas,
   obterVendaPorId,
-  criarLivro,
-  atualizarLivro,
-  excluirLivro,
+  obterVendaPorData,
+  criarVenda,
+  atualizarVenda,
+  excluirVenda
 };

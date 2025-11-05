@@ -6,7 +6,7 @@ export default function Footer() {
     return (
         <>
             <div className={`grid grid-cols-1 lg:grid-cols-3 gap-1 rounded-t-[150px] ${styles.rodape_fundo}`}>
-                <div className={`p-40`}>
+                <div className={`flex m-auto p-23`}>
                     <img
                         className="m-0 w-full h-auto"
                         src="/img/logos/logo_comprimida.png"
@@ -14,7 +14,7 @@ export default function Footer() {
                     />
                 </div>
 
-                <div className={`grid grid-cols-2 gap-4 px-10 py-20`}>
+                <div className={`grid grid-cols-2`}>
 
                     <div className="flex flex-col gap-6 align-center justify-center">
                         <div>
@@ -68,9 +68,9 @@ export default function Footer() {
                     </div>
                 </div>
 
-                <div className={`pt-18 px-10`}>
+                <div className="flex align-end mb-0">
                     <img
-                        className="m-0 p-0 w-full h-auto"
+                        className="p-0 pt-11 pe-10 flex align-end w-full h-full object-contain"
                         src="/img/rodape/crianca_rodape.png"
                         alt="Imagem grande"
                     />
@@ -78,12 +78,12 @@ export default function Footer() {
             </div>
 
             <div>
-                <div className="h-5 bg-[#8C3E82] border-b-4 border-dashed border-[#d594e6]"></div>
+                <div className="h-4 bg-[#8C3E82] border-b-4 border-dashed border-[#d594e6]"></div>
                 <div className="flex items-center justify-center bg-[#8C3E82]">
                     <p className="text-[#ebc7f5] p-5">Desenvolvido por Tikitos®, 2025 - Todos os direitos reservados.</p>
                 </div>
                 <img
-                    className="m-0 p-0 h-full bg-[#8C3E82]"
+                    className="m-0 p-0 w-full bg-[#8C3E82] object-cover"
                     src="/img/rodape/bolinhas_rodape.png"
                     alt="Imagem grande"
                 />
