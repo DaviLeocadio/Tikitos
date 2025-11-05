@@ -51,7 +51,7 @@ export default function Login() {
         transition: Bounce,
       });
 
-      
+
     try {
       const response = await fetch("http://localhost:8080/auth/login", {
         method: "POST",
@@ -92,7 +92,7 @@ export default function Login() {
         const perfil = getCookie("perfil");
 
         if (perfil == "vendedor") {
-          return (window.location.href = "/login/senha");
+          return (window.location.href = "/vendedor/pdv");
         }
         if (perfil == "gerente") {
           return (window.location.href = "/");

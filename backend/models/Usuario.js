@@ -64,4 +64,5 @@ const atualizarUsuario = async (id, usuarioData) => {
   }
 };
 
+
 export { listarUsuarios, obterUsuarioPorId, criarUsuario, atualizarUsuario };
