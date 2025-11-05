@@ -42,13 +42,13 @@ export function NavUser({
             <SidebarMenuButton
               size="lg"
               className="data-[state=open]:bg-[#924187] data-[state=open]:text-[#75BA51] hover:bg-[#924187]">
-              <Avatar className="h-8 w-8 rounded-lg grayscale">
+              <Avatar className="h-8 w-8 rounded-lg  ">
                 <AvatarImage src={user.avatar} alt={user.name} />
                 <AvatarFallback className="rounded-lg">CN</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight  hover:text-[#75BA51]">
                 <span className="truncate font-medium">{user.name}</span>
-                <span className="text-muted-foreground truncate text-xs">
+                <span className=" truncate text-xs">
                   {user.email}
                 </span>
               </div>
@@ -56,7 +56,7 @@ export function NavUser({
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
-            className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
+            className="w-(--radix-dropdown-menu-trigger-width) border-[#9D4E92] bg-[#9D4E92] text-[#75BA51] min-w-56 rounded-lg"
             side={isMobile ? "bottom" : "right"}
             align="end"
             sideOffset={4}>
@@ -68,13 +68,13 @@ export function NavUser({
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-medium">{user.name}</span>
-                  <span className="text-muted-foreground truncate text-xs">
+                  <span className=" text-[#75BA51] text-xs">
                     {user.email}
                   </span>
                 </div>
               </div>
             </DropdownMenuLabel>
-            <DropdownMenuSeparator />
+            <DropdownMenuSeparator className="bg-[#75BA51]" />
             {/* <DropdownMenuGroup> */}
               {/* <DropdownMenuItem>
                 <IconUserCircle />
@@ -90,9 +90,9 @@ export function NavUser({
               </DropdownMenuItem>
             </DropdownMenuGroup>*/}
              {/* <DropdownMenuSeparator /> */}
-            <DropdownMenuItem>
-              <IconLogout />
-              Log out
+            <DropdownMenuItem className="text-[#75BA51] hover:text-[#75BA51] active:bg-[#F1B8E8] active:text-[#75BA51]">
+              <IconLogout className="text-[#75BA51]" />
+              Sair
             </DropdownMenuItem> 
           </DropdownMenuContent>
         </DropdownMenu>

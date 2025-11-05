@@ -62,8 +62,8 @@ export default function Home() {
                         </div>
                     </div>
 
-                    {/* ÁREA DOS INPUTS COM TODOS OS DETALHES */}
-{/* <<<<<<< HEAD
+                    ÁREA DOS INPUTS COM TODOS OS DETALHES
+                    {/* <<<<<<< HEAD
                     {/* INPUT DE EMAIL */}
                     <div className="grid gap-5">
                         <div className={`flex flex-col gap-6 bg-[#9CD089] ${styles.form_container}`}>
@@ -81,99 +81,97 @@ export default function Home() {
                                 </div>
                             </form>
                         </div>
-                        //sasasas
-=======
-                    <div className="flex items-start gap-6">
-                        {/* imagem da linha com os números */}
-                        {/* <div className="flex flex-col items-center mt-2">
-                            <img
-                                src="/img/token/token_linha.png"
-                                alt="Linha com etapas"
-                                className="h-full w-90 z-10 m-0 p-0 object-contain"
-                            />
-                        </div> */}
-{/* >>>>>>> 972f2a9e6721090eb18f6c222d4c15e1b29be36b */}
 
-                        {/* CONTEÚDO DOS FORMULÁRIOS */}
-                        <div className="flex flex-col gap-4">
-                            {/* INPUT DE E-MAIL */}
-                            <div className={`flex flex-col gap-4 bg-[#9CD089] p-4 rounded-3xl ${styles.form_container}`}>
-                                <form className={styles.form}>
-                                    <div className={styles.form_group}>
-                                        <label
-                                            className="text-[var(--color-verdao)]"
-                                            htmlFor="email"
-                                        >
-                                           1°: Insira o seu e-mail:
-                                        </label>
-                                        <input
-                                            type="text"
-                                            id="email"
-                                            name="email"
-                                            placeholder="E-mail"
-                                            required
-                                            className="bg-[#DABCE1] border-2 border-dashed border-[#7C3A82] rounded-2xl px-4 py-2 text-[var(--color-verdao)] focus:outline-none focus:border-[#7C3A82] w-full"
-                                        />
-                                    </div>
-                                </form>
+                        <div className="flex items-start gap-6">
+                        {/* imagem da linha com os números */}
+                            <div className="flex flex-col items-center mt-2">
+                                <img
+                                    src="/img/token/token_linha.png"
+                                    alt="Linha com etapas"
+                                    className="h-full w-90 z-10 m-0 p-0 object-contain"
+                                />
                             </div>
 
-                            {/* INPUT DE VERIFICAÇÃO */}
-                            <div className={`bg-[#9CD089] p-4 rounded-3xl flex justify-center ${styles.form_container}`}>
-                                <form className={`flex flex-col items-center md:px-4 xl:p-1 ${styles.form}`}>
-                                    <div className={styles.form_group}>
-                                        <label
-                                            className="text-[var(--color-verdao)] mb-2 block"
-                                            htmlFor="number"
-                                        >
-                                           2°: Digite o código de validação:
-                                        </label>
-
-                                        {/* ÁREA DOS INPUTZINHOS DE VERIFICAÇÃO */}
-                                        <div
-                                            className="grid grid-cols-2 sm:flex sm:flex-nowrap justify-center gap-4 sm:gap-3 transition-all duration-300 ease-in-out validation-inputs"
-                                        >
-                                            {Array.from({ length: 6 }).map((_, i) => (
-                                                <input
-                                                    key={i}
-                                                    ref={(el) => (inputsRef.current[i] = el)}
-                                                    type="text"
-                                                    maxLength="1"
-                                                    onChange={(e) => handleChange(e, i)}
-                                                    onKeyDown={(e) => handleKeyDown(e, i)}
-                                                    className={`w-12 h-14 sm:w-10 sm:h-10 min-w-[2.95rem] min-h-[3.55rem] text-center text-lg font-semibold bg-[#DABCE1] border-2 border-dashed border-[#7C3A82] rounded-full focus:outline-none focus:border-[#7C3A82] text-[var(--color-verdao)] transition-all duration-300 ease-in-out ${styles.validation_inputs}`}
-                                                />
-                                            ))}
+                            {/* CONTEÚDO DOS FORMULÁRIOS */}
+                            <div className="flex flex-col gap-4">
+                                {/* INPUT DE E-MAIL */}
+                                <div className={`flex flex-col gap-4 bg-[#9CD089] p-4 rounded-3xl ${styles.form_container}`}>
+                                    <form className={styles.form}>
+                                        <div className={styles.form_group}>
+                                            <label
+                                                className="text-[var(--color-verdao)]"
+                                                htmlFor="email"
+                                            >
+                                                1°: Insira o seu e-mail:
+                                            </label>
+                                            <input
+                                                type="text"
+                                                id="email"
+                                                name="email"
+                                                placeholder="E-mail"
+                                                required
+                                                className="bg-[#DABCE1] border-2 border-dashed border-[#7C3A82] rounded-2xl px-4 py-2 text-[var(--color-verdao)] focus:outline-none focus:border-[#7C3A82] w-full"
+                                            />
                                         </div>
-                                    </div>
-                                </form>
+                                    </form>
+                                </div>
+
+                                {/* INPUT DE VERIFICAÇÃO */}
+                                <div className={`bg-[#9CD089] p-4 rounded-3xl flex justify-center ${styles.form_container}`}>
+                                    <form className={`flex flex-col items-center md:px-4 xl:p-1 ${styles.form}`}>
+                                        <div className={styles.form_group}>
+                                            <label
+                                                className="text-[var(--color-verdao)] mb-2 block"
+                                                htmlFor="number"
+                                            >
+                                                2°: Digite o código de validação:
+                                            </label>
+
+                                            {/* ÁREA DOS INPUTZINHOS DE VERIFICAÇÃO */}
+                                            <div
+                                                className="grid grid-cols-2 sm:flex sm:flex-nowrap justify-center gap-4 sm:gap-3 transition-all duration-300 ease-in-out validation-inputs"
+                                            >
+                                                {Array.from({ length: 6 }).map((_, i) => (
+                                                    <input
+                                                        key={i}
+                                                        ref={(el) => (inputsRef.current[i] = el)}
+                                                        type="text"
+                                                        maxLength="1"
+                                                        onChange={(e) => handleChange(e, i)}
+                                                        onKeyDown={(e) => handleKeyDown(e, i)}
+                                                        className={`w-12 h-14 sm:w-10 sm:h-10 min-w-[2.95rem] min-h-[3.55rem] text-center text-lg font-semibold bg-[#DABCE1] border-2 border-dashed border-[#7C3A82] rounded-full focus:outline-none focus:border-[#7C3A82] text-[var(--color-verdao)] transition-all duration-300 ease-in-out ${styles.validation_inputs}`}
+                                                    />
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    {/* BOTÃO DE ENVIAR */}
-                    <div className="flex justify-center">
-                        <Link href="/login/senha">
-                            <button
-                                className="group cursor-pointer transition-all duration-200 mt-5 rounded-full border border-transparent flex items-center justify-center gap-2 whitespace-nowrap bg-[#D6B9E2] text-[var(--color-verdao)] font-light hover:bg-[#db90e4] active:scale-95 px-8 py-3 text-[15px] sm:px-10 sm:text-[16px] md:px-19 md:text-[15px] lg:px-16 lg:text-[15px] xl:px-29"
-                            >
-                                <span className="text-end">Faça a verificação</span>
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    viewBox="0 0 16 16"
-                                    fill="currentColor"
-                                    className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7 text-[#6a0d75] transition-transform duration-300 ease-in-out group-hover:translate-x-[3px]"
+                        {/* BOTÃO DE ENVIAR */}
+                        <div className="flex justify-center">
+                            <Link href="/login/senha">
+                                <button
+                                    className="group cursor-pointer transition-all duration-200 mt-5 rounded-full border border-transparent flex items-center justify-center gap-2 whitespace-nowrap bg-[#D6B9E2] text-[var(--color-verdao)] font-light hover:bg-[#db90e4] active:scale-95 px-8 py-3 text-[15px] sm:px-10 sm:text-[16px] md:px-19 md:text-[15px] lg:px-16 lg:text-[15px] xl:px-29"
                                 >
-                                    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z" />
-                                </svg>
-                            </button>
-                        </Link>
+                                    <span className="text-end">Faça a verificação</span>
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 16 16"
+                                        fill="currentColor"
+                                        className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7 text-[#6a0d75] transition-transform duration-300 ease-in-out group-hover:translate-x-[3px]"
+                                    >
+                                        <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z" />
+                                    </svg>
+                                </button>
+                            </Link>
+                        </div>
+
+
                     </div>
-
-
                 </div>
             </div>
-</div>
         </>
     );
 }
