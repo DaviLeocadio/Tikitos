@@ -29,33 +29,51 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 
-export function NavUser({
-  user
-}) {
-  const { isMobile } = useSidebar()
+export function NavUser({ user }) {
+  const { isMobile, toggleSidebar, setOpen, setIsPinned } = useSidebar()
+
+  // 🔁 quando o menu abre
+  function handleDropdownOpenChange(open) {
+    if (!open) return
+
+    if (isMobile) {
+      toggleSidebar()
+      return
+    }
+
+    // Desktop: fixa a sidebar
+    setOpen(true)
+    setIsPinned(true)
+  }
+
+  // 🔥 Fecha o dropdown e "desfixa" a sidebar
+  function handleCloseMenu() {
+    setOpen(false)
+    setIsPinned(false)
+  }
 
   return (
     <SidebarMenu>
       <SidebarMenuItem>
-        <DropdownMenu>
+        <DropdownMenu onOpenChange={handleDropdownOpenChange}>
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
               size="lg"
               className="data-[state=open]:bg-[#924187] data-[state=open]:text-[#75BA51] hover:bg-[#924187]">
-              <Avatar className="h-8 w-8 rounded-lg  ">
+              <Avatar className="h-8 w-8 rounded-lg">
                 <AvatarImage src={user.avatar} alt={user.name} />
                 <AvatarFallback className="rounded-lg">CN</AvatarFallback>
               </Avatar>
-              <div className="grid flex-1 text-left text-sm leading-tight  hover:text-[#75BA51]">
+              <div className="grid flex-1 text-left text-sm leading-tight hover:text-[#75BA51]">
                 <span className="truncate font-medium">{user.name}</span>
-                <span className=" truncate text-xs">
-                  {user.email}
-                </span>
+                <span className="truncate text-xs">{user.email}</span>
               </div>
               <IconDotsVertical className="ml-auto size-4" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
+
           <DropdownMenuContent
+            onClick={handleCloseMenu} // 👈 FECHA ao clicar em qualquer parte do menu
             className="w-(--radix-dropdown-menu-trigger-width) border-[#9D4E92] bg-[#9D4E92] text-[#75BA51] min-w-56 rounded-lg"
             side={isMobile ? "bottom" : "right"}
             align="end"
@@ -68,35 +86,21 @@ export function NavUser({
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-medium">{user.name}</span>
-                  <span className=" text-[#75BA51] text-xs">
-                    {user.email}
-                  </span>
+                  <span className=" text-[#75BA51] text-xs">{user.email}</span>
                 </div>
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator className="bg-[#75BA51]" />
-            {/* <DropdownMenuGroup> */}
-              {/* <DropdownMenuItem>
-                <IconUserCircle />
-                Account
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <IconCreditCard />
-                Billing
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <IconNotification />
-                Notifications
-              </DropdownMenuItem>
-            </DropdownMenuGroup>*/}
-             {/* <DropdownMenuSeparator /> */}
-            <DropdownMenuItem className="text-[#75BA51] hover:text-[#75BA51] active:bg-[#F1B8E8] active:text-[#75BA51]">
+
+            <DropdownMenuItem
+              className="text-[#75BA51] focus:text-[#75BA51] focus:bg-[#F1B8E8] active:bg-[#F1B8E8] active:text-[#75BA51]"
+            >
               <IconLogout className="text-[#75BA51]" />
               Sair
-            </DropdownMenuItem> 
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>
     </SidebarMenu>
-  );
+  )
 }

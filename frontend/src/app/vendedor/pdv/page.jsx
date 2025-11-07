@@ -2,6 +2,7 @@
 import CardProdutos from '@/components/cards/cardProdutos.jsx';
 import AtalhosDiv from '@/components/atalhos/atalhosDiv';
 import InputWithAdornmentDemo from '@/components/input-07';
+import Carrinho from '@/components/carrinho/carrinho';
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { useEffect, useState } from 'react';
 
@@ -27,24 +28,33 @@ export default function PDV() {
     return (
         <>
             <div className='grid gap-5 grid-cols-2 md:grid-cols-2'>
-                <div className='flex m-5 gap-2 items-center'>
-                    <SidebarTrigger />
-                    <InputWithAdornmentDemo></InputWithAdornmentDemo>
+                <div className="">
+                    <div className='grid gap-5 grid-cols-1 md:grid-cols-1'>
+                        <div className='flex m-5 gap-2 items-center'>
+                            <SidebarTrigger />
+                            <InputWithAdornmentDemo></InputWithAdornmentDemo>
+                        </div>
+                    </div>
+
+                    <div className='grid gap-5 grid-cols-1 x-sm:grid-cols-1 sm:grid-cols-1 md:grid-cols-1 '>
+                        <div className='grid gap-5 grid-cols-1 x-sm:grid-cols- sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-2 overflow-y-scroll max-h-108 p-5 pt-0'>
+                            {produtos && produtos.length > 0 ? (
+                                (produtos.map((produto) => {
+                                    return (
+                                        <CardProdutos key={produto.id} produtos={produto}></CardProdutos>
+                                    )
+                                }))) : ('Nenhum produto encontrado')}
+
+                        </div>
+                    </div>
                 </div>
-
-            </div>
-            <div className='grid gap-5 grid-cols-1 x-sm:grid-cols-1 sm:grid-cols-2 md:grid-cols-2 '>
-                <div className='grid gap-5 grid-cols-1 x-sm:grid-cols- sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-2 overflow-y-scroll max-h-105 p-5 pt-0'>
-
-                    {produtos.length > 0 ? (
-                        (produtos.map((produto) => {
-                            return (
-                                <CardProdutos key={produto.id} produtos={produto}></CardProdutos>
-                            )
-                        }))) : ('')}
-
+                <div className="flex items-center content-center">
+                    <div className="flex items-center content-center">
+                        <Carrinho></Carrinho>
+                    </div>
                 </div>
             </div>
+
             <AtalhosDiv></AtalhosDiv>
         </>
     );

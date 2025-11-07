@@ -5,7 +5,6 @@ import { cva } from "class-variance-authority";
 import { PanelLeftIcon } from "lucide-react";
 import { usePathname } from "next/navigation";
 
-
 import { useIsMobile } from "@/hooks/use-mobile"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -24,7 +23,7 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip"
+} from "@/components/ui/tooltip_one"
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state"
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7
@@ -40,7 +39,6 @@ function useSidebar() {
   if (!context) {
     throw new Error("useSidebar must be used within a SidebarProvider.")
   }
-
   return context
 }
 
@@ -56,9 +54,10 @@ function SidebarProvider({
   const isMobile = useIsMobile()
   const [openMobile, setOpenMobile] = React.useState(false)
 
-  // This is the internal state of the sidebar.
-  // We use openProp and setOpenProp for control from outside the component.
+  // internal open state
   const [_open, _setOpen] = React.useState(defaultOpen)
+  const [isPinned, setIsPinned] = React.useState(false) // 🔹 ADIÇÃO: estado de "pin"
+
   const open = openProp ?? _open
   const setOpen = React.useCallback((value) => {
     const openState = typeof value === "function" ? value(open) : value
@@ -68,7 +67,7 @@ function SidebarProvider({
       _setOpen(openState)
     }
 
-    // This sets the cookie to keep the sidebar state.
+    // persist
     document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`
   }, [setOpenProp, open])
 
@@ -93,8 +92,7 @@ function SidebarProvider({
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [toggleSidebar])
 
-  // We add a state so that we can do data-state="expanded" or "collapsed".
-  // This makes it easier to style the sidebar with Tailwind classes.
+  // data-state
   const state = open ? "expanded" : "collapsed"
 
   const contextValue = React.useMemo(() => ({
@@ -105,7 +103,9 @@ function SidebarProvider({
     openMobile,
     setOpenMobile,
     toggleSidebar,
-  }), [state, open, setOpen, isMobile, openMobile, setOpenMobile, toggleSidebar])
+    isPinned,     
+    setIsPinned,    
+  }), [state, open, setOpen, isMobile, openMobile, setOpenMobile, toggleSidebar, isPinned, setIsPinned])
 
   return (
     <SidebarContext.Provider value={contextValue}>
@@ -139,7 +139,20 @@ function Sidebar({
   children,
   ...props
 }) {
-  const { isMobile, state, openMobile, setOpenMobile } = useSidebar()
+  const { isMobile, state, openMobile, setOpenMobile, setOpen, isPinned, setIsPinned } = useSidebar();
+
+  React.useEffect(() => {
+    function handleClickOutside(e) {
+      const sidebar = document.querySelector("[data-slot='sidebar']")
+      if (sidebar && !sidebar.contains(e.target) && isPinned) {
+        setOpen(false)
+        setIsPinned(false)
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [isPinned, setOpen, setIsPinned])
 
   if (collapsible === "none") {
     return (
@@ -149,13 +162,23 @@ function Sidebar({
           "bg-sidebar text-sidebar-foreground flex h-full w-(--sidebar-width) flex-col",
           className
         )}
+        onMouseEnter={() => {
+          if (!isMobile && state === "collapsed" && !isPinned) {
+            setOpen(true)
+          }
+        }}
+        onMouseLeave={() => {
+          if (!isMobile && state === "expanded" && !isPinned) {
+            setOpen(false)
+          }
+        }}
         {...props}>
         {children}
       </div>
     );
   }
 
-  // ISSO AQUI É A SIDEBAR NA HORA DO MOBILE
+  // MOBILE
   if (isMobile) {
     return (
       <Sheet open={openMobile} onOpenChange={setOpenMobile} {...props}>
@@ -180,7 +203,6 @@ function Sidebar({
     );
   }
 
-  // AQUI É O QUE DEIXA A SIDEBAR APARECER SEM SER ABERTA
   return (
     <div
       className="group peer text-sidebar-foreground hidden md:block"
@@ -188,8 +210,19 @@ function Sidebar({
       data-collapsible={state === "collapsed" ? collapsible : ""}
       data-variant={variant}
       data-side={side}
-      data-slot="sidebar">
-      {/* This is what handles the sidebar gap on desktop */}
+      data-slot="sidebar"
+      onMouseEnter={() => {
+        if (!isMobile && state === "collapsed" && !isPinned) {
+          setOpen(true)
+        }
+      }}
+      onMouseLeave={() => {
+        if (!isMobile && state === "expanded" && !isPinned) {
+          setOpen(false)
+        }
+      }}
+      {...props}
+    >
       <div
         data-slot="sidebar-gap"
         className={cn(
@@ -207,17 +240,16 @@ function Sidebar({
           side === "left"
             ? "left-0 group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)]"
             : "right-0 group-data-[collapsible=offcanvas]:right-[calc(var(--sidebar-width)*-1)]",
-          // Adjust the padding for floating and inset variants.
           variant === "floating" || variant === "inset"
             ? "p-2 group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)+(--spacing(4))+2px)]"
             : "group-data-[collapsible=icon]:w-(--sidebar-width-icon) group-data-[side=left]:border-r group-data-[side=right]:border-l",
           className
         )}
-        {...props}>
+      >
         <div
           data-sidebar="sidebar"
           data-slot="sidebar-inner"
-          className="bg-sidebar jusfify-center h-[96%] rounded-2xl border-3 border-dashed border-[#924187] group-data-[variant=floating]:border-sidebar-border flex w-full flex-col group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:shadow-sm">
+          className="bg-sidebar jusfify-center h-[99%] sm:h-[99%] rounded-2xl border-3 border-dashed border-[#924187] group-data-[variant=floating]:border-sidebar-border flex w-full flex-col group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:shadow-sm">
           {children}
         </div>
       </div>
@@ -225,14 +257,25 @@ function Sidebar({
   );
 }
 
+function SidebarTrigger({ className, onClick, ...props }) {
+  const { isMobile, toggleSidebar, setOpen, isPinned, setIsPinned } = useSidebar()
 
-// AQUI É O MENU QUE FAZ A SIDEBAR EXPANDIR AO CLICAR
-function SidebarTrigger({
-  className,
-  onClick,
-  ...props
-}) {
-  const { toggleSidebar } = useSidebar()
+  function handleClick(event) {
+    onClick?.(event)
+
+    if (isMobile) {
+      toggleSidebar()
+      return
+    }
+
+    if (!isPinned) {
+      setIsPinned(true)
+      setOpen(true)
+    } else {
+      setIsPinned(false)
+      setOpen(false)
+    }
+  }
 
   return (
     <Button
@@ -240,16 +283,18 @@ function SidebarTrigger({
       data-slot="sidebar-trigger"
       variant="ghost"
       size="icon"
-      className={cn("size-7", className)}
-      onClick={(event) => {
-        onClick?.(event)
-        toggleSidebar()
-      }}
-      {...props}>
+      className={cn(
+        "size-7 transition-all hover:bg-[#9BF377] focus:bg-[#9BF377] text-[#924187] hover:text-[#924187]",
+        isPinned ? "bg-sidebar-accent hover:bg-[#9BF377] text-[#924187]" : "",
+        className
+      )}
+      onClick={handleClick}
+      {...props}
+    >
       <PanelLeftIcon />
       <span className="sr-only">Toggle Sidebar</span>
     </Button>
-  );
+  )
 }
 
 function SidebarRail({
@@ -362,7 +407,6 @@ function SidebarContent({
       {...props} />
   );
 }
-
 
 // AQUI SÃO AS PÁGINAS QUE FICAM NA SIDEBAR
 function SidebarGroup({
@@ -547,7 +591,7 @@ function SidebarMenuAction({
         "peer-data-[size=lg]/menu-button:top-2.5",
         "group-data-[collapsible=icon]:hidden",
         showOnHover &&
-          "peer-data-[active=true]/menu-button:text-sidebar-accent-foreground group-focus-within/menu-item:opacity-100 group-hover/menu-item:opacity-100 data-[state=open]:opacity-100 md:opacity-0",
+        "peer-data-[active=true]/menu-button:text-sidebar-accent-foreground group-focus-within/menu-item:opacity-100 group-hover/menu-item:opacity-100 data-[state=open]:opacity-100 md:opacity-0",
         className
       )}
       {...props} />
