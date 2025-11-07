@@ -8,6 +8,7 @@ const port = process.env.PORT;
 import authRotas from "./routes/authRotas.js";
 import vendedorRotas from "./routes/vendedorRotas.js";
 import gerenteRotas from "./routes/gerenteRotas.js";
+import adminRotas from "./routes/adminRotas.js"
 
 // import adminRotas from "./routes/adminRotas.js";
 import authMiddleware from "./middlewares/authMiddleware.js";
@@ -28,7 +29,7 @@ app.use("/auth", authRotas);
 
 app.use("/vendedor", authMiddleware(["vendedor"]), vendedorRotas);
 app.use('/gerente', authMiddleware(["gerente"]), gerenteRotas);
-// app.use('/admin', authMiddleware(["admin"]), adminRotas);
+app.use('/admin', authMiddleware(["admin"]), adminRotas);
 
 // app.post("/meta", authMiddleware["vendedor", "gerente", "admin"], metaController);
 

@@ -173,14 +173,27 @@ const atualizarVendedorController = async (req, res) => {
   }
 };
 
-const excluirVendedorController = async (req, res) => {
+const desativarVendedorController = async (req, res) => {
   try {
-    const vendendorId = req.params.id;
-    await excluirVendendor(vendendorId);
-    res.status(200).json({ mensagem: "Vendendor excluído com sucesso" });
-  } catch (err) {
-    console.error("Erro ao excluir vendendor:", err);
-    res.status(500).json({ mensagem: "Erro ao excluir vendendor" });
+    const { vendedorId } = req.params;
+
+    const vendedorDesativado = atualizarUsuario(vendedorId, {
+      status: "inativo",
+    });
+    if (!vendedorDesativado)
+      return res.status(404).json({ error: "Vendedor não encontrado" });
+
+    return res
+      .status(200)
+      .json({
+        mensagem: "Vendedor com status inativo realizado!",
+        vendedorDesativado,
+      });
+  } catch (error) {
+    consoler.error("Erro ao atualizar o status do vendedor: ", error);
+    return res
+      .status(500)
+      .json({ error: "Erro ao atualizar o status do vendedor" });
   }
 };
 
@@ -189,5 +202,5 @@ export {
   obterVendedorPorIdController,
   criarVendedorController,
   atualizarVendedorController,
-  excluirVendedorController,
+  desativarVendedorController
 };

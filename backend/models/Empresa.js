@@ -8,6 +8,11 @@ import {
 
 const listarEmpresas = async (whereClause = null) => {
   try {
+    if (whereClause) {
+      whereClause += ` AND status = 'ativo'`;
+    } else {
+      whereClause = `status = 'ativo'`;
+    }
     return await readAll("empresas", whereClause);
   } catch (err) {
     console.error("Erro ao listar empresas: ", err);
@@ -42,9 +47,4 @@ const atualizarEmpresa = async (empresaId, empresaData) => {
   }
 };
 
-export { 
-    listarEmpresas,
-    obterEmpresaPorId,
-    criarEmpresa, 
-    atualizarEmpresa
-};
+export { listarEmpresas, obterEmpresaPorId, criarEmpresa, atualizarEmpresa };

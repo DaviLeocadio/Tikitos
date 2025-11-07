@@ -1,11 +1,13 @@
+import { listarDespesas } from "../models/Despesas.js";
 import { gerarRelatorioFinanceiroGerente } from "../models/Relatorio.js";
 import { listarVendas } from "../models/Venda.js";
+import { listarEmpresas } from "../models/Empresa.js";
 
 const gerarRelatorioGerenteController = async (req, res) => {
   try {
     const { inicio, fim, idCaixa, pagamento, detalhado } = req.query;
     const idEmpresa = req.usuarioEmpresa;
-    
+
     let relatorio = await gerarRelatorioFinanceiroGerente(
       idEmpresa,
       inicio || null,
@@ -13,23 +15,23 @@ const gerarRelatorioGerenteController = async (req, res) => {
       idCaixa || null
     );
 
-    //Buscar dados dos gastos
+    const gastos = await listarDespesas(`id_empresa = ${idEmpresa}`);
 
     if (pagamento) {
       const filtroQuantidade = `quantidade_${pagamento}`;
       const filtroValor = `valor_${pagamento}`;
-      
+
       relatorio = relatorio.map((linha) => ({
         data: linha.data,
         total_vendas: linha[filtroQuantidade],
         saldo_total: linha[filtroValor],
         media_por_venda:
-        linha[filtroQuantidade] > 0
-        ? linha[filtroValor] / linha[filtroQuantidade]
-        : 0,
+          linha[filtroQuantidade] > 0
+            ? linha[filtroValor] / linha[filtroQuantidade]
+            : 0,
       }));
     }
-    
+
     let vendas = null;
 
     if (detalhado) {
@@ -38,37 +40,68 @@ const gerarRelatorioGerenteController = async (req, res) => {
       if (inicio && fim)
         conditions.push(`DATE(data_venda) BETWEEN '${inicio}' AND ${fim}`);
       if (pagamento) conditions.push(`tipo_pagamento = '${pagamento}'`);
-      
+
       const query = conditions.join(" AND ");
-      
+
       vendas = await listarVendas(query);
 
-      console.log(vendas)
+      console.log(vendas);
     }
-    
-    relatorio = relatorio.filter(linha => (parseFloat(linha.total_vendas) !== 0));
+
+    relatorio = relatorio.filter(
+      (linha) => parseFloat(linha.total_vendas) !== 0
+    );
 
     relatorio = relatorio.map((linha) => {
       const mediaPorVenda = parseFloat(linha.media_por_venda).toFixed(2);
       return {
         ...linha,
-        media_por_venda: mediaPorVenda
-      }
-      
+        media_por_venda: mediaPorVenda,
+      };
     });
-    
+
     let retorno = {};
     retorno.resumo = relatorio;
-    if(vendas) retorno.vendas = vendas;
+    retorno.gastos = gastos;
+    if (vendas) retorno.vendas = vendas;
 
-    console.log(retorno)
     return res.status(200).json({
       mensagem: "Relatório financeiro para gerente realizado com sucesso",
-      retorno
+      retorno,
     });
   } catch (err) {
     console.error("Erro ao gerar relatório para gerente: ", err);
     res.status(500).json({ mensagem: "Erro ao gerar relatório para gerente" });
+  }
+};
+
+const gerarRelatorioFiliaisController = async (req, res) => {
+  try {
+    const filiaisListadas = await listarEmpresas();
+    const vendasListadas = await listarVendas();
+
+    let listaFiliaisAtivas = [];
+    let listaFiliaisInativas = [];
+
+    filiaisListadas.map((filial) => {
+      if (filial.status == "ativo") {
+        return listaFiliaisAtivas.push(filial);
+      } else {
+        return listaFiliaisInativas.push(filial);
+      }
+    });
+
+    
+    // Total de filiais ativas
+    const totalFiliais = listaFiliaisAtivas.length;
+
+    // Total de filiais inativas
+    const totalFiliaisInativas = listaFiliaisInativas.length;
+  } catch (err) {
+    consoler.error("Erro ao gerar relatório sobre as filiais: ", err);
+    return res
+      .status(500)
+      .json({ mensagem: "Erro ao gerar relatório sobre filiais" });
   }
 };
 

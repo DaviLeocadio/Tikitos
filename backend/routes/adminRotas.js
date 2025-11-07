@@ -1,12 +1,43 @@
 import express from "express";
-const FilialController = require('../controllers/FilialController');
-const UsuarioController = require('../controllers/UsuarioController');
-const ProdutoController = require('../controllers/ProdutoController');
-const FornecedorController = require('../controllers/FornecedorController');
-const RelatorioController = require('../controllers/RelatorioController');
+import {
+  listarEmpresasController,
+  obterEmpresaPorIdController,
+  criarEmpresaController,
+  atualizarEmpresaController,
+  desativarFilialController,
+  estoqueFilialController,
+  estoqueTodasFiliaisController,
+} from "../controllers/FilialController.js";
 
-import multer from 'multer';
-import path from 'path';
+import {} from "../controllers/GerenteController.js";
+
+import {
+  listarProdutosController,
+  obterProdutoPorIdController,
+  criarProdutoController,
+  atualizarProdutoController,
+  desativarProdutoController,
+} from "../controllers/ProdutoController.js";
+
+import {
+  criarFornecedorController,
+  listarFornecedoresController,
+  obterFornecedorPorIdController,
+  atualizarFornecedorController,
+} from "../controllers/FornecedorController.js";
+
+import {
+  listarVendedoresController,
+  obterVendedorPorIdController,
+  criarVendedorController,
+  atualizarVendedorController,
+  desativarVendedorController
+} from "../controllers/VendedorController.js"
+
+// import {} from "../controllers/RelatorioController";
+
+import multer from "multer";
+import path from "path";
 
 import { fileURLToPath } from "url";
 
@@ -14,94 +45,119 @@ const router = express.Router();
 
 /* ===================== ROTAS ADMINISTRATIVAS ===================== */
 
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-
 const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, path.join(__dirname, '../../front-end/my-app/public/img/empresas'));
-    },
-    filename: (req, file, cb) => {
-        const nomeArquivo = `${Date.now()}-${file.originalname}`;
-        cb(null, nomeArquivo);
-    }
+  destination: (req, file, cb) => {
+    cb(null, path.join(__dirname, "../../frontend/public/img/empresas"));
+  },
+  filename: (req, file, cb) => {
+    const nomeArquivo = `${Date.now()}-${file.originalname}`;
+    cb(null, nomeArquivo);
+  },
 });
 
-const upload = multer({ storage: storage })
+const upload = multer({ storage: storage });
 
+/* ===== FILIAIS ===== */
 
 // Listar todas as filiais
-router.get('/filiais', FilialController.listarFiliais);
+router.get("/filiais", listarEmpresasController);
 
-// Listar uma filial específica
-router.get('/filiais/:id', FilialController.listarFilial);
+// Obter uma filial específica
+router.get("/filiais/:empresaId", obterEmpresaPorIdController);
 
 // Criar uma nova filial
-router.post('/filiais', FilialController.criarFilial);
+router.post("/filiais", criarEmpresaController);
 
 // Alterar informações de uma filial
-router.put('/filiais/:id', FilialController.editarFilial);
+router.put("/filiais/:empresaId", atualizarEmpresaController);
 
 // Desativar uma filial
-router.delete('/filiais/:id', FilialController.desativarFilial);
+router.delete("/filiais/:empresaId", desativarFilialController);
 
 // Informações de estoque de uma filial
-router.get('/filiais/:id/estoque', FilialController.estoqueFilial);
+router.get("/filiais/:empresaId/estoque", estoqueFilialController);
 
 // Informações de estoque de todas as filiais
-router.get('/filiais/estoque', FilialController.estoqueTodasFiliais);
+router.get("/estoque/filiais", estoqueTodasFiliaisController);
 
+/* ===================== VENDEDORES ===================== */
 
-/* ===================== ROTA DO USUÁRIO ===================== */
+// Listar todos os vendedores
+router.get("/vendedores", listarVendedoresController);
 
-// Listar todos os usuários
-router.get('/usuarios', UsuarioController.listarUsuarios);
+// Listar um vendedor específico
+router.get("/vendedores/:vendedorId", obterVendedorPorIdController);
 
-// Listar um usuário específico
-router.get('/usuarios/:id', UsuarioController.listarUsuario);
+// Adicionar um vendedor a partir do id da filial
+router.post("/filiais/:vendedorId/vendedores", criarVendedorController);
 
-// Adicionar um usuário a partir do id da filial
-router.post('/filiais/:id/usuarios', UsuarioController.adicionarUsuario);
+// Alterar informações de um vendedor
+router.put("/vendedores/:vendedorId", atualizarVendedorController);
 
-// Alterar informações de um usuário
-router.put('/usuarios/:id', UsuarioController.editarUsuario);
+// Status do vendedor inativo
+router.put("/vendedoresDesativar/:vendedorId", desativarVendedorController);
 
-/* ===================== ROTAS DO PRODUTOS ===================== */
+/* ===================== GERENTES ===================== */
+
+// Listar todos os gerentes
+router.get("/gerentes", listarVendedoresController);
+
+// Listar um gerente específico
+router.get("/gerentes/:gerenteId", obterVendedorPorIdController);
+
+// Adicionar um gerente a partir do id da filial
+router.post("/filiais/:gerenteId/gerentes", criarVendedorController);
+
+// Alterar informações de um gerente
+router.put("/gerentes/:gerenteId", atualizarVendedorController);
+
+// Status do gerente inativo
+router.put("/gerentesDesativar/:gerenteId", desativarVendedorController);
+
+/* ===================== PRODUTOS ===================== */
 
 // Listar todos os produtos disponíveis
-router.get('/produtos', ProdutoController.listarProdutos);
+router.get("/produtos", listarProdutosController);
 
 // Listar um produto específico
-router.get('/produtos/:id', ProdutoController.listarProduto);
+router.get("/produtos/:id", obterProdutoPorIdController);
 
 // Adicionar um produto
-router.post('/produtos', upload.single('imagem'), ProdutoController.adicionarProduto);
+router.post("/produtos", upload.single("imagem"), criarProdutoController);
 
 // Alterar informações de um produto
-router.put('/produtos/:id', upload.single('imagem'), ProdutoController.editarProduto);
+router.put(
+  "/produtos/:id",
+  upload.single("imagem"),
+  atualizarProdutoController
+);
 
 // Desativar um produto
-router.delete('/produtos/:id', ProdutoController.desativarProduto);
+router.delete("/produtos/:id", desativarProdutoController);
 
-/* ===================== ROTAS DO FORNECEDOR ===================== */
+/* ===================== FORNECEDORES ===================== */
 
 // Adicionar um fornecedor
-router.post('/fornecedores', FornecedorController.adicionarFornecedor);
+router.post("/fornecedores", criarFornecedorController);
 
 // Listar fornecedores
-router.get('/fornecedores', FornecedorController.listarFornecedores);
+router.get("/fornecedores", listarFornecedoresController);
 
 // Editar fornecedor
-router.put('/fornecedores/:id', FornecedorController.editarFornecedor);
+router.put("/fornecedores/:id", atualizarFornecedorController);
 
-/* ===================== ROTAS DO FINANCEIRO ===================== */
+/* ===================== FINANCEIRO ===================== */
 
-// Relatório financeiro consolidado de todas as filiais
-router.get('/relatorios/financeiro', RelatorioController.relatorioFinanceiroConsolidado);
+// // Relatório financeiro consolidado de todas as filiais
+// router.get(
+//   "/relatorios/financeiro",
+//   RelatorioController.relatorioFinanceiroConsolidado
+// );
 
-// Relatório geral de vendas (por período, filial, vendedor, etc.)
-router.get('/relatorios/vendas', RelatorioController.relatorioVendasGeral);
+// // Relatório geral de vendas (por período, filial, vendedor, etc.)
+// router.get("/relatorios/vendas", RelatorioController.relatorioVendasGeral);
 
 export default router;

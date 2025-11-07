@@ -42,9 +42,19 @@ const atualizarDespesa = async (idDespesa, despesaData) => {
   }
 };
 
+const excluirDespesa = async (idDespesa) => {
+  try {
+    return await deleteRecord("despesas", `id_despesa = ${idDespesa}`);
+  } catch (error) {
+    console.error("Erro ai excluir despesa: ", error);
+    throw error
+  }
+}
+
 export {
   listarDespesas,
   obterDespesaPorId,
   criarDespesa,
   atualizarDespesa,
+  excluirDespesa
 };

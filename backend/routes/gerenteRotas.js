@@ -4,7 +4,7 @@ import {
   obterVendedorPorIdController,
   criarVendedorController,
   atualizarVendedorController,
-  excluirVendedorController,
+  desativarVendedorController,
 } from "../controllers/VendedorController.js";
 
 import {
@@ -24,8 +24,12 @@ import {
 } from "../controllers/CaixaController.js";
 import { listarVendasGerenteController } from "../controllers/VendaController.js";
 import { gerarRelatorioGerenteController } from "../controllers/RelatorioController.js";
-import { adicionarGastoController, listarGastosController } from "../controllers/GastoController.js";
-
+import {
+  adicionarGastoController,
+  atualizarGastoController,
+  excluirGastoController,
+  listarGastosController,
+} from "../controllers/GastoController.js";
 
 const router = express.Router();
 
@@ -59,16 +63,16 @@ router.get("/estoque-baixo", estoqueBaixoController);
 /* ======== Despesas ======== */
 
 // Informações de gastos da filial
-router.get('/gastos', listarGastosController);
+router.get("/gastos", listarGastosController);
 
 // Adiciona um gasto
- router.post('/gastos', adicionarGastoController);
+router.post("/gastos", adicionarGastoController);
 
-// // Edita informações de um gasto
-//  router.put('/gastos/:id',GastoController.editarGasto);
+// Edita informações de um gasto
+router.put("/gastos/:idGasto", atualizarGastoController);
 
-// // Exclui um gasto
-//  router.delete('/gastos/:id', GastoController.excluirGasto);
+// Exclui um gasto
+router.delete("/gastos/:idGasto", excluirGastoController);
 
 /* ===== Caixa, Vendas e Relatórios ===== */
 

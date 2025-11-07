@@ -22,16 +22,16 @@ const gerarRelatorioFinanceiroGerente = async (
     FROM vendas
     WHERE id_empresa = ?
     `;
-    let params = [idEmpresa]
+    let params = [idEmpresa];
 
     if (dataInicio && dataFim) {
       sql += ` AND DATE(data_venda) BETWEEN ? AND ? `;
       params.push(dataInicio, dataFim);
     }
 
-    if(idCaixa) {
-      sql+=  ` AND id_caixa = ? `
-      params.push(idCaixa)
+    if (idCaixa) {
+      sql += ` AND id_caixa = ? `;
+      params.push(idCaixa);
     }
 
     sql += ` GROUP BY DATE(data_venda) ORDER BY DATE(data_venda);
@@ -43,5 +43,6 @@ const gerarRelatorioFinanceiroGerente = async (
     throw err;
   }
 };
+
 
 export { gerarRelatorioFinanceiroGerente };
