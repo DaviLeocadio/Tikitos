@@ -45,6 +45,7 @@ const checkEmailController = async (req, res) => {
     if (!email) {
       return res.status(401).json({ error: "Email não informado" });
     }
+    console.log(email)
     // Procura email no bd
     const usuario = await encontrarUsuario(email);
     if (!usuario)

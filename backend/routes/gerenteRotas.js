@@ -4,7 +4,7 @@ import {
   obterVendedorPorIdController,
   criarVendedorController,
   atualizarVendedorController,
-  excluirVendedorController,
+  desativarVendedorController,
 } from "../controllers/VendedorController.js";
 
 import {
@@ -14,12 +14,22 @@ import {
   atualizarProdutoController,
 } from "../controllers/ProdutoController.js";
 
-import { atualizarProdutoLojaController, estoqueBaixoController } from "../controllers/ProdutoLojaController.js";
-
-// const ProdutoController = require('../controllers/ProdutoController');
-// const RelatorioController = require('../controllers/RelatorioController');
-// const CaixaController = require('../controllers/CaixaController');
-// const VendaController = require('../controllers/VendaController');
+import {
+  atualizarProdutoLojaController,
+  estoqueBaixoController,
+} from "../controllers/ProdutoLojaController.js";
+import {
+  fluxoCaixaDiarioController,
+  obterResumoCaixaController,
+} from "../controllers/CaixaController.js";
+import { listarVendasGerenteController } from "../controllers/VendaController.js";
+import { gerarRelatorioGerenteController } from "../controllers/RelatorioController.js";
+import {
+  adicionarGastoController,
+  atualizarGastoController,
+  excluirGastoController,
+  listarGastosController,
+} from "../controllers/GastoController.js";
 
 const router = express.Router();
 
@@ -28,55 +38,57 @@ const router = express.Router();
 /* ===== Vendedores ===== */
 
 // Adiciona um funcionário (vendedor)
- router.post('/vendedores', criarVendedorController);
+router.post("/vendedores", criarVendedorController);
 
 // Visualiza todos os vendedores
 router.get("/vendedores", listarVendedoresController);
 
-// // Altera informações de um vendedor específico
+// Altera informações de um vendedor específico
 router.put("/vendedores/:vendedorId", atualizarVendedorController);
+
+// Status do vendedor inativo
+router.delete("/vendedores/:vendedorId/desativar", desativarVendedorController);
 
 /* ===== Produtos e Estoque ===== */
 
 // Lista todos os produtos
-router.get('/produtos', listarProdutosController);
-
+router.get("/produtos", listarProdutosController);
 
 // Informações específicas de um produto
-router.get('/produtos/:idProduto', obterProdutoPorIdController);
+router.get("/produtos/:idProduto", obterProdutoPorIdController);
 
 // Edita estoque e/ou desconto de um produto (na filial)
-router.put('/produtos/:id', atualizarProdutoLojaController);
+router.put("/produtos/:id", atualizarProdutoLojaController);
 
 // Lista produtos com estoque abaixo do mínimo (alerta)
-router.get('/estoque-baixo', estoqueBaixoController);
+router.get("/estoque-baixo", estoqueBaixoController);
 
 /* ======== Despesas ======== */
 
-// // Informações de gastos da filial
-// router.get('/gastos', GastoController.listarGastos);
+// Informações de gastos da filial
+router.get("/gastos", listarGastosController);
 
-// // // Adiciona um gasto
-//  router.post('/gastos', GastoController.adicionarGasto);
+// Adiciona um gasto
+router.post("/gastos", adicionarGastoController);
 
-// // // Edita informações de um gasto
-//  router.put('/gastos/:id',GastoController.editarGasto);
+// Edita informações de um gasto
+router.put("/gastos/:idGasto", atualizarGastoController);
 
-// // // Exclui um gasto
-//  router.delete('/gastos/:id', GastoController.excluirGasto);
+// Exclui um gasto
+router.delete("/gastos/:idGasto", excluirGastoController);
 
-// /* ===== Caixa, Vendas e relatórios ===== */
+/* ===== Caixa, Vendas e Relatórios ===== */
 
-// // // Visualiza valores obtidos do fluxo de caixa de cada dia
-// router.get('/caixa', CaixaController.fluxoCaixaDiario);
+// Visualiza valores obtidos do fluxo de caixa de cada dia
+router.get("/caixa", fluxoCaixaDiarioController);
 
-// // // Resumo de um caixa específico
-//  router.get('/caixa/:id', CaixaController.resumoCaixa);
+// Resumo de um caixa específico
+router.get("/caixa/:idCaixa", obterResumoCaixaController);
 
-// // // Relatório financeiro com parâmetros de consulta
-// router.get('/relatorio', RelatorioController.gerarRelatorio);
+// Relatório financeiro com parâmetros de consulta
+router.get("/relatorio", gerarRelatorioGerenteController);
 
-// // // Lista vendas da filial (filtros: data, vendedor, forma de pagamento)
-// router.get('/vendas', VendaController.listarVendas);
+// Lista vendas da filial (filtros: data, vendedor, forma de pagamento)
+router.get("/vendas", listarVendasGerenteController);
 
 export default router;

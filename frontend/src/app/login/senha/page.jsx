@@ -21,7 +21,7 @@ export default function Home() {
           novaSenha: senha,
           confirmarSenha: confirmarSenha,
         }),
-      });
+      })
 
       const data = await response.json();
       if (response.status == 400) {

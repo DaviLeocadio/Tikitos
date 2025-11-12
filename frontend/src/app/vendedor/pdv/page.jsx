@@ -18,12 +18,13 @@ export default function PDV() {
     };
 
     buscarProdutos();
+    console.log(produtos)
   }, []);
   return (
     <>
       <div className="grid gap-5 grid-cols-2 md:grid-cols-2 ">
         <div className="grid gap-5 grid-cols-2 md:grid-cols-2 overflow-y-scroll max-h-110 p-5">
-          {produtos.length > 0 ? (
+          {produtos && produtos.length > 0 ? (
             produtos.map((produto, index) => {
               return (
                 <div key={index}>
@@ -36,6 +37,7 @@ export default function PDV() {
           )}
         </div>
       </div>
+      
     </>
   );
 }

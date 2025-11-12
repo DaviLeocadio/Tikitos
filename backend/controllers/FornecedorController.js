@@ -5,7 +5,7 @@ import {
   atualizarFornecedor,
 } from "../models/Fornecedor.js";
 
-const listarFornecedorController = async (req, res) => {
+const listarFornecedoresController = async (req, res) => {
   try {
     const fornecedores = await listarFornecedor();
     res
@@ -76,7 +76,7 @@ const atualizarFornecedorController = async (req, res) => {
 
 export {
   criarFornecedorController,
-  listarFornecedorController,
+  listarFornecedoresController,
   obterFornecedorPorIdController,
   atualizarFornecedorController,
 };

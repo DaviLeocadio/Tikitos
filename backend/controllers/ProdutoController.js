@@ -10,7 +10,10 @@ import path from "path";
 import { obterCategoriaPorId } from "../models/Categorias.js";
 import { obterProdutoLoja } from "../models/ProdutoLoja.js";
 import { mascaraDinheiro } from "../utils/formatadorNumero.js";
-import { formatarProduto, formatarProdutos } from "../utils/formatarProdutos.js";
+import {
+  formatarProduto,
+  formatarProdutos,
+} from "../utils/formatarProdutos.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -20,6 +23,7 @@ const listarProdutosController = async (req, res) => {
     const usuarioEmpresa = req.usuarioEmpresa;
     const usuarioPerfil = req.usuarioPerfil;
     const produtos = await listarProdutos();
+    
     const produtosFormatados = await formatarProdutos(
       produtos,
       usuarioPerfil !== "admin" ? usuarioEmpresa : null
@@ -144,9 +148,29 @@ const atualizarProdutoController = async (req, res) => {
   }
 };
 
+const desativarProdutoController = async (req, res) => {
+  try {
+    const { idProduto } = req.params;
+
+    const produtoDesativado = await atualizarProduto(idProduto, {
+      status: "inativo",
+    });
+    if (!produtoDesativado)
+      return res.status(404).json({ error: "Produto não encontrado" });
+
+    return res
+      .status(200)
+      .json({ mensagem: "Produto desativado com sucesso", produtoDesativado });
+  } catch (error) {
+    console.error("Erro ao desativar produto: ", err);
+    res.status(500).json({ mensagem: "Erro ao desativar produto" });
+  }
+};
+
 export {
   listarProdutosController,
   obterProdutoPorIdController,
   criarProdutoController,
   atualizarProdutoController,
+  desativarProdutoController
 };

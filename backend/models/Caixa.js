@@ -1,4 +1,4 @@
-import { readAll, read, create, update } from "../config/database.js";
+import { readAll, read, create, update, readRaw } from "../config/database.js";
 
 const AbrirCaixa = async (caixaData) => {
   try {
@@ -39,4 +39,72 @@ const FecharCaixa = async (caixaData, idCaixa) => {
   }
 };
 
-export { AbrirCaixa, LerCaixaPorVendedor, FecharCaixa, AtualizarCaixa };
+const ListarCaixasPorEmpresa = async (idEmpresa, dataCaixa = null) => {
+  try {
+    return await readAll(
+      "caixa",
+      `id_empresa = ${idEmpresa} ${
+        dataCaixa ? `AND DATE(abertura)  = '${dataCaixa}'` : ""
+      }`
+    );
+  } catch (err) {
+    console.error("Erro ao listar caixas por empresa: ", err);
+    throw err;
+  }
+};
+
+const RelatorioCaixa = async (idEmpresa) => {
+  try {
+    const sql = `
+    SELECT
+    DATE(abertura) as data,
+      SUM(valor_final - valor_inicial) AS valor_total,
+      COUNT(*) AS caixas
+      FROM caixa
+      WHERE id_empresa = ?
+      GROUP BY DATE(abertura)
+      ORDER BY data;
+    `;
+    return await readRaw(sql, [idEmpresa]);
+  } catch (err) {
+    console.error("Erro ao listar caixas por empresa: ", err);
+    throw err;
+  }
+};
+
+const obterCaixaPorId = async (idCaixa) => {
+  try {
+    return await read("caixa", `id_caixa = ${idCaixa}`);
+  } catch (error) {
+    console.error("Erro ao obter caixa por ID: ", err);
+    throw err;
+  }
+};
+
+const resumoVendasCaixa = async (idCaixa) => {
+  try {
+    const sql = `
+    SELECT
+	    COUNT(*) AS total_vendas,
+      SUM(total) AS saldo_total,
+      SUM(CASE WHEN tipo_pagamento = 'pix' THEN 1 ELSE 0 END) AS total_pix,
+      SUM(CASE WHEN tipo_pagamento = 'dinheiro' THEN 1 ELSE 0 END) AS total_dinheiro,
+      SUM(CASE WHEN tipo_pagamento = 'cartao' THEN 1 ELSE 0 END) AS total_cartao
+    FROM vendas
+    WHERE id_caixa = ?;`;
+    return await readRaw(sql, [idCaixa]);
+  } catch (err) {
+    console.error("Erro ao obter resumo do caixa: ", err);
+    throw err;
+  }
+}
+export {
+  AbrirCaixa,
+  LerCaixaPorVendedor,
+  FecharCaixa,
+  AtualizarCaixa,
+  ListarCaixasPorEmpresa,
+  RelatorioCaixa,
+  obterCaixaPorId,
+  resumoVendasCaixa,
+}

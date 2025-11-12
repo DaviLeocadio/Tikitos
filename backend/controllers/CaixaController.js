@@ -2,9 +2,13 @@ import {
   AbrirCaixa,
   LerCaixaPorVendedor,
   FecharCaixa,
+  ListarCaixasPorEmpresa,
+  RelatorioCaixa,
+  obterCaixaPorId,
+  resumoVendasCaixa,
 } from "../models/Caixa.js";
 
-import { obterVendaPorData } from "../models/Venda.js";
+import { listarVendasPorCaixa, obterVendaPorData } from "../models/Venda.js";
 
 import { listarItensVenda } from "../models/ItensVenda.js";
 
@@ -183,8 +187,59 @@ const ResumoCaixaController = async (req, res) => {
   }
 };
 
-export { 
-  AbrirCaixaController, 
-  FecharCaixaController, 
-  ResumoCaixaController
+const fluxoCaixaDiarioController = async (req, res) => {
+  try {
+    const idEmpresa = req.usuarioEmpresa;
+    const { dataCaixa } = req.query;
+
+    let caixaData = [];
+
+    if (dataCaixa) {
+      const caixas = await ListarCaixasPorEmpresa(idEmpresa, dataCaixa);
+
+      caixas.forEach((caixa) => {
+        const valor = (caixa.valor_final - caixa.valor_inicial).toFixed(2);
+        caixaData.push({
+          data: caixa.abertura,
+          valor: valor,
+          idCaixa: caixa.id_caixa,
+        });
+      });
+    } else {
+      caixaData = await RelatorioCaixa(idEmpresa);
+    }
+    return res
+      .status(200)
+      .json({ mensagem: "Caixas listados com sucesso", caixaData });
+  } catch (error) {
+    console.error("Erro ao montar resumo diário de caixa", error);
+    res.status(500).json({ error: "Erro ao montar resumo diário de caixa" });
+  }
+};
+
+const obterResumoCaixaController = async (req, res) => {
+  try {
+    const { idCaixa } = req.params;
+    const caixa = await obterCaixaPorId(idCaixa);
+    if (!caixa) return res.status(404).json({ error: "Caixa não encontrado" });
+
+    const vendas = await listarVendasPorCaixa(idCaixa);
+
+    const resumoCaixa = await resumoVendasCaixa(idCaixa);
+    
+    return res
+      .status(200)
+      .json({ mensagem: "Resumo do caixa obtido com sucesso", resumoCaixa, vendas });
+  } catch (error) {
+    console.error("Erro ao obter resumo de um caixa", error);
+    res.status(500).json({ error: "Erro ao obter resumo de um caixa" });
+  }
+};
+
+export {
+  AbrirCaixaController,
+  FecharCaixaController,
+  ResumoCaixaController,
+  fluxoCaixaDiarioController,
+  obterResumoCaixaController,
 };

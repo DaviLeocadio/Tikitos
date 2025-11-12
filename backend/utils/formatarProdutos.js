@@ -21,13 +21,15 @@ export const formatarProdutos = async (produtos, usuarioEmpresa = null) => {
       }
       let precoFormatado = mascaraDinheiro(precoProduto);
 
-      return {
+      let response = {
         ...produto,
         categoria: categoria.nome,
-        estoque: estoque || null,
         preco: precoProduto,
         precoFormatado: precoFormatado,
       };
+
+      if (estoque) response.estoque = estoque;
+      return response;
     })
   );
 };
@@ -48,11 +50,13 @@ export const formatarProduto = async (produto, usuarioEmpresa = null) => {
   }
   let precoFormatado = mascaraDinheiro(precoProduto);
 
-  return {
+  let response = {
     ...produto,
     categoria: categoria.nome,
-    estoque: estoque || null,
     preco: precoProduto,
     precoFormatado: precoFormatado,
   };
+
+  if (estoque) response.estoque = estoque;
+  return response;
 };

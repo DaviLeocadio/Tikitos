@@ -31,10 +31,7 @@
   /* font-size: 18px; */
 }
 
-.form_container .form {
-  display: flex;
-  flex-direction: column;
-}
+
 
 .form_container .form_group {
   display: flex;

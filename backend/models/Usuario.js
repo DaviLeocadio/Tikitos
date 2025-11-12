@@ -29,9 +29,9 @@ const listarUsuarios = async (whereClause = null) => {
   }
 };
 
-const obterUsuarioPorId = async (id) => {
+const obterUsuarioPorId = async (whereClause) => {
   try {
-    const usuario = await read("usuarios", `id_usuario = ${id}`);
+    const usuario = await read("usuarios", whereClause);
     delete usuario.senha;
 
     return {
@@ -57,7 +57,7 @@ const criarUsuario = async (usuarioData) => {
 
 const atualizarUsuario = async (id, usuarioData) => {
   try {
-    await update("usuarios", usuarioData, `id_usuario = ${id}`);
+    return await update("usuarios", usuarioData, `id_usuario = ${id}`);
   } catch (err) {
     console.error("Erro ao atualizar usuario: ", err);
     throw err;

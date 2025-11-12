@@ -8,29 +8,28 @@ import { ToastContainer, toast, Bounce } from "react-toastify";
 export default function Login() {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
-  const [caracterExcedidoSenha, setCaracterExcedidoSenha] = useState(false);
-  const [caracterExcedidoEmail, setCaracterExcedidoEmail] = useState(false);
-  const [cadastroIncorreto, setCadastroIncorreto] = useState(false);
-  const [camposVazios, setCamposVazios] = useState(false);
 
   useEffect(() => {
     // Verifica de há excesso de caracteres para proteção contra ataques
     const temporizador = setTimeout(() => {
-      if (email.length > 100) {
-        setCaracterExcedidoEmail(true);
-        return;
+      if (email.length > 100 || senha.length > 25) {
+        return toast("Máximo de caracteres excedido!", {
+          icon: (
+            <img
+              src="/img/toast/logo_ioio.png"
+              alt="logo"
+              className="w-22 h-7"
+            />
+          ),
+          position: "top-right",
+          autoClose: 4000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          style: { backgroundColor: "#924187", color: "#fff" },
+          transition: Bounce,
+        });
       }
-
-      if (senha.length > 25) {
-        setCaracterExcedidoSenha(true);
-        return;
-      }
-
-      //Assim que o usuario digita ou apaga some a mensagem de erro
-      setCaracterExcedidoSenha(false);
-      setCaracterExcedidoEmail(false);
-      setCadastroIncorreto(false);
-      setCamposVazios(false);
     }, 100);
 
     return () => clearTimeout(temporizador);
@@ -50,7 +49,6 @@ export default function Login() {
         style: { backgroundColor: "#924187", color: "#fff" },
         transition: Bounce,
       });
-
 
     try {
       const response = await fetch("http://localhost:8080/auth/login", {
@@ -165,8 +163,7 @@ export default function Login() {
 
           <div className={`bg-[#9CD089]  ${styles.form_container}`}>
             {/* INPUT DE EMAIL */}
-            <form className={styles.form}>
-              <div className={styles.form_group}>
+              <div className={`${styles.form_group} flex flex-col`}>
                 <label className={`text-[var(--color-verdao)]`} htmlFor="email">
                   Insira o seu e-mail:
                 </label>
@@ -181,11 +178,10 @@ export default function Login() {
                   onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
-            </form>
+ 
 
             {/* INPUT DE SENHA */}
-            <form className={styles.form}>
-              <div className={styles.form_group}>
+              <div className={`${styles.form_group} flex flex-col`}>
                 <label
                   className={`text-[var(--color-verdao)] `}
                   htmlFor="email"
@@ -203,7 +199,6 @@ export default function Login() {
                   onChange={(e) => setSenha(e.target.value)}
                 />
               </div>
-            </form>
           </div>
 
           {/* BOTÃO DE ENVIAR */}
@@ -211,6 +206,9 @@ export default function Login() {
             <button
               className="group cursor-pointer transition-all duration-200 mt-5 rounded-full border border-transparent flex items-center justify-center gap-2 whitespace-nowrap bg-[#D6B9E2] text-[var(--color-verdao)] font-light hover:bg-[#db90e4] active:scale-95 px-8 py-3 text-[15px] sm:px-10 sm:text-[16px] md:px-14 md:text-[15px] lg:px-16 lg:text-[15px] xl:px-29"
               onClick={loginUser}
+              onSubmit={(e) => {
+                if (e.key == "enter") e.preventDefault();
+              }}
             >
               <span className="text-end">Entre clicando aqui!</span>
               <svg
