@@ -47,7 +47,7 @@
 // // Exclui um gasto
 // router.delete('/gastos/:id', GastoController.excluirGasto);
 
-// /* ===================== ROTAS DE CAIXA, VENDAS, RELATORIOS ===================== */
+/* ===================== ROTAS DE CAIXA, VENDAS, RELATORIOS ===================== */
 
 // // Visualiza valores obtidos do fluxo de caixa de cada dia
 // router.get('/caixa', CaixaController.fluxoCaixaDiario);

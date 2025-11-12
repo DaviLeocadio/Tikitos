@@ -1,11 +1,9 @@
 "use client"
 
+import * as React from "react"
 import {
-  IconCreditCard,
   IconDotsVertical,
   IconLogout,
-  IconNotification,
-  IconUserCircle,
 } from "@tabler/icons-react"
 
 import {
@@ -16,7 +14,6 @@ import {
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -30,36 +27,40 @@ import {
 } from "@/components/ui/sidebar"
 
 export function NavUser({ user }) {
-  const { isMobile, toggleSidebar, setOpen, setIsPinned } = useSidebar()
+  const { isMobile, setOpen, setIsPinned } = useSidebar()
+  const [dropdownOpen, setDropdownOpen] = React.useState(false)
 
-  // 🔁 quando o menu abre
   function handleDropdownOpenChange(open) {
-    if (!open) return
+    setDropdownOpen(open)
 
-    if (isMobile) {
-      toggleSidebar()
-      return
+    if (open) {
+      setOpen(true)
+      setIsPinned(true)
     }
-
-    // Desktop: fixa a sidebar
-    setOpen(true)
-    setIsPinned(true)
   }
 
-  // 🔥 Fecha o dropdown e "desfixa" a sidebar
-  function handleCloseMenu() {
-    setOpen(false)
-    setIsPinned(false)
+  function handleDropdownClick() {
+    if (!isMobile) {
+      setDropdownOpen(false)
+      setIsPinned(false)
+      setOpen(false)
+    }
   }
 
   return (
     <SidebarMenu>
       <SidebarMenuItem>
-        <DropdownMenu onOpenChange={handleDropdownOpenChange}>
+        <DropdownMenu open={dropdownOpen} onOpenChange={handleDropdownOpenChange}>
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
               size="lg"
-              className="data-[state=open]:bg-[#924187] data-[state=open]:text-[#75BA51] hover:bg-[#924187]">
+              className={`
+                data-[state=open]:bg-[#924187]
+                data-[state=open]:text-[#75BA51]
+                hover:bg-[#924187]
+                hover:text-[#75BA51]
+              `}
+            >
               <Avatar className="h-8 w-8 rounded-lg">
                 <AvatarImage src={user.avatar} alt={user.name} />
                 <AvatarFallback className="rounded-lg">CN</AvatarFallback>
@@ -73,12 +74,13 @@ export function NavUser({ user }) {
           </DropdownMenuTrigger>
 
           <DropdownMenuContent
-            onClick={handleCloseMenu} // 👈 FECHA ao clicar em qualquer parte do menu
+            onClick={handleDropdownClick}
             className="w-(--radix-dropdown-menu-trigger-width) border-[#9D4E92] bg-[#9D4E92] text-[#75BA51] min-w-56 rounded-lg"
             side={isMobile ? "bottom" : "right"}
             align="end"
-            sideOffset={4}>
-            <DropdownMenuLabel className="p-0 font-normal">
+            sideOffset={4}
+          >
+            <DropdownMenuLabel className="p-0 font-normal cursor-pointer">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
                   <AvatarImage src={user.avatar} alt={user.name} />
@@ -86,10 +88,11 @@ export function NavUser({ user }) {
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-medium">{user.name}</span>
-                  <span className=" text-[#75BA51] text-xs">{user.email}</span>
+                  <span className="text-[#75BA51] text-xs">{user.email}</span>
                 </div>
               </div>
             </DropdownMenuLabel>
+
             <DropdownMenuSeparator className="bg-[#75BA51]" />
 
             <DropdownMenuItem

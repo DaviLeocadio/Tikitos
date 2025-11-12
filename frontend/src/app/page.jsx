@@ -192,7 +192,7 @@ export default function Login() {
             {/* Resposta de cadastro incorreto */}
             {cadastroIncorreto ? (
               <div>
-                <p>Email ou senha incorretos</p>
+                <center><p>Email ou senha incorretos</p></center>
               </div>
             ) : (
               ""

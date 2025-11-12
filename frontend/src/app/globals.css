@@ -150,3 +150,9 @@
 body {
   background-color: #ddf1d4;
 }
+
+/* muda a cor selecionado */
+::selection{
+  background-color: var(--color-verdinho);
+  color: #924187;
+}

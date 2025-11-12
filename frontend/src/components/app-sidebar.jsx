@@ -48,7 +48,7 @@ const data = {
   navMain: [
     {
       title: "Pesquisar",
-      href: "#",
+      href: "/vendedor/suporte",
       icon: (props) => <BiSearch className="size-5" {...props} />,
     },
     {

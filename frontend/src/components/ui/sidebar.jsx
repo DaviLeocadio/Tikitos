@@ -103,8 +103,8 @@ function SidebarProvider({
     openMobile,
     setOpenMobile,
     toggleSidebar,
-    isPinned,     
-    setIsPinned,    
+    isPinned,
+    setIsPinned,
   }), [state, open, setOpen, isMobile, openMobile, setOpenMobile, toggleSidebar, isPinned, setIsPinned])
 
   return (
@@ -144,15 +144,14 @@ function Sidebar({
   React.useEffect(() => {
     function handleClickOutside(e) {
       const sidebar = document.querySelector("[data-slot='sidebar']")
-      if (sidebar && !sidebar.contains(e.target) && isPinned) {
+      if (sidebar && !sidebar.contains(e.target) && !isPinned) {
         setOpen(false)
-        setIsPinned(false)
       }
     }
 
     document.addEventListener("mousedown", handleClickOutside)
     return () => document.removeEventListener("mousedown", handleClickOutside)
-  }, [isPinned, setOpen, setIsPinned])
+  }, [isPinned, setOpen])
 
   if (collapsible === "none") {
     return (
@@ -186,7 +185,7 @@ function Sidebar({
           data-sidebar="sidebar"
           data-slot="sidebar"
           data-mobile="true"
-          className="bg-sidebar h-[90%] rounded-2xl border-3 border-dashed border-[#924187] text-sidebar-foreground w-(--sidebar-width) p-0 [&>button]:hidden"
+          className="bg-sidebar h-[99%] rounded-2xl border-3 border-dashed border-[#924187] text-sidebar-foreground w-(--sidebar-width) p-0 [&>button]:hidden"
           style={
             {
               "--sidebar-width": SIDEBAR_WIDTH_MOBILE
@@ -236,7 +235,7 @@ function Sidebar({
       <div
         data-slot="sidebar-container"
         className={cn(
-          "fixed inset-y-0 z-10 hidden h-[100%] items-center justify-center w-(--sidebar-width) transition-[left,right,width] duration-200 ease-linear md:flex",
+          "fixed mx-2 inset-y-0 z-10 hidden h-[100%] items-center justify-center w-(--sidebar-width) transition-[left,right,width] duration-200 ease-linear md:flex",
           side === "left"
             ? "left-0 group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)]"
             : "right-0 group-data-[collapsible=offcanvas]:right-[calc(var(--sidebar-width)*-1)]",
@@ -249,7 +248,7 @@ function Sidebar({
         <div
           data-sidebar="sidebar"
           data-slot="sidebar-inner"
-          className="bg-sidebar jusfify-center h-[99%] sm:h-[99%] rounded-2xl border-3 border-dashed border-[#924187] group-data-[variant=floating]:border-sidebar-border flex w-full flex-col group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:shadow-sm">
+          className="bg-sidebar jusfify-center h-[99%] sm:h-[96%] rounded-2xl border-3 border-dashed border-[#924187] group-data-[variant=floating]:border-sidebar-border flex w-full flex-col group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:shadow-sm">
           {children}
         </div>
       </div>
@@ -258,7 +257,7 @@ function Sidebar({
 }
 
 function SidebarTrigger({ className, onClick, ...props }) {
-  const { isMobile, toggleSidebar, setOpen, isPinned, setIsPinned } = useSidebar()
+  const { isMobile, toggleSidebar, setOpen, isPinned, setIsPinned, open } = useSidebar()
 
   function handleClick(event) {
     onClick?.(event)
@@ -276,11 +275,22 @@ function SidebarTrigger({ className, onClick, ...props }) {
       setOpen(false)
     }
   }
+  const isActiveVisual = Boolean(open)
+  const inlineStyle = isActiveVisual
+    ? {
+      backgroundColor: "#9BF377",
+      color: "#924187",
+    }
+    : undefined
+  const svgStyle = isActiveVisual
+    ? { color: "#924187", stroke: "#924187" }
+    : undefined
 
   return (
     <Button
       data-sidebar="trigger"
       data-slot="sidebar-trigger"
+      aria-expanded={open ? "true" : "false"}
       variant="ghost"
       size="icon"
       className={cn(
@@ -288,14 +298,17 @@ function SidebarTrigger({ className, onClick, ...props }) {
         isPinned ? "bg-sidebar-accent hover:bg-[#9BF377] text-[#924187]" : "",
         className
       )}
+      style={inlineStyle}
       onClick={handleClick}
       {...props}
     >
-      <PanelLeftIcon />
+      <PanelLeftIcon style={svgStyle} />
       <span className="sr-only">Toggle Sidebar</span>
     </Button>
   )
 }
+
+
 
 function SidebarRail({
   className,
@@ -545,30 +558,12 @@ function SidebarMenuButton({
       data-size={size}
       data-active={isActive}
       className={cn(sidebarMenuButtonVariants({ variant, size }), className)}
-      {...props} />
+      {...props}
+    />
   )
-
-  if (!tooltip) {
-    return button
-  }
-
-  if (typeof tooltip === "string") {
-    tooltip = {
-      children: tooltip,
-    }
-  }
-
-  return (
-    <Tooltip>
-      <TooltipTrigger asChild>{button}</TooltipTrigger>
-      <TooltipContent
-        side="right"
-        align="center"
-        hidden={state !== "collapsed" || isMobile}
-        {...tooltip} />
-    </Tooltip>
-  );
+  return button
 }
+
 
 function SidebarMenuAction({
   className,
