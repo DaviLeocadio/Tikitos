@@ -1,8 +1,8 @@
 import { deleteRecord, read, readAll, update, create } from "../config/database.js";
 
-const listarItensVenda = async (vendaId) => {
+const listarItensVenda = async (query = null) => {
   try {
-    return await readAll("venda_itens", `id_venda = ${vendaId}`);
+    return await readAll("venda_itens", query);
   } catch (err) {
     console.error("Erro ao listar itens da venda: ", err);
     throw err;

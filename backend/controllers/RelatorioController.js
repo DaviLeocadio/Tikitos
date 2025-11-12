@@ -1,7 +1,11 @@
 import { listarDespesas } from "../models/Despesas.js";
-import { gerarRelatorioFinanceiroGerente } from "../models/Relatorio.js";
+import {
+  gerarRelatorioFinanceiroGerente,
+  gerarRelatorioVendasAdmin,
+} from "../models/Relatorio.js";
 import { listarVendas } from "../models/Venda.js";
 import { listarEmpresas } from "../models/Empresa.js";
+import { listarItensVenda } from "../models/ItensVenda.js";
 
 const gerarRelatorioGerenteController = async (req, res) => {
   try {
@@ -77,32 +81,76 @@ const gerarRelatorioGerenteController = async (req, res) => {
 
 const gerarRelatorioFiliaisController = async (req, res) => {
   try {
-    const filiaisListadas = await listarEmpresas();
+    const empresasListadas = await listarEmpresas();
     const vendasListadas = await listarVendas();
+    const itensListados = await listarItensVenda();
 
-    let listaFiliaisAtivas = [];
-    let listaFiliaisInativas = [];
+    const retorno = empresasListadas.map((empresa) => {
+      const vendasEmpresa = vendasListadas.filter(
+        (venda) => venda.id_empresa == empresa.id_empresa
+      );
 
-    filiaisListadas.map((filial) => {
-      if (filial.status == "ativo") {
-        return listaFiliaisAtivas.push(filial);
-      } else {
-        return listaFiliaisInativas.push(filial);
-      }
+      const produtosVendidos = vendasEmpresa.flatMap((venda) =>
+        itensListados.filter((produto) => produto.id_venda === venda.id_venda)
+      );
+      return {
+        empresaId: empresa.id_empresa,
+        totalVendas: vendasEmpresa.length,
+        totalProdutosVendidos: produtosVendidos.length,
+        vendas: vendasEmpresa,
+        produtos: produtosVendidos,
+      };
     });
 
-    
-    // Total de filiais ativas
-    const totalFiliais = listaFiliaisAtivas.length;
-
-    // Total de filiais inativas
-    const totalFiliaisInativas = listaFiliaisInativas.length;
+    res
+      .status(200)
+      .json({ mensagem: "Relatorio das filiais gerado com sucesso", retorno });
   } catch (err) {
-    consoler.error("Erro ao gerar relatório sobre as filiais: ", err);
+    console.error("Erro ao gerar relatório sobre as filiais: ", err);
     return res
       .status(500)
       .json({ mensagem: "Erro ao gerar relatório sobre filiais" });
   }
 };
 
-export { gerarRelatorioGerenteController };
+const relatorioVendasGeralController = async (req, res) => {
+  try {
+    const { inicio, fim, idEmpresa, idVendedor } = req.query;
+
+    if(!inicio || !fim) return res.status(404).json({error: 'Data de início e fim são parâmetros obrigatórios'})
+
+    let whereClause = `data_venda BETWEEN '${inicio}' AND '${fim}'`;
+    if (idEmpresa) whereClause += ` AND id_empresa = ${idEmpresa}`;
+    if (idVendedor) whereClause += ` AND id_usuario = ${idVendedor}`;
+
+    const vendas = await listarVendas(whereClause);
+
+    const relatorio = await gerarRelatorioVendasAdmin(
+      inicio,
+      fim,
+      idEmpresa,
+      idVendedor
+    );
+
+    const relatorioVendas = {
+      relatorio,
+      vendas,
+    };
+
+    return res.status(200).json({
+      mensagem: "Relatório de vendas gerado com sucesso",
+      relatorioVendas,
+    });
+  } catch (err) {
+    console.error("Erro ao gerar relatório de vendas: ", err);
+    return res
+      .status(500)
+      .json({ mensagem: "Erro ao gerar relatório de vendas" });
+  }
+};
+
+export {
+  gerarRelatorioGerenteController,
+  gerarRelatorioFiliaisController,
+  relatorioVendasGeralController,
+};

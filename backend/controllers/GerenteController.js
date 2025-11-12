@@ -5,10 +5,11 @@ import {
   criarUsuario,
   atualizarUsuario,
 } from "../models/Usuario.js";
+import { obterEmpresaPorId } from "../models/Empresa.js";
 
 const listarGerentesController = async (req, res) => {
   try {
-    const gerentes = await listarUsuarios("perfil = gerente");
+    const gerentes = await listarUsuarios("perfil = 'gerente'");
 
     res
       .status(200)
@@ -22,7 +23,7 @@ const obterGerentePorIdController = async (req, res) => {
   try {
     const { gerenteId } = req.params;
 
-    const gerente = await obterUsuarioPorId(gerenteId);
+    const gerente = await obterUsuarioPorId(`id_usuario = ${gerenteId}`);
 
     res.status(200).json({ mensagem: "Gerente obtido com sucesso!", gerente });
   } catch (err) {
@@ -32,24 +33,47 @@ const obterGerentePorIdController = async (req, res) => {
 
 const criarGerenteController = async (req, res) => {
   try {
-    const {
-      nome,
-      email,
-      telefone,
-      cpf,
-      endereco,
-      perfil,
-      data_nasc,
-      idEmpresa,
-    } = req.body;
+    const { nome, email, telefone, cpf, endereco, perfil, data_nasc } =
+      req.body;
+
+    const { idEmpresa } = req.params;
+
+    const filial = await obterEmpresaPorId(idEmpresa);
+    if (!filial)
+      return res
+        .status(404)
+        .json({ error: "Filial não encontrada com o ID informado" });
+
+    const telefoneFormatado = telefone.replace(/\D/g, "");
+    if (telefoneFormatado.lenght < 10 || telefoneFormatado.lenght > 11)
+      return res.status(400).json({ error: "Telefone inválido." });
+
+    const cpfFormatado = cpf.replace(/\D/g, "");
+
+    if (cpfFormatado.length != 11) {
+      return res.status(400).json({ error: "CPF inválido." });
+    }
+
+    const { logradouro, numero, complemento, bairro, cidade, uf, cep } =
+      endereco;
+
+    if (!logradouro || !numero || !bairro || !cidade || !uf || !cep)
+      return res
+        .status(404)
+        .json({ error: "Parâmetros do endereço faltando." });
+
+    const enderecoFormatado = `${logradouro}, ${numero}${
+      complemento ? `, ${complemento}` : ""
+    }, ${bairro}, ${cidade}/${uf}, ${cep}`;
 
     const gerenteData = {
       nome: nome,
       email: email,
-      telefone: telefone,
-      cpf: cpf,
-      endereco,
+      telefone: telefoneFormatado,
+      cpf: cpfFormatado,
+      endereco: enderecoFormatado,
       perfil: perfil,
+      senha: "deve_mudar",
       data_nasc: data_nasc,
       id_empresa: idEmpresa,
     };
@@ -67,6 +91,11 @@ const criarGerenteController = async (req, res) => {
 const atualizarGerenteController = async (req, res) => {
   try {
     const { gerenteId } = req.params;
+    const gerente = await obterUsuarioPorId(gerenteId);
+    if (!gerente)
+      return res
+        .status(404)
+        .json({ error: "Gerente não encontrado com o ID informado" });
     const {
       nome,
       email,
@@ -75,26 +104,51 @@ const atualizarGerenteController = async (req, res) => {
       endereco,
       perfil,
       data_nasc,
-      idEmpresa,
+      id_empresa,
     } = req.body;
 
-    const gerenteData = {
+    const telefoneFormatado = telefone.replace(/\D/g, "");
+    if (telefoneFormatado.lenght < 10 || telefoneFormatado.lenght > 11)
+      return res.status(400).json({ error: "Telefone inválido." });
+
+    const cpfFormatado = cpf.replace(/\D/g, "");
+
+    if (cpfFormatado.length != 11) {
+      return res.status(400).json({ error: "CPF inválido." });
+    }
+
+    let gerenteData = {
       nome: nome,
       email: email,
-      telefone: telefone,
-      cpf: cpf,
-      endereco,
+      telefone: telefoneFormatado,
+      cpf: cpfFormatado,
       perfil: perfil,
       data_nasc: data_nasc,
-      id_empresa: idEmpresa,
+      id_empresa: id_empresa,
     };
 
-    const gerenteAtualizado = atualizarUsuario(gerenteId, gerenteData);
+    if (endereco) {
+      const { logradouro, numero, complemento, bairro, cidade, uf, cep } =
+        endereco;
 
-    res
+      if (!logradouro || !numero || !bairro || !cidade || !uf || !cep)
+        return res
+          .status(404)
+          .json({ error: "Parâmetros do endereço faltando." });
+
+      const enderecoFormatado = `${logradouro}, ${numero}${
+        complemento ? `, ${complemento}` : ""
+      } - ${bairro}, ${cidade} - ${uf}, ${cep}`;
+      gerenteData.endereco = enderecoFormatado;
+    }
+
+    const gerenteAtualizado = await atualizarUsuario(gerenteId, gerenteData);
+
+    return res
       .status(200)
       .json({ mensagem: "Gerente atualizado com sucesso!", gerenteAtualizado });
   } catch (err) {
+    console.error("Erro ao atualizar gerente: ", err);
     return res
       .status(500)
       .json({ err: "Não foi possível atualizar o gerente" });
@@ -112,7 +166,7 @@ const desativarGerenteController = async (req, res) => {
     if (!gerenteDesativado)
       return res.status(404).json({ error: "Gerente não encontrado" });
 
-    res
+    return res
       .status(201)
       .json({ mensagem: "Gerente com status inativo!", gerenteDesativado });
   } catch (err) {
@@ -128,5 +182,5 @@ export {
   obterGerentePorIdController,
   criarGerenteController,
   atualizarGerenteController,
-  desativarGerenteController
+  desativarGerenteController,
 };

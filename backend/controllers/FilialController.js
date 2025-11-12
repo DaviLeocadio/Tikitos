@@ -183,11 +183,15 @@ const estoqueTodasFiliaisController = async (req, res) => {
   try {
     const filiais = await listarEmpresas("tipo = 'filial'");
     const produtos = await listarProdutos();
+    
+    let listaEstoque = {};
+    
 
     await Promise.all(
       filiais.map(async (filial) => {
         const idEmpresa = filial.id_empresa;
-        let listaEstoque = {};
+
+        if(!listaEstoque[idEmpresa]) listaEstoque[idEmpresa] = {}
 
         for (const produto of produtos) {
           const produtoLoja = await obterProdutoLoja(
@@ -196,7 +200,7 @@ const estoqueTodasFiliaisController = async (req, res) => {
           );
           listaEstoque[idEmpresa][produto.id_produto] = {
             ...produto,
-            estoque: produtoLoja.estoque,
+            estoque: produtoLoja ? produtoLoja.estoque : 0,
           };
         }
       })

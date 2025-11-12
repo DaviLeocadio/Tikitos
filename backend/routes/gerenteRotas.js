@@ -43,8 +43,11 @@ router.post("/vendedores", criarVendedorController);
 // Visualiza todos os vendedores
 router.get("/vendedores", listarVendedoresController);
 
-// // Altera informações de um vendedor específico
+// Altera informações de um vendedor específico
 router.put("/vendedores/:vendedorId", atualizarVendedorController);
+
+// Status do vendedor inativo
+router.delete("/vendedores/:vendedorId/desativar", desativarVendedorController);
 
 /* ===== Produtos e Estoque ===== */
 

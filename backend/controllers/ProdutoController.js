@@ -23,6 +23,7 @@ const listarProdutosController = async (req, res) => {
     const usuarioEmpresa = req.usuarioEmpresa;
     const usuarioPerfil = req.usuarioPerfil;
     const produtos = await listarProdutos();
+    
     const produtosFormatados = await formatarProdutos(
       produtos,
       usuarioPerfil !== "admin" ? usuarioEmpresa : null
