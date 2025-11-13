@@ -161,66 +161,67 @@ export default function Login() {
             </div>
           </div>
 
-          <div className={`bg-[#9CD089]  ${styles.form_container}`}>
+          <form className={`bg-[#9CD089] ${styles.form_container}`} onSubmit={(e) => {
+            e.preventDefault();
+            loginUser();
+          }}>
             {/* INPUT DE EMAIL */}
-              <div className={`${styles.form_group} flex flex-col`}>
-                <label className={`text-[var(--color-verdao)]`} htmlFor="email">
-                  Insira o seu e-mail:
-                </label>
-                <input
-                  type="text"
-                  id="email"
-                  name="email"
-                  placeholder="E-mail"
-                  required=""
-                  className={`bg-[#DABCE1] focus:border-color[#9CD089]`}
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </div>
- 
+            <div className={`${styles.form_group} flex flex-col`}>
+              <label className={`text-[var(--color-verdao)]`} htmlFor="email">
+                Insira o seu e-mail:
+              </label>
+              <input
+                type="text"
+                id="email"
+                name="email"
+                placeholder="E-mail"
+                required=""
+                className={`bg-[#DABCE1] focus:border-color[#9CD089]`}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+
 
             {/* INPUT DE SENHA */}
-              <div className={`${styles.form_group} flex flex-col`}>
-                <label
-                  className={`text-[var(--color-verdao)] `}
-                  htmlFor="email"
+            <div className={`${styles.form_group} flex flex-col`}>
+              <label
+                className={`text-[var(--color-verdao)] `}
+                htmlFor="email"
+              >
+                Insira a sua senha:
+              </label>
+              <input
+                type="password"
+                id="email"
+                name="email"
+                placeholder="Senha"
+                required=""
+                className={`bg-[#DABCE1]`}
+                value={senha}
+                onChange={(e) => setSenha(e.target.value)}
+              />
+            </div>
+
+            <div className="flex justify-center">
+              <button
+                className="group cursor-pointer transition-all duration-200 mt-5 rounded-full border border-transparent flex items-center justify-center gap-2 whitespace-nowrap bg-[#D6B9E2] text-[var(--color-verdao)] font-light hover:bg-[#db90e4] active:scale-95 px-8 py-3 text-[15px] sm:px-10 sm:text-[16px] md:px-14 md:text-[15px] lg:px-16 lg:text-[15px] xl:px-29"
+              >
+                <span className="text-end">Entre clicando aqui!</span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 16 16"
+                  fill="currentColor"
+                  className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7 text-[#6a0d75] transition-transform duration-300 ease-in-out group-hover:translate-x-[3px]"
                 >
-                  Insira a sua senha:
-                </label>
-                <input
-                  type="password"
-                  id="email"
-                  name="email"
-                  placeholder="Senha"
-                  required=""
-                  className={`bg-[#DABCE1]`}
-                  value={senha}
-                  onChange={(e) => setSenha(e.target.value)}
-                />
-              </div>
-          </div>
+                  <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z" />
+                </svg>
+              </button>
+            </div>
+          </form>
 
           {/* BOTÃO DE ENVIAR */}
-          <div className="flex justify-center">
-            <button
-              className="group cursor-pointer transition-all duration-200 mt-5 rounded-full border border-transparent flex items-center justify-center gap-2 whitespace-nowrap bg-[#D6B9E2] text-[var(--color-verdao)] font-light hover:bg-[#db90e4] active:scale-95 px-8 py-3 text-[15px] sm:px-10 sm:text-[16px] md:px-14 md:text-[15px] lg:px-16 lg:text-[15px] xl:px-29"
-              onClick={loginUser}
-              onSubmit={(e) => {
-                if (e.key == "enter") e.preventDefault();
-              }}
-            >
-              <span className="text-end">Entre clicando aqui!</span>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 16 16"
-                fill="currentColor"
-                className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7 text-[#6a0d75] transition-transform duration-300 ease-in-out group-hover:translate-x-[3px]"
-              >
-                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z" />
-              </svg>
-            </button>
-          </div>
+
 
           {/* ESCRITA COM O LINK */}
           <p
