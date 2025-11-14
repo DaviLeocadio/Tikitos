@@ -31,89 +31,85 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
+
+// AQUI É A IMPORTAÇÃO NECESSÁRIA PARA OS ÍCONES
+import { BiSearch } from "react-icons/bi";
+import { BsClockHistory } from "react-icons/bs";
+import { BsQuestionCircle } from "react-icons/bs";
+
 
 const data = {
   user: {
     name: "shadcn",
     email: "m@example.com",
-    avatar: "/img/logos/logo_comprimida.png",
+    avatar: "/img/sidebar/sidebar_user.png"
   },
   navMain: [
     {
-      title: "Dashboard",
-      url: "#",
-      icon: IconDashboard,
+      title: "Pesquisar",
+      href: "/vendedor/suporte",
+      icon: (props) => <BiSearch className="size-5" {...props} />,
     },
     {
-      title: "Lifecycle",
-      url: "#",
-      icon: IconListDetails,
+      title: "Histórico",
+      href: "#",
+      icon: (props) => <BsClockHistory className="size-3" {...props} />,
     },
     {
-      title: "Analytics",
-      url: "#",
-      icon: IconChartBar,
-    },
-    {
-      title: "Projects",
-      url: "#",
-      icon: IconFolder,
-    },
-    {
-      title: "Team",
-      url: "#",
-      icon: IconUsers,
-    },
+      title: "Suporte",
+      href: "#",
+      icon: (props) => <BsQuestionCircle className="size-4" {...props} />,
+    }
   ],
-  navClouds: [
-    {
-      title: "Capture",
-      icon: IconCamera,
-      isActive: true,
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Proposal",
-      icon: IconFileDescription,
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Prompts",
-      icon: IconFileAi,
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
-    },
-  ]
+  // navClouds: [
+  //   {
+  //     title: "Capture",
+  //     icon: IconCamera,
+  //     isActive: true,
+  //     url: "#",
+  //     items: [
+  //       {
+  //         title: "Active Proposals",
+  //         url: "#",
+  //       },
+  //       {
+  //         title: "Archived",
+  //         url: "#",
+  //       },
+  //     ],
+  //   },
+  //   {
+  //     title: "Proposal",
+  //     icon: IconFileDescription,
+  //     url: "#",
+  //     items: [
+  //       {
+  //         title: "Active Proposals",
+  //         url: "#",
+  //       },
+  //       {
+  //         title: "Archived",
+  //         url: "#",
+  //       },
+  //     ],
+  //   },
+  //   {
+  //     title: "Prompts",
+  //     icon: IconFileAi,
+  //     url: "#",
+  //     items: [
+  //       {
+  //         title: "Active Proposals",
+  //         url: "#",
+  //       },
+  //       {
+  //         title: "Archived",
+  //         url: "#",
+  //       },
+  //     ],
+  //   },
+  // ]
   // navSecondary: [
   //   {
   //     title: "Settings",
@@ -159,9 +155,9 @@ export function AppSidebar({
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton asChild className="data-[slot=sidebar-menu-button]:!p-1.5">
-              <a href="#">
-                <IconInnerShadowTop className="!size-5" />
-                <span className="text-base font-semibold">Tikitos</span>
+              <a href="/vendedor/pdv">
+                <img src="/img/logos/logo_ioio.png" alt="" className="max-h-full"/>
+                <span className="text-base font-semibold text-[#76216D]  hover:text-[#75BA51] active:text-[#75BA51]">Tikitos</span>
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -172,7 +168,7 @@ export function AppSidebar({
         {/* <NavDocuments items={data.documents} /> */}
         {/* <NavSecondary items={data.navSecondary} className="mt-auto" /> */}
       </SidebarContent>
-      <SidebarFooter>
+      <SidebarFooter className="flex justify-start pl-1.5">
         <NavUser user={data.user} />
       </SidebarFooter>
     </Sidebar>

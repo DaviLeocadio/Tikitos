@@ -12,6 +12,25 @@ export default function Home() {
   const [caracterExcedido, setCaracterExcedido] = useState(false);
   const inputsRef = useRef([]);
 
+  function aparecerToast(msg) {
+    toast(msg, {
+      icon: (
+        <img
+          src="/img/toast/logo_ioio.png"
+          alt="logo"
+          className="w-22 h-7"
+        />
+      ),
+      position: "top-right",
+      autoClose: 4000,
+      hideProgressBar: true,
+      closeOnClick: true,
+      pauseOnHover: true,
+      style: { backgroundColor: "#924187", color: "#fff" },
+      transition: Bounce,
+    });
+  }
+
   const handleChange = (e, index) => {
     const value = e.target.value;
     if (value.length > 1) return;
@@ -41,7 +60,6 @@ export default function Home() {
   useEffect(() => {
     if (!email) return;
 
-    console.log(email);
     //Verificar Email
     const temporizador = setTimeout(async () => {
       try {
@@ -57,66 +75,21 @@ export default function Home() {
         // TRATAMENTO DE ERROS
         //Caso tente enviar um email vazio
         if (response.status == 401) {
-          return;
+          return aparecerToast("Preencha todos os campos!");
         }
 
         if (response.status == 400) {
-          return toast("Número de caracteres excedido!", {
-            icon: (
-              <img
-                src="/img/toast/logo_ioio.png"
-                alt="logo"
-                className="w-22 h-7"
-              />
-            ),
-            position: "top-right",
-            autoClose: 4000,
-            hideProgressBar: true,
-            closeOnClick: true,
-            pauseOnHover: true,
-            style: { backgroundColor: "#924187", color: "#fff" },
-            transition: Bounce,
-          });
+          return aparecerToast("Número de caracteres excedido!")
         }
 
         //Vendo se o email está correto de acordo com o banco
         if (response.status == 404) {
           setEmailIncorreto(true);
-          return toast("Email incorreto!", {
-            icon: (
-              <img
-                src="/img/toast/logo_ioio.png"
-                alt="logo"
-                className="w-22 h-7"
-              />
-            ),
-            position: "top-right",
-            autoClose: 4000,
-            hideProgressBar: true,
-            closeOnClick: true,
-            pauseOnHover: true,
-            style: { backgroundColor: "#924187", color: "#fff" },
-            transition: Bounce,
-          });
+          return aparecerToast("Email incorreto!")
         }
 
-        if(response.status == 400){
-          return toast("Número de caracteres excedido!", {
-            icon: (
-              <img
-                src="/img/toast/logo_ioio.png"
-                alt="logo"
-                className="w-22 h-7"
-              />
-            ),
-            position: "top-right",
-            autoClose: 4000,
-            hideProgressBar: true,
-            closeOnClick: true,
-            pauseOnHover: true,
-            style: { backgroundColor: "#924187", color: "#fff" },
-            transition: Bounce,
-          });
+        if (response.status == 400) {
+          return aparecerToast("Número de caracteres excedido!")
         }
 
         if (response.status == 200) {
@@ -135,7 +108,6 @@ export default function Home() {
   //Verificar token
   async function verificarToken() {
     const codigo = obterTokenCompleto();
-    console.log(codigo);
     try {
       const response = await fetch(
         "http://localhost:8080/auth/verificar_token",
@@ -153,106 +125,35 @@ export default function Home() {
       if (response.status == 401) {
         switch (data.code) {
           case "CODIGO_EXPIROU":
-            return toast("O seu código expirou!", {
-              icon: (
-                <img
-                  src="/img/toast/logo_ioio.png"
-                  alt="logo"
-                  className="w-22 h-7"
-                />
-              ),
-              position: "top-right",
-              autoClose: 4000,
-              hideProgressBar: true,
-              closeOnClick: true,
-              pauseOnHover: true,
-              style: { backgroundColor: "#924187", color: "#fff" },
-              transition: Bounce,
-            });
+            return aparecerToast("O seu código expirou!")
 
           case "CODIGO_INVALIDO":
-            return toast("Código inválido!", {
-              icon: (
-                <img
-                  src="/img/toast/logo_ioio.png"
-                  alt="logo"
-                  className="w-22 h-7"
-                />
-              ),
-              position: "top-right",
-              autoClose: 4000,
-              hideProgressBar: true,
-              closeOnClick: true,
-              pauseOnHover: true,
-              style: { backgroundColor: "#924187", color: "#fff" },
-              transition: Bounce,
-            });
+            return aparecerToast("Código inválido!")
         }
       }
 
       if (response.status == 400) {
         switch (data.code) {
           case "CARACTER_EXCEDIDO":
-            return toast("Número de caracteres excedido!", {
-              icon: (
-                <img
-                  src="/img/toast/logo_ioio.png"
-                  alt="logo"
-                  className="w-22 h-7"
-                />
-              ),
-              position: "top-right",
-              autoClose: 4000,
-              hideProgressBar: true,
-              closeOnClick: true,
-              pauseOnHover: true,
-              style: { backgroundColor: "#924187", color: "#fff" },
-              transition: Bounce,
-            });
+            return aparecerToast("Número de caracteres excedido!")
 
           case "FALTA_DADOS":
-            return toast("Preencha todos os campos!", {
-              icon: (
-                <img
-                  src="/img/toast/logo_ioio.png"
-                  alt="logo"
-                  className="w-22 h-7"
-                />
-              ),
-              position: "top-right",
-              autoClose: 4000,
-              hideProgressBar: true,
-              closeOnClick: true,
-              pauseOnHover: true,
-              style: { backgroundColor: "#924187", color: "#fff" },
-              transition: Bounce,
-            });
+            return aparecerToast("Preencha todos os campos!");
+
           case "TOKEN_INCORRETO":
-            return toast("Token inválido!", {
-              icon: (
-                <img
-                  src="/img/toast/logo_ioio.png"
-                  alt="logo"
-                  className="w-22 h-7"
-                />
-              ),
-              position: "top-right",
-              autoClose: 4000,
-              hideProgressBar: true,
-              closeOnClick: true,
-              pauseOnHover: true,
-              style: { backgroundColor: "#924187", color: "#fff" },
-              transition: Bounce,
-            });
+            return aparecerToast("Token inválido!")
         }
       }
 
       if (response.ok) {
         setCookie("email", email);
-        window.location.href = "/login/senha";
+        return window.location.href = "/login/senha";
       }
+
+      return;
     } catch (error) {
       console.log("Erro ao verificar o token: ", error);
+      return;
     }
   }
 
@@ -340,13 +241,12 @@ export default function Home() {
                         name="email"
                         placeholder="E-mail"
                         required
-                        className={`bg-[#DABCE1] border-2 border-dashed ${
-                          emailIncorreto
-                            ? "!border-[#f34236] focus:!border-[#f34236]"
-                            : emailCorreto
+                        className={`bg-[#DABCE1] border-2 border-dashed ${emailIncorreto
+                          ? "!border-[#f34236] focus:!border-[#f34236]"
+                          : emailCorreto
                             ? "!border-[var(--color-verdao)] focus:!border-[var(--color-verdao)]"
                             : "!border-[#7C3A82] focus:!border-[#91678c]"
-                        } rounded-2xl px-4 py-2 pr-10 text-[var(--color-verdao)] focus:outline-none w-full transition-all duration-300`}
+                          } rounded-2xl px-4 py-2 pr-10 text-[var(--color-verdao)] focus:outline-none w-full transition-all duration-300`}
                         value={email}
                         onChange={(e) => {
                           setEmail(e.target.value);

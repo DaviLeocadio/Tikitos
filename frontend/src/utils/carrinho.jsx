@@ -31,8 +31,9 @@ export function adicionarAoCarrinho(produto) {
 }
 
 // Atualizar quantidade do item
-export function atualizarQuantidade(id, novaQuantidade) {
+export function atualizarQuantidade(id_produto, novaQuantidade) {
     let carrinho = obterCarrinho();
+
     carrinho = carrinho.map((p) => 
         p.id_produto === id_produto ? {...p, quantidade: novaQuantidade } : p
     )

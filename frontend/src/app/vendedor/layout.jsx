@@ -34,7 +34,7 @@ export default function Layout({ children }) {
           <div className="flex flex-col">
 
             <main>
-              <SidebarTrigger />
+              
               {children}
             </main>
             <Footer></Footer>

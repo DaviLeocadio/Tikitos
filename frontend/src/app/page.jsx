@@ -9,46 +9,40 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
 
+  function aparecerToast(msg) {
+    toast(msg, {
+      icon: (
+        <img
+          src="/img/toast/logo_ioio.png"
+          alt="logo"
+          className="w-22 h-7"
+        />
+      ),
+      position: "top-right",
+      autoClose: 4000,
+      hideProgressBar: true,
+      closeOnClick: true,
+      pauseOnHover: true,
+      style: { backgroundColor: "#924187", color: "#fff" },
+      transition: Bounce,
+    });
+  }
+
   useEffect(() => {
     // Verifica de há excesso de caracteres para proteção contra ataques
     const temporizador = setTimeout(() => {
       if (email.length > 100 || senha.length > 25) {
-        return toast("Máximo de caracteres excedido!", {
-          icon: (
-            <img
-              src="/img/toast/logo_ioio.png"
-              alt="logo"
-              className="w-22 h-7"
-            />
-          ),
-          position: "top-right",
-          autoClose: 4000,
-          hideProgressBar: true,
-          closeOnClick: true,
-          pauseOnHover: true,
-          style: { backgroundColor: "#924187", color: "#fff" },
-          transition: Bounce,
-        });
+        return aparecerToast("Máximo de caracteres excedido!")
       }
     }, 100);
 
     return () => clearTimeout(temporizador);
   }, [email, senha]);
 
+
   async function loginUser() {
     if (!email || !senha)
-      return toast("Preencha todos os campos!", {
-        icon: (
-          <img src="/img/toast/logo_ioio.png" alt="logo" className="w-22 h-7" />
-        ),
-        position: "top-right",
-        autoClose: 4000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: true,
-        style: { backgroundColor: "#924187", color: "#fff" },
-        transition: Bounce,
-      });
+      return aparecerToast("Preencha todos os campos!")
 
     try {
       const response = await fetch("http://localhost:8080/auth/login", {
@@ -62,22 +56,7 @@ export default function Login() {
 
       //Tratamento de erro caso o email ou a senha estiver incorreta
       if (response.status == 404 || response.status == 401) {
-        return toast("Email ou senha incorretos!", {
-          icon: (
-            <img
-              src="/img/toast/logo_ioio.png"
-              alt="logo"
-              className="w-22 h-7"
-            />
-          ),
-          position: "top-right",
-          autoClose: 4000,
-          hideProgressBar: true,
-          closeOnClick: true,
-          pauseOnHover: true,
-          style: { backgroundColor: "#924187", color: "#fff" },
-          transition: Bounce,
-        });
+        return aparecerToast("Email ou senha incorretos!")
       }
 
       if (response.ok) {
@@ -87,23 +66,20 @@ export default function Login() {
         setCookie("empresa", data.usuario.empresa);
         setCookie("perfil", data.usuario.perfil);
 
-        const perfil = getCookie("perfil");
-
-        if (perfil == "vendedor") {
+        if (data.usuario.perfil == "vendedor") {
           return (window.location.href = "/vendedor/pdv");
         }
-        if (perfil == "gerente") {
+        if (data.usuario.perfil == "gerente") {
           return (window.location.href = "/");
         }
-        if (perfil == "administrador") {
+        if (data.usuario.perfil == "administrador") {
           return (window.location.href = "/");
         }
 
         return console.log("Login completo");
-      } else {
-        console.log("Erro ao realizar login");
-        return console.log("Login incompleto");
       }
+
+      return;
     } catch (error) {
       return console.error("Erro na requisição", error);
     }

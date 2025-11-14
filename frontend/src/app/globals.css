@@ -138,16 +138,12 @@
   }
 }
 
-@layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
+body {
+  background-color: #ddf1d4;
 }
 
+/* muda a cor selecionado */
 ::selection{
   background-color: var(--color-verdinho);
-  color: #fff;
+  color: #924187;
 }

@@ -3,6 +3,7 @@ import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { cva } from "class-variance-authority";
 import { PanelLeftIcon } from "lucide-react";
+import { usePathname } from "next/navigation";
 
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
@@ -22,7 +23,7 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
+} from "@/components/ui/tooltip_one"
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state"
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7
@@ -38,8 +39,7 @@ function useSidebar() {
   if (!context) {
     throw new Error("useSidebar must be used within a SidebarProvider.");
   }
-
-  return context;
+  return context
 }
 
 function SidebarProvider({
@@ -54,24 +54,22 @@ function SidebarProvider({
   const isMobile = useIsMobile();
   const [openMobile, setOpenMobile] = React.useState(false);
 
-  // This is the internal state of the sidebar.
-  // We use openProp and setOpenProp for control from outside the component.
-  const [_open, _setOpen] = React.useState(defaultOpen);
-  const open = openProp ?? _open;
-  const setOpen = React.useCallback(
-    (value) => {
-      const openState = typeof value === "function" ? value(open) : value;
-      if (setOpenProp) {
-        setOpenProp(openState);
-      } else {
-        _setOpen(openState);
-      }
+  // internal open state
+  const [_open, _setOpen] = React.useState(defaultOpen)
+  const [isPinned, setIsPinned] = React.useState(false) // 🔹 ADIÇÃO: estado de "pin"
 
-      // This sets the cookie to keep the sidebar state.
-      document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`;
-    },
-    [setOpenProp, open]
-  );
+  const open = openProp ?? _open
+  const setOpen = React.useCallback((value) => {
+    const openState = typeof value === "function" ? value(open) : value
+    if (setOpenProp) {
+      setOpenProp(openState)
+    } else {
+      _setOpen(openState)
+    }
+
+    // persist
+    document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`
+  }, [setOpenProp, open])
 
   // Helper to toggle the sidebar.
   const toggleSidebar = React.useCallback(() => {
@@ -94,22 +92,20 @@ function SidebarProvider({
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [toggleSidebar]);
 
-  // We add a state so that we can do data-state="expanded" or "collapsed".
-  // This makes it easier to style the sidebar with Tailwind classes.
-  const state = open ? "expanded" : "collapsed";
+  // data-state
+  const state = open ? "expanded" : "collapsed"
 
-  const contextValue = React.useMemo(
-    () => ({
-      state,
-      open,
-      setOpen,
-      isMobile,
-      openMobile,
-      setOpenMobile,
-      toggleSidebar,
-    }),
-    [state, open, setOpen, isMobile, openMobile, setOpenMobile, toggleSidebar]
-  );
+  const contextValue = React.useMemo(() => ({
+    state,
+    open,
+    setOpen,
+    isMobile,
+    openMobile,
+    setOpenMobile,
+    toggleSidebar,
+    isPinned,
+    setIsPinned,
+  }), [state, open, setOpen, isMobile, openMobile, setOpenMobile, toggleSidebar, isPinned, setIsPinned])
 
   return (
     <SidebarContext.Provider value={contextValue}>
@@ -142,7 +138,19 @@ function Sidebar({
   children,
   ...props
 }) {
-  const { isMobile, state, openMobile, setOpenMobile } = useSidebar();
+  const { isMobile, state, openMobile, setOpenMobile, setOpen, isPinned, setIsPinned } = useSidebar();
+
+  React.useEffect(() => {
+    function handleClickOutside(e) {
+      const sidebar = document.querySelector("[data-slot='sidebar']")
+      if (sidebar && !sidebar.contains(e.target) && !isPinned) {
+        setOpen(false)
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [isPinned, setOpen])
 
   if (collapsible === "none") {
     return (
@@ -152,14 +160,23 @@ function Sidebar({
           "bg-sidebar text-sidebar-foreground flex h-full w-(--sidebar-width) flex-col",
           className
         )}
-        {...props}
-      >
+        onMouseEnter={() => {
+          if (!isMobile && state === "collapsed" && !isPinned) {
+            setOpen(true)
+          }
+        }}
+        onMouseLeave={() => {
+          if (!isMobile && state === "expanded" && !isPinned) {
+            setOpen(false)
+          }
+        }}
+        {...props}>
         {children}
       </div>
     );
   }
 
-  // ISSO AQUI É A SIDEBAR NA HORA DO MOBILE
+  // MOBILE
   if (isMobile) {
     return (
       <Sheet open={openMobile} onOpenChange={setOpenMobile} {...props}>
@@ -167,7 +184,7 @@ function Sidebar({
           data-sidebar="sidebar"
           data-slot="sidebar"
           data-mobile="true"
-          className="bg-sidebar h-[90%] rounded-2xl border-3 border-dashed border-[#924187] text-sidebar-foreground w-(--sidebar-width) p-0 [&>button]:hidden"
+          className="bg-sidebar h-[99%] rounded-2xl border-3 border-dashed border-[#924187] text-sidebar-foreground w-(--sidebar-width) p-0 [&>button]:hidden"
           style={
             {
               "--sidebar-width": SIDEBAR_WIDTH_MOBILE
@@ -184,7 +201,6 @@ function Sidebar({
     );
   }
 
-  // AQUI É O QUE DEIXA A SIDEBAR APARECER SEM SER ABERTA
   return (
     <div
       className="group peer text-sidebar-foreground hidden md:block"
@@ -193,8 +209,18 @@ function Sidebar({
       data-variant={variant}
       data-side={side}
       data-slot="sidebar"
+      onMouseEnter={() => {
+        if (!isMobile && state === "collapsed" && !isPinned) {
+          setOpen(true)
+        }
+      }}
+      onMouseLeave={() => {
+        if (!isMobile && state === "expanded" && !isPinned) {
+          setOpen(false)
+        }
+      }}
+      {...props}
     >
-      {/* This is what handles the sidebar gap on desktop */}
       <div
         data-slot="sidebar-gap"
         className={cn(
@@ -209,22 +235,20 @@ function Sidebar({
       <div
         data-slot="sidebar-container"
         className={cn(
-          "fixed inset-y-0 z-10 hidden h-[100%] items-center justify-center w-(--sidebar-width) transition-[left,right,width] duration-200 ease-linear md:flex",
+          "fixed mx-2 inset-y-0 z-10 hidden h-[100%] items-center justify-center w-(--sidebar-width) transition-[left,right,width] duration-200 ease-linear md:flex",
           side === "left"
             ? "left-0 group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)]"
             : "right-0 group-data-[collapsible=offcanvas]:right-[calc(var(--sidebar-width)*-1)]",
-          // Adjust the padding for floating and inset variants.
           variant === "floating" || variant === "inset"
             ? "p-2 group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)+(--spacing(4))+2px)]"
             : "group-data-[collapsible=icon]:w-(--sidebar-width-icon) group-data-[side=left]:border-r group-data-[side=right]:border-l",
           className
         )}
-        {...props}
       >
         <div
           data-sidebar="sidebar"
           data-slot="sidebar-inner"
-          className="bg-sidebar jusfify-center h-[96%] rounded-2xl border-3 border-dashed border-[#924187] group-data-[variant=floating]:border-sidebar-border flex w-full flex-col group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:shadow-sm">
+          className="bg-sidebar jusfify-center h-[99%] sm:h-[96%] rounded-2xl border-3 border-dashed border-[#924187] group-data-[variant=floating]:border-sidebar-border flex w-full flex-col group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:shadow-sm">
           {children}
         </div>
       </div>
@@ -232,33 +256,59 @@ function Sidebar({
   );
 }
 
+function SidebarTrigger({ className, onClick, ...props }) {
+  const { isMobile, toggleSidebar, setOpen, isPinned, setIsPinned, open } = useSidebar()
 
-// AQUI É O MENU QUE FAZ A SIDEBAR EXPANDIR AO CLICAR
-function SidebarTrigger({
-  className,
-  onClick,
-  ...props
-}) {
-  const { toggleSidebar } = useSidebar()
+  function handleClick(event) {
+    onClick?.(event)
+
+    if (isMobile) {
+      toggleSidebar()
+      return
+    }
+
+    if (!isPinned) {
+      setIsPinned(true)
+      setOpen(true)
+    } else {
+      setIsPinned(false)
+      setOpen(false)
+    }
+  }
+  const isActiveVisual = Boolean(open)
+  const inlineStyle = isActiveVisual
+    ? {
+      backgroundColor: "#9BF377",
+      color: "#924187",
+    }
+    : undefined
+  const svgStyle = isActiveVisual
+    ? { color: "#924187", stroke: "#924187" }
+    : undefined
 
   return (
     <Button
       data-sidebar="trigger"
       data-slot="sidebar-trigger"
+      aria-expanded={open ? "true" : "false"}
       variant="ghost"
       size="icon"
-      className={cn("size-7", className)}
-      onClick={(event) => {
-        onClick?.(event);
-        toggleSidebar();
-      }}
+      className={cn(
+        "size-7 transition-all hover:bg-[#9BF377] focus:bg-[#9BF377] text-[#924187] hover:text-[#924187]",
+        isPinned ? "bg-sidebar-accent hover:bg-[#9BF377] text-[#924187]" : "",
+        className
+      )}
+      style={inlineStyle}
+      onClick={handleClick}
       {...props}
     >
-      <PanelLeftIcon />
+      <PanelLeftIcon style={svgStyle} />
       <span className="sr-only">Toggle Sidebar</span>
     </Button>
-  );
+  )
 }
+
+
 
 function SidebarRail({ className, ...props }) {
   const { toggleSidebar } = useSidebar();
@@ -357,7 +407,6 @@ function SidebarContent({ className, ...props }) {
   );
 }
 
-
 // AQUI SÃO AS PÁGINAS QUE FICAM NA SIDEBAR
 function SidebarGroup({
   className,
@@ -441,12 +490,13 @@ function SidebarMenuItem({ className, ...props }) {
   );
 }
 
+// AQUI EU MUDEI AS CORES DA ESCRITA DAS PÁGINAS
 const sidebarMenuButtonVariants = cva(
-  "peer/menu-button flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-sm outline-hidden ring-sidebar-ring transition-[width,height,padding] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-sidebar-accent data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0",
+  "peer/menu-button text-[#9D4E92] flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-sm outline-hidden ring-sidebar-ring transition-[width,height,padding] hover:bg-sidebar-accent active:bg-sidebar-accent active:bg-sidebar-[#924187] active:text-[#75BA51] disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-sidebar-accent data-[active=true]:font-medium data-[state=open]:hover:bg-sidebar-accent group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0 hover:!text-[#75BA51]",
   {
     variants: {
       variant: {
-        default: "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+        default: "hover:bg-sidebar-accent  hover:bg-[#924187] hover:text-sidebar-accent-foreground",
         outline:
           "bg-background shadow-[0_0_0_1px_hsl(var(--sidebar-border))] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground hover:shadow-[0_0_0_1px_hsl(var(--sidebar-accent))]",
       },
@@ -484,30 +534,10 @@ function SidebarMenuButton({
       className={cn(sidebarMenuButtonVariants({ variant, size }), className)}
       {...props}
     />
-  );
-
-  if (!tooltip) {
-    return button;
-  }
-
-  if (typeof tooltip === "string") {
-    tooltip = {
-      children: tooltip,
-    };
-  }
-
-  return (
-    <Tooltip>
-      <TooltipTrigger asChild>{button}</TooltipTrigger>
-      <TooltipContent
-        side="right"
-        align="center"
-        hidden={state !== "collapsed" || isMobile}
-        {...tooltip}
-      />
-    </Tooltip>
-  );
+  )
+  return button
 }
+
 
 function SidebarMenuAction({
   className,
@@ -530,7 +560,7 @@ function SidebarMenuAction({
         "peer-data-[size=lg]/menu-button:top-2.5",
         "group-data-[collapsible=icon]:hidden",
         showOnHover &&
-          "peer-data-[active=true]/menu-button:text-sidebar-accent-foreground group-focus-within/menu-item:opacity-100 group-hover/menu-item:opacity-100 data-[state=open]:opacity-100 md:opacity-0",
+        "peer-data-[active=true]/menu-button:text-sidebar-accent-foreground group-focus-within/menu-item:opacity-100 group-hover/menu-item:opacity-100 data-[state=open]:opacity-100 md:opacity-0",
         className
       )}
       {...props}
