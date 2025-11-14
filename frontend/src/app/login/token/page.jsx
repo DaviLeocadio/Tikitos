@@ -291,7 +291,7 @@ export default function Home() {
                       className="text-[var(--color-verdao)] mb-2 block"
                       htmlFor="number"
                     >
-                      Digite o código de validação:
+                      2° Digite o código de validação:
                     </label>
 
                     {/* ÁREA DOS INPUTZINHOS DE VERIFICAÇÃO */}

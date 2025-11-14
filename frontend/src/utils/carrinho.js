@@ -34,17 +34,19 @@ export function adicionarAoCarrinho(produto) {
 
 // Atualizar quantidade do item
 export function atualizarQuantidade(id_produto, novaQuantidade) {
+    if (novaQuantidade>10) return;
     let carrinho = obterCarrinho();
-     console.log(id_produto)
+    console.log(id_produto)
     carrinho = carrinho.map((p) => 
-       
         p.id_produto === id_produto ? {...p, quantidade: novaQuantidade } : p
     )
-
     salvarCarrinho(carrinho)
+
+    localStorage.setItem("ultimoProdutoAdicionado", id_produto);
+    window.dispatchEvent(new Event("carrinhoAtualizado"))
 }
 
-// Remove
+// Remove item do carrinho
 export function removerDoCarrinho(id_produto) {
     let carrinho = obterCarrinho()
 
@@ -53,11 +55,26 @@ export function removerDoCarrinho(id_produto) {
     salvarCarrinho(carrinho)
 }
 
+// Limpar Carrinho - remove todos os itens
+export function limparCarrinho(){
+    let carrinho = [];
+    salvarCarrinho(carrinho);
+}
+
 // Calcular total do carrinho
 export function calcularTotal() {
     const carrinho = obterCarrinho()
     return carrinho.reduce (
         (acc, item) => acc + item.preco * item.quantidade,
+        0
+    );
+}
+
+// Quantidade de itens no carrinho
+export function obterQuantidade() {
+    const carrinho = obterCarrinho()
+    return carrinho.reduce (
+        (acc, item) => acc + item.quantidade,
         0
     );
 }

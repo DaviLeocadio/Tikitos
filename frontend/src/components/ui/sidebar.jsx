@@ -308,8 +308,6 @@ function SidebarTrigger({ className, onClick, ...props }) {
   )
 }
 
-
-
 function SidebarRail({ className, ...props }) {
   const { toggleSidebar } = useSidebar();
 

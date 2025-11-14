@@ -12,11 +12,7 @@ export default function Login() {
   function aparecerToast(msg) {
     toast(msg, {
       icon: (
-        <img
-          src="/img/toast/logo_ioio.png"
-          alt="logo"
-          className="w-22 h-7"
-        />
+        <img src="/img/toast/logo_ioio.png" alt="logo" className="w-22 h-7" />
       ),
       position: "top-right",
       autoClose: 4000,
@@ -32,17 +28,15 @@ export default function Login() {
     // Verifica de há excesso de caracteres para proteção contra ataques
     const temporizador = setTimeout(() => {
       if (email.length > 100 || senha.length > 25) {
-        return aparecerToast("Máximo de caracteres excedido!")
+        return aparecerToast("Máximo de caracteres excedido!");
       }
     }, 100);
 
     return () => clearTimeout(temporizador);
   }, [email, senha]);
 
-
   async function loginUser() {
-    if (!email || !senha)
-      return aparecerToast("Preencha todos os campos!")
+    if (!email || !senha) return aparecerToast("Preencha todos os campos!");
 
     try {
       const response = await fetch("http://localhost:8080/auth/login", {
@@ -56,7 +50,7 @@ export default function Login() {
 
       //Tratamento de erro caso o email ou a senha estiver incorreta
       if (response.status == 404 || response.status == 401) {
-        return aparecerToast("Email ou senha incorretos!")
+        return aparecerToast("Email ou senha incorretos!");
       }
 
       if (response.ok) {
@@ -72,11 +66,9 @@ export default function Login() {
         if (data.usuario.perfil == "gerente") {
           return (window.location.href = "/");
         }
-        if (data.usuario.perfil == "administrador") {
+        if (data.usuario.perfil == "admin") {
           return (window.location.href = "/");
         }
-
-        return console.log("Login completo");
       }
 
       return;
@@ -137,48 +129,53 @@ export default function Login() {
             </div>
           </div>
 
-          <form className={`bg-[#9CD089] ${styles.form_container}`} onSubmit={(e) => {
-            e.preventDefault();
-            loginUser();
-          }}>
-            {/* INPUT DE EMAIL */}
-            <div className={`${styles.form_group} flex flex-col`}>
-              <label className={`text-[var(--color-verdao)]`} htmlFor="email">
-                Insira o seu e-mail:
-              </label>
-              <input
-                type="text"
-                id="email"
-                name="email"
-                placeholder="E-mail"
-                required=""
-                className={`bg-[#DABCE1] focus:border-color[#9CD089]`}
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
+          {/* LOGIN */}
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              loginUser();
+            }}
+          >
+            <div className={`bg-[#9CD089] ${styles.form_container}`}>
+              {/* INPUT DE EMAIL */}
+              <div className={`${styles.form_group} flex flex-col`}>
+                <label className={`text-[var(--color-verdao)]`} htmlFor="email">
+                  Insira o seu e-mail:
+                </label>
+                <input
+                  type="text"
+                  id="email"
+                  name="email"
+                  placeholder="E-mail"
+                  required=""
+                  className={`bg-[#DABCE1] focus:border-color[#9CD089]`}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
+
+              {/* INPUT DE SENHA */}
+              <div className={`${styles.form_group} flex flex-col`}>
+                <label
+                  className={`text-[var(--color-verdao)] `}
+                  htmlFor="email"
+                >
+                  Insira a sua senha:
+                </label>
+                <input
+                  type="password"
+                  id="email"
+                  name="email"
+                  placeholder="Senha"
+                  required=""
+                  className={`bg-[#DABCE1]`}
+                  value={senha}
+                  onChange={(e) => setSenha(e.target.value)}
+                />
+              </div>
             </div>
 
-
-            {/* INPUT DE SENHA */}
-            <div className={`${styles.form_group} flex flex-col`}>
-              <label
-                className={`text-[var(--color-verdao)] `}
-                htmlFor="email"
-              >
-                Insira a sua senha:
-              </label>
-              <input
-                type="password"
-                id="email"
-                name="email"
-                placeholder="Senha"
-                required=""
-                className={`bg-[#DABCE1]`}
-                value={senha}
-                onChange={(e) => setSenha(e.target.value)}
-              />
-            </div>
-
+            {/* BOTÃO DE ENVIAR */}
             <div className="flex justify-center">
               <button
                 className="group cursor-pointer transition-all duration-200 mt-5 rounded-full border border-transparent flex items-center justify-center gap-2 whitespace-nowrap bg-[#D6B9E2] text-[var(--color-verdao)] font-light hover:bg-[#db90e4] active:scale-95 px-8 py-3 text-[15px] sm:px-10 sm:text-[16px] md:px-14 md:text-[15px] lg:px-16 lg:text-[15px] xl:px-29"
@@ -195,9 +192,6 @@ export default function Login() {
               </button>
             </div>
           </form>
-
-          {/* BOTÃO DE ENVIAR */}
-
 
           {/* ESCRITA COM O LINK */}
           <p

@@ -40,15 +40,15 @@ import { BsQuestionCircle } from "react-icons/bs";
 
 
 const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/img/sidebar/sidebar_user.png"
-  },
+  // user: {
+  //   name: "shadcn",
+  //   email: "m@example.com",
+  //   avatar: "/img/sidebar/sidebar_user.png"
+  // },
   navMain: [
     {
       title: "Pesquisar",
-      href: "/vendedor/suporte",
+      href: "#",
       icon: (props) => <BiSearch className="size-5" {...props} />,
     },
     {
@@ -58,7 +58,7 @@ const data = {
     },
     {
       title: "Suporte",
-      href: "#",
+      href: "/vendedor/suporte",
       icon: (props) => <BsQuestionCircle className="size-4" {...props} />,
     }
   ],
@@ -169,7 +169,7 @@ export function AppSidebar({
         {/* <NavSecondary items={data.navSecondary} className="mt-auto" /> */}
       </SidebarContent>
       <SidebarFooter className="flex justify-start pl-1.5">
-        <NavUser user={data.user} />
+        <NavUser />
       </SidebarFooter>
     </Sidebar>
   );
