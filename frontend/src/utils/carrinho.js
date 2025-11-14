@@ -2,8 +2,8 @@ const CHAVE = "produtos";
 
 
 // Lê o carrinho do localstorage
-export function obterCarrinho () {
-    if(localStorage.hasOwnProperty(CHAVE)) {
+export function obterCarrinho() {
+    if (localStorage.hasOwnProperty(CHAVE)) {
         return JSON.parse(localStorage.getItem(CHAVE));
     }
     return [];
@@ -22,11 +22,11 @@ export function adicionarAoCarrinho(produto) {
 
     const index = carrinho.findIndex((p) => p.id_produto === produto.id_produto);
 
-    if(index !== -1 ) {
+    if (index !== -1) {
         // ja existe -> adiciona
-        carrinho[index].quantidade +=1;
+        carrinho[index].quantidade += 1;
     } else {
-        carrinho.push({...produto, quantidade: 1})
+        carrinho.push({ ...produto, quantidade: 1 })
     }
 
     salvarCarrinho(carrinho)
@@ -34,16 +34,16 @@ export function adicionarAoCarrinho(produto) {
 
 // Atualizar quantidade do item
 export function atualizarQuantidade(id_produto, novaQuantidade) {
-    if (novaQuantidade>10) return;
-    let carrinho = obterCarrinho();
-    console.log(id_produto)
-    carrinho = carrinho.map((p) => 
-        p.id_produto === id_produto ? {...p, quantidade: novaQuantidade } : p
-    )
-    salvarCarrinho(carrinho)
-
     localStorage.setItem("ultimoProdutoAdicionado", id_produto);
     window.dispatchEvent(new Event("carrinhoAtualizado"))
+    
+    if (novaQuantidade > 10) return;
+    let carrinho = obterCarrinho();
+    console.log(id_produto)
+    carrinho = carrinho.map((p) =>
+        p.id_produto === id_produto ? { ...p, quantidade: novaQuantidade } : p
+    )
+    salvarCarrinho(carrinho)
 }
 
 // Remove item do carrinho
@@ -56,7 +56,7 @@ export function removerDoCarrinho(id_produto) {
 }
 
 // Limpar Carrinho - remove todos os itens
-export function limparCarrinho(){
+export function limparCarrinho() {
     let carrinho = [];
     salvarCarrinho(carrinho);
 }
@@ -64,7 +64,7 @@ export function limparCarrinho(){
 // Calcular total do carrinho
 export function calcularTotal() {
     const carrinho = obterCarrinho()
-    return carrinho.reduce (
+    return carrinho.reduce(
         (acc, item) => acc + item.preco * item.quantidade,
         0
     );
@@ -73,7 +73,7 @@ export function calcularTotal() {
 // Quantidade de itens no carrinho
 export function obterQuantidade() {
     const carrinho = obterCarrinho()
-    return carrinho.reduce (
+    return carrinho.reduce(
         (acc, item) => acc + item.quantidade,
         0
     );

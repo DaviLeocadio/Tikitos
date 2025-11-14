@@ -2,16 +2,16 @@ import * as React from "react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 
-export default function CardDemo({quantidade, subtotal, desconto, setDesconto}) {
+export default function CardDemo({ quantidade, subtotal, desconto, setDesconto }) {
 
   const itens = [
     {
-      nome: "Total itens",  
+      nome: "Total itens",
       valor: quantidade,
     },
     {
       nome: "Subtotal",
-      valor:  `R$ ${Number(subtotal).toFixed(2).replace(".", ",")}`,
+      valor: `R$ ${Number(subtotal).toFixed(2).replace(".", ",")}`,
     },
     {
       nome: "Desconto",
@@ -19,9 +19,20 @@ export default function CardDemo({quantidade, subtotal, desconto, setDesconto}) 
     },
   ];
 
+  const max = 100;
+  const min = 0;
+
   const handleChangeDesconto = (e) => {
-    setDesconto(e.target.value)
+    const inputValue = Number(e.target.value)
+    let novoDesconto = Number(inputValue).toFixed();
+    if (inputValue > max) {
+      novoDesconto = max;
+    } else if (inputValue < min) {
+      novoDesconto = '';
+    }
+    setDesconto(novoDesconto)
   }
+
 
   return (
     <div className="flex flex-row gap-3">
@@ -35,15 +46,21 @@ export default function CardDemo({quantidade, subtotal, desconto, setDesconto}) 
           </h1>
 
           {index === itens.length - 1 ? (
-            <Input
+            <input
               id={`input-${index}`}
               type="number"
+              min={min}
+              max={max}
+              value={desconto}
               placeholder={item.placeholder}
               onChange={handleChangeDesconto}
-              className="mt-1 w-[70px] text-center text-sm placeholder:text-[#EADBEA] bg-[#B96AAE] border-none text-[#DDF1D4] focus:outline-none rounded-md h-5.5
+              className="mt-1 w-[70px] text-center text-sm placeholder:text-[#EADBEA]  border-none text-[#DDF1D4] focus:outline-none rounded-md h-5.5
       [&::-webkit-inner-spin-button]:appearance-none
       [&::-webkit-outer-spin-button]:appearance-none
-      [appearance:textfield] outline-none shadow-none"
+      [appearance:textfield] outline-none shadow-none
+      transition
+      hover:bg-[#B96AAE]/50  focus:bg-[#B96AAE] 
+      "
             />
           ) : (
             <p className="mt-0 text-[#EADBEA] text-[15px]">{item.valor}</p>

@@ -28,7 +28,7 @@ import { OctagonAlert } from "lucide-react";
 import React from "react";
 import { adicionarAoCarrinho, obterCarrinho } from "@/utils/carrinho.js";
 
-const CardProduto = ({ produto }) => {
+const CardProduto = ({ produto, match }) => {
   const handleAdd = () => {
     adicionarAoCarrinho(produto);
     console.log(obterCarrinho());
@@ -69,6 +69,35 @@ const CardProduto = ({ produto }) => {
     },
   ];
 
+
+  // function Highlight({ text, matches }) {
+  //   if (!matches || matches.length === 0) return text;
+
+  //   const nomeMatch = matches.find(m => m.key === "nome");
+  //   if (!nomeMatch) return text;
+
+  //   // Pega o MAIOR intervalo (mais longo)
+  //   let best = nomeMatch.indices.reduce((a, b) => {
+  //     const lenA = a[1] - a[0];
+  //     const lenB = b[1] - b[0];
+  //     return lenB > lenA ? b : a;
+  //   });
+
+  //   const [start, end] = best;
+
+  //   return (
+  //     <>
+  //       {text.slice(0, start)}
+  //       <mark className="px-1 bg-lime-300 font-bold">
+  //         {text.slice(start, end + 1)}
+  //       </mark>
+  //       {text.slice(end + 1)}
+  //     </>
+  //   );
+  // }
+
+
+
   return (
     <Card
       className="group min-w-53 shadow-none gap-0 pt-0 pb-0 bg-[#D8F1DC] border-[3px] border-dashed border-[#75ba51] rounded-[50px] p-2 hover:bg-[#C8FDB4] transition"
@@ -76,9 +105,14 @@ const CardProduto = ({ produto }) => {
     >
       <CardHeader className="pt-3 px-6 flex items-center flex-row justify-between gap-2 font-semibold text-sm">
         <div className="flex flex-col align-center">
+
           <h3 className="text-[#8C3E82] text-[12px] tracking-tighter">
             {produto.nome}
           </h3>
+          {/* <Highlight
+            text={produto.nome}
+            match={match?.find(m => m.key === "nome")}
+          /> */}
           <p className="text-[#c97fda] text-[12px]">{produto.precoFormatado}</p>
         </div>
 
@@ -100,7 +134,7 @@ const CardProduto = ({ produto }) => {
               </TooltipContent>
             </Tooltip>
 
-            <AlertDialogContent className="bg-[#E5B8F1]">
+            <AlertDialogContent className="bg-[#edd5f4]">
               <AlertDialogHeader className="items-center">
                 <AlertDialogTitle className="flex flex-col justify-center items-center">
                   <img
@@ -110,7 +144,7 @@ const CardProduto = ({ produto }) => {
                   />
                   <div className="flex flex-col justify-center items-center text-sm/6">
                     <h4 className="text-[14px] text-[#75BA51]">CATEGORIA</h4>
-                    <h1 className="font-bold mt-[-5px] text-[20px] text-[#76196c]">Bonecos</h1>
+                    <h1 className="font-bold mt-[-7px] text-[20px] text-[#76196c]">Bonecos</h1>
                   </div>
                 </AlertDialogTitle>
                 <AlertDialogDescription className="text-[15px] text-center">
@@ -120,7 +154,8 @@ const CardProduto = ({ produto }) => {
               </AlertDialogHeader>
 
               <AlertDialogFooter className="mt-2 sm:justify-center">
-                <AlertDialogCancel>Fechar</AlertDialogCancel>
+                <AlertDialogCancel className="bg-[#65745A] rounded-[50px] mt-2 py-2 px-5 text-[#caf4b7] text-sm font-semibold w-50 h-13 flex gap-3 justify-center items-center transform transition-all duration-300 ease-out group-hover:scale-110 hover:bg-[#74816b] hover:scale-97">Fechar</AlertDialogCancel>
+                <button className="bg-[#65745A] rounded-[50px] mt-2 py-2 px-5 text-[#caf4b7] text-sm font-semibold w-50 h-13 flex gap-3 justify-center items-center transform transition-all duration-300 ease-out group-hover:scale-110 hover:bg-[#74816b] hover:scale-97">Relatar erro</button>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
@@ -142,7 +177,7 @@ const CardProduto = ({ produto }) => {
               </TooltipContent>
             </Tooltip>
 
-            <AlertDialogContent>
+            <AlertDialogContent className="bg-[#edd5f4]">
               <AlertDialogHeader className="items-center">
                 <AlertDialogTitle>
                   <div className="mb-2 mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10">
@@ -157,7 +192,9 @@ const CardProduto = ({ produto }) => {
               </AlertDialogHeader>
 
               <AlertDialogFooter className="mt-2 sm:justify-center">
-                <AlertDialogCancel>Fechar</AlertDialogCancel>
+                <AlertDialogCancel className="bg-[#65745A] rounded-[50px] mt-2 py-2 px-5 text-[#caf4b7] text-sm font-semibold w-30 h-13 flex gap-3 justify-center items-center transform transition-all duration-300 ease-out group-hover:scale-110 hover:bg-[#74816b] hover:scale-97">Fechar</AlertDialogCancel>
+                <button className="bg-[#65745A] rounded-[50px] mt-2 py-2 px-5 text-[#caf4b7] text-sm font-semibold w-40 h-13 flex gap-3 justify-center items-center transform transition-all duration-300 ease-out group-hover:scale-110 hover:bg-[#74816b] hover:scale-97">Relatar defeito</button>
+                <button className="bg-[#65745A] rounded-[50px] mt-2 py-2 px-5 text-[#caf4b7] text-sm font-semibold w-40 h-13 flex gap-3 justify-center items-center transform transition-all duration-300 ease-out group-hover:scale-110 hover:bg-[#74816b] hover:scale-97">Lista de espera</button>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>

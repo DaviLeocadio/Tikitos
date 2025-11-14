@@ -1,32 +1,32 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, forwardRef } from "react";
 import styles from "./carrinho.module.css";
 import { atualizarQuantidade, removerDoCarrinho } from "@/utils/carrinho.js";
 
-export default function CarrinhoCard({ produto, id }) {
-  console.log(produto);
 
+export default forwardRef(function CarrinhoCard(props, ref) {
+  const { produto, id } = props;
   const increment = () => {
-    if(produto.quantidade <10){
-        atualizarQuantidade(produto.id_produto, produto.quantidade + 1);
+    if (produto.quantidade < 10) {
+      atualizarQuantidade(produto.id_produto, produto.quantidade + 1);
     }
   };
   const decrement = () => {
-    if(produto.quantidade >1) {
-        atualizarQuantidade(produto.id_produto, produto.quantidade - 1);
+    if (produto.quantidade > 1) {
+      atualizarQuantidade(produto.id_produto, produto.quantidade - 1);
     }
   };
   const handleAtualizar = (e) => {
     const qtd = Number(e.target.value)
-    if(qtd < 10 && qtd > 0) {
-        atualizarQuantidade(produto.id_produto, qtd);
+    if (qtd < 10 && qtd > 0) {
+      atualizarQuantidade(produto.id_produto, qtd);
     }
-    
+
   }
   useEffect(() => {
-    if(produto.quantidade > 10) {
-         atualizarQuantidade(produto.id_produto, 10);
-    } else if(produto.quantidade <1) {
-         atualizarQuantidade(produto.id_produto, 1);
+    if (produto.quantidade > 10) {
+      atualizarQuantidade(produto.id_produto, 10);
+    } else if (produto.quantidade < 1) {
+      atualizarQuantidade(produto.id_produto, 1);
     }
   }, [produto.quantidade])
 
@@ -34,8 +34,10 @@ export default function CarrinhoCard({ produto, id }) {
     removerDoCarrinho(produto.id_produto);
   };
   return (
-    <div id={id}
-    className="group flex w-full min-w-53 shadow-none gap-0 bg-[#D8F1DC] border-[3px] border-dashed border-[#75ba51] rounded-[40px] p-5 hover:bg-[#C8FDB4] transition justify-between items-center">
+    <div
+      id={id}
+      ref={ref}
+      className="group flex w-full min-w-53 shadow-none gap-0 bg-[#D8F1DC] border-[3px] border-dashed border-[#75ba51] rounded-[40px] p-5 hover:bg-[#C8FDB4] transition justify-between items-center">
       <div className="flex flex-col align-center gap-2">
         <div>
           <h3 className="text-[#8C3E82] text-[14px] tracking-tighter">
@@ -111,3 +113,4 @@ export default function CarrinhoCard({ produto, id }) {
     </div>
   );
 }
+)

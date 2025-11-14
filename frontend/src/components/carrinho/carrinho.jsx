@@ -13,8 +13,9 @@ export default function Carrinho() {
   const [carrinho, setCarrinho] = useState([]);
   const [loading, setLoading] = useState(false);
   const [total, setTotal] = useState(null);
-  const [desconto, setDesconto] = useState(0);
+  const [desconto, setDesconto] = useState('');
   const [quantidade, setQuantidade] = useState(0);
+  const [scroll, setScroll] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -44,19 +45,36 @@ export default function Carrinho() {
     };
   }, []);
 
-  const containerRef = useRef(null);
+  const carrinhoRef = useRef(null);
+  const itemRefs = useRef({});
+
 
   useEffect(() => {
-    const ultimo = localStorage.getItem("ultimoProdutoAdicionado");
+    const ultimoId = localStorage.getItem("ultimoProdutoAdicionado");
+    if (!ultimoId) return;
 
-    if (!ultimo || !containerRef.current) return;
+    const carrinho = carrinhoRef.current;
+    const item = itemRefs.current[ultimoId];
+    if (!carrinho || !item) return;
 
-    const elemento = document.getElementById(`produto#${ultimo}`);
-    if (elemento) {
-      elemento.scrollIntoView({
-        behavior: "smooth",
-        block: "center",
-      });
+    const itemOffsetTop = item.offsetTop
+    const itemHeight = item.offsetHeight;
+    const carrinhoHeight = carrinho.offsetHeight;
+
+    const scrollTop =
+      itemOffsetTop - carrinhoHeight / 2 + itemHeight / 2;
+
+    carrinho.scrollTo({
+      top: scrollTop,
+      behavior: "smooth"
+    })
+
+    const carrinhoElement = document.getElementById('carrinho');
+
+    if (carrinhoElement.scrollHeight > carrinhoElement.clientHeight) {
+      setScroll(true)
+    } else {
+      setScroll(false)
     }
   }, [carrinho]);
 
@@ -84,9 +102,11 @@ export default function Carrinho() {
               </div>
 
               <div
-                ref={containerRef}
-                className="flex flex-col gap-3 overflow-y-scroll max-h-53 pe-6 pt-0 ms-1 cursor-"
+                ref={carrinhoRef}
+                id="carrinho"
+                className={`flex flex-col gap-3 overflow-y-scroll max-h-53 pt-0 ms-1 ${scroll ? 'pe-6' : 'pe-0'}`}
               >
+
                 {loading ? (
                   <h1> Carregando carrinho...</h1>
                 ) : carrinho && carrinho.length == 0 ? (
@@ -97,7 +117,8 @@ export default function Carrinho() {
                       <CarrinhoCard
                         key={produto.id_produto}
                         produto={produto}
-                        id={`produto#${produto.id_produto}`}
+                        id={produto.id_produto}
+                        ref={(el) => (itemRefs.current[produto.id_produto] = el)}
                       />
                     );
                   })
@@ -128,8 +149,8 @@ export default function Carrinho() {
           </div>
         </div>
 
-        <div className="flex items-center col-span-2">
-          <div className="">
+        <div className="items-center col-span-2 hidden lg:flex">
+          <div>
             <img
               className="m-0 pr-3"
               src="/img/pdv/carrinho_criancas.png"
@@ -137,6 +158,7 @@ export default function Carrinho() {
             />
           </div>
         </div>
+
       </div>
     </>
   );
