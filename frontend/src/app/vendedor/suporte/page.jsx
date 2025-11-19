@@ -2,6 +2,7 @@
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { useEffect, useState } from "react";
 import CardSuporte from "@/components/cardSuporte/CardSuporte.jsx";
+import styles from "./suporte.module.css";
 
 import {
   Accordion,
@@ -9,6 +10,8 @@ import {
   AccordionTrigger,
   AccordionContent,
 } from "@/components/ui/accordion";
+
+import Pagamento from "@/components/pagamento";
 
 
 export default function Suporte() {
@@ -22,15 +25,15 @@ export default function Suporte() {
       </div>
 
       {/* BANNER INICIAL */}
-      <div className="rounded-[50px]">
+      <div className="rounded-3xl overflow-hidden px-[45px] mb-10">
         <img
-        src="/img/suporte/topicos_suporte.png"
-        className="w-full px-35 rounded-[50px]"
-      />
+          src="/img/suporte/topicos_suporte.png"
+          className="w-full rounded-3xl sm:w-[50%]"
+        />
       </div>
 
       {/* CARDS DOS TÓPICOS EXPLICTIVOS */}
-      <div className="flex flex-wrap items-center gap-15 justify-center py-3">
+      <div className="flex flex-wrap items-center gap-15 justify-center py-3 mb-[-1%]">
         <CardSuporte src="/img/suporte/ursinho_suporte.png" title="Ponto de Venda"
           text="O PDV é onde você registra suas vendas de forma rápida e segura.Selecione o produto, 
         finalize o pagamento e o pedido será adicionado ao seu histórico automaticamente."/>
@@ -49,54 +52,102 @@ export default function Suporte() {
       </div>
 
 
+      <div className="flex flex-col lg:flex-row items-start justify-between gap-5 w-full">
+        {/* BLOCO ESQUERDO = TÍTULO + ACCORDION */}
+        <div className="flex flex-col items-start w-full lg:w-1/2">
 
-      {/* TÍTULO PARA AS PERGUNTAS FREQUENTES */}
-      <img src="/img/suporte/perguntas_suporte.png" className="w-[43%] p-17 mt-[-40]" />
+          {/* TÍTULO */}
+          <img
+            src="/img/suporte/perguntas_suporte.png"
+            className="w-[43%] p-16 mb-[-4%]"
+          />
 
-      {/* ACCORDION DAS PERGUNTAS */}
-      <div className="max-w-xl mx-auto p-1">
-        <Accordion type="single" collapsible className="w-full">
+          {/* ACCORDION */}
+          <div className="max-w-md w-full sm:px-6 lg:mx-10 p-1 items-start">
+            <Accordion type="single" collapsible className="w-full">
 
-          <AccordionItem value="item-1">
-            <AccordionTrigger>O que é o shadcn/ui?</AccordionTrigger>
-            <AccordionContent>
-              É uma coleção de componentes usando Tailwind + Radix.
-            </AccordionContent>
-          </AccordionItem>
+              <AccordionItem value="item-1">
+                <AccordionTrigger>Meu pedido não aparece no histórico de vendas.</AccordionTrigger>
+                <AccordionContent>
+                  Verifique se a venda foi finalizada corretamente no PDV.
+                  Se mesmo assim não aparecer, atualize a página. Caso o problema continue, envie uma mensagem no suporte informando o horário da venda.
+                </AccordionContent>
+              </AccordionItem>
 
-          <AccordionItem value="item-2">
-            <AccordionTrigger>É gratuito?</AccordionTrigger>
-            <AccordionContent>
-              Sim, totalmente open-source.
-            </AccordionContent>
-          </AccordionItem>
+              <AccordionItem value="item-2">
+                <AccordionTrigger>O PDV travou ou ficou em branco.</AccordionTrigger>
+                <AccordionContent>
+                  Isso pode acontecer por instabilidade na internet.
+                  Atualize a página e tente novamente. Se o erro persistir, limpe o cache do navegador ou entre em contato com o suporte.
+                </AccordionContent>
+              </AccordionItem>
 
-          <AccordionItem value="item-3">
-            <AccordionTrigger>Como instalar o shadcn/ui?</AccordionTrigger>
-            <AccordionContent>
-              Basta rodar o comando <code>npx shadcn-ui init</code> e depois adicionar
-              os componentes desejados.
-            </AccordionContent>
-          </AccordionItem>
+              <AccordionItem value="item-3">
+                <AccordionTrigger>Como saber se a venda foi concluída?</AccordionTrigger>
+                <AccordionContent>
+                  Toda venda finalizada com sucesso aparece imediatamente no Histórico de Vendas, com o valor e a data.
+                  Se não estiver lá, é provável que o pagamento não tenha sido confirmado.
+                </AccordionContent>
+              </AccordionItem>
 
-          <AccordionItem value="item-4">
-            <AccordionTrigger>Preciso usar Tailwind?</AccordionTrigger>
-            <AccordionContent>
-              Sim. O shadcn/ui é construído usando Tailwind como base.
-            </AccordionContent>
-          </AccordionItem>
+              <AccordionItem value="item-4">
+                <AccordionTrigger>Esqueci minha senha de acesso.</AccordionTrigger>
+                <AccordionContent>
+                  Na tela de login, clique em “Esqueci minha senha” e siga as instruções para redefinir.
+                  Você receberá um link por e-mail para criar uma nova senha.
+                </AccordionContent>
+              </AccordionItem>
 
-          <AccordionItem value="item-5">
-            <AccordionTrigger>Posso personalizar os componentes?</AccordionTrigger>
-            <AccordionContent>
-              Pode! Os componentes são totalmente editáveis dentro da sua pasta
-              <code>/components/ui</code>.
-            </AccordionContent>
-          </AccordionItem>
+              <AccordionItem value="item-5">
+                <AccordionTrigger>Posso alterar meus dados de vendedor?</AccordionTrigger>
+                <AccordionContent>
+                  Por enquanto, mudanças como nome da loja ou informações de contato devem ser feitas com a ajuda do suporte.
+                  Envie uma mensagem explicando o que deseja alterar.
+                </AccordionContent>
+              </AccordionItem>
 
-        </Accordion>
+            </Accordion>
+          </div>
+        </div>
+
+        {/* BLOCO DIREITO = FORMULÁRIO */}
+        <form className={`w-full lg:w-1/2 ${styles.stackedForm}`}>
+          <ul className={styles.wrapper}>
+            <li style={{ "--i": 4 }}>
+              <input
+                required
+                placeholder="Name"
+                type="text"
+                className={styles.input}
+              />
+            </li>
+
+            <li style={{ "--i": 3 }}>
+              <input
+                name="phone"
+                required
+                placeholder="Phone number"
+                className={styles.input}
+              />
+            </li>
+
+            <li style={{ "--i": 2 }}>
+              <input
+                name="email"
+                required
+                placeholder="E-mail"
+                type="email"
+                className={styles.input}
+              />
+            </li>
+
+            <button style={{ "--i": 1 }}>
+              <span>Submit</span>
+            </button>
+          </ul>
+        </form>
+
       </div>
-
 
 
     </>

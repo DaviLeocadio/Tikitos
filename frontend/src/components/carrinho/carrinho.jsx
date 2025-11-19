@@ -62,7 +62,7 @@ export default function Carrinho() {
     const carrinhoHeight = carrinho.offsetHeight;
 
     const scrollTop =
-      itemOffsetTop - carrinhoHeight / 2 + itemHeight / 2;
+      itemOffsetTop - carrinhoHeight / 2 + itemHeight / 10;
 
     carrinho.scrollTo({
       top: scrollTop,

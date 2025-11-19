@@ -8,10 +8,10 @@ export default function loading() {
          <img 
         src="/img/loading/loading.gif" 
         alt="loading gif" 
-        className='w-30 h-30' 
+        className='w-100 h-50' 
         />
       </div>
-    </div>
+    </div>  
   </>
   )
   ;

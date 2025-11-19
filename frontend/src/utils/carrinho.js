@@ -23,10 +23,20 @@ export function adicionarAoCarrinho(produto) {
     const index = carrinho.findIndex((p) => p.id_produto === produto.id_produto);
 
     if (index !== -1) {
+        if (carrinho[index].quantidade >= 10) return;
+
         // ja existe -> adiciona
         carrinho[index].quantidade += 1;
+        localStorage.setItem("ultimoProdutoAdicionado", produto.id_produto);
+        window.dispatchEvent(new Event("carrinhoAtualizado"))
+
+
     } else {
         carrinho.push({ ...produto, quantidade: 1 })
+        localStorage.setItem("ultimoProdutoAdicionado", produto.id_produto);
+        window.dispatchEvent(new Event("carrinhoAtualizado"))
+
+
     }
 
     salvarCarrinho(carrinho)
@@ -36,7 +46,7 @@ export function adicionarAoCarrinho(produto) {
 export function atualizarQuantidade(id_produto, novaQuantidade) {
     localStorage.setItem("ultimoProdutoAdicionado", id_produto);
     window.dispatchEvent(new Event("carrinhoAtualizado"))
-    
+
     if (novaQuantidade > 10) return;
     let carrinho = obterCarrinho();
     console.log(id_produto)

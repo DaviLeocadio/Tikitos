@@ -2,10 +2,10 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { EyeIcon, EyeOffIcon, LockIcon, MailIcon } from "lucide-react";
+import { EyeIcon, EyeOffIcon, LockIcon, MailIcon, X } from "lucide-react";
 import { useState } from "react";
 
-export default function InputWithAdornmentDemo({query, setQuery}) {
+export default function InputWithAdornmentDemo({ query, setQuery }) {
   const [showPassword, setShowPassword] = useState(false);
 
   const togglePasswordVisibility = () => {
@@ -14,6 +14,9 @@ export default function InputWithAdornmentDemo({query, setQuery}) {
 
   const handleChangeQuery = (e) => {
     setQuery(e.target.value)
+  }
+  const handleClean = () => {
+    setQuery('')
   }
 
   return (
@@ -26,7 +29,12 @@ export default function InputWithAdornmentDemo({query, setQuery}) {
           value={query}
           onChange={handleChangeQuery}
           placeholder="Nome, SKU ou descrição"
-          className="border-0 focus-visible:ring-0 shadow-none" />
+          className="border-0 focus-visible:ring-0 shadow-none text-[#5c6854]" />
+        {query.length > 0 && <Button
+          onClick={handleClean}
+          className="bg-transparent hover:bg-transparent cursor-pointer hover:scale-110">
+          <X className="text-[#9d4e92] " />
+        </Button>}
       </div>
     </div>
   );

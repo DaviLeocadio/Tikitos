@@ -3,9 +3,11 @@ import CardProduto from "@/components/cards/cardProdutos.jsx";
 import AtalhosDiv from "@/components/atalhos/atalhosDiv";
 import InputWithAdornmentDemo from "@/components/input-07";
 import Carrinho from "@/components/carrinho/carrinho";
+import CarrinhoSidebar from "@/components/carrinho/carrinho-sidebar";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { useEffect, useState } from "react";
 import Fuse from "fuse.js";
+
 
 export default function PDV() {
   const [query, setQuery] = useState('')
@@ -43,9 +45,10 @@ export default function PDV() {
       keys: [
         { name: 'id_produto', weight: 0.5 },
         { name: 'nome', weight: 0.3 },
+        { name: 'categoria', weight: 0.25 },
         { name: 'descricao', weight: 0.2 }
       ],
-      includeMatches: true,
+      // includeMatches: true,
       threshold: 0.2,
       ignoreLocation: true,
     });
@@ -64,6 +67,7 @@ export default function PDV() {
 
   return (
     <>
+    <CarrinhoSidebar />
       <div className="grid gap-5 grid-cols-1 md:grid-cols-2">
         <div className="">
           <div className="grid gap-5 grid-cols-1 md:grid-cols-1">
@@ -85,13 +89,12 @@ export default function PDV() {
                   produto={produto.item}
                   match={produto.matches}
                 ></CardProduto>
-                // <h1> corinthians</h1>
               ))
               )}
             </div>
           </div>
         </div>
-        <div className="flex items-center content-center">
+        <div className="hidden lg:flex items-center content-center">
           <div className="flex items-center content-center">
             <Carrinho></Carrinho>
           </div>

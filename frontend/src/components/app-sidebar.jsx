@@ -155,7 +155,7 @@ export function AppSidebar({
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton asChild className="data-[slot=sidebar-menu-button]:!p-1.5 pointer-events-none">
+            <SidebarMenuButton asChild className="data-[slot=sidebar-menu-button]:!p-1.5">
               <Link href="/vendedor/pdv">
                 <img src="/img/logos/logo_ioio.png" alt="" className="max-h-full"/>
                 <span className="text-base font-semibold text-[#76216D] hover:bg-[#ffffff00]">Tikitos</span>

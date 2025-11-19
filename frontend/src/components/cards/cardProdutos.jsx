@@ -25,14 +25,118 @@ import {
 
 import { OctagonAlert } from "lucide-react";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { adicionarAoCarrinho, obterCarrinho } from "@/utils/carrinho.js";
 
+const getId = (p) =>
+  p?.id ?? p?._id ?? p?.codigo ?? p?.sku ?? (typeof p?.nome === "string" ? p.nome : undefined);
+
+const removerDoCarrinho = (produto) => {
+  try {
+    const id = getId(produto);
+    const carrinho = obterCarrinho() || [];
+    if (!id) return carrinho;
+    const novo = carrinho.filter((p) => getId(p) !== id);
+    try {
+      localStorage.setItem("carrinho", JSON.stringify(novo));
+    } catch (err) {
+      // noop
+    }
+    try {
+      window.dispatchEvent(new CustomEvent("carrinho:update"));
+    } catch (err) {
+      // noop
+    }
+    return novo;
+  } catch (err) {
+    return obterCarrinho() || [];
+  }
+};
+
 const CardProduto = ({ produto, match }) => {
-  const handleAdd = () => {
-    adicionarAoCarrinho(produto);
-    console.log(obterCarrinho());
+  const [cardSelecionado, setCardSelecionado] = useState(false);
+
+  const isInteractiveElement = (el) => {
+    if (!el || !el.closest) return false;
+    return Boolean(
+      el.closest(
+        "button, a, input, textarea, select, svg, i, [role='button'], [data-ignore-card-click]"
+      )
+    );
   };
+
+  const handleAdd = (e) => {
+    // só responde a clique primário (botão esquerdo)
+    if (e && typeof e.button === "number" && e.button !== 0) return;
+
+    // evita que cliques em controles internos (ícones/botões) toggleiem o card
+    if (e && isInteractiveElement(e.target)) return;
+
+    e?.stopPropagation?.();
+
+    try {
+      const id = getId(produto);
+      if (!id) return;
+
+      // Usa o estado local como fonte da verdade para toggle:
+      if (cardSelecionado) {
+        // já selecionado -> remover
+        removerDoCarrinho(produto);
+        setCardSelecionado(false);
+      } else {
+        // não selecionado -> adicionar
+        adicionarAoCarrinho(produto);
+        setCardSelecionado(true);
+      }
+
+      // notifica outros componentes/cards que o carrinho mudou
+      try {
+        window.dispatchEvent(new CustomEvent("carrinho:update"));
+      } catch (err) {
+        // noop
+      }
+    } catch (err) {
+      // noop
+    }
+  };
+
+  useEffect(() => {
+    let mounted = true;
+    const myId = getId(produto);
+
+    const checkCarrinho = () => {
+      try {
+        const carrinho = obterCarrinho() || [];
+        const ids = new Set(carrinho.map((p) => getId(p)).filter(Boolean));
+        const existe = myId ? ids.has(myId) : false;
+        if (mounted) setCardSelecionado(Boolean(existe));
+      } catch (err) {
+        if (mounted) setCardSelecionado(false);
+      }
+    };
+
+    // checa inicialmente
+    checkCarrinho();
+
+    // atualiza ao mudar localStorage (outras abas) e ao receber evento custom
+    const onStorage = (ev) => {
+      if (!ev.key || ev.key === "carrinho") checkCarrinho();
+    };
+    const onCarrinhoUpdate = () => checkCarrinho();
+
+    window.addEventListener("storage", onStorage);
+    window.addEventListener("carrinho:update", onCarrinhoUpdate);
+
+    // polling para garantir sincronização quando remoção ocorrer na mesma aba sem dispatch
+    const intervalId = setInterval(checkCarrinho, 700);
+
+    return () => {
+      mounted = false;
+      window.removeEventListener("storage", onStorage);
+      window.removeEventListener("carrinho:update", onCarrinhoUpdate);
+      clearInterval(intervalId);
+    };
+  }, [produto]);
 
   const categorias = [
     {
@@ -69,8 +173,7 @@ const CardProduto = ({ produto, match }) => {
     },
   ];
 
-
-  // function Highlight({ text, matches }) {
+    // function Highlight({ text, matches }) {
   //   if (!matches || matches.length === 0) return text;
 
   //   const nomeMatch = matches.find(m => m.key === "nome");
@@ -96,16 +199,18 @@ const CardProduto = ({ produto, match }) => {
   //   );
   // }
 
-
-
   return (
     <Card
-      className="group min-w-53 shadow-none gap-0 pt-0 pb-0 bg-[#D8F1DC] border-[3px] border-dashed border-[#75ba51] rounded-[50px] p-2 hover:bg-[#C8FDB4] transition"
+      // ALTERAÇÃO APLICADA AQUI: Estilização condicional para hover/seleção
+      className={`group min-w-53 shadow-none gap-0 pt-0 pb-0 border-[3px] border-dashed border-[#75ba51] rounded-[50px] p-2 transition-all duration-150 ease-in-out cursor-pointer
+        ${cardSelecionado 
+          ? "bg-[#C8FDB4] shadow-lg hover:shadow-xl" 
+          : "bg-[#D8F1DC] hover:scale-[1.01]" // Apenas um pequeno scale no hover
+        }`}
       onClick={handleAdd}
     >
       <CardHeader className="pt-3 px-6 flex items-center flex-row justify-between gap-2 font-semibold text-sm">
         <div className="flex flex-col align-center">
-
           <h3 className="text-[#8C3E82] text-[12px] tracking-tighter">
             {produto.nome}
           </h3>
@@ -115,7 +220,6 @@ const CardProduto = ({ produto, match }) => {
           /> */}
           <p className="text-[#c97fda] text-[12px]">{produto.precoFormatado}</p>
         </div>
-
         <div className="w-11 h-full flex justify-between items-center gap-2">
           {/* PRIMEIRO ÍCONE: Informações */}
           <AlertDialog>

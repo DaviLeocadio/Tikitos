@@ -59,7 +59,8 @@ export default function CardDemo({ quantidade, subtotal, desconto, setDesconto }
       [&::-webkit-outer-spin-button]:appearance-none
       [appearance:textfield] outline-none shadow-none
       transition
-      hover:bg-[#B96AAE]/50  focus:bg-[#B96AAE] 
+      bg-[#B96AAE]/50 
+      hover:bg-[#B96AAE] focus:bg-[#B96AAE] 
       "
             />
           ) : (

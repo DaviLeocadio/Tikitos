@@ -38,15 +38,28 @@ export default forwardRef(function CarrinhoCard(props, ref) {
       id={id}
       ref={ref}
       className="group flex w-full min-w-53 shadow-none gap-0 bg-[#D8F1DC] border-[3px] border-dashed border-[#75ba51] rounded-[40px] p-5 hover:bg-[#C8FDB4] transition justify-between items-center">
-      <div className="flex flex-col align-center gap-2">
+      <div className="w-3/4 flex flex-col align-center gap-2 ">
         <div>
           <h3 className="text-[#8C3E82] text-[14px] tracking-tighter">
             {produto.nome}
           </h3>
-          <p className="text-[#c97fda] text-[13px]">{produto.precoFormatado}</p>
+          <p className="w-full flex justify-between gap-1 pe-3">
+            <span className="text-[#c97fda] text-[13px]">
+              {produto.precoFormatado}
+            </span>
+
+            <span className="text-[#c97fda] text-[13px]">
+              {" × "} {produto.quantidade} 
+              {" R$ "}
+              {Number(produto.preco * produto.quantidade)
+                .toFixed(2)
+                .replace(".", ",")}
+            </span>
+          </p>
+
         </div>
 
-        <div className="flex flex-row justify-center items-center gap-2 text-center">
+        <div className="flex flex-row justify-start items-center gap-2 text-center">
           <div className="flex flex-col items-center justify-center text-center space-y-1">
             <div className="flex items-center bg-[#9D4E92] border border-[#9D4E92] rounded-md">
               <button
@@ -103,7 +116,7 @@ export default forwardRef(function CarrinhoCard(props, ref) {
         </div>
       </div>
 
-      <div className="flex justify-center items-center w-20 h-20">
+      <div className="flex justify-center items-center w-1/4 min-w-20 h-20">
         <img
           className="m-0 max-h-20 object-contain transform transition-transform duration-300 ease-out group-hover:scale-110"
           src={produto.imagem}
