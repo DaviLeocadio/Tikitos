@@ -43,17 +43,15 @@ export default forwardRef(function CarrinhoCard(props, ref) {
           <h3 className="text-[#8C3E82] text-[14px] tracking-tighter">
             {produto.nome}
           </h3>
-          <p className="w-full flex justify-between gap-1 pe-3">
-            <span className="text-[#c97fda] text-[13px]">
-              {produto.precoFormatado}
-            </span>
-
-            <span className="text-[#c97fda] text-[13px]">
-              {" × "} {produto.quantidade} 
+          <p className="w-full flex items-center gap-2">
+            <span className="text-[#8C3E82] text-[15px] font-bold">
               {" R$ "}
               {Number(produto.preco * produto.quantidade)
                 .toFixed(2)
                 .replace(".", ",")}
+            </span>
+            <span className="text-[#c97fda] text-[13px]">
+               {"   "}({produto.quantidade}{"×"} {produto.precoFormatado})
             </span>
           </p>
 
@@ -65,7 +63,7 @@ export default forwardRef(function CarrinhoCard(props, ref) {
               <button
                 type="button"
                 onClick={decrement}
-                className="px-2 py-1 text-[#DDF1D4] bg-[#9D4E92] border-r border-[#9D4E92] rounded-l-md hover:bg-[#B478AB] cursor-pointer"
+                className={`px-2 py-1 text-[#DDF1D4] bg-[#9D4E92] border-r border-[#9D4E92] rounded-l-md hover:bg-[#B478AB] cursor-pointer ${produto.quantidade==1 ? 'pointer-events-none' : ''}`}
               >
                 <svg
                   className="w-3 h-5"
@@ -92,7 +90,7 @@ export default forwardRef(function CarrinhoCard(props, ref) {
               <button
                 type="button"
                 onClick={increment}
-                className="px-2 py-1 text-[#DDF1D4] bg-[#9D4E92] border-l border-[#9D4E92] rounded-r-md hover:bg-[#B478AB] cursor-pointer"
+                className={`px-2 py-1 text-[#DDF1D4] bg-[#9D4E92] border-l border-[#9D4E92] rounded-r-md hover:bg-[#B478AB] cursor-pointer ${produto.quantidade==10 ? 'pointer-events-none' : ''}`}
               >
                 <svg
                   className="w-3 h-5 "
@@ -109,6 +107,7 @@ export default forwardRef(function CarrinhoCard(props, ref) {
               </button>
             </div>
           </div>
+          
           <i
             className="bi bi-trash text-[18px] hover:scale-85 transition cursor-pointer pt-0.5"
             onClick={handleDelete}

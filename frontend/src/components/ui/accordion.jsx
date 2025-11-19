@@ -23,7 +23,7 @@ function AccordionItem({ className, ...props }) {
     <AccordionPrimitive.Item
       data-slot="accordion-item"
       className={cn(
-        "relative overflow-hidden rounded-xl mb-2 border border-border/70 bg-[#569A33] hover:bg-[#75BA51] text-[#E5B8F1] hover:text-[#76216D]",
+        "relative overflow-hidden rounded-xl mb-2 border border-border/70 bg-[#569A33] hover:bg-[#75BA51] text-[#E5B8F1] hover:text-[#76216D] transition-all",
         className
       )}
       {...props}
@@ -66,7 +66,7 @@ function AccordionContent({ className, children, ...props }) {
       data-slot="accordion-content"
       className={cn(
         // evita salto de altura
-        "overflow-hidden max-h-0 data-[state=open]:max-h-[400px] transition-[max-height] duration-300 ease-in-out",
+        "overflow-hidden max-h-0 data-[state=open]:max-h-[400px] transition-all duration-300 ease-in-out",
         className
       )}
       {...props}

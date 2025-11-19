@@ -8,7 +8,7 @@ export default function loading() {
          <img 
         src="/img/loading/loading.gif" 
         alt="loading gif" 
-        className='w-100 h-50' 
+        className='w-100 h-60' 
         />
       </div>
     </div>  

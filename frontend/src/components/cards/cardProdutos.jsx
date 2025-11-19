@@ -201,11 +201,11 @@ const CardProduto = ({ produto, match }) => {
 
   return (
     <Card
-      // ALTERAÇÃO APLICADA AQUI:
-      className={`group min-w-53 shadow-none gap-0 pt-0 pb-0 border-[3px] border-dashed border-[#75ba51] rounded-[50px] p-2 transition-all duration-150 ease-in-out cursor-pointer transform origin-center
+      // ALTERAÇÃO APLICADA AQUI: Estilização condicional para hover/seleção
+      className={`group min-w-53 shadow-none gap-0 pt-0 pb-0 border-[3px] border-dashed border-[#75ba51] rounded-[50px] p-2 transition 
         ${cardSelecionado 
-          ? "bg-[#C8FDB4] shadow-lg hover:shadow-xl hover:scale-[1.01]" // SELECIONADO: Fundo destacado + feedback sutil (sombra/scale) no hover
-          : "bg-[#D8F1DC] hover:scale-[1.01]"       // NÃO SELECIONADO: Fundo normal + feedback sutil (scale) no hover
+          ? "bg-[#C8FDB4] shadow-md hover:shadow-lg" // SELECIONADO: Fundo destacado + feedback de hover por sombra
+          : "bg-[#D8F1DC] hover:bg-[#C8FDB4]"       // NÃO SELECIONADO: Fundo normal + feedback de hover por destaque de cor
         }`}
       onClick={handleAdd}
     >

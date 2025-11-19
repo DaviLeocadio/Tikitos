@@ -25,10 +25,10 @@ export default function Suporte() {
       </div>
 
       {/* BANNER INICIAL */}
-      <div className="rounded-3xl overflow-hidden px-[45px] mb-10">
+      <div className="rounded-3xl overflow-hidden px-[45px] mb-10 sm:w-[100%] ">
         <img
           src="/img/suporte/topicos_suporte.png"
-          className="w-full rounded-3xl sm:w-[50%]"
+          className="w-full rounded-3xl"
         />
       </div>
 
@@ -52,15 +52,18 @@ export default function Suporte() {
       </div>
 
 
-      <div className="flex flex-col lg:flex-row items-start justify-between gap-5 w-full">
+      <div className={`flex flex-col lg:flex-row items-start justify-between gap-5 w-full ${styles.supportRow}`}>
         {/* BLOCO ESQUERDO = TÍTULO + ACCORDION */}
-        <div className="flex flex-col items-start w-full lg:w-1/2">
+        <div className="flex flex-col items-start w-full lg:w-[55%]">
 
           {/* TÍTULO */}
           <img
             src="/img/suporte/perguntas_suporte.png"
-            className="w-[43%] p-16 mb-[-4%]"
+            className="w-[80%] p-4  
+             sm:w-[60%] sm:p-10 sm:mb-[2%] sm:items-center
+             md:w-[80%] md:p-16 md:mb-[-10%]"
           />
+
 
           {/* ACCORDION */}
           <div className="max-w-md w-full sm:px-6 lg:mx-10 p-1 items-start">
@@ -116,7 +119,7 @@ export default function Suporte() {
             <li style={{ "--i": 4 }}>
               <input
                 required
-                placeholder="Name"
+                placeholder="Email"
                 type="text"
                 className={styles.input}
               />
@@ -126,7 +129,7 @@ export default function Suporte() {
               <input
                 name="phone"
                 required
-                placeholder="Phone number"
+                placeholder="Título"
                 className={styles.input}
               />
             </li>
@@ -135,7 +138,7 @@ export default function Suporte() {
               <input
                 name="email"
                 required
-                placeholder="E-mail"
+                placeholder="Descrição"
                 type="email"
                 className={styles.input}
               />

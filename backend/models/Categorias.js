@@ -17,7 +17,7 @@ const listarCategorias = async (whereClause = null) => {
 
 const obterCategoriaPorId = async (categoriaId) => {
   try {
-    return await read("produtos", `id_categoria = ${categoriaId}`);
+    return await read("categorias", `id_categoria = ${categoriaId}`);
   } catch (err) {
     console.error("Erro ao obter produto por ID: ", err);
     throw err;

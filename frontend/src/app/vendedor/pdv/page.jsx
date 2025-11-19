@@ -68,7 +68,7 @@ export default function PDV() {
   return (
     <>
     <CarrinhoSidebar />
-      <div className="grid gap-5 grid-cols-1 md:grid-cols-2">
+      <div className="grid gap-5 grid-cols-1 lg:grid-cols-2">
         <div className="">
           <div className="grid gap-5 grid-cols-1 md:grid-cols-1">
             <div className="flex m-5 gap-2 items-center">
@@ -78,7 +78,7 @@ export default function PDV() {
           </div>
 
           <div className="grid gap-5 grid-cols-1 x-sm:grid-cols-1 sm:grid-cols-1 md:grid-cols-1 ">
-            <div className="grid gap-5 grid-cols-1 x-sm:grid-cols- sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-2 overflow-y-scroll lg:max-h-108 p-5 pt-0 ms-1">
+            <div className="grid gap-5 grid-cols-1 x-sm:grid-cols- sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 overflow-y-scroll lg:max-h-108 p-5 pt-0 ms-1">
               {loading ? (
                 <h1>Loading</h1>
               ) : produtos && produtos.length === 0 && !loading ? (

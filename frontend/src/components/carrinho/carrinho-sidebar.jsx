@@ -69,13 +69,16 @@ export default function CarrinhoSidebar() {
     const carrinhoEl = carrinhoRef.current;
     const item = itemRefs.current[ultimoId];
     if (!carrinhoEl || !item) return;
-    const itemOffsetTop = item.offsetTop;
-    const itemHeight = item.offsetHeight;
-    const carrinhoHeight = carrinhoEl.offsetHeight;
-    const scrollTop = itemOffsetTop - carrinhoHeight / 2 + itemHeight / 2;
-    carrinhoEl.scrollTo({ top: scrollTop, behavior: "smooth" });
-    const carrinhoElement = document.getElementById("carrinho");
-    if (carrinhoElement.scrollHeight > carrinhoElement.clientHeight) {
+
+    // const itemOffsetTop = item.offsetTop;
+    // const itemHeight = item.offsetHeight;
+    // const carrinhoHeight = carrinhoEl.offsetHeight;
+    // const scrollTop = itemOffsetTop - carrinhoHeight / 2 + itemHeight / 2;
+
+    // carrinhoEl.scrollTo({ top: scrollTop, behavior: "smooth" });
+    // const carrinhoElement = document.getElementById("carrinho");
+    
+    if (carrinhoEl.scrollHeight > carrinhoEl.clientHeight) {
       setScroll(true);
     } else {
       setScroll(false);

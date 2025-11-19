@@ -8,6 +8,7 @@ import {
   limparCarrinho,
 } from "@/utils/carrinho.js";
 import CarrinhoCard from "@/components/carrinho/CarrinhoCard.jsx";
+import { BrushCleaning } from "lucide-react";
 
 export default function Carrinho() {
   const [carrinho, setCarrinho] = useState([]);
@@ -74,9 +75,32 @@ export default function Carrinho() {
     }
   }, [carrinho]);
 
+  function animateBrush() {
+
+    const element = document.getElementById('brushElement');
+    const brushKeyframes = [
+      { transform: 'rotate(0deg)' },
+      { transform: 'rotate(-45deg)' },
+      { transform: 'rotate(45deg)' },
+      { transform: 'rotate(-30deg)' },
+      { transform: 'rotate(30deg)' },
+      { transform: 'rotate(0deg)' }
+    ]; const timingOptions = {
+      duration: 1000,
+      iterations: 1,
+      easing: 'ease-in-out',
+      fill: 'forwards'
+    };
+    element.animate(brushKeyframes, timingOptions);
+  }
+
   const handleResetarCarrinho = () => {
-    limparCarrinho();
+    animateBrush();
+    setTimeout(() => {
+      limparCarrinho();
+    }, 500)
   };
+
 
   return (
     <>
@@ -90,19 +114,21 @@ export default function Carrinho() {
                   <p>Carrinho</p>
                 </div>
                 <div className="flex flex-row gap-2 text-center justify-center items-center">
-                  <i
+                  <BrushCleaning
+                    size={20}
+                    id="brushElement"
                     onClick={handleResetarCarrinho}
-                    className={`bi bi-arrow-repeat text-[25px] cursor-pointer ${styles.rotate_on_hover}`}
-                  ></i>
+                    className={`text-[25px] cursor-pointer ${styles.brush_animate}
+                    ${carrinho.length==0 ? 'pointer-events-none' : ''}`}
+                  />
                 </div>
               </div>
 
               <div
                 ref={carrinhoRef}
                 id="carrinho"
-                className={`flex flex-col gap-3 overflow-y-scroll max-h-53 pt-0 ms-1 ${
-                  scroll ? "pe-6" : "pe-0"
-                }`}
+                className={`flex flex-col gap-3 overflow-y-scroll max-h-53 pt-0 ms-1 ${scroll ? "pe-6" : "pe-0"
+                  }`}
               >
                 {loading ? (
                   <h1> Carregando carrinho...</h1>

@@ -1,8 +1,8 @@
 
  .stackedForm {
     --form-btn-color-3: #67A448;
-    --form-btn-color-2: #CDAED5;
-    --form-btn-color-1: #f2cefb;
+    --form-btn-color-2: #f2cefb;
+    --form-btn-color-1: #CDAED5;
     --form-btn-color: #813A77;
     --form-btn-active-color: #691760;
     --form-rotation: rotate3d(0, 1, 0, 180deg);
@@ -44,7 +44,7 @@
     width: 200px;
     z-index: var(--i);
     transition: 0.3s;
-    color: #4F6940;
+    color: #F2CEFB;
   }
   
   .stackedForm .wrapper li::before,
@@ -96,12 +96,12 @@
     padding: 0;
     padding-left: var(--form-text-padding-left);
     width: calc(100%);
-    color: black;
+    color: #465D39;
     transform: var(--form-rotation);
   }
   
   .stackedForm li .input::placeholder {
-    color: black;
+    color: #465D39;
   }
   
   .stackedForm li:nth-child(1) .input {
