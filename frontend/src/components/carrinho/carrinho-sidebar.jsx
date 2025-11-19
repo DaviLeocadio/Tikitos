@@ -42,7 +42,7 @@ export default function CarrinhoSidebar() {
   useEffect(() => {
     atualizarCarrinho();
   }, [open]);
-  
+
   useEffect(() => {
     atualizarCarrinho();
   }, []);
@@ -64,9 +64,18 @@ export default function CarrinhoSidebar() {
   }, []);
 
   useEffect(() => {
+    const ultimoId = localStorage.getItem("ultimoProdutoAdicionado");
+    if (!ultimoId) return;
     const carrinhoEl = carrinhoRef.current;
-    console.log(carrinhoEl.scrollHeight);
-    if (carrinhoEl.scrollHeight > carrinhoEl.clientHeight) {
+    const item = itemRefs.current[ultimoId];
+    if (!carrinhoEl || !item) return;
+    const itemOffsetTop = item.offsetTop;
+    const itemHeight = item.offsetHeight;
+    const carrinhoHeight = carrinhoEl.offsetHeight;
+    const scrollTop = itemOffsetTop - carrinhoHeight / 2 + itemHeight / 2;
+    carrinhoEl.scrollTo({ top: scrollTop, behavior: "smooth" });
+    const carrinhoElement = document.getElementById("carrinho");
+    if (carrinhoElement.scrollHeight > carrinhoElement.clientHeight) {
       setScroll(true);
     } else {
       setScroll(false);
@@ -106,7 +115,6 @@ export default function CarrinhoSidebar() {
           [&>button]:hidden
         "
         >
-
           <SheetHeader className="relative z-0">
             <SheetTitle className="text-[#8c3e82] flex justify-between items-center">
               <span className="flex items-center gap-2">
@@ -125,8 +133,9 @@ export default function CarrinhoSidebar() {
           <div
             ref={carrinhoRef}
             id="carrinho"
-            className={`flex flex-col gap-3 max-h-[55vh] mt-4 overflow-y-scroll ps-2 ${scroll ? "pe-4" : "pe-0"
-              }`}
+            className={`flex flex-col gap-3 max-h-[55vh] mt-4 overflow-y-scroll ps-2 ${
+              scroll ? "pe-4" : "pe-0"
+            }`}
           >
             {loading ? (
               <p>Carregando...</p>
@@ -143,7 +152,6 @@ export default function CarrinhoSidebar() {
               ))
             )}
           </div>
-
 
           <SheetFooter className="p-0">
             {/* RESUMO / TOTAL */}

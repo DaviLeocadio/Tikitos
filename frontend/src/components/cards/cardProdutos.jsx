@@ -201,11 +201,11 @@ const CardProduto = ({ produto, match }) => {
 
   return (
     <Card
-      // ALTERAÇÃO APLICADA AQUI: Estilização condicional para hover/seleção
-      className={`group min-w-53 shadow-none gap-0 pt-0 pb-0 border-[3px] border-dashed border-[#75ba51] rounded-[50px] p-2 transition-all duration-150 ease-in-out cursor-pointer
+      // ALTERAÇÃO APLICADA AQUI:
+      className={`group min-w-53 shadow-none gap-0 pt-0 pb-0 border-[3px] border-dashed border-[#75ba51] rounded-[50px] p-2 transition-all duration-150 ease-in-out cursor-pointer transform origin-center
         ${cardSelecionado 
-          ? "bg-[#C8FDB4] shadow-lg hover:shadow-xl" 
-          : "bg-[#D8F1DC] hover:scale-[1.01]" // Apenas um pequeno scale no hover
+          ? "bg-[#C8FDB4] shadow-lg hover:shadow-xl hover:scale-[1.01]" // SELECIONADO: Fundo destacado + feedback sutil (sombra/scale) no hover
+          : "bg-[#D8F1DC] hover:scale-[1.01]"       // NÃO SELECIONADO: Fundo normal + feedback sutil (scale) no hover
         }`}
       onClick={handleAdd}
     >
@@ -220,6 +220,7 @@ const CardProduto = ({ produto, match }) => {
           /> */}
           <p className="text-[#c97fda] text-[12px]">{produto.precoFormatado}</p>
         </div>
+
         <div className="w-11 h-full flex justify-between items-center gap-2">
           {/* PRIMEIRO ÍCONE: Informações */}
           <AlertDialog>

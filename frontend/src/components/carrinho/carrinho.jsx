@@ -13,7 +13,7 @@ export default function Carrinho() {
   const [carrinho, setCarrinho] = useState([]);
   const [loading, setLoading] = useState(false);
   const [total, setTotal] = useState(null);
-  const [desconto, setDesconto] = useState('');
+  const [desconto, setDesconto] = useState("");
   const [quantidade, setQuantidade] = useState(0);
   const [scroll, setScroll] = useState(false);
 
@@ -48,7 +48,6 @@ export default function Carrinho() {
   const carrinhoRef = useRef(null);
   const itemRefs = useRef({});
 
-
   useEffect(() => {
     const ultimoId = localStorage.getItem("ultimoProdutoAdicionado");
     if (!ultimoId) return;
@@ -57,24 +56,21 @@ export default function Carrinho() {
     const item = itemRefs.current[ultimoId];
     if (!carrinho || !item) return;
 
-    const itemOffsetTop = item.offsetTop
+    const itemOffsetTop = item.offsetTop;
     const itemHeight = item.offsetHeight;
     const carrinhoHeight = carrinho.offsetHeight;
 
-    const scrollTop =
-      itemOffsetTop - carrinhoHeight / 2 + itemHeight / 10;
+    const scrollTop = itemOffsetTop - carrinhoHeight / 2 + itemHeight / 10;
 
     carrinho.scrollTo({
       top: scrollTop,
-      behavior: "smooth"
-    })
+      behavior: "smooth",
+    });
 
-    const carrinhoElement = document.getElementById('carrinho');
-
-    if (carrinhoElement.scrollHeight > carrinhoElement.clientHeight) {
-      setScroll(true)
+    if (carrinho.scrollHeight > carrinho.clientHeight) {
+      setScroll(true);
     } else {
-      setScroll(false)
+      setScroll(false);
     }
   }, [carrinho]);
 
@@ -104,9 +100,10 @@ export default function Carrinho() {
               <div
                 ref={carrinhoRef}
                 id="carrinho"
-                className={`flex flex-col gap-3 overflow-y-scroll max-h-53 pt-0 ms-1 ${scroll ? 'pe-6' : 'pe-0'}`}
+                className={`flex flex-col gap-3 overflow-y-scroll max-h-53 pt-0 ms-1 ${
+                  scroll ? "pe-6" : "pe-0"
+                }`}
               >
-
                 {loading ? (
                   <h1> Carregando carrinho...</h1>
                 ) : carrinho && carrinho.length == 0 ? (
@@ -118,7 +115,9 @@ export default function Carrinho() {
                         key={produto.id_produto}
                         produto={produto}
                         id={produto.id_produto}
-                        ref={(el) => (itemRefs.current[produto.id_produto] = el)}
+                        ref={(el) =>
+                          (itemRefs.current[produto.id_produto] = el)
+                        }
                       />
                     );
                   })
@@ -158,7 +157,6 @@ export default function Carrinho() {
             />
           </div>
         </div>
-
       </div>
     </>
   );
