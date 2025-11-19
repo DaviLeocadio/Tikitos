@@ -12,7 +12,7 @@ export default function Login() {
   function aparecerToast(msg) {
     toast(msg, {
       icon: (
-        <img src="/img/toast/logo_ioio.png" alt="logo" className="w-22 h-7" />
+        <img src="/img/toast/logo_ioio.png" alt="logo" className="h-6 mt-0.5" />
       ),
       position: "top-right",
       autoClose: 4000,

@@ -3,8 +3,7 @@ import styles from "./carrinho.module.css";
 import { atualizarQuantidade, removerDoCarrinho } from "@/utils/carrinho.js";
 
 export default function CarrinhoCard({ produto, id }) {
-  console.log(produto);
-
+  
   const increment = () => {
     if(produto.quantidade <10){
         atualizarQuantidade(produto.id_produto, produto.quantidade + 1);
