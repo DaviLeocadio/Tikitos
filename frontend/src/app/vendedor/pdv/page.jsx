@@ -3,13 +3,20 @@ import CardProduto from "@/components/cards/cardProdutos.jsx";
 import AtalhosDiv from "@/components/atalhos/atalhosDiv";
 import InputWithAdornmentDemo from "@/components/input-07";
 import Carrinho from "@/components/carrinho/carrinho";
+import CarrinhoSidebar from "@/components/carrinho/carrinho-sidebar";
 import { voltarCarrinho } from "@/utils/carrinho.js";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { useEffect, useState } from "react";
+import Fuse from "fuse.js";
+
 import { deleteCookie } from "cookies-next/client";
 
 export default function PDV() {
+  const [query, setQuery] = useState('')
   const [produtos, setProdutos] = useState([]);
+  const [listaProdutos, setListaProdutos] = useState([]);
+  const [loading, setLoading] = useState(false)
+
 
   // Atalhos
   const handleKeyDown = async (event) => {
@@ -37,6 +44,7 @@ export default function PDV() {
 
   useEffect(() => {
     const buscarProdutos = async () => {
+      setLoading(true)
       const response = await fetch("http://localhost:8080/vendedor/produtos", {
         method: "GET",
         credentials: "include",
@@ -51,9 +59,42 @@ export default function PDV() {
         return setProdutos(data.produtosFormatados);
       }
     };
-
     buscarProdutos();
   }, []);
+
+  useEffect(() => {
+    setProdutos(listaProdutos.map(p => ({ item: p, matches: [] })));
+  }, [listaProdutos])
+
+  useEffect(() => {
+    if (!query || query.trim().length === 0) {
+      setProdutos(listaProdutos.map(p => ({ item: p, matches: [] })));
+      return
+    }
+    const fuse = new Fuse(listaProdutos, {
+      keys: [
+        { name: 'id_produto', weight: 0.5 },
+        { name: 'nome', weight: 0.3 },
+        { name: 'categoria', weight: 0.25 },
+        { name: 'descricao', weight: 0.2 }
+      ],
+      // includeMatches: true,
+      threshold: 0.2,
+      ignoreLocation: true,
+    });
+
+
+    const resultado = fuse.search(query);
+    setProdutos(
+      resultado.map(r => ({
+        item: r.item,
+        matches: r.matches
+      }))
+    );
+
+  }, [query, listaProdutos]);
+
+
 
   // Config Atalhos
   useEffect(() => {
@@ -81,12 +122,13 @@ export default function PDV() {
   const produtosInativos = produtos.filter((p) => p.status == "inativo");
   return (
     <>
-      <div className="grid gap-5 grid-cols-1 md:grid-cols-2">
+    <CarrinhoSidebar />
+      <div className="grid gap-5 grid-cols-1 lg:grid-cols-2">
         <div className="">
           <div className="grid gap-5 grid-cols-1 md:grid-cols-1">
             <div className="flex m-5 gap-2 items-center">
               <SidebarTrigger />
-              <InputWithAdornmentDemo></InputWithAdornmentDemo>
+              <InputWithAdornmentDemo query={query} setQuery={setQuery}></InputWithAdornmentDemo>
             </div>
           </div>
 
@@ -97,7 +139,7 @@ export default function PDV() {
             </div>
           </div>
         </div>
-        <div className="flex items-center content-center">
+        <div className="hidden lg:flex items-center content-center">
           <div className="flex items-center content-center">
             <Carrinho></Carrinho>
           </div>

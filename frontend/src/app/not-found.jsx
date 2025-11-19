@@ -31,7 +31,7 @@ export default function NotFound() {
                             
                             {/* Texto */}
                             <div className="mb-8 max-w-md">
-                                 <p className='text-lg sm:text-xl font-semibold text-gray-700 color-[var(--color-verdao)]'>
+                                 <p className='text-lg sm:text-xl   font-semibold text-gray-700 color-[var(--color-verdao)]'>
                                     Que pena! Parece que o seu acesso a esta área está "em manutenção" 
                                     pelos nossos pequenos construtores de sonhos! 
                                  </p>
@@ -39,13 +39,9 @@ export default function NotFound() {
                            
                             {/* Botão para voltar à página inicial */}
                             <Link href="/">
-                                <button 
-                                    type="button"
-                                    className='h-[3rem] w-[20rem] rounded-xl bg-[var(--color-verdao)] text-[var(--color-verdeclaro)]'
-                                >
-                                    <span>Voltar para à outra página</span>
-                                    {/* Símbolo de seta para a direita */}
-                                    <span className='text-xl'>&rarr;</span> 
+                                <button className="bg-[#65745A] rounded-[50px] mt-2 py-2 px-5 text-[#caf4b7] text-sm font-semibold w-full h-13 flex gap-3 justify-center items-center transform transition-all duration-300 ease-out group-hover:scale-110 hover:bg-[#74816b] hover:scale-97">
+                                    <h3>Voltar para a outra página</h3>
+                                    <i className="bi bi-arrow-right-circle-fill text-[25px]"></i>
                                 </button>
                             </Link>
                         </main>

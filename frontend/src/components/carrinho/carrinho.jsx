@@ -9,13 +9,15 @@ import {
   voltarCarrinho
 } from "@/utils/carrinho.js";
 import CarrinhoCard from "@/components/carrinho/CarrinhoCard.jsx";
+import { BrushCleaning } from "lucide-react";
 
 export default function Carrinho() {
   const [carrinho, setCarrinho] = useState([]);
   const [loading, setLoading] = useState(false);
   const [total, setTotal] = useState(null);
-  const [desconto, setDesconto] = useState(0);
+  const [desconto, setDesconto] = useState("");
   const [quantidade, setQuantidade] = useState(0);
+  const [scroll, setScroll] = useState(false);
 
   // Atalhos
   const handleKeyDown = (event) => {
@@ -53,25 +55,61 @@ export default function Carrinho() {
     };
   }, []);
 
-  const containerRef = useRef(null);
+  const carrinhoRef = useRef(null);
+  const itemRefs = useRef({});
 
   useEffect(() => {
-    const ultimo = localStorage.getItem("ultimoProdutoAdicionado");
+    const ultimoId = localStorage.getItem("ultimoProdutoAdicionado");
+    if (!ultimoId) return;
 
-    if (!ultimo || !containerRef.current) return;
+    const carrinho = carrinhoRef.current;
+    const item = itemRefs.current[ultimoId];
+    if (!carrinho || !item) return;
 
-    const elemento = document.getElementById(`produto#${ultimo}`);
-    if (elemento) {
-      elemento.scrollIntoView({
-        behavior: "smooth",
-        block: "center",
-      });
+    const itemOffsetTop = item.offsetTop;
+    const itemHeight = item.offsetHeight;
+    const carrinhoHeight = carrinho.offsetHeight;
+
+    const scrollTop = itemOffsetTop - carrinhoHeight / 2 + itemHeight / 10;
+
+    carrinho.scrollTo({
+      top: scrollTop,
+      behavior: "smooth",
+    });
+
+    if (carrinho.scrollHeight > carrinho.clientHeight) {
+      setScroll(true);
+    } else {
+      setScroll(false);
     }
   }, [carrinho]);
 
+  function animateBrush() {
+
+    const element = document.getElementById('brushElement');
+    const brushKeyframes = [
+      { transform: 'rotate(0deg)' },
+      { transform: 'rotate(-45deg)' },
+      { transform: 'rotate(45deg)' },
+      { transform: 'rotate(-30deg)' },
+      { transform: 'rotate(30deg)' },
+      { transform: 'rotate(0deg)' }
+    ]; const timingOptions = {
+      duration: 1000,
+      iterations: 1,
+      easing: 'ease-in-out',
+      fill: 'forwards'
+    };
+    element.animate(brushKeyframes, timingOptions);
+  }
+
   const handleResetarCarrinho = () => {
-    limparCarrinho();
+    animateBrush();
+    setTimeout(() => {
+      limparCarrinho();
+    }, 500)
   };
+
 
   return (
     <>
@@ -85,16 +123,21 @@ export default function Carrinho() {
                   <p>Carrinho</p>
                 </div>
                 <div className="flex flex-row gap-2 text-center justify-center items-center">
-                  <i
+                  <BrushCleaning
+                    size={20}
+                    id="brushElement"
                     onClick={handleResetarCarrinho}
-                    className={`bi bi-arrow-repeat text-[25px] cursor-pointer ${styles.rotate_on_hover}`}
-                  ></i>
+                    className={`text-[25px] cursor-pointer ${styles.brush_animate}
+                    ${carrinho.length==0 ? 'pointer-events-none' : ''}`}
+                  />
                 </div>
               </div>
 
               <div
-                ref={containerRef}
-                className="flex flex-col gap-3 overflow-y-scroll max-h-53 pe-6 pt-0 ms-1 cursor-"
+                ref={carrinhoRef}
+                id="carrinho"
+                className={`flex flex-col gap-3 overflow-y-scroll max-h-53 pt-0 ms-1 ${scroll ? "pe-6" : "pe-0"
+                  }`}
               >
                 {loading ? (
                   <h1> Carregando carrinho...</h1>
@@ -106,7 +149,10 @@ export default function Carrinho() {
                       <CarrinhoCard
                         key={produto.id_produto}
                         produto={produto}
-                        id={`produto#${produto.id_produto}`}
+                        id={produto.id_produto}
+                        ref={(el) =>
+                          (itemRefs.current[produto.id_produto] = el)
+                        }
                       />
                     );
                   })
@@ -137,8 +183,8 @@ export default function Carrinho() {
           </div>
         </div>
 
-        <div className="flex items-center col-span-2">
-          <div className="">
+        <div className="items-center col-span-2 hidden lg:flex">
+          <div>
             <img
               className="m-0 pr-3"
               src="/img/pdv/carrinho_criancas.png"

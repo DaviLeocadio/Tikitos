@@ -19,6 +19,7 @@ import {
   IconUsers,
 } from "@tabler/icons-react"
 
+import Link from 'next/link';
 import { NavDocuments } from "@/components/nav-documents"
 import { NavMain } from "@/components/nav-main"
 import { NavSecondary } from "@/components/nav-secondary"
@@ -155,10 +156,10 @@ export function AppSidebar({
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton asChild className="data-[slot=sidebar-menu-button]:!p-1.5">
-              <a href="/vendedor/pdv">
+              <Link href="/vendedor/pdv">
                 <img src="/img/logos/logo_ioio.png" alt="" className="max-h-full"/>
-                <span className="text-base font-semibold text-[#76216D]  hover:text-[#75BA51] active:text-[#75BA51]">Tikitos</span>
-              </a>
+                <span className="text-base font-semibold text-[#76216D] hover:bg-[#ffffff00]">Tikitos</span>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
