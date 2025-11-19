@@ -12,11 +12,15 @@ import {
   excluirVendaController
 } from "../controllers/VendaController.js";
 
-import { 
+import {
   listarProdutosController,
-  obterProdutoPorIdController 
+  obterProdutoPorIdController,
 } from "../controllers/ProdutoController.js";
 
+import {
+  listarCategoriasController,
+  obterCategoriaPorProdutoController
+} from '../controllers/CategoriasController.js'
 
 dotenv.config();
 
@@ -41,9 +45,12 @@ router.delete("/vendas/:idVenda", excluirVendaController);
 // Listar produtos
 router.get("/produtos", listarProdutosController);
 
+//Categoria do produto
+router.get("/categorias/:idProduto", obterCategoriaPorProdutoController);
+
 // Detalhes de uma unidade de produto
 router.get("/produtos/:idProduto", obterProdutoPorIdController);
-  
+
 // Resumo do caixa (Total de vendas, pagamento, saldo)
 router.get("/caixa/:idCaixa/resumo", ResumoCaixaController);
 

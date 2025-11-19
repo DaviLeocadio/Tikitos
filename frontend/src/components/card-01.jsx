@@ -2,16 +2,16 @@ import * as React from "react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 
-export default function CardDemo() {
+export default function CardDemo({quantidade, subtotal, desconto, setDesconto}) {
 
   const itens = [
     {
-      nome: "Total itens",
-      valor: 5,
+      nome: "Total itens",  
+      valor: quantidade,
     },
     {
       nome: "Subtotal",
-      valor: "R$ 129,90",
+      valor:  `R$ ${Number(subtotal).toFixed(2).replace(".", ",")}`,
     },
     {
       nome: "Desconto",
@@ -19,6 +19,9 @@ export default function CardDemo() {
     },
   ];
 
+  const handleChangeDesconto = (e) => {
+    setDesconto(e.target.value)
+  }
 
   return (
     <div className="flex flex-row gap-3">
@@ -36,6 +39,7 @@ export default function CardDemo() {
               id={`input-${index}`}
               type="number"
               placeholder={item.placeholder}
+              onChange={handleChangeDesconto}
               className="mt-1 w-[70px] text-center text-sm placeholder:text-[#EADBEA] bg-[#B96AAE] border-none text-[#DDF1D4] focus:outline-none rounded-md h-5.5
       [&::-webkit-inner-spin-button]:appearance-none
       [&::-webkit-outer-spin-button]:appearance-none

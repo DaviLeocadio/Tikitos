@@ -11,11 +11,7 @@ export default function Home() {
   function aparecerToast(msg) {
     toast(msg, {
       icon: (
-        <img
-          src="/img/toast/logo_ioio.png"
-          alt="logo"
-          className="w-22 h-7"
-        />
+        <img src="/img/toast/logo_ioio.png" alt="logo" className="h-6 mt-0.5" />
       ),
       position: "top-right",
       autoClose: 4000,
@@ -39,17 +35,20 @@ export default function Home() {
           novaSenha: senha,
           confirmarSenha: confirmarSenha,
         }),
-      })
+      });
 
       const data = await response.json();
 
       // Tratamento de erros
       if (response.status == 400) {
-        if (data.code == "FALTA_DADOS") return aparecerToast("Preencha todos os campos!")
+        if (data.code == "FALTA_DADOS")  return aparecerToast("Preencha todos os campos!");
 
-        if (data.code == "CARACTER_EXCEDIDO") return aparecerToast("Número de caracteres excedido!")
+        if (data.code == "CARACTER_EXCEDIDO") return aparecerToast("Número de caracteres excedido!");
+
+        if (data.code == "CARACTER_MINIMO") return aparecerToast("O número mínimo de caracteres é de 6!");
 
         if (data.code == "SENHA_DIFERENTE") return aparecerToast("Confirmar a senha tem que ser igual ao campo de senha!");
+        
       }
 
       if (response.ok) {
@@ -114,10 +113,17 @@ export default function Home() {
 
           <div className="flex flex-col gap-4">
             {/* INPUT DE NOVA SENHA */}
-            <div className={`flex flex-col gap-4 bg-[#9CD089]  ${styles.form_container}`}>
+            <div
+              className={`flex flex-col gap-4 bg-[#9CD089]  ${styles.form_container}`}
+            >
               <form className={styles.form}>
                 <div className={styles.form_group}>
-                  <label className={`text-[var(--color-verdao)]`} htmlFor="email">3°: Digite uma nova senha:</label>
+                  <label
+                    className={`text-[var(--color-verdao)]`}
+                    htmlFor="email"
+                  >
+                    3°: Digite uma nova senha:
+                  </label>
                   <input
                     type="text"
                     id="email"
@@ -136,7 +142,12 @@ export default function Home() {
             <div className={`bg-[#9CD089]  ${styles.form_container}`}>
               <form className={styles.form}>
                 <div className={styles.form_group}>
-                  <label className={`text-[var(--color-verdao)] `} htmlFor="email">4°: Confirme sua nova senha:</label>
+                  <label
+                    className={`text-[var(--color-verdao)] `}
+                    htmlFor="email"
+                  >
+                    4°: Confirme sua nova senha:
+                  </label>
                   <input
                     type="password"
                     id="email"

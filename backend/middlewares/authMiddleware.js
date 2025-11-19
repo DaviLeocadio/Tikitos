@@ -9,7 +9,7 @@ const authMiddleware = (funcoesPermitidas = []) => {
 
     if (!authHeader) {
       return res
-        .status(401)
+        .status(403)
         .json({ mensagem: "Não autorizado: Token não fornecido" });
     }
 

@@ -1,6 +1,7 @@
 "use client"
 
 import { IconCirclePlusFilled, IconMail } from "@tabler/icons-react";
+import Link from "next/link";
 
 import { Button } from "@/components/ui/button"
 import {
@@ -21,16 +22,20 @@ export function NavMain({
           <SidebarMenuItem className="flex items-center gap-2">
           </SidebarMenuItem>
         </SidebarMenu>
+
         <SidebarMenu>
           {items.map((item) => (
             <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton tooltip={item.title}>
-                {item.icon && <item.icon />}
-                <span className="group-data-[collapsible=icon]:hidden">{item.title}</span>
+              <SidebarMenuButton asChild tooltip={item.title}>
+                <Link href={item.href}>
+                  {item.icon && <item.icon />}
+                  <span className="group-data-[collapsible=icon]:hidden">{item.title}</span>
+                </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
           ))}
         </SidebarMenu>
+        
       </SidebarGroupContent>
     </SidebarGroup>
   );

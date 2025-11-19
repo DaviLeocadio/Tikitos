@@ -151,6 +151,13 @@ const definirSenhaController = async (req, res) => {
       });
     }
 
+    if(novaSenha < 6){
+      return res.status(400).json({
+        mensagem: "Mínimo de caracteres é de 6",
+        code: "CARACTER_MINIMO",
+      })
+    }
+
     // Busca o token no banco
     const record = await buscarToken(usuario.id_usuario);
 

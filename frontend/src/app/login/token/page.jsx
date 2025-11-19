@@ -18,7 +18,7 @@ export default function Home() {
         <img
           src="/img/toast/logo_ioio.png"
           alt="logo"
-          className="w-22 h-7"
+          className="h-6 mt-0.5"
         />
       ),
       position: "top-right",
@@ -291,7 +291,7 @@ export default function Home() {
                       className="text-[var(--color-verdao)] mb-2 block"
                       htmlFor="number"
                     >
-                      Digite o código de validação:
+                      2° Digite o código de validação:
                     </label>
 
                     {/* ÁREA DOS INPUTZINHOS DE VERIFICAÇÃO */}

@@ -14,6 +14,7 @@
   --color-verdinho: #9bf377;
   --color-verdefundo: #9bf377;
   --color-verdefolha: #75ba51;
+  --color-verdeclaro: #caf4b7;  
 
   --breakpoint-xs: 30rem;
   --breakpoint-surface: 64rem; 
@@ -134,7 +135,7 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground font-sans; /* 🔹 Usa a fonte Poppins */
+    @apply bg-background text-foreground font-sans;
   }
 }
 
@@ -147,3 +148,4 @@ body {
   background-color: var(--color-verdinho);
   color: #924187;
 }
+  
