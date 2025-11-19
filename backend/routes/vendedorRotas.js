@@ -22,6 +22,10 @@ import {
   obterCategoriaPorProdutoController
 } from '../controllers/CategoriasController.js'
 
+import {
+  estoqueBaixoController
+} from '../controllers/ProdutoLojaController.js'
+
 dotenv.config();
 
 const router = express.Router();
@@ -53,6 +57,9 @@ router.get("/produtos/:idProduto", obterProdutoPorIdController);
 
 // Resumo do caixa (Total de vendas, pagamento, saldo)
 router.get("/caixa/:idCaixa/resumo", ResumoCaixaController);
+
+// Lista produtos com estoque abaixo do mínimo (alerta)
+router.get("/estoque-baixo", estoqueBaixoController);
 
 
 // Extra: Relatório de vendas, métricas, tarefas

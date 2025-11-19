@@ -15,12 +15,12 @@ export default function AtalhosDiv() {
 
                 <div className="gap-2 flex">
                     <i className="bi bi-arrow-counterclockwise font-bold"></i>
-                    <h3>Voltar o item excluído: <span className='bold'>F1</span> </h3>
+                    <h3>Voltar o item excluído: <span className='bold'>F2</span> </h3>
                 </div>
 
                 <div className="gap-2 flex">
                     <i className="bi bi-question-circle font-bold"></i>
-                    <h3>Página de suporte: <span className='bold'>F5</span> </h3>
+                    <h3>Página de suporte: <span className='bold'>F4</span> </h3>
                 </div>
 
                 <div className="gap-2 flex">

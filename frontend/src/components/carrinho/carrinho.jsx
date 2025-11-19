@@ -6,6 +6,7 @@ import {
   calcularTotal,
   obterQuantidade,
   limparCarrinho,
+  voltarCarrinho
 } from "@/utils/carrinho.js";
 import CarrinhoCard from "@/components/carrinho/CarrinhoCard.jsx";
 
@@ -16,7 +17,14 @@ export default function Carrinho() {
   const [desconto, setDesconto] = useState(0);
   const [quantidade, setQuantidade] = useState(0);
 
+  // Atalhos
+  const handleKeyDown = (event) => {
+    if (event.keyCode === 45) return limparCarrinho();
+    if(event.keyCode === 113) return voltarCarrinho(carrinho);
+  };
+
   useEffect(() => {
+    document.addEventListener("keydown", handleKeyDown);
     setLoading(true);
     const checkCarrinho = () => {
       const carrinho = obterCarrinho();
@@ -41,6 +49,7 @@ export default function Carrinho() {
     return () => {
       window.removeEventListener("storage", handleStorage);
       window.removeEventListener("carrinhoAtualizado", handleCustom);
+      document.removeEventListener("keydown", handleKeyDown);
     };
   }, []);
 
