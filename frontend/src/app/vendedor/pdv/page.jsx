@@ -16,6 +16,7 @@ export default function PDV() {
   const [produtos, setProdutos] = useState([]);
   const [listaProdutos, setListaProdutos] = useState([]);
   const [loading, setLoading] = useState(false)
+  const [produtosAtivos, setProdutosAtivos] = useState();
 
 
   // Atalhos
@@ -56,7 +57,7 @@ export default function PDV() {
 
       if (response.ok) {
         const data = await response.json();
-        return setProdutos(data.produtosFormatados);
+        return setListaProdutos(data.produtosFormatados);
       }
     };
     buscarProdutos();
@@ -64,6 +65,9 @@ export default function PDV() {
 
   useEffect(() => {
     setProdutos(listaProdutos.map(p => ({ item: p, matches: [] })));
+    const produtosAtivos = listaProdutos.filter((p) => p.status === "ativo");
+    const produtosInativos = listaProdutos.filter((p) => p.status === "inativo");
+    setProdutosAtivos(produtosAtivos)
   }, [listaProdutos])
 
   useEffect(() => {
@@ -103,26 +107,28 @@ export default function PDV() {
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [produtos]);
+  }, [listaProdutos]);
 
   function renderProdutos(produtosEscolhidos) {
     return produtosEscolhidos && produtosEscolhidos.length > 0
       ? produtosEscolhidos.map((produto) => {
-          return (
-            <CardProduto
-              key={produto.id_produto}
-              produto={produto}
-            ></CardProduto>
-          );
-        })
+        return (
+          <CardProduto
+            key={produto.id_produto}
+            produto={produto}
+          ></CardProduto>
+  
+        );
+      })
       : "Nenhum produto encontrado";
+
   }
 
-  const produtosAtivos = produtos.filter((p) => p.status == "ativo");
-  const produtosInativos = produtos.filter((p) => p.status == "inativo");
+
+
   return (
     <>
-    <CarrinhoSidebar />
+      <CarrinhoSidebar />
       <div className="grid gap-5 grid-cols-1 lg:grid-cols-2">
         <div className="">
           <div className="grid gap-5 grid-cols-1 md:grid-cols-1">
@@ -135,7 +141,7 @@ export default function PDV() {
           <div className="grid gap-5 grid-cols-1 x-sm:grid-cols-1 sm:grid-cols-1 md:grid-cols-1">
             <div className="grid gap-5 grid-cols-1 x-sm:grid-cols- sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-2 overflow-y-scroll max-h-108 p-5 pt-0 ms-1">
               {renderProdutos(produtosAtivos)}
-              {renderProdutos(produtosInativos)}
+              { }
             </div>
           </div>
         </div>

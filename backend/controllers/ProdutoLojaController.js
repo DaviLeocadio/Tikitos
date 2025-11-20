@@ -77,6 +77,7 @@ const estoqueBaixoController = async (req, res) => {
     if (estoqueBaixo.length == 0)
       return res.status(200).json({
         mensagem: `Nenhum produto com estoque abaixo de ${estoqueMin} unidades`,
+        code:'ESTOQUE'
       });
 
     let produtosComEstoqueBaixo = [];

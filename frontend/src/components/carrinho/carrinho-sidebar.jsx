@@ -77,7 +77,7 @@ export default function CarrinhoSidebar() {
 
     // carrinhoEl.scrollTo({ top: scrollTop, behavior: "smooth" });
     // const carrinhoElement = document.getElementById("carrinho");
-    
+
     if (carrinhoEl.scrollHeight > carrinhoEl.clientHeight) {
       setScroll(true);
     } else {
@@ -92,13 +92,14 @@ export default function CarrinhoSidebar() {
       {/* BOTÃO FLUTUANTE PARA MOBILE */}
       <button
         onClick={() => setOpen(!open)}
-        className="fixed bottom-8 right-8 z-[500] 
+        className="fixed bottom-8 right-8 
           bg-[#9bf377] text-[#924187]
           rounded-full shadow-xl
           w-16 h-16 flex justify-center items-center
           text-3xl font-bold
           border-4 border-[#75ba51]
           lg:hidden
+          transition
         "
       >
         <i className="bi bi-cart4"></i>
@@ -120,10 +121,18 @@ export default function CarrinhoSidebar() {
         >
           <SheetHeader className="relative z-0">
             <SheetTitle className="text-[#8c3e82] flex justify-between items-center">
-              <span className="flex items-center gap-2">
-                <i className="bi bi-cart4 text-[22px]"></i>
-                Carrinho
-              </span>
+              <button
+                onClick={() => setOpen(!open)}
+                className=" cursor-pointer text-[#924187] flex justify-center items-center text-3xl
+        "
+              >
+                <span className="flex items-center gap-2">
+                  <i className="bi bi-arrow-bar-left text-[22px]"></i>
+                  <i className="bi bi-cart4 text-[22px]"></i>
+                  Carrinho
+                </span>
+
+              </button>
 
               <i
                 className={`bi bi-arrow-repeat text-[25px] cursor-pointer`}
@@ -136,9 +145,8 @@ export default function CarrinhoSidebar() {
           <div
             ref={carrinhoRef}
             id="carrinho"
-            className={`flex flex-col gap-3 max-h-[55vh] mt-4 overflow-y-scroll ps-2 ${
-              scroll ? "pe-4" : "pe-0"
-            }`}
+            className={`flex flex-col gap-3 max-h-[55vh] mt-4 overflow-y-scroll ps-2 ${scroll ? "pe-4" : "pe-0"
+              }`}
           >
             {loading ? (
               <p>Carregando...</p>

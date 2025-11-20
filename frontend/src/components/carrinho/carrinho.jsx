@@ -1,3 +1,4 @@
+'use client'
 import CardDemo from "@/components/card-01";
 import styles from "./carrinho.module.css";
 import { useEffect, useState, useRef } from "react";
@@ -26,6 +27,7 @@ export default function Carrinho() {
   };
 
   useEffect(() => {
+    console.log(obterCarrinho())
     document.addEventListener("keydown", handleKeyDown);
     setLoading(true);
     const checkCarrinho = () => {

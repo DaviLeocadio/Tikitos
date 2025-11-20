@@ -1,3 +1,4 @@
+'use client'
 import { useEffect, useState, forwardRef } from "react";
 import styles from "./carrinho.module.css";
 import { atualizarQuantidade, removerDoCarrinho } from "@/utils/carrinho.js";

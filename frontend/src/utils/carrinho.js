@@ -1,5 +1,3 @@
-import { ca } from "zod/v4/locales";
-
 const CHAVE = "produtos";
 
 // Lê o carrinho do localstorage
@@ -23,9 +21,7 @@ function salvarCarrinho(carrinho) {
 export function adicionarAoCarrinho(produto) {
   let carrinho = obterCarrinho();
 
-    if (produto.status == 'inativo') return;
-    const index = carrinho.findIndex((p) => p.id_produto === produto.id_produto);
-
+  const index = carrinho.findIndex((p) => p.id_produto === produto.id_produto);
   if (index !== -1) {
     if (carrinho[index].quantidade >= 10) return;
 
@@ -36,6 +32,7 @@ export function adicionarAoCarrinho(produto) {
     localStorage.setItem("carrinhoAtualizado", Date.now());
     window.dispatchEvent(new Event("carrinhoAtualizado"));
   } else {
+   
     carrinho.push({ ...produto, quantidade: 1 });
     localStorage.setItem("ultimoProdutoAdicionado", produto.id_produto);
 
@@ -70,22 +67,6 @@ export function removerDoCarrinho(id_produto) {
   window.dispatchEvent(new Event("carrinhoAtualizado"));
 }
 
-// Volta item removido do carrinho
-export function voltarCarrinho(produto) {
-    const idProdutoExcluido = localStorage.getItem('item_excluido');
-    if (!idProdutoExcluido) return;
-
-    let carrinho = obterCarrinho();
-    const produtoExcluido = produto.find((p) => parseInt(p.id_produto) === parseInt(idProdutoExcluido));
-
-    if (!produtoExcluido) return;
-
-    carrinho.push({ ...produtoExcluido, quantidade: 1 });
-
-    salvarCarrinho(carrinho)
-    localStorage.removeItem('item_excluido');
-}
-
 // Limpar Carrinho - remove todos os itens
 export function limparCarrinho() {
   let carrinho = [];
@@ -102,4 +83,19 @@ export function calcularTotal() {
 export function obterQuantidade() {
   const carrinho = obterCarrinho();
   return carrinho.reduce((acc, item) => acc + item.quantidade, 0);
+}
+
+export function voltarCarrinho(produto) {
+    const idProdutoExcluido = localStorage.getItem('item_excluido');
+    if (!idProdutoExcluido) return;
+
+    let carrinho = obterCarrinho();
+    const produtoExcluido = produto.find((p) => parseInt(p.id_produto) === parseInt(idProdutoExcluido));
+
+    if (!produtoExcluido) return;
+
+    carrinho.push({ ...produtoExcluido, quantidade: 1 });
+
+    salvarCarrinho(carrinho)
+    localStorage.removeItem('item_excluido');
 }
