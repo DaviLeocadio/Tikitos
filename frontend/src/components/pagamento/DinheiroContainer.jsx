@@ -2,7 +2,14 @@ import { calcularTotal } from "@/utils/carrinho";
 import { useState } from "react";
 
 export default function DinheiroContainer() {
-  const [valorRecebido, setValorRecebido] = useState();
+  const [valorRecebido, setValorRecebido] = useState('');
+
+  function conta() {
+    if (valorRecebido - calcularTotal() < 0) return 'R$0.00';
+    const troco = valorRecebido - calcularTotal();
+    return 'R$' + troco.toFixed(2);
+  }
+
   return (
     <>
       <main className="flex gap-5">
@@ -30,7 +37,7 @@ export default function DinheiroContainer() {
             className="bg-rosinha rounded-lg p-2.5 text-white"
             placeholder="Valor do Troco"
             readOnly
-            value={calcularTotal() - valorRecebido || 0 }
+            value={conta()}
           />
         </div>
       </main>

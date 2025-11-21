@@ -17,30 +17,11 @@ export default function PDV() {
   const [listaProdutos, setListaProdutos] = useState([]);
   const [loading, setLoading] = useState(false)
   const [produtosAtivos, setProdutosAtivos] = useState();
-
+  const [produtosInativos, setProdutosInativos] = useState();
 
   // Atalhos
   const handleKeyDown = async (event) => {
-    if (event.keyCode === 27) {
-      const response = await fetch("http://localhost:8080/auth/logout", {
-        method: "POST",
-        credentials: "include",
-      });
-
-      if (response.ok) {
-        deleteCookie("nome");
-        deleteCookie("email");
-        deleteCookie("perfil");
-        deleteCookie("empresa");
-
-        return (window.location.href = "/");
-      }
-    }
-
-    if (event.keyCode === 115)
-      return (window.location.href = "/vendedor/suporte");
-
-    if (event.keyCode === 113) return voltarCarrinho(produtos);
+    if (event.keyCode === 113) return voltarCarrinho(listaProdutos);
   };
 
   useEffect(() => {
@@ -67,6 +48,7 @@ export default function PDV() {
     setProdutos(listaProdutos.map(p => ({ item: p, matches: [] })));
     const produtosAtivos = listaProdutos.filter((p) => p.status === "ativo");
     const produtosInativos = listaProdutos.filter((p) => p.status === "inativo");
+    setProdutosInativos(produtosInativos)
     setProdutosAtivos(produtosAtivos)
   }, [listaProdutos])
 
@@ -117,7 +99,7 @@ export default function PDV() {
             key={produto.id_produto}
             produto={produto}
           ></CardProduto>
-  
+
         );
       })
       : "Nenhum produto encontrado";
@@ -141,7 +123,7 @@ export default function PDV() {
           <div className="grid gap-5 grid-cols-1 x-sm:grid-cols-1 sm:grid-cols-1 md:grid-cols-1">
             <div className="grid gap-5 grid-cols-1 x-sm:grid-cols- sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-2 overflow-y-scroll max-h-108 p-5 pt-0 ms-1">
               {renderProdutos(produtosAtivos)}
-              { }
+              {renderProdutos(produtosInativos)}
             </div>
           </div>
         </div>

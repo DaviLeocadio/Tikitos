@@ -1,12 +1,15 @@
-
+'use client'
 import AtalhosDiv from "@/components/atalhos/atalhosDiv";
 import Carrinho from "@/components/carrinho/carrinho";
 import PagamentoContainer from "@/components/pagamento/PagamentoContainer";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { ChevronLeft } from "lucide-react";
+import { voltarCarrinho } from "@/utils/carrinho";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 export default function Pagamento() {
+  
   return (
     <>
       <div className="flex lg:h-[87vh] 2xl:h-[90vh]">
@@ -19,12 +22,12 @@ export default function Pagamento() {
             </Link>
           </header>
 
-          <PagamentoContainer/>
+          <PagamentoContainer />
 
         </div>
         <Carrinho isPagamento={true} />
       </div>
-      <AtalhosDiv/>
+      <AtalhosDiv />
     </>
   );
 }

@@ -32,7 +32,7 @@ export function adicionarAoCarrinho(produto) {
     localStorage.setItem("carrinhoAtualizado", Date.now());
     window.dispatchEvent(new Event("carrinhoAtualizado"));
   } else {
-   
+
     carrinho.push({ ...produto, quantidade: 1 });
     localStorage.setItem("ultimoProdutoAdicionado", produto.id_produto);
 
@@ -63,6 +63,7 @@ export function removerDoCarrinho(id_produto) {
   carrinho = carrinho.filter((p) => p.id_produto !== id_produto);
   salvarCarrinho(carrinho);
 
+  localStorage.setItem("item_excluido", id_produto)
   localStorage.setItem("carrinhoAtualizado", Date.now());
   window.dispatchEvent(new Event("carrinhoAtualizado"));
 }
@@ -86,16 +87,16 @@ export function obterQuantidade() {
 }
 
 export function voltarCarrinho(produto) {
-    const idProdutoExcluido = localStorage.getItem('item_excluido');
-    if (!idProdutoExcluido) return;
+  const idProdutoExcluido = localStorage.getItem('item_excluido');
+  if (!idProdutoExcluido) return;
 
-    let carrinho = obterCarrinho();
-    const produtoExcluido = produto.find((p) => parseInt(p.id_produto) === parseInt(idProdutoExcluido));
+  let carrinho = obterCarrinho();
+  const produtoExcluido = produto.find((p) => parseInt(p.id_produto) === parseInt(idProdutoExcluido));
 
-    if (!produtoExcluido) return;
+  if (!produtoExcluido) return;
 
-    carrinho.push({ ...produtoExcluido, quantidade: 1 });
+  carrinho.push({ ...produtoExcluido, quantidade: 1 });
 
-    salvarCarrinho(carrinho)
-    localStorage.removeItem('item_excluido');
+  salvarCarrinho(carrinho)
+  localStorage.removeItem('item_excluido');
 }

@@ -11,6 +11,7 @@ import {
 } from "@/utils/carrinho.js";
 import CarrinhoCard from "@/components/carrinho/CarrinhoCard.jsx";
 import { BrushCleaning } from "lucide-react";
+import { deleteCookie } from "cookies-next/client";
 
 export default function Carrinho({ isPagamento = false }) {
   const [carrinho, setCarrinho] = useState([]);
@@ -20,15 +21,8 @@ export default function Carrinho({ isPagamento = false }) {
   const [quantidade, setQuantidade] = useState(0);
   const [scroll, setScroll] = useState(false);
 
-  // Atalhos
-  const handleKeyDown = (event) => {
-    if (event.keyCode === 45) return limparCarrinho();
-    if (event.keyCode === 113) return voltarCarrinho(carrinho);
-  };
 
   useEffect(() => {
-    console.log(obterCarrinho());
-    document.addEventListener("keydown", handleKeyDown);
     setLoading(true);
     const checkCarrinho = () => {
       const carrinho = obterCarrinho();
@@ -53,7 +47,6 @@ export default function Carrinho({ isPagamento = false }) {
     return () => {
       window.removeEventListener("storage", handleStorage);
       window.removeEventListener("carrinhoAtualizado", handleCustom);
-      document.removeEventListener("keydown", handleKeyDown);
     };
   }, []);
 
@@ -128,9 +121,8 @@ export default function Carrinho({ isPagamento = false }) {
                     size={20}
                     id="brushElement"
                     onClick={handleResetarCarrinho}
-                    className={`text-[25px] cursor-pointer ${
-                      styles.brush_animate
-                    }
+                    className={`text-[25px] cursor-pointer ${styles.brush_animate
+                      }
                     ${carrinho.length == 0 ? "pointer-events-none" : ""}`}
                   />
                 </div>
@@ -139,9 +131,8 @@ export default function Carrinho({ isPagamento = false }) {
               <div
                 ref={carrinhoRef}
                 id="carrinho"
-                className={`flex flex-col gap-3 overflow-y-scroll lg:max-h-[50vh] xl:max-h-[45vh] 2xl:max-h-[60vh] 3xl:max-h-[60vh] pt-0 ms-1 ${
-                  scroll ? "pe-6" : "pe-0"
-                }`}
+                className={`flex flex-col gap-3 overflow-y-scroll lg:max-h-[50vh] xl:max-h-[45vh] 2xl:max-h-[60vh] 3xl:max-h-[60vh] pt-0 ms-1 ${scroll ? "pe-6" : "pe-0"
+                  }`}
               >
                 {loading ? (
                   <h1> Carregando carrinho...</h1>
@@ -183,8 +174,8 @@ export default function Carrinho({ isPagamento = false }) {
                 ''
               ) : (
                 <button className="bg-[#65745A] rounded-[50px] mt-2 py-2 px-5 text-[#caf4b7] text-sm font-semibold w-full h-13 flex gap-3 justify-center items-center transform transition-all duration-300 ease-out group-hover:scale-110 hover:bg-[#74816b] hover:scale-97 cursor-pointer"
-                
-                onClick={()=> window.location.href='/vendedor/pagamento'}>
+
+                  onClick={() => window.location.href = '/vendedor/pagamento'}>
                   <h3>Avançar para o pagamento</h3>
                   <i className="bi bi-arrow-right-circle-fill text-[25px]"></i>
                 </button>
