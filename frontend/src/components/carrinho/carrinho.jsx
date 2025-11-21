@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import CardDemo from "@/components/card-01";
 import styles from "./carrinho.module.css";
 import { useEffect, useState, useRef } from "react";
@@ -7,12 +7,12 @@ import {
   calcularTotal,
   obterQuantidade,
   limparCarrinho,
-  voltarCarrinho
+  voltarCarrinho,
 } from "@/utils/carrinho.js";
 import CarrinhoCard from "@/components/carrinho/CarrinhoCard.jsx";
 import { BrushCleaning } from "lucide-react";
 
-export default function Carrinho() {
+export default function Carrinho({ isPagamento = false }) {
   const [carrinho, setCarrinho] = useState([]);
   const [loading, setLoading] = useState(false);
   const [total, setTotal] = useState(null);
@@ -23,11 +23,11 @@ export default function Carrinho() {
   // Atalhos
   const handleKeyDown = (event) => {
     if (event.keyCode === 45) return limparCarrinho();
-    if(event.keyCode === 113) return voltarCarrinho(carrinho);
+    if (event.keyCode === 113) return voltarCarrinho(carrinho);
   };
 
   useEffect(() => {
-    console.log(obterCarrinho())
+    console.log(obterCarrinho());
     document.addEventListener("keydown", handleKeyDown);
     setLoading(true);
     const checkCarrinho = () => {
@@ -87,20 +87,20 @@ export default function Carrinho() {
   }, [carrinho]);
 
   function animateBrush() {
-
-    const element = document.getElementById('brushElement');
+    const element = document.getElementById("brushElement");
     const brushKeyframes = [
-      { transform: 'rotate(0deg)' },
-      { transform: 'rotate(-45deg)' },
-      { transform: 'rotate(45deg)' },
-      { transform: 'rotate(-30deg)' },
-      { transform: 'rotate(30deg)' },
-      { transform: 'rotate(0deg)' }
-    ]; const timingOptions = {
+      { transform: "rotate(0deg)" },
+      { transform: "rotate(-45deg)" },
+      { transform: "rotate(45deg)" },
+      { transform: "rotate(-30deg)" },
+      { transform: "rotate(30deg)" },
+      { transform: "rotate(0deg)" },
+    ];
+    const timingOptions = {
       duration: 1000,
       iterations: 1,
-      easing: 'ease-in-out',
-      fill: 'forwards'
+      easing: "ease-in-out",
+      fill: "forwards",
     };
     element.animate(brushKeyframes, timingOptions);
   }
@@ -109,14 +109,13 @@ export default function Carrinho() {
     animateBrush();
     setTimeout(() => {
       limparCarrinho();
-    }, 500)
+    }, 500);
   };
-
 
   return (
     <>
-      <div className="grid grid-cols-7 mt-5">
-        <div className="flex col-span-5 bg-[#E5B8F1] border-[3px] border-dashed border-[#B478AB] rounded-[50px] text-[#8c3e82] text-sm font-semibold p-5 min-h-124 max-h-124">
+      <div className="grid grid-cols-7 my-5 ">
+        <div className="flex col-span-5 max-h-full bg-[#E5B8F1] border-[3px] border-dashed border-[#B478AB] rounded-[50px] text-[#8c3e82] text-sm font-semibold p-5 min-h-124 ">
           <div className="flex w-full flex-col justify-between">
             <div className="flex w-full flex-col gap-1">
               <div className="flex justify-between w-full px-3">
@@ -129,8 +128,10 @@ export default function Carrinho() {
                     size={20}
                     id="brushElement"
                     onClick={handleResetarCarrinho}
-                    className={`text-[25px] cursor-pointer ${styles.brush_animate}
-                    ${carrinho.length==0 ? 'pointer-events-none' : ''}`}
+                    className={`text-[25px] cursor-pointer ${
+                      styles.brush_animate
+                    }
+                    ${carrinho.length == 0 ? "pointer-events-none" : ""}`}
                   />
                 </div>
               </div>
@@ -138,8 +139,9 @@ export default function Carrinho() {
               <div
                 ref={carrinhoRef}
                 id="carrinho"
-                className={`flex flex-col gap-3 overflow-y-scroll max-h-53 pt-0 ms-1 ${scroll ? "pe-6" : "pe-0"
-                  }`}
+                className={`flex flex-col gap-3 overflow-y-scroll lg:max-h-[50vh] xl:max-h-[45vh] 2xl:max-h-[60vh] 3xl:max-h-[60vh] pt-0 ms-1 ${
+                  scroll ? "pe-6" : "pe-0"
+                }`}
               >
                 {loading ? (
                   <h1> Carregando carrinho...</h1>
@@ -177,10 +179,16 @@ export default function Carrinho() {
                     .replace(".", ",")}
                 </h3>
               </div>
-              <button className="bg-[#65745A] rounded-[50px] mt-2 py-2 px-5 text-[#caf4b7] text-sm font-semibold w-full h-13 flex gap-3 justify-center items-center transform transition-all duration-300 ease-out group-hover:scale-110 hover:bg-[#74816b] hover:scale-97">
-                <h3>Avançar para o pagamento</h3>
-                <i className="bi bi-arrow-right-circle-fill text-[25px]"></i>
-              </button>
+              {isPagamento ? (
+                ''
+              ) : (
+                <button className="bg-[#65745A] rounded-[50px] mt-2 py-2 px-5 text-[#caf4b7] text-sm font-semibold w-full h-13 flex gap-3 justify-center items-center transform transition-all duration-300 ease-out group-hover:scale-110 hover:bg-[#74816b] hover:scale-97 cursor-pointer"
+                
+                onClick={()=> window.location.href='/vendedor/pagamento'}>
+                  <h3>Avançar para o pagamento</h3>
+                  <i className="bi bi-arrow-right-circle-fill text-[25px]"></i>
+                </button>
+              )}
             </div>
           </div>
         </div>
