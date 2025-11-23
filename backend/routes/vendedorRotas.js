@@ -31,14 +31,13 @@ dotenv.config();
 const router = express.Router();
 
 //Rota para abrir caixa
-router.post("/caixa/:idVendedor", AbrirCaixaController);
+router.post("/caixa/", AbrirCaixaController);
 
 //Rota para fechar caixa
-router.put("/caixa/:idVendedor", FecharCaixaController);
-
+router.post("/caixa/fechar", FecharCaixaController);
 
 //Rota para listar as vendas
-router.get("/:idVendedor/vendas", listarVendasController);
+router.get("/vendas", listarVendasController);
 
 //Rota para a criação de vendas
 router.post("/vendas", criarVendaController);

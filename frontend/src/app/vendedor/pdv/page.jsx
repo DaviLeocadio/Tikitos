@@ -8,14 +8,13 @@ import { voltarCarrinho } from "@/utils/carrinho.js";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { useEffect, useState } from "react";
 import Fuse from "fuse.js";
-
-import { deleteCookie } from "cookies-next/client";
+import { setCookie, getCookie, deleteCookie } from "cookies-next/client";
 
 export default function PDV() {
-  const [query, setQuery] = useState('')
+  const [query, setQuery] = useState("");
   const [produtos, setProdutos] = useState([]);
   const [listaProdutos, setListaProdutos] = useState([]);
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
   const [produtosAtivos, setProdutosAtivos] = useState();
   const [produtosInativos, setProdutosInativos] = useState();
 
@@ -25,8 +24,30 @@ export default function PDV() {
   };
 
   useEffect(() => {
+    const abrirCaixa = async () => {
+      const response = await fetch("http://localhost:8080/vendedor/caixa", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-type": "application/json" },
+      });
+
+      if (response.status == 403) return (window.location.href = "/forbidden");
+      if (response.status == 404) return;
+
+      if (response.ok) {
+        const data = await response.json();
+        return setCookie("idCaixa", Number(data.novoCaixa));
+      }
+    };
+
+    const idCaixa = getCookie("idCaixa");
+
+    if (!idCaixa) {
+      abrirCaixa();
+    }
+
     const buscarProdutos = async () => {
-      setLoading(true)
+      setLoading(true);
       const response = await fetch("http://localhost:8080/vendedor/produtos", {
         method: "GET",
         credentials: "include",
@@ -45,42 +66,40 @@ export default function PDV() {
   }, []);
 
   useEffect(() => {
-    setProdutos(listaProdutos.map(p => ({ item: p, matches: [] })));
+    setProdutos(listaProdutos.map((p) => ({ item: p, matches: [] })));
     const produtosAtivos = listaProdutos.filter((p) => p.status === "ativo");
-    const produtosInativos = listaProdutos.filter((p) => p.status === "inativo");
-    setProdutosInativos(produtosInativos)
-    setProdutosAtivos(produtosAtivos)
-  }, [listaProdutos])
+    const produtosInativos = listaProdutos.filter(
+      (p) => p.status === "inativo"
+    );
+    setProdutosInativos(produtosInativos);
+    setProdutosAtivos(produtosAtivos);
+  }, [listaProdutos]);
 
   useEffect(() => {
     if (!query || query.trim().length === 0) {
-      setProdutos(listaProdutos.map(p => ({ item: p, matches: [] })));
-      return
+      setProdutos(listaProdutos.map((p) => ({ item: p, matches: [] })));
+      return;
     }
     const fuse = new Fuse(listaProdutos, {
       keys: [
-        { name: 'id_produto', weight: 0.5 },
-        { name: 'nome', weight: 0.3 },
-        { name: 'categoria', weight: 0.25 },
-        { name: 'descricao', weight: 0.2 }
+        { name: "id_produto", weight: 0.5 },
+        { name: "nome", weight: 0.3 },
+        { name: "categoria", weight: 0.25 },
+        { name: "descricao", weight: 0.2 },
       ],
       // includeMatches: true,
       threshold: 0.2,
       ignoreLocation: true,
     });
 
-
     const resultado = fuse.search(query);
     setProdutos(
-      resultado.map(r => ({
+      resultado.map((r) => ({
         item: r.item,
-        matches: r.matches
+        matches: r.matches,
       }))
     );
-
   }, [query, listaProdutos]);
-
-
 
   // Config Atalhos
   useEffect(() => {
@@ -94,19 +113,15 @@ export default function PDV() {
   function renderProdutos(produtosEscolhidos) {
     return produtosEscolhidos && produtosEscolhidos.length > 0
       ? produtosEscolhidos.map((produto) => {
-        return (
-          <CardProduto
-            key={produto.id_produto}
-            produto={produto}
-          ></CardProduto>
-
-        );
-      })
+          return (
+            <CardProduto
+              key={produto.id_produto}
+              produto={produto}
+            ></CardProduto>
+          );
+        })
       : "Nenhum produto encontrado";
-
   }
-
-
 
   return (
     <>
@@ -116,7 +131,10 @@ export default function PDV() {
           <div className="grid gap-5 grid-cols-1 md:grid-cols-1">
             <div className="flex m-5 gap-2 items-center">
               <SidebarTrigger />
-              <InputWithAdornmentDemo query={query} setQuery={setQuery}></InputWithAdornmentDemo>
+              <InputWithAdornmentDemo
+                query={query}
+                setQuery={setQuery}
+              ></InputWithAdornmentDemo>
             </div>
           </div>
 

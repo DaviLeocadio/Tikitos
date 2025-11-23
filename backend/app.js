@@ -22,6 +22,12 @@ app.use(cors({
   origin: "http://localhost:3000", // Frontend Next.js
 }));
 
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Credentials", "true");
+  next();
+});
+
+
 app.use(express.json());
 app.use(cookieParser());
 

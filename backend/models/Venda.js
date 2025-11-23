@@ -45,6 +45,40 @@ const obterVendaPorData = async (dataCaixa, idCaixa, idEmpresa) => {
   }
 };
 
+const obterVendasIntervaloUsuario = async (
+  dataInicial,
+  dataFinal,
+  idUsuario,
+  idEmpresa
+) => {
+  try {
+    return await readAll(
+      "vendas",
+      `DATE(data_venda) BETWEEN '${dataInicial}' AND '${dataFinal}'
+      AND id_usuario = ${idUsuario}
+      AND id_empresa = ${idEmpresa}`
+    );
+  } catch (error) {
+    console.error("Erro ao listar vendas: ", err);
+    throw err;
+  }
+};
+
+const obterVendaPorDataUsuario = async (data, idUsuario, idEmpresa) => {
+  console.log(data)
+  try {
+    return await readAll(
+      "vendas",
+      `DATE(data_venda) = '${data}'
+      AND id_usuario = ${idUsuario}
+      AND id_empresa = ${idEmpresa}`
+    );
+  } catch (error) {
+    console.error("Erro ao listar vendas: ", err);
+    throw err;
+  }
+};
+
 const criarVenda = async (vendaData) => {
   try {
     return await create("vendas", vendaData);
@@ -80,4 +114,6 @@ export {
   criarVenda,
   atualizarVenda,
   excluirVenda,
+  obterVendasIntervaloUsuario,
+  obterVendaPorDataUsuario
 };

@@ -54,6 +54,8 @@ export default function Login() {
       }
 
       if (response.ok) {
+        aparecerToast("Login realizado com sucesso!");
+        
         // Colocando informações nos cookies
         setCookie("email", data.usuario.email);
         setCookie("nome", data.usuario.nome);

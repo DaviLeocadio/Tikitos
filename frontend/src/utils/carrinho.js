@@ -1,3 +1,8 @@
+"use client";
+
+if (typeof window === "undefined") return [];
+
+
 const CHAVE = "produtos";
 
 // Lê o carrinho do localstorage

@@ -107,7 +107,7 @@ export default function Carrinho({ isPagamento = false }) {
 
   return (
     <>
-      <div className="grid grid-cols-7 my-5 ">
+      <div className="hidden lg:grid grid-cols-7 my-5 ">
         <div className="flex col-span-5 max-h-full bg-[#E5B8F1] border-[3px] border-dashed border-[#B478AB] rounded-[50px] text-[#8c3e82] text-sm font-semibold p-5 min-h-124 ">
           <div className="flex w-full flex-col justify-between">
             <div className="flex w-full flex-col gap-1">

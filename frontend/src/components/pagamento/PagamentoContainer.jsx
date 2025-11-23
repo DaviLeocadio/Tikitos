@@ -7,6 +7,7 @@ import { BsGift, BsGiftFill } from "react-icons/bs";
 import CartaoContainer from "./CartaoContainer";
 import PixContainer from "./PixContainer";
 import DinheiroContainer from "./DinheiroContainer";
+import FinalizarPagamentoButton from "./FinalizarPagamentoButton";
 
 export default function PagamentoContainer() {
   const [metodoPag, setMetodoPag] = useState("débito");
@@ -44,17 +45,14 @@ export default function PagamentoContainer() {
 
   return (
     <div>
-      <div className="flex w-full pb-5 justify-between">
+      <div className="flex w-full pt-0 pb-5 justify-between">
         {/* substituir por imagem com lemonade display */}
         <h1 className="text-2xl font-bold text-roxo flex flex-col">
           <span>página de</span>
           <span>pagamento</span>
         </h1>
 
-        <button className="bg-[#4f6940] max-w-2xs rounded-[50px] mt-2 py-2 px-5 text-[#9bf377] text-sm font-bold w-full h-13 flex gap-3 justify-center items-center transform transition-all duration-400 ease-out group-hover:scale-110 hover:bg-[#65745A] hover:scale-97">
-          <h3 className="text-lg">Finalizar pagamento</h3>
-          <ChevronRight size={25} />
-        </button>
+        <FinalizarPagamentoButton />
       </div>
 
       <div className="py-3">
@@ -93,14 +91,14 @@ export default function PagamentoContainer() {
           </button>
         </div>
         <MetodoDePagamento metodoPag={metodoPag} setMetodoPag={setMetodoPag} />
-        <div className="flex 2xl:min-h-80">
-          <div className="w-2/3">
+        <div className="flex 2xl:min-h-80 flex-col md:flex-row">
+          <div className="w-full md:w-2/3">
             {metodoPag == "débito" && <CartaoContainer />}
             {metodoPag == "crédito" && <CartaoContainer />}
             {metodoPag == "pix" && <PixContainer />}
             {metodoPag == "dinheiro" && <DinheiroContainer />}
           </div>
-          <div className="w-1/3">
+          <div className="w-full md:w-1/3 pb-10">
             <h3 className="flex flex-col text-lg font-bold text-verdefolha">
               <span>Programa</span>
               <span>Fidelidade:</span>

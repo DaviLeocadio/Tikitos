@@ -19,7 +19,7 @@ import {
 import CarrinhoCard from "@/components/carrinho/CarrinhoCard.jsx";
 import CardDemo from "@/components/card-01";
 
-export default function CarrinhoSidebar() {
+export default function CarrinhoSidebar({ isPagamento = false }) {
   const [open, setOpen] = useState(false);
   const [carrinho, setCarrinho] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -100,6 +100,7 @@ export default function CarrinhoSidebar() {
           border-4 border-[#75ba51]
           lg:hidden
           transition
+          cursor-pointer
         "
       >
         <i className="bi bi-cart4"></i>
@@ -183,10 +184,16 @@ export default function CarrinhoSidebar() {
                 </h3>
               </div>
 
-              <button className="bg-[#65745A] rounded-[50px] mt-3 py-2 px-5 text-[#caf4b7] text-sm font-semibold w-full h-13 flex gap-3 justify-center items-center transition-all hover:bg-[#74816b]">
-                <h3>Avançar para o pagamento</h3>
-                <i className="bi bi-arrow-right-circle-fill text-[25px]"></i>
-              </button>
+              {isPagamento ? (
+                ''
+              ) : (
+                <button className="bg-[#65745A] rounded-[50px] mt-2 py-2 px-5 text-[#caf4b7] text-sm font-semibold w-full h-13 flex gap-3 justify-center items-center transform transition-all duration-300 ease-out group-hover:scale-110 hover:bg-[#74816b] hover:scale-97 cursor-pointer"
+
+                  onClick={() => window.location.href = '/vendedor/pagamento'}>
+                  <h3>Avançar para o pagamento</h3>
+                  <i className="bi bi-arrow-right-circle-fill text-[25px]"></i>
+                </button>
+              )}
             </div>
           </SheetFooter>
         </SheetContent>
