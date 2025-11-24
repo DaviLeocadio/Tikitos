@@ -59,6 +59,7 @@ export default forwardRef(function CarrinhoCard(props, ref) {
 
             <span className="text-[#c97fda] text-[13px]">
               ({produto.quantidade}× {produto.precoFormatado})
+             
             </span>
           </p>
         </div>

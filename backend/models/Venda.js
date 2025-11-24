@@ -15,6 +15,15 @@ const listarVendas = async (query = null) => {
   }
 };
 
+const listarVendasPorVendedor = async (idVendedor) => {
+  try {
+    return await readAll("vendas", `id_usuario = ${idVendedor} ORDER BY data_venda DESC`);
+  } catch (err) {
+    console.error("Erro ao listar vendas: ", err);
+    throw err;
+  }
+};
+
 const listarVendasPorCaixa = async (caixaId) => {
   try {
     return await readAll("vendas", `id_caixa = ${caixaId}`);
@@ -65,7 +74,6 @@ const obterVendasIntervaloUsuario = async (
 };
 
 const obterVendaPorDataUsuario = async (data, idUsuario, idEmpresa) => {
-  console.log(data)
   try {
     return await readAll(
       "vendas",
@@ -115,5 +123,6 @@ export {
   atualizarVenda,
   excluirVenda,
   obterVendasIntervaloUsuario,
-  obterVendaPorDataUsuario
+  obterVendaPorDataUsuario,
+  listarVendasPorVendedor
 };

@@ -6,6 +6,7 @@ import {
   criarVenda,
   excluirVenda,
   listarVendasPorCaixa,
+  listarVendasPorVendedor,
 } from "../models/Venda.js";
 
 import {
@@ -39,7 +40,7 @@ const listarVendasController = async (req, res) => {
         .status(404)
         .json({ mensagem: "Nenhum caixa aberto para o vendedor" });
 
-    const vendas = await listarVendasPorCaixa(caixa.id_caixa);
+    const vendas = await listarVendasPorVendedor(idVendedor);
 
     if (!vendas || vendas.lenght === 0) {
       return res
@@ -110,8 +111,9 @@ const criarVendaController = async (req, res) => {
 
       const novoEstoque = produtoLoja.estoque - p.quantidade;
       if (novoEstoque < 0) {
+        // CORREÇÃO: usar produto.nome e produtoLoja.estoque
         return res.status(404).json({
-          error: `Não há ${p.quantidade} unidades de ${p.nome}, apenas ${produtoLoja.quantidade}`,
+          error: `Não há ${p.quantidade} unidades de ${produto.nome}, apenas ${produtoLoja.estoque}`,
         });
       }
 

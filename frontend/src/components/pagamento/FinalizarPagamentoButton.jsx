@@ -10,37 +10,74 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { ChevronRight } from "lucide-react";
-import { obterCarrinho, obterQuantidade } from "@/utils/carrinho";
+import {
+  limparCarrinho,
+  obterCarrinho,
+  obterQuantidade,
+} from "@/utils/carrinho";
 
 export default function FinalizarPagamentoButton({ pagamento, cpf }) {
   const [open, setOpen] = useState(false);
-  const [step, setStep] = useState("confirm"); // confirm | loading | success
+  const [step, setStep] = useState("confirm");
   const [contador, setContador] = useState(3);
-  const [tipo, setTipo] = useState(null);
+  const [buttonActive, setButtonActive] = useState(false);
 
-  const quantidadeItens = obterQuantidade();
+  useEffect(() => {
+    const quantidadeItens = obterQuantidade();
+    console.log("Validação:", { quantidadeItens, pagamento, cpf, cpfLength: cpf?.length });
+    
+    // Validação mais robusta
+    if (quantidadeItens > 0 && pagamento && cpf && cpf.trim().length >= 11) {
+      setButtonActive(true);
+    } else {
+      setButtonActive(false);
+    }
+  }, [pagamento, cpf]);
 
   const finalizarVenda = async () => {
     setStep("loading");
 
     const itens = obterCarrinho();
 
-    if (pagamento === "debito" || pagamento === "crédito") {
-      setTipo("cartão");
-    } else {
-      setTipo(pagamento);
+    // Validação adicional antes de enviar
+    if (!itens || itens.length === 0) {
+      alert("Carrinho vazio!");
+      setStep("confirm");
+      return;
     }
 
+    if (!pagamento || !cpf) {
+      alert("Forma de pagamento ou CPF não informado!");
+      setStep("confirm");
+      return;
+    }
+
+    // Remove formatação do CPF (apenas números)
+    const cpfLimpo = cpf.replace(/\D/g, '');
+    
+    if (cpfLimpo.length !== 11) {
+      alert("CPF inválido! Deve conter 11 dígitos.");
+      setStep("confirm");
+      return;
+    }
+
+    // Resolve o tipo de pagamento
+    const tipoPagamento =
+      pagamento === "debito" || pagamento === "credito" ? "cartao" : pagamento;
+
+    // Monta o payload exatamente como no Postman
     const venda = {
       produtos: itens.map((item) => ({
         id_produto: item.id_produto,
         quantidade: item.quantidade,
       })),
       pagamento: {
-        tipo: tipo,
-        cpf: cpf,
+        tipo: tipoPagamento,
+        cpf: cpf, // Envia o CPF COM formatação (como no Postman)
       },
     };
+
+    console.log("Payload sendo enviado:", JSON.stringify(venda, null, 2));
 
     try {
       const response = await fetch("http://localhost:8080/vendedor/vendas", {
@@ -50,10 +87,14 @@ export default function FinalizarPagamentoButton({ pagamento, cpf }) {
         body: JSON.stringify(venda),
       });
 
-      if(!response.ok) throw new Error("Status: ", response.status)
+      const data = await response.json();
 
-      await response.json();
+      if (!response.ok) {
+        console.error("Erro do servidor:", data);
+        throw new Error(data.error || `Erro ${response.status}: ${response.statusText}`);
+      }
 
+      console.log("Venda finalizada com sucesso:", data);
       setStep("success");
 
       let n = 3;
@@ -62,13 +103,17 @@ export default function FinalizarPagamentoButton({ pagamento, cpf }) {
         setContador(n);
         if (n === 0) {
           clearInterval(interval);
+          limparCarrinho();
           setOpen(false);
           setStep("confirm");
           setContador(3);
+          window.location.href = "/vendedor/pdv";
         }
       }, 1000);
+
     } catch (e) {
-      alert("Erro ao finalizar venda", e.message);
+      alert(`Erro ao finalizar venda: ${e.message}`);
+      console.error("Erro completo:", e);
       setStep("confirm");
     }
   };
@@ -77,11 +122,9 @@ export default function FinalizarPagamentoButton({ pagamento, cpf }) {
     <>
       <button
         onClick={() => setOpen(true)}
-        disabled={quantidadeItens == 0}
+        disabled={!buttonActive}
         className={` ${
-          quantidadeItens == 0
-            ? "pointer-events-none opacity-75 grayscale-75"
-            : ""
+          !buttonActive ? "pointer-events-none opacity-75 grayscale-75" : ""
         }
             bg-[#4f6940] max-w-2xs rounded-[50px] mt-2 py-2 px-5 text-[#9bf377] text-sm font-bold w-full h-13 flex gap-3 justify-center items-center transform transition-all duration-400 ease-out hover:bg-[#65745A] hover:scale-97 cursor-pointer`}
       >
@@ -99,7 +142,6 @@ export default function FinalizarPagamentoButton({ pagamento, cpf }) {
             </DialogTitle>
           </DialogHeader>
 
-          {/* CONFIRMAR */}
           {step === "confirm" && (
             <p className="text-[#4f6940] font-medium text-md">
               Tem certeza que deseja finalizar esta compra?

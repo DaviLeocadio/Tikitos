@@ -8,10 +8,12 @@ import CartaoContainer from "./CartaoContainer";
 import PixContainer from "./PixContainer";
 import DinheiroContainer from "./DinheiroContainer";
 import FinalizarPagamentoButton from "./FinalizarPagamentoButton";
+import InputCPFMask from "../InputCPFMask";
 
 export default function PagamentoContainer() {
   const [metodoPag, setMetodoPag] = useState("débito");
   const [embalagem, setEmbalagem] = useState(false);
+  const [cpf, setCpf] = useState("");
 
   const fidelidade = Math.random(0, 10);
 
@@ -52,7 +54,7 @@ export default function PagamentoContainer() {
           <span>pagamento</span>
         </h1>
 
-        <FinalizarPagamentoButton />
+        <FinalizarPagamentoButton pagamento={metodoPag} cpf={cpf} />
       </div>
 
       <div className="py-3">
@@ -108,10 +110,13 @@ export default function PagamentoContainer() {
             </div>
             <div className="mt-8 text-lg font-bold text-verdefolha">
               <h3>Nota Fiscal(CPF)</h3>
-              <input
+              <InputCPFMask
+                id="cpf"
                 type="text"
                 className="bg-rosinha text-sm rounded-lg mt-2 p-3 ps-2 text-white"
-                placeholder="Insira aqui"
+                value={cpf}
+                onChange={(e) => setCpf(e.target.value)}
+                placeholder="000.000.000-00"
               />
             </div>
           </div>
