@@ -66,7 +66,7 @@ export default function Login() {
           return (window.location.href = "/vendedor/pdv");
         }
         if (data.usuario.perfil == "gerente") {
-          return (window.location.href = "/");
+          return (window.location.href = "/gerente");
         }
         if (data.usuario.perfil == "admin") {
           return (window.location.href = "/");
