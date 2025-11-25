@@ -14,24 +14,52 @@ import {
   limparCarrinho,
   obterCarrinho,
   obterQuantidade,
+  calcularTotal,
 } from "@/utils/carrinho";
 
-export default function FinalizarPagamentoButton({ pagamento, cpf }) {
+export default function FinalizarPagamentoButton({ pagamento, cpf, embalagem = false }) {
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState("confirm");
   const [contador, setContador] = useState(3);
   const [buttonActive, setButtonActive] = useState(false);
+  const [mensagemValidacao, setMensagemValidacao] = useState("");
 
+  // Validação em tempo real
   useEffect(() => {
     const quantidadeItens = obterQuantidade();
-    console.log("Validação:", { quantidadeItens, pagamento, cpf, cpfLength: cpf?.length });
+    const cpfLimpo = cpf ? cpf.replace(/\D/g, '') : '';
     
-    // Validação mais robusta
-    if (quantidadeItens > 0 && pagamento && cpf && cpf.trim().length >= 11) {
-      setButtonActive(true);
-    } else {
+    // Reseta mensagem
+    setMensagemValidacao("");
+    
+    // Validações
+    if (quantidadeItens === 0) {
+      setMensagemValidacao("Adicione produtos ao carrinho");
       setButtonActive(false);
+      return;
     }
+    
+    if (!pagamento) {
+      setMensagemValidacao("Selecione um método de pagamento");
+      setButtonActive(false);
+      return;
+    }
+    
+    if (!cpf || cpf.trim().length === 0) {
+      setMensagemValidacao("Digite o CPF para nota fiscal");
+      setButtonActive(false);
+      return;
+    }
+    
+    if (cpfLimpo.length !== 11) {
+      setMensagemValidacao("CPF deve ter 11 dígitos");
+      setButtonActive(false);
+      return;
+    }
+    
+    // Tudo OK
+    setMensagemValidacao("");
+    setButtonActive(true);
   }, [pagamento, cpf]);
 
   const finalizarVenda = async () => {
@@ -52,7 +80,7 @@ export default function FinalizarPagamentoButton({ pagamento, cpf }) {
       return;
     }
 
-    // Remove formatação do CPF (apenas números)
+    // Remove formatação do CPF
     const cpfLimpo = cpf.replace(/\D/g, '');
     
     if (cpfLimpo.length !== 11) {
@@ -63,9 +91,13 @@ export default function FinalizarPagamentoButton({ pagamento, cpf }) {
 
     // Resolve o tipo de pagamento
     const tipoPagamento =
-      pagamento === "debito" || pagamento === "credito" ? "cartao" : pagamento;
+      pagamento === "débito" || pagamento === "crédito" ? "cartao" : pagamento;
 
-    // Monta o payload exatamente como no Postman
+    // Calcula o total com embalagem se necessário
+    const totalCarrinho = calcularTotal();
+    const totalFinal = embalagem ? totalCarrinho + 1.50 : totalCarrinho;
+
+    // Monta o payload
     const venda = {
       produtos: itens.map((item) => ({
         id_produto: item.id_produto,
@@ -73,8 +105,10 @@ export default function FinalizarPagamentoButton({ pagamento, cpf }) {
       })),
       pagamento: {
         tipo: tipoPagamento,
-        cpf: cpf, // Envia o CPF COM formatação (como no Postman)
+        cpf: cpf,
       },
+      embalagem: embalagem,
+      total: totalFinal,
     };
 
     console.log("Payload sendo enviado:", JSON.stringify(venda, null, 2));
@@ -97,6 +131,7 @@ export default function FinalizarPagamentoButton({ pagamento, cpf }) {
       console.log("Venda finalizada com sucesso:", data);
       setStep("success");
 
+      // Countdown para fechar
       let n = 3;
       const interval = setInterval(() => {
         n--;
@@ -119,18 +154,31 @@ export default function FinalizarPagamentoButton({ pagamento, cpf }) {
   };
 
   return (
-    <>
+    <div className="flex flex-col items-end gap-2">
       <button
         onClick={() => setOpen(true)}
         disabled={!buttonActive}
-        className={` ${
-          !buttonActive ? "pointer-events-none opacity-75 grayscale-75" : ""
-        }
-            bg-[#4f6940] max-w-2xs rounded-[50px] mt-2 py-2 px-5 text-[#9bf377] text-sm font-bold w-full h-13 flex gap-3 justify-center items-center transform transition-all duration-400 ease-out hover:bg-[#65745A] hover:scale-97 cursor-pointer`}
+        className={`
+          bg-[#4f6940] rounded-[50px] py-2 px-4 sm:px-5 
+          text-[#9bf377] text-sm sm:text-base font-bold 
+          flex gap-2 sm:gap-3 justify-center items-center 
+          transform transition-all duration-300 ease-out 
+          ${buttonActive 
+            ? 'hover:bg-[#65745A] hover:scale-[0.97] cursor-pointer' 
+            : 'pointer-events-none opacity-75 grayscale cursor-not-allowed'
+          }
+        `}
       >
-        <h3 className="text-lg">Finalizar pagamento</h3>
-        <ChevronRight size={25} />
+        <h3 className="text-base sm:text-lg whitespace-nowrap">Finalizar pagamento</h3>
+        <ChevronRight size={20} className="sm:w-6 sm:h-6" />
       </button>
+      
+      {/* Mensagem de validação */}
+      {mensagemValidacao && (
+        <p className="text-xs sm:text-sm text-[#924187] font-semibold text-right animate-pulse mx-auto">
+          {mensagemValidacao}
+        </p>
+      )}
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-md bg-[#e8c5f1] border-3 border-[#924187] border-dashed rounded-3xl">
@@ -143,9 +191,27 @@ export default function FinalizarPagamentoButton({ pagamento, cpf }) {
           </DialogHeader>
 
           {step === "confirm" && (
-            <p className="text-[#4f6940] font-medium text-md">
-              Tem certeza que deseja finalizar esta compra?
-            </p>
+            <div className="space-y-3">
+              <p className="text-[#4f6940] font-medium text-md">
+                Tem certeza que deseja finalizar esta compra?
+              </p>
+              <div className="bg-white/50 rounded-lg p-3 text-sm">
+                <p className="text-[#76196c] font-semibold">
+                  Pagamento: <span className="font-normal">{pagamento}</span>
+                </p>
+                <p className="text-[#76196c] font-semibold">
+                  CPF: <span className="font-normal">{cpf}</span>
+                </p>
+                {embalagem && (
+                  <p className="text-[#76196c] font-semibold">
+                    Embalagem: <span className="font-normal">Sim (+R$1,50)</span>
+                  </p>
+                )}
+                <p className="text-[#4f6940] font-bold mt-2">
+                  Total: R$ {(calcularTotal() + (embalagem ? 1.50 : 0)).toFixed(2).replace('.', ',')}
+                </p>
+              </div>
+            </div>
           )}
 
           {step === "loading" && (
@@ -159,8 +225,9 @@ export default function FinalizarPagamentoButton({ pagamento, cpf }) {
 
           {step === "success" && (
             <div className="text-center py-6">
+              <div className="text-6xl mb-4">🎉</div>
               <p className="text-[#4f6940] text-xl font-extrabold">
-                🎉 Venda concluída!
+                Venda concluída!
               </p>
               <p className="text-[#76196c] font-medium mt-2">
                 Fechando em {contador}...
@@ -170,17 +237,17 @@ export default function FinalizarPagamentoButton({ pagamento, cpf }) {
 
           <DialogFooter className="mt-4">
             {step === "confirm" && (
-              <div className="flex gap-2">
+              <div className="flex gap-2 w-full">
                 <Button
                   variant="secondary"
-                  className="bg-[#9bf377] text-[#4f6940] hover:bg-[#75ba51] cursor-pointer"
+                  className="flex-1 bg-[#9bf377] text-[#4f6940] hover:bg-[#75ba51] cursor-pointer font-bold"
                   onClick={() => setOpen(false)}
                 >
                   Cancelar
                 </Button>
 
                 <Button
-                  className="bg-[#76196c] text-white hover:bg-[#924187] cursor-pointer"
+                  className="flex-1 bg-[#76196c] text-white hover:bg-[#924187] cursor-pointer font-bold"
                   onClick={finalizarVenda}
                 >
                   Confirmar
@@ -190,6 +257,6 @@ export default function FinalizarPagamentoButton({ pagamento, cpf }) {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </>
+    </div>
   );
 }

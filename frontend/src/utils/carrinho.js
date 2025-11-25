@@ -43,7 +43,7 @@ export function adicionarAoCarrinho(produto) {
 
   // Se já existe no carrinho
   if (index !== -1) {
-    const qtdAtual = carrinho[index].quantidade;
+    const qtdAtual = carrinho[index].quantidade;    
 
     // Não deixar ultrapassar o estoque do produto
     if (qtdAtual >= produto.estoque) return;
@@ -51,7 +51,7 @@ export function adicionarAoCarrinho(produto) {
     carrinho[index].quantidade += 1;
   } else {
     // Se o estoque for 0, não deixa adicionar
-    if (produto.estoque <= 0) return;
+    if (produto.estoque <= 0 || !produto.estoque) return;
 
     carrinho.push({ ...produto, quantidade: 1 });
   }
