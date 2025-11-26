@@ -16,8 +16,9 @@ const obterCategoriaPorProdutoController = async (req, res) => {
   try {
     const { idProduto } = req.params;
 
-    const produtos = listarProdutos();
-    const categorias = listarCategorias();
+    const produtos = await listarProdutos();
+    const categorias = await listarCategorias();
+
 
     const produtosListados = produtos.find((p) => p.id_produto == idProduto);
 

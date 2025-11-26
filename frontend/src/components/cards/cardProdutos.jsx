@@ -23,38 +23,26 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
-import { OctagonAlert } from "lucide-react";
+import { PackageMinus, PackageCheck } from "lucide-react";
 
 import React, { useEffect, useState } from "react";
-import { adicionarAoCarrinho, obterCarrinho } from "@/utils/carrinho.js";
+import {
+  adicionarAoCarrinho,
+  obterCarrinho,
+  removerDoCarrinho,
+} from "@/utils/carrinho.js";
 
 const getId = (p) =>
-  p?.id ?? p?._id ?? p?.codigo ?? p?.sku ?? (typeof p?.nome === "string" ? p.nome : undefined);
-
-const removerDoCarrinho = (produto) => {
-  try {
-    const id = getId(produto);
-    const carrinho = obterCarrinho() || [];
-    if (!id) return carrinho;
-    const novo = carrinho.filter((p) => getId(p) !== id);
-    try {
-      localStorage.setItem("carrinho", JSON.stringify(novo));
-    } catch (err) {
-      // noop
-    }
-    try {
-      window.dispatchEvent(new CustomEvent("carrinho:update"));
-    } catch (err) {
-      // noop
-    }
-    return novo;
-  } catch (err) {
-    return obterCarrinho() || [];
-  }
-};
+  p?.id ??
+  p?._id ??
+  p?.codigo ??
+  p?.sku ??
+  (typeof p?.nome === "string" ? p.nome : undefined);
 
 const CardProduto = ({ produto, match }) => {
   const [cardSelecionado, setCardSelecionado] = useState(false);
+  const [categoria, setCategoria] = useState();
+  const [estoqueBaixo, setEstoqueBaixo] = useState(false);
 
   const isInteractiveElement = (el) => {
     if (!el || !el.closest) return false;
@@ -75,13 +63,10 @@ const CardProduto = ({ produto, match }) => {
     e?.stopPropagation?.();
 
     try {
-      const id = getId(produto);
-      if (!id) return;
-
       // Usa o estado local como fonte da verdade para toggle:
       if (cardSelecionado) {
         // já selecionado -> remover
-        removerDoCarrinho(produto);
+        removerDoCarrinho(produto.id_produto);
         setCardSelecionado(false);
       } else {
         // não selecionado -> adicionar
@@ -115,6 +100,44 @@ const CardProduto = ({ produto, match }) => {
       }
     };
 
+    const categoriaProdutos = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:8080/vendedor/categorias/${produto.id_produto}`,
+          {
+            method: "GET",
+            credentials: "include",
+          }
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setCategoria(data.categoriaProduto.nome);
+        }
+      } catch (err) {
+        console.log("Erro ao conseguir categorias", err);
+      }
+    };
+
+    const estoqueProdutos = async () => {
+      const response = await fetch(
+        "http://localhost:8080/vendedor/estoque-baixo",
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+
+        const estoque = data.produtosComEstoqueBaixo.some(
+          (p) => p.id_produto === produto.id_produto
+        );
+
+        return setEstoqueBaixo(estoque);
+      }
+    };
+
     // checa inicialmente
     checkCarrinho();
 
@@ -130,6 +153,8 @@ const CardProduto = ({ produto, match }) => {
     // polling para garantir sincronização quando remoção ocorrer na mesma aba sem dispatch
     const intervalId = setInterval(checkCarrinho, 700);
 
+    estoqueProdutos();
+    categoriaProdutos();
     return () => {
       mounted = false;
       window.removeEventListener("storage", onStorage);
@@ -138,42 +163,25 @@ const CardProduto = ({ produto, match }) => {
     };
   }, [produto]);
 
-  const categorias = [
-    {
-      categoria: "Pelúcias",
-      img: "/img/categorias/pelucia_categoria.png",
-    },
-    {
-      categoria: "Musical",
-      img: "/img/categorias/musical_categoria.png",
-    },
-    {
-      categoria: "Fantasia e Aventura",
-      img: "/img/categorias/fantasia_categoria.png",
-    },
-    {
-      categoria: "Movimento",
-      img: "/img/categorias/movimento_categoria.png",
-    },
-    {
-      categoria: "Jogos",
-      img: "/img/categorias/jogos_categoria.png",
-    },
-    {
-      categoria: "Construção",
-      img: "/img/categorias/construcao_categoria.png",
-    },
-    {
-      categoria: "Veículos",
-      img: "/img/categorias/veiculo_categoria.png",
-    },
-    {
-      categoria: "Bonecos",
-      img: "/img/categorias/bonecos_categoria.png",
-    },
-  ];
+  const categoriasImagens = {
+    Pelúcias: "/img/categorias/pelucia_categoria.png",
 
-    // function Highlight({ text, matches }) {
+    Musical: "/img/categorias/musical_categoria.png",
+
+    "Fantasia e Aventura": "/img/categorias/fantasia_categoria.png",
+
+    Movimento: "/img/categorias/movimento_categoria.png",
+
+    Jogos: "/img/categorias/jogos_categoria.png",
+
+    Construção: "/img/categorias/construcao_categoria.png",
+
+    Veículos: "/img/categorias/veiculo_categoria.png",
+
+    Bonecos: "/img/categorias/bonecos_categoria.png",
+  };
+
+  // function Highlight({ text, matches }) {
   //   if (!matches || matches.length === 0) return text;
 
   //   const nomeMatch = matches.find(m => m.key === "nome");
@@ -202,10 +210,11 @@ const CardProduto = ({ produto, match }) => {
   return (
     <Card
       // ALTERAÇÃO APLICADA AQUI: Estilização condicional para hover/seleção
-      className={`group min-w-53 shadow-none gap-0 pt-0 pb-0 border-[3px] border-dashed border-[#75ba51] rounded-[50px] p-2 transition 
-        ${cardSelecionado 
-          ? "bg-[#C8FDB4] shadow-md hover:shadow-lg" // SELECIONADO: Fundo destacado + feedback de hover por sombra
-          : "bg-[#D8F1DC] hover:bg-[#C8FDB4]"       // NÃO SELECIONADO: Fundo normal + feedback de hover por destaque de cor
+      className={`cursor-pointer group min-w-53 shadow-none gap-0 pt-0 pb-0 border-[3px] border-dashed border-[#75ba51] rounded-[50px] p-2 transition 
+        ${
+          cardSelecionado
+            ? "bg-[#C8FDB4] shadow-md hover:shadow-lg" // SELECIONADO: Fundo destacado + feedback de hover por sombra
+            : "bg-[#D8F1DC] hover:bg-[#C8FDB4]" // NÃO SELECIONADO: Fundo normal + feedback de hover por destaque de cor
         }`}
       onClick={handleAdd}
     >
@@ -244,12 +253,14 @@ const CardProduto = ({ produto, match }) => {
                 <AlertDialogTitle className="flex flex-col justify-center items-center">
                   <img
                     className="h-25"
-                    src="/img/categorias/bonecos_categoria.png"
+                    src={`${categoriasImagens[categoria]}`}
                     alt="categoria"
                   />
                   <div className="flex flex-col justify-center items-center text-sm/6">
                     <h4 className="text-[14px] text-[#75BA51]">CATEGORIA</h4>
-                    <h1 className="font-bold mt-[-7px] text-[20px] text-[#76196c]">Bonecos</h1>
+                    <h1 className="font-bold mt-[-7px] text-[20px] text-[#76196c]">
+                      {categoria}
+                    </h1>
                   </div>
                 </AlertDialogTitle>
                 <AlertDialogDescription className="text-[15px] text-center">
@@ -259,8 +270,12 @@ const CardProduto = ({ produto, match }) => {
               </AlertDialogHeader>
 
               <AlertDialogFooter className="mt-2 sm:justify-center">
-                <AlertDialogCancel className="bg-[#65745A] rounded-[50px] mt-2 py-2 px-5 text-[#caf4b7] text-sm font-semibold w-50 h-13 flex gap-3 justify-center items-center transform transition-all duration-300 ease-out group-hover:scale-110 hover:bg-[#74816b] hover:scale-97">Fechar</AlertDialogCancel>
-                <button className="bg-[#65745A] rounded-[50px] mt-2 py-2 px-5 text-[#caf4b7] text-sm font-semibold w-50 h-13 flex gap-3 justify-center items-center transform transition-all duration-300 ease-out group-hover:scale-110 hover:bg-[#74816b] hover:scale-97">Relatar erro</button>
+                <AlertDialogCancel className="bg-[#65745A] rounded-[50px] mt-2 py-2 px-5 text-[#caf4b7] text-sm font-semibold w-50 h-13 flex gap-3 justify-center items-center transform transition-all duration-300 ease-out group-hover:scale-110 hover:bg-[#74816b] hover:scale-97">
+                  Fechar
+                </AlertDialogCancel>
+                <button className="bg-[#65745A] rounded-[50px] mt-2 py-2 px-5 text-[#caf4b7] text-sm font-semibold w-50 h-13 flex gap-3 justify-center items-center transform transition-all duration-300 ease-out group-hover:scale-110 hover:bg-[#74816b] hover:scale-97">
+                  Relatar erro
+                </button>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
@@ -270,7 +285,11 @@ const CardProduto = ({ produto, match }) => {
             <Tooltip>
               <TooltipTrigger asChild>
                 <AlertDialogTrigger asChild>
-                  <i className="bi bi-exclamation-circle-fill text-[16px] text-[#4f6940] hover:scale-95 transition cursor-pointer"></i>
+                  <i
+                    className={`bi bi-exclamation-circle-fill text-[16px] ${
+                      estoqueBaixo ? "text-[#8a1919]" : "text-[#4f6940]"
+                    }  hover:scale-95 transition cursor-pointer`}
+                  ></i>
                 </AlertDialogTrigger>
               </TooltipTrigger>
               <TooltipContent
@@ -286,7 +305,11 @@ const CardProduto = ({ produto, match }) => {
               <AlertDialogHeader className="items-center">
                 <AlertDialogTitle>
                   <div className="mb-2 mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10">
-                    <OctagonAlert className="h-7 w-7 text-destructive" />
+                    {estoqueBaixo ? (
+                      <PackageMinus className="h-7 w-7 text-destructive" />
+                    ) : (
+                      <PackageCheck className="h-7 w-7 text-[#4f6940]" />
+                    )}
                   </div>
                   Situação do Estoque
                 </AlertDialogTitle>
@@ -297,9 +320,15 @@ const CardProduto = ({ produto, match }) => {
               </AlertDialogHeader>
 
               <AlertDialogFooter className="mt-2 sm:justify-center">
-                <AlertDialogCancel className="bg-[#65745A] rounded-[50px] mt-2 py-2 px-5 text-[#caf4b7] text-sm font-semibold w-30 h-13 flex gap-3 justify-center items-center transform transition-all duration-300 ease-out group-hover:scale-110 hover:bg-[#74816b] hover:scale-97">Fechar</AlertDialogCancel>
-                <button className="bg-[#65745A] rounded-[50px] mt-2 py-2 px-5 text-[#caf4b7] text-sm font-semibold w-40 h-13 flex gap-3 justify-center items-center transform transition-all duration-300 ease-out group-hover:scale-110 hover:bg-[#74816b] hover:scale-97">Relatar defeito</button>
-                <button className="bg-[#65745A] rounded-[50px] mt-2 py-2 px-5 text-[#caf4b7] text-sm font-semibold w-40 h-13 flex gap-3 justify-center items-center transform transition-all duration-300 ease-out group-hover:scale-110 hover:bg-[#74816b] hover:scale-97">Lista de espera</button>
+                <AlertDialogCancel className="bg-[#65745A] rounded-[50px] mt-2 py-2 px-5 text-[#caf4b7] text-sm font-semibold w-30 h-13 flex gap-3 justify-center items-center transform transition-all duration-300 ease-out group-hover:scale-110 hover:bg-[#74816b] hover:scale-97">
+                  Fechar
+                </AlertDialogCancel>
+                <button className="bg-[#65745A] rounded-[50px] mt-2 py-2 px-5 text-[#caf4b7] text-sm font-semibold w-40 h-13 flex gap-3 justify-center items-center transform transition-all duration-300 ease-out group-hover:scale-110 hover:bg-[#74816b] hover:scale-97">
+                  Relatar defeito
+                </button>
+                <button className="bg-[#65745A] rounded-[50px] mt-2 py-2 px-5 text-[#caf4b7] text-sm font-semibold w-40 h-13 flex gap-3 justify-center items-center transform transition-all duration-300 ease-out group-hover:scale-110 hover:bg-[#74816b] hover:scale-97">
+                  Lista de espera
+                </button>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>

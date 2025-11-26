@@ -69,18 +69,18 @@ function QuickActionCard({ title, description, icon, href, color }) {
   );
 }
 
-export default function GerenteDashboard() {
+export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [dashboardData, setDashboardData] = useState(null);
   const [nomeFilial, setNomeFilial] = useState("");
-  const [nomeGerente, setNomeGerente] = useState("");
+  const [nomeAdmin, setNomeAdmin] = useState("");
   const [periodo, setPeriodo] = useState("mes");
   const [erro, setErro] = useState(null);
 
   useEffect(() => {
     const nome = getCookie("nome");
     const empresa = getCookie("empresa");
-    setNomeGerente(nome || "Gerente");
+    setNomeAdmin(nome || "Administrador");
     setNomeFilial(empresa || "Filial");
   }, []);
 
@@ -90,7 +90,7 @@ export default function GerenteDashboard() {
       setErro(null);
       
       try {
-        const response = await fetch(`http://localhost:8080/gerente/dashboard?periodo=${periodo}`, {
+        const response = await fetch(`http://localhost:8080/admin/dashboard?periodo=${periodo}`, {
           method: "GET",
           credentials: "include",
           headers: { "Content-Type": "application/json" },
@@ -130,7 +130,7 @@ export default function GerenteDashboard() {
               Dashboard - {nomeFilial}
             </h1>
             <p className="text-lg text-[#8c3e82]">
-              Bem-vindo, <span className="font-semibold">{nomeGerente}</span>! 
+              Bem-vindo, <span className="font-semibold">{nomeAdmin}</span>! 
             </p>
           </div>
 
@@ -203,42 +203,42 @@ export default function GerenteDashboard() {
                   title="Produtos"
                   description="Gerenciar catálogo e descontos"
                   icon="box-seam"
-                  href="/gerente/produtos"
+                  href="/admin/produtos"
                   color="[#76196c]"
                 />
                 <QuickActionCard
                   title="Vendedores"
                   description="Gerenciar equipe de vendas"
                   icon="people"
-                  href="/gerente/vendedores"
+                  href="/admin/vendedores"
                   color="[#569a33]"
                 />
                 <QuickActionCard
                   title="Fornecedores"
                   description="Cadastrar e gerenciar fornecedores"
                   icon="truck"
-                  href="/gerente/fornecedores"
+                  href="/admin/fornecedores"
                   color="[#4f6940]"
                 />
                 <QuickActionCard
                   title="Financeiro"
                   description="Fluxo de caixa e despesas"
                   icon="cash-coin"
-                  href="/gerente/financeiro"
+                  href="/admin/financeiro"
                   color="[#ff6b6b]"
                 />
                 <QuickActionCard
                   title="Relatórios"
                   description="Gerar relatórios e análises"
                   icon="file-earmark-bar-graph"
-                  href="/gerente/relatorios"
+                  href="/admin/relatorios"
                   color="[#924187]"
                 />
                 <QuickActionCard
                   title="Alertas"
                   description="Produtos com estoque baixo"
                   icon="bell"
-                  href="/gerente/estoque-baixo"
+                  href="/admin/estoque-baixo"
                   color="[#ff6b6b]"
                 />
               </div>
@@ -307,7 +307,7 @@ export default function GerenteDashboard() {
                         {dashboardData.produtos.baixoEstoque} produtos com estoque baixo
                       </p>
                       <Link 
-                        href="/gerente/estoque-baixo"
+                        href="/admin/estoque-baixo"
                         className="text-sm text-orange-600 hover:text-orange-800 underline mt-1 inline-block"
                       >
                         Ver detalhes →

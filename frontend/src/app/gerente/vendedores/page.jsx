@@ -17,6 +17,11 @@ export default function GerenteVendedor() {
   const [email, setEmail] = useState('');
   const [statusFiltro, setStatusFiltro] = useState("todos");
 
+  // Modal
+  const [ModalEditarVendedor, setModalEditarVendedor] = useState({
+    open: false,
+    vendedor: null,
+  });
 
   // Hook customizado
   const {
@@ -25,7 +30,7 @@ export default function GerenteVendedor() {
   } = useVendedores();
 
   // Colunas da tabela
-  const columns = GetColumns();
+  const columns = GetColumns({setModalEditarVendedor});
 
   const applyGlobalFilter = (value, fields) =>
     fields.some(
@@ -84,9 +89,6 @@ export default function GerenteVendedor() {
           setSorting={setSorting}
         />
       </div>
-
-
-
     </div>
   );
 }

@@ -1,13 +1,17 @@
 import { calcularTotal } from "@/utils/carrinho";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function DinheiroContainer() {
-  const [valorRecebido, setValorRecebido] = useState('');
+  const [valorRecebido, setValorRecebido] = useState("");
+
+  useEffect(() => {
+    localStorage.setItem("valorRecebido", valorRecebido);
+  }, [valorRecebido]);
 
   function conta() {
-    if (valorRecebido - calcularTotal() < 0) return 'R$0.00';
+    if (valorRecebido - calcularTotal() < 0) return "R$0.00";
     const troco = valorRecebido - calcularTotal();
-    return 'R$' + troco.toFixed(2);
+    return "R$" + troco.toFixed(2);
   }
 
   return (

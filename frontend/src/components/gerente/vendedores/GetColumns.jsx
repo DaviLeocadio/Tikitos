@@ -38,8 +38,8 @@ export default function GetColumns({setModalVendedor}) {
         </button>
       ),
       cell: ({ row }) => (
-        <div>
-          <p className="font-semibold text-[#4f6940]">{row.getValue("nome")}</p>
+        <div className="max-w-[120px] truncate">
+          <p className="font-semibold truncate text-[#4f6940]">{row.getValue("nome")}</p>
         </div>
       ),
     },

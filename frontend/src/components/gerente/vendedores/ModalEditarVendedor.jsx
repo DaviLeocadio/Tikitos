@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
-export default function ModalEditarDesconto({ vendedor, open, onClose, onSalvar }) {
+export default function ModalEditarVendedor({ vendedor, open, onClose, onSalvar }) {
   const [vendedorInfo, setVendedorInfo] = useState(vendedor);
   const [loading, setLoading] = useState(false);
 
