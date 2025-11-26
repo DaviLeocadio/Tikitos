@@ -18,7 +18,7 @@ function MetricCard({ title, value, icon, color, trend }) {
               <span className={`font-semibold text-${trend.direction === 'up' ? 'green' : 'red'}-600`}>
                 {trend.percentage}%
               </span>
-              <span className="text-gray-500">vs mês anterior</span>
+              <span className="text-gray-500">vs período anterior</span>
             </div>
           )}
         </div>
@@ -75,42 +75,43 @@ export default function GerenteDashboard() {
   const [nomeFilial, setNomeFilial] = useState("");
   const [nomeGerente, setNomeGerente] = useState("");
   const [periodo, setPeriodo] = useState("mes");
+  const [erro, setErro] = useState(null);
 
   useEffect(() => {
     const nome = getCookie("nome");
     const empresa = getCookie("empresa");
     setNomeGerente(nome || "Gerente");
     setNomeFilial(empresa || "Filial");
+  }, []);
 
+  useEffect(() => {
     const buscarDados = async () => {
       setLoading(true);
+      setErro(null);
+      
       try {
-        // Simulação - substitua pela sua API
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        
-        setDashboardData({
-          vendas: {
-            total: "R$ 45.320,00",
-            quantidade: 234,
-            trend: { direction: "up", percentage: 12.5 }
-          },
-          produtos: {
-            total: 1247,
-            baixoEstoque: 23,
-            trend: { direction: "down", percentage: 3.2 }
-          },
-          vendedores: {
-            ativos: 8,
-            melhorVendedor: "João Silva"
-          },
-          fluxoCaixa: {
-            saldo: "R$ 12.450,00",
-            entradas: "R$ 48.320,00",
-            saidas: "R$ 35.870,00"
-          }
+        const response = await fetch(`http://localhost:8080/gerente/dashboard?periodo=${periodo}`, {
+          method: "GET",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
         });
+
+        if (response.status === 403) {
+          window.location.href = "/forbidden";
+          return;
+        }
+
+        if (!response.ok) {
+          throw new Error(`Erro ${response.status}: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        console.log("Dashboard data:", data);
+        setDashboardData(data.dashboard);
+        
       } catch (error) {
         console.error("Erro ao buscar dados:", error);
+        setErro(error.message);
       } finally {
         setLoading(false);
       }
@@ -151,9 +152,19 @@ export default function GerenteDashboard() {
           </div>
         </div>
 
+        {/* Erro */}
+        {erro && (
+          <div className="bg-red-50 border-2 border-red-300 rounded-xl p-4">
+            <div className="flex items-center gap-2 text-red-700">
+              <i className="bi bi-exclamation-triangle text-xl"></i>
+              <p className="font-semibold">Erro ao carregar dashboard: {erro}</p>
+            </div>
+          </div>
+        )}
+
         {loading ? (
           <DashboardSkeleton />
-        ) : (
+        ) : dashboardData ? (
           <>
             {/* Métricas principais */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -166,7 +177,7 @@ export default function GerenteDashboard() {
               />
               <MetricCard
                 title="Produtos Vendidos"
-                value={dashboardData.vendas.quantidade}
+                value={dashboardData.produtos.vendidos}
                 icon="box-seam"
                 color="[#76196c]"
               />
@@ -263,7 +274,7 @@ export default function GerenteDashboard() {
                 </div>
               </div>
 
-              {/* Melhor Vendedor */}
+              {/* Melhor Vendedor e Destaques */}
               <div className="bg-white rounded-xl border-3 border-dashed border-[#76196c] p-6">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-xl font-bold text-[#76196c]">Destaques</h3>
@@ -271,27 +282,91 @@ export default function GerenteDashboard() {
                 </div>
                 <div className="space-y-4">
                   <div className="p-4 bg-[#e8c5f1] rounded-lg">
-                    <p className="text-sm text-gray-600 mb-1">Melhor Vendedor do Período</p>
+                    <p className="text-sm text-gray-600 mb-1">🏆 Melhor Vendedor do Período</p>
                     <p className="text-xl font-bold text-[#76196c]">
                       {dashboardData.vendedores.melhorVendedor}
                     </p>
+                    <p className="text-sm text-[#8c3e82] mt-1">
+                      {dashboardData.vendedores.vendasMelhorVendedor} vendas • 
+                      R$ {dashboardData.vendedores.valorMelhorVendedor.toFixed(2).replace('.', ',')}
+                    </p>
                   </div>
                   <div className="p-4 bg-[#c5ffad] rounded-lg">
-                    <p className="text-sm text-gray-600 mb-1">Total de Vendas</p>
+                    <p className="text-sm text-gray-600 mb-1">📊 Total de Transações</p>
                     <p className="text-xl font-bold text-[#569a33]">
-                      {dashboardData.vendas.quantidade} produtos
+                      {dashboardData.vendas.totalTransacoes} vendas
+                    </p>
+                    <p className="text-sm text-[#4f6940] mt-1">
+                      {dashboardData.produtos.vendidos} produtos vendidos
                     </p>
                   </div>
-                  <div className="p-4 bg-orange-50 rounded-lg border-2 border-orange-300">
-                    <p className="text-sm text-gray-600 mb-1">⚠️ Atenção</p>
-                    <p className="text-base font-semibold text-orange-700">
-                      {dashboardData.produtos.baixoEstoque} produtos com estoque baixo
-                    </p>
+                  {dashboardData.produtos.baixoEstoque > 0 && (
+                    <div className="p-4 bg-orange-50 rounded-lg border-2 border-orange-300">
+                      <p className="text-sm text-gray-600 mb-1">⚠️ Atenção</p>
+                      <p className="text-base font-semibold text-orange-700">
+                        {dashboardData.produtos.baixoEstoque} produtos com estoque baixo
+                      </p>
+                      <Link 
+                        href="/gerente/estoque-baixo"
+                        className="text-sm text-orange-600 hover:text-orange-800 underline mt-1 inline-block"
+                      >
+                        Ver detalhes →
+                      </Link>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Estatísticas Adicionais */}
+            <div className="bg-white rounded-xl border-3 border-dashed border-[#b478ab] p-6">
+              <h3 className="text-xl font-bold text-[#76196c] mb-4">
+                Pagamentos do Período
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="p-4 bg-[#e8f5e8] rounded-lg border-2 border-[#569a33]">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-gray-600 mb-1">PIX</p>
+                      <p className="text-2xl font-bold text-[#569a33]">
+                        R$ {dashboardData.vendas.porTipoPagamento.pix.toFixed(2).replace('.', ',')}
+                      </p>
+                    </div>
+                    <i className="bi bi-qr-code text-3xl text-[#569a33]"></i>
+                  </div>
+                </div>
+                <div className="p-4 bg-[#fff5e6] rounded-lg border-2 border-[#ff9800]">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-gray-600 mb-1">Dinheiro</p>
+                      <p className="text-2xl font-bold text-[#ff9800]">
+                        R$ {dashboardData.vendas.porTipoPagamento.dinheiro.toFixed(2).replace('.', ',')}
+                      </p>
+                    </div>
+                    <i className="bi bi-cash-coin text-3xl text-[#ff9800]"></i>
+                  </div>
+                </div>
+                <div className="p-4 bg-[#f0e5f5] rounded-lg border-2 border-[#76196c]">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-gray-600 mb-1">Cartão</p>
+                      <p className="text-2xl font-bold text-[#76196c]">
+                        R$ {dashboardData.vendas.porTipoPagamento.cartao.toFixed(2).replace('.', ',')}
+                      </p>
+                    </div>
+                    <i className="bi bi-credit-card text-3xl text-[#76196c]"></i>
                   </div>
                 </div>
               </div>
             </div>
           </>
+        ) : (
+          <div className="bg-gray-50 border-2 border-gray-300 rounded-xl p-8 text-center">
+            <i className="bi bi-inbox text-6xl text-gray-400 mb-4"></i>
+            <p className="text-xl font-semibold text-gray-600">
+              Nenhum dado disponível
+            </p>
+          </div>
         )}
       </div>
     </div>

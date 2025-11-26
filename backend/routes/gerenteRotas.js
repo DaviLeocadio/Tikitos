@@ -30,10 +30,14 @@ import {
   excluirGastoController,
   listarGastosController,
 } from "../controllers/GastoController.js";
+import { dashboardGerenteController } from "../controllers/DashboardGerenteController.js";
 
 const router = express.Router();
 
 /* ===================== ROTAS GERENTE ===================== */
+
+/* Dashboard */
+router.get("/dashboard", dashboardGerenteController)
 
 /* ===== Vendedores ===== */
 
