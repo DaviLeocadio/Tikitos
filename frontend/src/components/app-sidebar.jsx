@@ -38,18 +38,19 @@ import {
 import { BiMoney, BiSearch } from "react-icons/bi";
 import { BsCart, BsClockHistory } from "react-icons/bs";
 import { BsQuestionCircle } from "react-icons/bs";
+import { BiReceipt } from "react-icons/bi";
 
 
 const data = {
   navMain: [
     {
-      title: "Pesquisar",
-      href: "#",
-      icon: (props) => <BiSearch className="size-5" {...props} />,
+      title: "Ponto de Venda",
+      href: "/vendedor/pdv",
+      icon: (props) => <BiReceipt className="size-7" {...props} />,
     },
     {
-      title: "Histórico",
-      href: "#",
+      title: "Vendas",
+      href: "/vendedor/configuracoes",
       icon: (props) => <BsClockHistory className="size-3" {...props} />,
     },
     {
