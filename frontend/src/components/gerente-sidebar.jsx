@@ -1,28 +1,8 @@
 "use client"
 
 import * as React from "react"
-import {
-  IconCamera,
-  IconChartBar,
-  IconDashboard,
-  IconDatabase,
-  IconFileAi,
-  IconFileDescription,
-  IconFileWord,
-  IconFolder,
-  IconHelp,
-  IconInnerShadowTop,
-  IconListDetails,
-  IconReport,
-  IconSearch,
-  IconSettings,
-  IconUsers,
-} from "@tabler/icons-react"
-
 import Link from 'next/link';
-import { NavDocuments } from "@/components/nav-documents"
 import { NavMain } from "@/components/nav-main"
-import { NavSecondary } from "@/components/nav-secondary"
 import { NavUser } from "@/components/nav-user"
 import {
   Sidebar,
@@ -34,43 +14,43 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 
-// AQUI É A IMPORTAÇÃO NECESSÁRIA PARA OS ÍCONES
-import { BiMoney, BiSearch } from "react-icons/bi";
-import { BsCart, BsClockHistory } from "react-icons/bs";
-import { BsQuestionCircle } from "react-icons/bs";
-
-
 const data = {
   navMain: [
     {
-      title: "Pesquisar",
-      href: "#",
-      icon: (props) => <BiSearch className="size-5" {...props} />,
+      title: "Dashboard",
+      href: "/gerente/",
+      icon: (props) => <i className="bi bi-speedometer2" {...props} />,
     },
     {
-      title: "Histórico",
-      href: "#",
-      icon: (props) => <BsClockHistory className="size-3" {...props} />,
+      title: "Produtos",
+      href: "/gerente/produtos",
+      icon: (props) => <i className="bi bi-box-seam" {...props} />,
     },
     {
-      title: "Suporte",
-      href: "/vendedor/suporte",
-      icon: (props) => <BsQuestionCircle className="size-4" {...props} />,
+      title: "Vendedores",
+      href: "/gerente/vendedores",
+      icon: (props) => <i className="bi bi-people" {...props} />,
     },
     {
-      title: "Vendas",
-      href: "/vendedor/vendas",
-      icon: (props) => <BsCart className="size-4" {...props} />,
+      title: "Financeiro",
+      href: "/gerente/financeiro",
+      icon: (props) => <i className="bi bi-cash-coin" {...props} />,
     },
     {
-      title: "Caixa",
-      href: "/vendedor/caixa",
-      icon: (props) => <BiMoney className="size-4" {...props} />,
+      title: "Relatórios",
+      href: "/gerente/relatorios",
+      icon: (props) => <i className="bi bi-file-earmark-bar-graph" {...props} />,
+    },
+    {
+      title: "Alertas",
+      href: "/gerente/alertas",
+      icon: (props) => <i className="bi bi-bell" {...props} />,
     }
+    
   ],
 }
 
-export function AppSidebar({
+export function GerenteSidebar({
   ...props
 }) {
   return (

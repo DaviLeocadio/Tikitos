@@ -8,6 +8,11 @@ import {
 
 import { formatarNome } from "../utils/formatadorNome.js";
 
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat.js";
+
+dayjs.extend(customParseFormat);
+
 const listarVendedoresController = async (req, res) => {
   try {
     let vendedores = [];
@@ -73,15 +78,18 @@ const criarVendedorController = async (req, res) => {
       return res.status(400).json({ error: "CPF inválido." });
     }
 
+    const dataNasc = dayjs(data_nasc, "DD/MM/YYYY");
+
+    const dataNascSQL = dataNasc.format("YYYY-MM-DD HH:mm:ss");
+
     let vendendorData = {
       nome: formatarNome(nome),
       email,
       telefone: telefoneFormatado,
       cpf: cpfFormatado,
-      endereco: enderecoFormatado,
       perfil: "vendedor",
       senha: "deve_mudar",
-      data_nasc: new Date(data_nasc),
+      data_nasc: dataNascSQL,
       id_empresa: req.usuarioEmpresa,
     };
 
@@ -132,40 +140,30 @@ const atualizarVendedorController = async (req, res) => {
           .json({ error: "Já existe um cadastro com o email informado." });
     }
 
-    const telefoneFormatado = telefone.replace(/\D/g, "");
-    if (telefoneFormatado.lenght < 10 || telefoneFormatado.lenght > 11)
+    const telefoneFormatado = await telefone?.replace(/\D/g, "");
+    if (telefoneFormatado?.lenght < 10 || telefoneFormatado?.lenght > 11)
       return res.status(400).json({ error: "Telefone inválido." });
 
-    const cpfFormatado = cpf.replace(/\D/g, "");
+    const cpfFormatado = await cpf?.replace(/\D/g, "");
 
-    if (cpfFormatado.length != 11) {
+    if (cpfFormatado?.length != 11) {
       return res.status(400).json({ error: "CPF inválido." });
     }
+
+    const dataNasc = dayjs(data_nasc, "DD/MM/YYYY");
+
+    const dataNascSQL = dataNasc.format("YYYY-MM-DD HH:mm:ss");
+
     let vendendorData = {
       nome: formatarNome(nome),
       email,
       telefone: telefoneFormatado,
       cpf: cpfFormatado,
       perfil: "vendedor",
-      data_nasc,
+      data_nasc: dataNascSQL,
       id_empresa: req.usuarioEmpresa,
+      endereco,
     };
-
-    if (endereco) {
-      const { logradouro, numero, complemento, bairro, cidade, uf, cep } =
-        endereco;
-
-      if (!logradouro || !numero || !bairro || !cidade || !uf || !cep)
-        return res
-          .status(404)
-          .json({ error: "Parâmetros do endereço faltando." });
-
-      const enderecoFormatado = `${logradouro}, ${numero}${
-        complemento ? `, ${complemento}` : ""
-      } - ${bairro}, ${cidade} - ${uf}, ${cep}`;
-
-      vendendorData.endereco = enderecoFormatado;
-    }
 
     const vendendorAtualizado = await atualizarUsuario(
       vendedorId,

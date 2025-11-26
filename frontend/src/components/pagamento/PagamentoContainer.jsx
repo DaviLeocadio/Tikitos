@@ -5,7 +5,7 @@ import CartaoContainer from "./CartaoContainer";
 import PixContainer from "./PixContainer";
 import DinheiroContainer from "./DinheiroContainer";
 import FinalizarPagamentoButton from "./FinalizarPagamentoButton";
-import InputCPFMask from "../InputCPFMask";
+import InputCPFMask from "../inputMasks/InputCPFMask";
 
 export default function PagamentoContainer() {
   const [metodoPag, setMetodoPag] = useState("débito");

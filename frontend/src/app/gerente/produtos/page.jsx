@@ -9,6 +9,7 @@ import {
   ProdutosTable,
   GetColumns,
 } from "@/components/gerente/produtos";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 
 
 export default function GerenteProdutos() {
@@ -55,12 +56,12 @@ export default function GerenteProdutos() {
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#f0e5f5] to-[#e8f5e8] p-5 lg:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-[#DDF1D4] to-verdeclaro p-5 lg:p-8">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div>
           <h1 className="text-3xl lg:text-4xl font-bold text-[#76196c]">
-            Gerenciar Produtos
+           <SidebarTrigger/> Gerenciar Produtos
           </h1>
           <p className="text-lg text-[#8c3e82] mt-1">
             {produtosFiltrados.length} produtos encontrados

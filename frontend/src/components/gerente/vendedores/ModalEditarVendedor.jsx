@@ -1,66 +1,152 @@
 "use client";
 import { useState, useEffect } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import InputTelefoneMask from "@/components/inputMasks/InputCEPMask";
+import InputCPFMask from "@/components/inputMasks/InputCPFMask";
+import InputDataMask from "@/components/inputMasks/InputDataMask";
 
-export default function ModalEditarDesconto({ vendedor, open, onClose, onSalvar }) {
+export default function ModalEditarVendedor({
+  vendedor,
+  open,
+  onClose,
+  onSalvar,
+}) {
   const [vendedorInfo, setVendedorInfo] = useState(vendedor);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    setVendedorInfo(vendedorInfo);
+    const data = new Date(vendedor?.data_nasc);
+    const dataNasc = data.toLocaleDateString("pt-BR");
+    setVendedorInfo({ ...vendedor, data_nasc: dataNasc });
   }, [vendedor]);
 
   const handleSalvar = async () => {
     setLoading(true);
-    await onSalvar(vendedor.id_usuario, vendedor);
+    await onSalvar(vendedor.id_usuario, vendedorInfo);
     setLoading(false);
     onClose();
   };
 
-  const precoComDesconto = produto?.preco * (1 - desconto / 100);
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setVendedorInfo((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md bg-[#e8c5f1] border-3 border-[#924187] border-dashed rounded-3xl">
         <DialogHeader>
           <DialogTitle className="text-[#76196c] font-extrabold text-xl">
-            Editar Desconto
+            Editar Vendedor
           </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-4">
-          <div>
-            <p className="text-sm text-[#8c3e82] font-semibold">Produto:</p>
-            <p className="text-lg font-bold text-[#76196c]">{produto?.nome}</p>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <p className="text-sm text-[#8c3e82] font-semibold">Preço Original:</p>
-              <p className="text-lg font-bold text-[#4f6940]">
-                R$ {produto?.preco?.toFixed(2).replace('.', ',')}
-              </p>
-            </div>
-            <div>
-              <p className="text-sm text-[#8c3e82] font-semibold">Preço com Desconto:</p>
-              <p className="text-lg font-bold text-[#569a33]">
-                R$ {precoComDesconto?.toFixed(2).replace('.', ',')}
-              </p>
-            </div>
-          </div>
-
-          <div>
-            <label className="text-sm text-[#8c3e82] font-semibold block mb-2">
-              Desconto (%):
+        <div className="space-y-3">
+          <div className="mb-2 flex flex-col">
+            <label
+              htmlFor="nome"
+              className="text-sm text-[#569a33]  font-semibold "
+            >
+              Nome:
             </label>
             <input
-              type="number"
-              min="0"
-              max="100"
-              value={desconto}
-              onChange={(e) => setDesconto(Math.min(100, Math.max(0, Number(e.target.value))))}
-              className="w-full p-3 rounded-lg border-2 border-[#b478ab] text-[#76196c] font-bold text-lg focus:outline-none focus:border-[#76196c]"
+              type="text"
+              id="nome"
+              name="nome"
+              className="text-md font-semibold focus-visible:outline-none text-[#76196c] bg-verdeclaro px-2 py-1 rounded-lg border-1 border-dashed border-roxoescuro"
+              value={vendedorInfo?.nome}
+              onChange={handleChange}
+            />
+          </div>
+
+          <div className="mb-2 flex flex-col">
+            <label
+              htmlFor="email"
+              className="text-sm text-[#569a33]  font-semibold "
+            >
+              Email:
+            </label>
+            <input
+              type="text"
+              id="email"
+              name="email"
+              className="text-md font-semibold focus-visible:outline-none text-[#76196c] bg-verdeclaro px-2 py-1 rounded-lg border-1 border-dashed border-roxoescuro"
+              value={vendedorInfo?.email}
+              onChange={handleChange}
+            />
+          </div>
+          <div className="mb-2 flex flex-col">
+            <label
+              htmlFor="telefone"
+              className="text-sm text-[#569a33]  font-semibold "
+            >
+              Telefone:
+            </label>
+            <InputTelefoneMask
+              type="text"
+              id="telefone"
+              name="telefone"
+              className="text-md font-semibold focus-visible:outline-none text-[#76196c] bg-verdeclaro px-2 py-1 rounded-lg border-1 border-dashed border-roxoescuro"
+              value={vendedorInfo?.telefone}
+              onChange={handleChange}
+            />
+          </div>
+          <div className="mb-2 flex flex-col">
+            <label
+              htmlFor="cpf"
+              className="text-sm text-[#569a33]  font-semibold "
+            >
+              CPF:
+            </label>
+            <InputCPFMask
+              type="text"
+              id="cpf"
+              name="cpf"
+              className="text-md font-semibold focus-visible:outline-none text-[#76196c] bg-verdeclaro px-2 py-1 rounded-lg border-1 border-dashed border-roxoescuro"
+              value={vendedorInfo?.cpf}
+              onChange={handleChange}
+            />
+          </div>
+          <div className="mb-2 flex flex-col">
+            <label
+              htmlFor="data_nasc"
+              className="text-sm text-[#569a33]  font-semibold "
+            >
+              Data de Nascimento:
+            </label>
+            <InputDataMask
+              type="data"
+              id="data_nasc"
+              name="data_nasc"
+              className="text-md font-semibold focus-visible:outline-none text-[#76196c] bg-verdeclaro px-2 py-1 rounded-lg border-1 border-dashed border-roxoescuro"
+              value={vendedorInfo?.data_nasc}
+              onChange={handleChange}
+            />
+          </div>
+          <div className="flex flex-col">
+            <label
+              htmlFor="endereco"
+              className="text-sm text-[#569a33]  font-semibold "
+            >
+              Endereço:
+            </label>
+            <input
+              type="text"
+              id="endereco"
+              name="endereco"
+              className="text-md font-semibold focus-visible:outline-none text-[#76196c] bg-verdeclaro px-2 py-1 rounded-lg border-1 border-dashed border-roxoescuro"
+              value={vendedorInfo?.endereco}
+              onChange={handleChange}
             />
           </div>
         </div>
@@ -69,14 +155,14 @@ export default function ModalEditarDesconto({ vendedor, open, onClose, onSalvar 
           <div className="flex gap-2 w-full">
             <Button
               variant="secondary"
-              className="flex-1 bg-[#9bf377] text-[#4f6940] hover:bg-[#75ba51] font-bold cursor-pointer"
+              className="flex-1 bg-[#9bf377] text-[#4f6940] hover:bg-[#75ba51] font-semibold cursor-pointer"
               onClick={onClose}
               disabled={loading}
             >
               Cancelar
             </Button>
             <Button
-              className="flex-1 bg-[#76196c] text-white hover:bg-[#924187] font-bold cursor-pointer"
+              className="flex-1 bg-[#76196c] text-white hover:bg-[#924187] font-semibold cursor-pointer"
               onClick={handleSalvar}
               disabled={loading}
             >

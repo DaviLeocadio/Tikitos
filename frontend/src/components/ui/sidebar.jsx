@@ -294,7 +294,7 @@
         variant="ghost"
         size="icon"
         className={cn(
-          "size-7 transition-all hover:bg-[#9BF377] focus:bg-[#9BF377] text-[#924187] hover:text-[#924187]",
+          "size-7 cursor-pointer transition-all hover:bg-[#9BF377] focus:bg-[#9BF377] text-[#924187] hover:text-[#924187]",
           isPinned ? "bg-sidebar-accent hover:bg-[#9BF377] text-[#924187]" : "",
           className
         )}

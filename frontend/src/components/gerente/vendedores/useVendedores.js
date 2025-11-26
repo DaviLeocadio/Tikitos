@@ -25,6 +25,27 @@ export default function useProdutos() {
     }
   };
 
+  const handleSalvarVendedor = async (idVendedor, vendedorData) => {
+    try {
+      const response = await fetch(
+        `http://localhost:8080/gerente/vendedores/${idVendedor}/`,
+        {
+          method: "PUT",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(vendedorData),
+        }
+      );
+      console.log(await response.json());
+      if (response.ok) {
+        await buscarVendedores();
+        alert("Vendedores atualizados com sucesso!");
+      }
+    } catch (error) {
+      console.error("Erro ao salvar vendedor:", error);
+      alert("Erro ao salvar vendedor!");
+    }
+  };
 
   useEffect(() => {
     buscarVendedores();
@@ -33,5 +54,6 @@ export default function useProdutos() {
   return {
     vendedores,
     loading,
+    handleSalvarVendedor
   };
 }

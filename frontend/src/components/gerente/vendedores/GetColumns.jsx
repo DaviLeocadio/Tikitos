@@ -67,8 +67,8 @@ export default function GetColumns({setModalVendedor}) {
       accessorKey: "endereco",
       header: "Endereço",
       cell: ({ row }) => (
-        <div className="max-w-[120px] truncate">
-          <span className="px-2 py-1 truncate bg-[#e8c5f1] text-[#76196c] rounded-full text-xs font-semibold block">
+        <div className="">
+          <span className="px-2 py-1 text-[#76196c]  text-xs font-normal block">
             {row.original.endereco}
           </span>
         </div>
@@ -110,7 +110,7 @@ export default function GetColumns({setModalVendedor}) {
             <button
               onClick={() => setModalVendedor({ open: true, vendedor })}
               className="px-3 py-1 bg-[#76196c] text-white rounded-lg text-sm font-semibold hover:bg-[#924187] transition cursor-pointer"
-              title="Editar desconto"
+              title="Editar vendedor"
             >
               <i className="bi bi-person"></i>
             </button>
