@@ -66,10 +66,8 @@ const CardProduto = ({ produto, match }) => {
   };
 
   const handleAdd = (e) => {
-    // só responde a clique primário (botão esquerdo)
     if (e && typeof e.button === "number" && e.button !== 0) return;
 
-    // evita que cliques em controles internos (ícones/botões) toggleiem o card
     if (e && isInteractiveElement(e.target)) return;
 
     e?.stopPropagation?.();
@@ -78,25 +76,20 @@ const CardProduto = ({ produto, match }) => {
       const id = getId(produto);
       if (!id) return;
 
-      // Usa o estado local como fonte da verdade para toggle:
       if (cardSelecionado) {
-        // já selecionado -> remover
         removerDoCarrinho(produto);
         setCardSelecionado(false);
       } else {
-        // não selecionado -> adicionar
         adicionarAoCarrinho(produto);
         setCardSelecionado(true);
       }
-
-      // notifica outros componentes/cards que o carrinho mudou
       try {
         window.dispatchEvent(new CustomEvent("carrinho:update"));
       } catch (err) {
-        // noop
+        
       }
     } catch (err) {
-      // noop
+     
     }
   };
 
@@ -115,10 +108,10 @@ const CardProduto = ({ produto, match }) => {
       }
     };
 
-    // checa inicialmente
+    
     checkCarrinho();
 
-    // atualiza ao mudar localStorage (outras abas) e ao receber evento custom
+    
     const onStorage = (ev) => {
       if (!ev.key || ev.key === "carrinho") checkCarrinho();
     };
@@ -173,39 +166,12 @@ const CardProduto = ({ produto, match }) => {
     },
   ];
 
-    // function Highlight({ text, matches }) {
-  //   if (!matches || matches.length === 0) return text;
-
-  //   const nomeMatch = matches.find(m => m.key === "nome");
-  //   if (!nomeMatch) return text;
-
-  //   // Pega o MAIOR intervalo (mais longo)
-  //   let best = nomeMatch.indices.reduce((a, b) => {
-  //     const lenA = a[1] - a[0];
-  //     const lenB = b[1] - b[0];
-  //     return lenB > lenA ? b : a;
-  //   });
-
-  //   const [start, end] = best;
-
-  //   return (
-  //     <>
-  //       {text.slice(0, start)}
-  //       <mark className="px-1 bg-lime-300 font-bold">
-  //         {text.slice(start, end + 1)}
-  //       </mark>
-  //       {text.slice(end + 1)}
-  //     </>
-  //   );
-  // }
-
   return (
     <Card
-      // ALTERAÇÃO APLICADA AQUI: Estilização condicional para hover/seleção
       className={`group min-w-53 shadow-none gap-0 pt-0 pb-0 border-[3px] border-dashed border-[#75ba51] rounded-[50px] p-2 transition 
         ${cardSelecionado 
-          ? "bg-[#C8FDB4] shadow-md hover:shadow-lg" // SELECIONADO: Fundo destacado + feedback de hover por sombra
-          : "bg-[#D8F1DC] hover:bg-[#C8FDB4]"       // NÃO SELECIONADO: Fundo normal + feedback de hover por destaque de cor
+          ? "bg-[#C8FDB4] shadow-md hover:shadow-lg" 
+          : "bg-[#D8F1DC] hover:bg-[#C8FDB4]"
         }`}
       onClick={handleAdd}
     >
@@ -214,15 +180,11 @@ const CardProduto = ({ produto, match }) => {
           <h3 className="text-[#8C3E82] text-[12px] tracking-tighter">
             {produto.nome}
           </h3>
-          {/* <Highlight
-            text={produto.nome}
-            match={match?.find(m => m.key === "nome")}
-          /> */}
           <p className="text-[#c97fda] text-[12px]">{produto.precoFormatado}</p>
         </div>
 
         <div className="w-11 h-full flex justify-between items-center gap-2">
-          {/* PRIMEIRO ÍCONE: Informações */}
+
           <AlertDialog>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -265,7 +227,7 @@ const CardProduto = ({ produto, match }) => {
             </AlertDialogContent>
           </AlertDialog>
 
-          {/* SEGUNDO ÍCONE: Classificação de Estoque */}
+          
           <AlertDialog>
             <Tooltip>
               <TooltipTrigger asChild>

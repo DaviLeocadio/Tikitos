@@ -35,7 +35,7 @@ import {
 } from "@/components/ui/sidebar";
 
 // AQUI É A IMPORTAÇÃO NECESSÁRIA PARA OS ÍCONES
-import { BiSearch } from "react-icons/bi";
+import { BiReceipt } from "react-icons/bi";
 import { BsClockHistory } from "react-icons/bs";
 import { BsQuestionCircle } from "react-icons/bs";
 
@@ -48,13 +48,13 @@ const data = {
   // },
   navMain: [
     {
-      title: "Pesquisar",
-      href: "#",
-      icon: (props) => <BiSearch className="size-5" {...props} />,
+      title: "Ponto de Venda",
+      href: "/vendedor/pdv",
+      icon: (props) => <BiReceipt className="size-7" {...props} />,
     },
     {
       title: "Histórico",
-      href: "#",
+      href: "/vendedor/historico",
       icon: (props) => <BsClockHistory className="size-3" {...props} />,
     },
     {
