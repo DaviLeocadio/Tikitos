@@ -122,6 +122,14 @@ export default function PDV() {
         matches: r.matches,
       }))
     );
+
+    const produtosAtivos = produtos.filter((p) => p.status === "ativo");
+    const produtosInativos = produtos.filter(
+      (p) => p.status === "inativo"
+    );
+    setProdutosInativos(produtosInativos);
+    setProdutosAtivos(produtosAtivos);
+
   }, [query, listaProdutos]);
 
   // Config Atalhos
@@ -140,19 +148,14 @@ export default function PDV() {
 
     return produtosEscolhidos.map((produto) => {
       return (
-        <CardProduto
-          key={produto.id_produto}
-          produto={produto}
-        ></CardProduto>
+        <CardProduto key={produto.id_produto} produto={produto}></CardProduto>
       );
     });
   }
 
   // Verifica se não há produtos
-  const nenhumProdutoEncontrado = 
-    !loading && 
-    produtosAtivos.length === 0 && 
-    produtosInativos.length === 0;
+  const nenhumProdutoEncontrado =
+    !loading && produtosAtivos.length === 0 && produtosInativos.length === 0;
 
   return (
     <>
@@ -160,8 +163,8 @@ export default function PDV() {
       <div className="h-screen w-full flex flex-col">
         <div className="h-11/12 w-full">
           <div className="flex md:h-[100%] pt-0">
-            <div className="py-2 p-10 m-5 w-full xl:w-4/5 2xl:w-3/4 h-[90%]">
-              <div className="flex m-5 gap-2 items-center">
+            <div className="m-5 w-full xl:w-4/5 2xl:w-3/4 h-[90%]">
+              <div className="flex m-5 mt-0 gap-2 items-center">
                 <SidebarTrigger />
                 <InputWithAdornmentDemo
                   query={query}
@@ -191,7 +194,7 @@ export default function PDV() {
                           Nenhum produto encontrado
                         </h3>
                         <p className="text-[#8c3e82] mt-2">
-                          {query 
+                          {query
                             ? `Não encontramos produtos com "${query}"`
                             : "Não há produtos cadastrados no momento"}
                         </p>
