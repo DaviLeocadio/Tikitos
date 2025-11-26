@@ -6,16 +6,27 @@ import {
   RelatorioCaixa,
   obterCaixaPorId,
   resumoVendasCaixa,
+  CaixaAbertoVendedor,
 } from "../models/Caixa.js";
 
-import { listarVendasPorCaixa, obterVendaPorData } from "../models/Venda.js";
+import {
+  listarVendasPorCaixa,
+  obterVendaPorData,
+  obterVendaPorDataUsuario,
+} from "../models/Venda.js";
 
 import { listarItensVenda } from "../models/ItensVenda.js";
+import {
+  contarProdutosEmPromocao,
+  obterProdutosEstoqueCritico,
+} from "../models/ProdutoLoja.js";
+import { obterProdutoPorId } from "../models/Produto.js";
+import { obterCategoriaPorId } from "../models/Categorias.js";
 
 const AbrirCaixaController = async (req, res) => {
   try {
-    const { idVendedor } = req.params;
     const idEmpresa = req.usuarioEmpresa;
+    const idVendedor = req.usuarioId;
 
     //Verifica se a variavel está certo
     if (!idVendedor || !idEmpresa) {
@@ -25,7 +36,7 @@ const AbrirCaixaController = async (req, res) => {
     }
 
     //Verifica se há algum caixa aberto para o vendedor
-    const caixaExistente = await LerCaixaPorVendedor(idVendedor);
+    const caixaExistente = await CaixaAbertoVendedor(idVendedor);
     if (caixaExistente) {
       return res
         .status(400)
@@ -66,33 +77,33 @@ const AbrirCaixaController = async (req, res) => {
 
 const FecharCaixaController = async (req, res) => {
   try {
-    const { idVendedor } = req.params;
-    const { valorFinal } = req.body;
+    const idVendedor = req.usuarioId;
 
     //Calcular valor final pelas vendas
 
     //Verrifica se há valores para as variáveis
-    if (!idVendedor || !valorFinal) {
+    if (!idVendedor) {
       return res
         .status(400)
         .json({ mensagem: "ID do vendedor e valor final são obrigatórios" });
     }
 
     //Verifica se há um caixa aberto para fechar
-    const caixaExistente = await LerCaixaPorVendedor(idVendedor);
-    const caixaExistenteStatus = caixaExistente.status;
+    const caixaExistente = await CaixaAbertoVendedor(idVendedor);
 
-    if (caixaExistenteStatus !== "aberto") {
+    if (!caixaExistente) {
       return res.status(400).json({
         mensagem: "Nenhum caixa aberto encontrado para este vendedor",
       });
     }
+    const valorFinal =
+      caixaExistente.valor_final - caixaExistente.valor_inicial;
 
     const fechamento =
       new Date().getFullYear() +
-      "/" +
+      "-" +
       (new Date().getMonth() + 1) +
-      "/" +
+      "-" +
       new Date().getDate() +
       " " +
       new Date().getHours() +
@@ -109,7 +120,7 @@ const FecharCaixaController = async (req, res) => {
     };
 
     //Fechamento
-    const caixaFechado = await FecharCaixa(caixaData, idVendedor);
+    const caixaFechado = await FecharCaixa(caixaData, caixaExistente.id_caixa);
     return res
       .status(200)
       .json({ mensagem: "Caixa fechado com sucesso", caixaFechado });
@@ -123,6 +134,7 @@ const ResumoCaixaController = async (req, res) => {
   try {
     const { idCaixa } = req.params;
     const idEmpresa = req.usuarioEmpresa;
+    const idUsuario = req.usuarioId;
 
     if (!idCaixa) {
       return res
@@ -130,56 +142,164 @@ const ResumoCaixaController = async (req, res) => {
         .json({ mensagem: "Parâmetros necessários incompletos" });
     }
 
-    //Verifica os dados de venda de um certo dia
-    const date =
-      new Date().getFullYear() +
-      "/" +
+    // Data formatada
+    const hoje = (new Date()).toLocaleDateString("pt-BR");
+    const date = new Date().getFullYear() +
+      "-" +
       (new Date().getMonth() + 1) +
-      "/" +
-      new Date().getDate();
+      "-" +
+      new Date().getDate()
+    
 
-    const vendas = await obterVendaPorData(date, idCaixa, idEmpresa);
+    // 1. VENDAS DO DIA (pelo usuário, não pelo caixa)
+    const vendas = await obterVendaPorDataUsuario(date, idUsuario, idEmpresa);
 
-    //Adiciona o valor da venda num array
-    const valorTotal = vendas.map((venda) => venda.total);
-
-    //Adiciona o id da venda num array
-    const idVenda = vendas.map((venda) => venda.id_venda);
-
-    //Para cada id da venda, ele verifica se há itens desse id
-    let itensVenda = [];
-    for (const id of idVenda) {
-      const itens = await listarItensVenda(id);
-
-      itensVenda.push(...itens);
+    if (vendas.length === 0) {
+      return res.status(200).json({
+        mensagem: "Nenhuma venda encontrada para hoje",
+        totalCaixa: 0,
+        totalProdutos: 0,
+        valorCaixa: 0,
+        totalVendas: 0,
+        categoriaMaisVendida: { numero: 0, nome: "N/A" },
+        horarioMaisVendas: "0h",
+        alertaEstoque: 0,
+        produtosPromocao: 0,
+        historicoCompras: [],
+        vendasSemana: [],
+      });
     }
 
-    //Pega as quantidades e coloca numa array
-    let produtos = [];
-    itensVenda.map((item) => {
-      produtos.push(item.quantidade);
+    const idVenda = vendas.map((v) => v.id_venda);
+
+    // Itens das vendas
+    let itensVendaTotal = [];
+    for (const id of idVenda) {
+      const itens = await listarItensVenda(id);
+      itensVendaTotal.push(...itens);
+    }
+
+    // Total de produtos vendidos
+    const totalProdutos = itensVendaTotal.reduce(
+      (acc, item) => acc + item.quantidade,
+      0
+    );
+
+    // Valor total
+    const valorTotalVendas = vendas.reduce(
+      (acc, v) => acc + parseFloat(v.total),
+      0
+    );
+
+    // Total de vendas
+    const totalVendas = vendas.length;
+
+    // 2. CATEGORIA MAIS VENDIDA
+    const categoriasPorQuantidade = {};
+
+    for (const item of itensVendaTotal) {
+      const produto = await obterProdutoPorId(item.id_produto);
+
+      if (produto && produto.id_categoria) {
+        const categoriaId = produto.id_categoria;
+        const categoria = await obterCategoriaPorId(categoriaId);
+
+        if (!categoriasPorQuantidade[categoriaId]) {
+          categoriasPorQuantidade[categoriaId] = {
+            id: categoriaId,
+            nome: categoria ? categoria.nome : "Categoria " + categoriaId,
+            quantidade: 0,
+          };
+        }
+
+        categoriasPorQuantidade[categoriaId].quantidade += item.quantidade;
+      }
+    }
+
+    const categoriasArray = Object.values(categoriasPorQuantidade);
+    const categoriaMaisVendida =
+      categoriasArray.length > 0
+        ? categoriasArray.sort((a, b) => b.quantidade - a.quantidade)[0]
+        : { nome: "N/A", id: 0 };
+
+    // 3. HORÁRIO DE MAIS VENDAS
+    const vendasPorHora = {};
+    for (const venda of vendas) {
+      const hora = new Date(venda.data_venda).getHours();
+      vendasPorHora[hora] = (vendasPorHora[hora] || 0) + 1;
+    }
+
+    let horaMaisVendas = Object.keys(vendasPorHora).reduce((a, b) =>
+      vendasPorHora[a] > vendasPorHora[b] ? a : b
+    );
+    const horarioMaisVendas = `${horaMaisVendas}h`;
+
+    // 4. ALERTA DE ESTOQUE
+    const alertaEstoque = (await obterProdutosEstoqueCritico(idEmpresa)).length;
+
+    // 5. PRODUTOS EM PROMOÇÃO
+    const produtosPromocao = (await contarProdutosEmPromocao(idEmpresa)).length;
+
+    // 6. HISTÓRICO
+    const historicoCompras = vendas.map((venda) => {
+      const itensDestaVenda = itensVendaTotal.filter(
+        (item) => item.id_venda === venda.id_venda
+      );
+      const totalProdutosVenda = itensDestaVenda.reduce(
+        (acc, item) => acc + item.quantidade,
+        0
+      );
+
+      return {
+        produtos: totalProdutosVenda,
+        valor: parseFloat(venda.total),
+      };
     });
 
-    //Soma os valores
-    const totalProdutos = produtos.reduce(
-      (numeroAnterior, numeroAtual) => numeroAnterior + numeroAtual,
-      0
-    );
+    // 7. VENDAS DA SEMANA (USANDO idUsuario)
+    const vendasSemana = [];
+    const diasSemana = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
 
-    //Soma todos os valores dentro do array valorTotal
-    const valorTotalVendas = valorTotal.reduce(
-      (ultimoValor, valorAtual) =>
-        parseFloat(ultimoValor) + parseFloat(valorAtual),
-      0
-    );
+    for (let i = 4; i >= 0; i--) {
+      const data = new Date();
+      data.setDate(data.getDate() - i);
+      const dataFormatada = data.toISOString().split("T")[0];
 
-    //Total de vendas
-    const totalVendas = valorTotal.length;
+      const vendasDia = await obterVendaPorDataUsuario(
+        dataFormatada,
+        idUsuario,
+        idEmpresa
+      );
+
+      vendasSemana.push({
+        dia: diasSemana[data.getDay()],
+        valor: vendasDia.length,
+      });
+    }
+
+    // 8. VALOR DO CAIXA ATUAL (aqui sim usa idCaixa)
+    const caixa = await obterCaixaPorId(idCaixa);
+    const valorCaixa = caixa
+      ? parseFloat(caixa.valor_final || 0) -
+        parseFloat(caixa.valor_inicial || 0)
+      : 0;
+
+    // RESPOSTA
     res.status(200).json({
       mensagem: "Resumo do caixa enviado com sucesso",
-      valorTotalVendas,
-      totalVendas,
+      totalCaixa: valorTotalVendas,
       totalProdutos,
+      valorCaixa,
+      totalVendas,
+      categoriaMaisVendida: {
+        numero: categoriaMaisVendida.id,
+        nome: categoriaMaisVendida.nome,
+      },
+      horarioMaisVendas,
+      alertaEstoque,
+      produtosPromocao,
+      historicoCompras,
+      vendasSemana,
     });
   } catch (error) {
     console.error("Erro ao demonstrar o resumo do caixa no dia", error);
@@ -226,10 +346,12 @@ const obterResumoCaixaController = async (req, res) => {
     const vendas = await listarVendasPorCaixa(idCaixa);
 
     const resumoCaixa = await resumoVendasCaixa(idCaixa);
-    
-    return res
-      .status(200)
-      .json({ mensagem: "Resumo do caixa obtido com sucesso", resumoCaixa, vendas });
+
+    return res.status(200).json({
+      mensagem: "Resumo do caixa obtido com sucesso",
+      resumoCaixa,
+      vendas,
+    });
   } catch (error) {
     console.error("Erro ao obter resumo de um caixa", error);
     res.status(500).json({ error: "Erro ao obter resumo de um caixa" });

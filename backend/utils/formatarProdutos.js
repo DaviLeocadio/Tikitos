@@ -8,6 +8,8 @@ export const formatarProdutos = async (produtos, usuarioEmpresa = null) => {
       const categoria = await obterCategoriaPorId(produto.id_categoria);
 
       let precoProduto = produto.preco;
+      let precoComDesconto = null;
+      let desconto = null;
       let estoque = null;
 
       if (usuarioEmpresa) {
@@ -15,20 +17,25 @@ export const formatarProdutos = async (produtos, usuarioEmpresa = null) => {
           produto.id_produto,
           usuarioEmpresa
         );
-        precoProduto =
+        precoComDesconto =
           produto.preco - produto.preco * produtoLoja.desconto * 0.01;
         estoque = produtoLoja.estoque;
+        desconto = produtoLoja.desconto;
       }
       let precoFormatado = mascaraDinheiro(precoProduto);
 
       let response = {
         ...produto,
         categoria: categoria.nome,
-        preco: precoProduto,
         precoFormatado: precoFormatado,
       };
 
       if (estoque) response.estoque = estoque;
+      if (precoComDesconto) {
+        response.precoComDesconto = precoComDesconto;
+        response.precoFormatadoComDesconto = mascaraDinheiro(precoComDesconto);
+      }
+      if (desconto) response.desconto = desconto;
       return response;
     })
   );

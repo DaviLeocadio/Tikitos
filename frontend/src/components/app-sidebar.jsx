@@ -35,9 +35,10 @@ import {
 } from "@/components/ui/sidebar";
 
 // AQUI É A IMPORTAÇÃO NECESSÁRIA PARA OS ÍCONES
-import { BiReceipt } from "react-icons/bi";
-import { BsClockHistory } from "react-icons/bs";
+import { BiMoney, BiSearch } from "react-icons/bi";
+import { BsCart, BsClockHistory } from "react-icons/bs";
 import { BsQuestionCircle } from "react-icons/bs";
+import { BiReceipt } from "react-icons/bi";
 
 
 const data = {
@@ -61,6 +62,16 @@ const data = {
       title: "Suporte",
       href: "/vendedor/suporte",
       icon: (props) => <BsQuestionCircle className="size-4" {...props} />,
+    },
+    {
+      title: "Vendas",
+      href: "/vendedor/vendas",
+      icon: (props) => <BsCart className="size-4" {...props} />,
+    },
+    {
+      title: "Caixa",
+      href: "/vendedor/caixa",
+      icon: (props) => <BiMoney className="size-4" {...props} />,
     }
   ],
   // navClouds: [

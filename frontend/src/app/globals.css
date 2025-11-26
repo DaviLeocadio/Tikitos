@@ -10,11 +10,13 @@
   --color-lilasescuro: #d695e7;
   --color-roxo: #924187;
   --color-roxoescuro: #76196c;
+  --color-rosinha: #b478ab;
   --color-verdao: #4f6940;
   --color-verdinho: #9bf377;
   --color-verdefundo: #9bf377;
   --color-verdefolha: #75ba51;
   --color-verdeclaro: #caf4b7;  
+  
 
   --breakpoint-xs: 30rem;
   --breakpoint-surface: 64rem; 
@@ -148,4 +150,3 @@ body {
   background-color: var(--color-verdinho);
   color: #924187;
 }
-  

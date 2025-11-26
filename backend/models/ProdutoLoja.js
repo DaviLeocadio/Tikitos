@@ -5,6 +5,9 @@ import {
   update,
   create,
 } from "../config/database.js";
+import dotenv from "dotenv";
+
+dotenv.config()
 
 const listarProdutosLoja = async (whereClause = null) => {
   try {
@@ -61,18 +64,41 @@ const deletarProdutoLoja = async (idProdutoLoja) => {
   }
 };
 
-const verificarEstoque = async(idProduto, idEmpresa) => {
+const verificarEstoque = async (idProduto, idEmpresa) => {
   try {
     const produto = await read(
-      "produto_loja", 
+      "produto_loja",
       `id_produto = ${idProduto} AND id_empresa = ${idEmpresa}`
     );
     return produto.estoque;
   } catch (error) {
-        console.error("Erro ao consuçtar estoque de produto: ", err);
+    console.error("Erro ao consultar estoque de produto: ", err);
     throw err;
   }
-}
+};
+const obterProdutosEstoqueCritico = async (idEmpresa) => {
+  try {
+     return await readAll(
+      "produto_loja",
+      `id_empresa = ${idEmpresa} AND estoque < ${process.env.ESTOQUE_MINIMO}`
+    )
+  } catch (error) {
+    console.error("Erro ao consultar estoque dos produtos: ", err);
+    throw err;
+  }
+};
+
+const contarProdutosEmPromocao = async (idEmpresa) => {
+  try {
+     return await readAll(
+      "produto_loja",
+      `id_empresa = ${idEmpresa} AND desconto > 0`
+    )
+  } catch (error) {
+    console.error("Erro ao buscar produtos em promoção: ", err);
+    throw err;
+  }
+};
 
 export {
   listarProdutosLoja,
@@ -80,5 +106,7 @@ export {
   criarProdutoLoja,
   atualizarProdutoLoja,
   deletarProdutoLoja,
-  verificarEstoque
+  verificarEstoque,
+  obterProdutosEstoqueCritico,
+  contarProdutosEmPromocao
 };

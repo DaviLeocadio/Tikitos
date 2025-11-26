@@ -12,25 +12,32 @@ import {
   excluirVendaController
 } from "../controllers/VendaController.js";
 
-import { 
+import {
   listarProdutosController,
-  obterProdutoPorIdController 
+  obterProdutoPorIdController,
 } from "../controllers/ProdutoController.js";
 
+import {
+  listarCategoriasController,
+  obterCategoriaPorProdutoController
+} from '../controllers/CategoriasController.js'
+
+import {
+  estoqueBaixoController
+} from '../controllers/ProdutoLojaController.js'
 
 dotenv.config();
 
 const router = express.Router();
 
 //Rota para abrir caixa
-router.post("/caixa/:idVendedor", AbrirCaixaController);
+router.post("/caixa/", AbrirCaixaController);
 
 //Rota para fechar caixa
-router.put("/caixa/:idVendedor", FecharCaixaController);
-
+router.post("/caixa/fechar", FecharCaixaController);
 
 //Rota para listar as vendas
-router.get("/:idVendedor/vendas", listarVendasController);
+router.get("/vendas", listarVendasController);
 
 //Rota para a criação de vendas
 router.post("/vendas", criarVendaController);
@@ -41,11 +48,17 @@ router.delete("/vendas/:idVenda", excluirVendaController);
 // Listar produtos
 router.get("/produtos", listarProdutosController);
 
+//Categoria do produto
+router.get("/categorias/:idProduto", obterCategoriaPorProdutoController);
+
 // Detalhes de uma unidade de produto
 router.get("/produtos/:idProduto", obterProdutoPorIdController);
-  
+
 // Resumo do caixa (Total de vendas, pagamento, saldo)
 router.get("/caixa/:idCaixa/resumo", ResumoCaixaController);
+
+// Lista produtos com estoque abaixo do mínimo (alerta)
+router.get("/estoque-baixo", estoqueBaixoController);
 
 
 // Extra: Relatório de vendas, métricas, tarefas

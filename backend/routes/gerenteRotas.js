@@ -30,10 +30,14 @@ import {
   excluirGastoController,
   listarGastosController,
 } from "../controllers/GastoController.js";
+import { dashboardGerenteController } from "../controllers/DashboardGerenteController.js";
 
 const router = express.Router();
 
 /* ===================== ROTAS GERENTE ===================== */
+
+/* Dashboard */
+router.get("/dashboard", dashboardGerenteController)
 
 /* ===== Vendedores ===== */
 
@@ -58,7 +62,10 @@ router.get("/produtos", listarProdutosController);
 router.get("/produtos/:idProduto", obterProdutoPorIdController);
 
 // Edita estoque e/ou desconto de um produto (na filial)
-router.put("/produtos/:id", atualizarProdutoLojaController);
+router.put("/produtos/:idProduto", atualizarProdutoLojaController);
+
+// Fazer pedido de produto pro fornecedor
+// router.post("/produtos/:idProduto", pedidoProdutoController)
 
 // Lista produtos com estoque abaixo do mínimo (alerta)
 router.get("/estoque-baixo", estoqueBaixoController);

@@ -21,6 +21,18 @@ const LerCaixaPorVendedor = async (idVendedor) => {
   }
 };
 
+const CaixaAbertoVendedor = async (idVendedor) => {
+  try {
+    return await read(
+      "caixa",
+      `id_usuario = ${idVendedor} AND status = 'aberto'`
+    );
+  } catch (err) {
+    console.error("Erro ao ler caixa por vendedor: ", err);
+    throw err;
+  }
+};
+
 const AtualizarCaixa = async (idCaixa, caixaData) => {
   try {
     return await update("caixa", caixaData, `id_caixa = ${idCaixa}`);
@@ -32,7 +44,7 @@ const AtualizarCaixa = async (idCaixa, caixaData) => {
 
 const FecharCaixa = async (caixaData, idCaixa) => {
   try {
-    return await update("caixa", caixaData, `id_usuario = ${idCaixa}`);
+    return await update("caixa", caixaData, `id_caixa = ${idCaixa}`);
   } catch (err) {
     console.error("Erro ao fechar caixa: ", err);
     throw err;
@@ -44,7 +56,7 @@ const ListarCaixasPorEmpresa = async (idEmpresa, dataCaixa = null) => {
     return await readAll(
       "caixa",
       `id_empresa = ${idEmpresa} ${
-        dataCaixa ? `AND DATE(abertura)  = '${dataCaixa}'` : ""
+        dataCaixa ? `AND DATE(abertura) = '${dataCaixa}'` : ""
       }`
     );
   } catch (err) {
@@ -107,4 +119,5 @@ export {
   RelatorioCaixa,
   obterCaixaPorId,
   resumoVendasCaixa,
+  CaixaAbertoVendedor
 }

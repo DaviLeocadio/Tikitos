@@ -15,6 +15,15 @@ const listarVendas = async (query = null) => {
   }
 };
 
+const listarVendasPorVendedor = async (idVendedor) => {
+  try {
+    return await readAll("vendas", `id_usuario = ${idVendedor} ORDER BY data_venda DESC`);
+  } catch (err) {
+    console.error("Erro ao listar vendas: ", err);
+    throw err;
+  }
+};
+
 const listarVendasPorCaixa = async (caixaId) => {
   try {
     return await readAll("vendas", `id_caixa = ${caixaId}`);
@@ -41,6 +50,39 @@ const obterVendaPorData = async (dataCaixa, idCaixa, idEmpresa) => {
     );
   } catch (err) {
     console.error("Erro ao obter detalhes da venda: ", err);
+    throw err;
+  }
+};
+
+const obterVendasIntervaloUsuario = async (
+  dataInicial,
+  dataFinal,
+  idUsuario,
+  idEmpresa
+) => {
+  try {
+    return await readAll(
+      "vendas",
+      `DATE(data_venda) BETWEEN '${dataInicial}' AND '${dataFinal}'
+      AND id_usuario = ${idUsuario}
+      AND id_empresa = ${idEmpresa}`
+    );
+  } catch (error) {
+    console.error("Erro ao listar vendas: ", err);
+    throw err;
+  }
+};
+
+const obterVendaPorDataUsuario = async (data, idUsuario, idEmpresa) => {
+  try {
+    return await readAll(
+      "vendas",
+      `DATE(data_venda) = '${data}'
+      AND id_usuario = ${idUsuario}
+      AND id_empresa = ${idEmpresa}`
+    );
+  } catch (error) {
+    console.error("Erro ao listar vendas: ", err);
     throw err;
   }
 };
@@ -80,4 +122,7 @@ export {
   criarVenda,
   atualizarVenda,
   excluirVenda,
+  obterVendasIntervaloUsuario,
+  obterVendaPorDataUsuario,
+  listarVendasPorVendedor
 };

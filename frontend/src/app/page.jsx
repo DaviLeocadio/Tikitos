@@ -12,7 +12,7 @@ export default function Login() {
   function aparecerToast(msg) {
     toast(msg, {
       icon: (
-        <img src="/img/toast/logo_ioio.png" alt="logo" className="w-22 h-7" />
+        <img src="/img/toast/logo_ioio.png" alt="logo" className="h-6 mt-0.5" />
       ),
       position: "top-right",
       autoClose: 4000,
@@ -54,6 +54,8 @@ export default function Login() {
       }
 
       if (response.ok) {
+        aparecerToast("Login realizado com sucesso!");
+        
         // Colocando informações nos cookies
         setCookie("email", data.usuario.email);
         setCookie("nome", data.usuario.nome);
@@ -64,7 +66,7 @@ export default function Login() {
           return (window.location.href = "/vendedor/pdv");
         }
         if (data.usuario.perfil == "gerente") {
-          return (window.location.href = "/");
+          return (window.location.href = "/gerente");
         }
         if (data.usuario.perfil == "admin") {
           return (window.location.href = "/");

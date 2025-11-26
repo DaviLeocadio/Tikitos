@@ -21,7 +21,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { getCookie } from "cookies-next/client";
+import { deleteCookie, getCookie } from "cookies-next/client";
 
 export function NavUser() {
   const { isMobile, setOpen, setIsPinned } = useSidebar();
@@ -71,6 +71,21 @@ export function NavUser() {
     }
   }
 
+  const sair = async () => {
+    const response = await fetch("http://localhost:8080/auth/logout", {
+      method: "POST",
+      credentials: "include",
+    });
+
+    if (response.ok) {
+      deleteCookie('nome')
+      deleteCookie('email')
+      deleteCookie('perfil')
+      deleteCookie('empresa')
+
+      return window.location.href = '/'
+    }
+  }
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -90,7 +105,9 @@ export function NavUser() {
             >
               <Avatar className="h-8 w-8 rounded-lg">
                 {/* <AvatarImage src={user.avatar} alt={user.name} /> */}
-                <AvatarFallback className="rounded-lg">{userIniciais}</AvatarFallback>
+                <AvatarFallback className="rounded-lg">
+                  {userIniciais}
+                </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight hover:text-[#75BA51]">
                 <span className="truncate font-medium">{userName}</span>
@@ -111,7 +128,9 @@ export function NavUser() {
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
                   {/* <AvatarImage src={} alt={nome} /> */}
-                  <AvatarFallback className="rounded-lg">{userIniciais}</AvatarFallback>
+                  <AvatarFallback className="rounded-lg">
+                    {userIniciais}
+                  </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-medium">{userName}</span>
@@ -124,7 +143,7 @@ export function NavUser() {
 
             <DropdownMenuItem className="text-[#75BA51] focus:text-[#75BA51] focus:bg-[#F1B8E8] active:bg-[#F1B8E8] active:text-[#75BA51]">
               <IconLogout className="text-[#75BA51]" />
-              Sair
+              <button type="button" onClick={sair}>Sair</button>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

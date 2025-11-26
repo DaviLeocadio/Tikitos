@@ -19,7 +19,7 @@ import {
 import CarrinhoCard from "@/components/carrinho/CarrinhoCard.jsx";
 import CardDemo from "@/components/card-01";
 
-export default function CarrinhoSidebar() {
+export default function CarrinhoSidebar({ isPagamento = false }) {
   const [open, setOpen] = useState(false);
   const [carrinho, setCarrinho] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -77,7 +77,7 @@ export default function CarrinhoSidebar() {
 
     // carrinhoEl.scrollTo({ top: scrollTop, behavior: "smooth" });
     // const carrinhoElement = document.getElementById("carrinho");
-    
+
     if (carrinhoEl.scrollHeight > carrinhoEl.clientHeight) {
       setScroll(true);
     } else {
@@ -92,13 +92,15 @@ export default function CarrinhoSidebar() {
       {/* BOTÃO FLUTUANTE PARA MOBILE */}
       <button
         onClick={() => setOpen(!open)}
-        className="fixed bottom-8 right-8 z-[500] 
+        className="fixed bottom-8 right-8 
           bg-[#9bf377] text-[#924187]
           rounded-full shadow-xl
           w-16 h-16 flex justify-center items-center
           text-3xl font-bold
           border-4 border-[#75ba51]
           lg:hidden
+          transition
+          cursor-pointer
         "
       >
         <i className="bi bi-cart4"></i>
@@ -120,10 +122,18 @@ export default function CarrinhoSidebar() {
         >
           <SheetHeader className="relative z-0">
             <SheetTitle className="text-[#8c3e82] flex justify-between items-center">
-              <span className="flex items-center gap-2">
-                <i className="bi bi-cart4 text-[22px]"></i>
-                Carrinho
-              </span>
+              <button
+                onClick={() => setOpen(!open)}
+                className=" cursor-pointer text-[#924187] flex justify-center items-center text-3xl
+        "
+              >
+                <span className="flex items-center gap-2">
+                  <i className="bi bi-arrow-bar-left text-[22px]"></i>
+                  <i className="bi bi-cart4 text-[22px]"></i>
+                  Carrinho
+                </span>
+
+              </button>
 
               <i
                 className={`bi bi-arrow-repeat text-[25px] cursor-pointer`}
@@ -136,9 +146,8 @@ export default function CarrinhoSidebar() {
           <div
             ref={carrinhoRef}
             id="carrinho"
-            className={`flex flex-col gap-3 max-h-[55vh] mt-4 overflow-y-scroll ps-2 ${
-              scroll ? "pe-4" : "pe-0"
-            }`}
+            className={`flex flex-col gap-3 max-h-[55vh] mt-4 overflow-y-scroll ps-2 ${scroll ? "pe-4" : "pe-0"
+              }`}
           >
             {loading ? (
               <p>Carregando...</p>
@@ -175,10 +184,16 @@ export default function CarrinhoSidebar() {
                 </h3>
               </div>
 
-              <button className="bg-[#65745A] rounded-[50px] mt-3 py-2 px-5 text-[#caf4b7] text-sm font-semibold w-full h-13 flex gap-3 justify-center items-center transition-all hover:bg-[#74816b]">
-                <h3>Avançar para o pagamento</h3>
-                <i className="bi bi-arrow-right-circle-fill text-[25px]"></i>
-              </button>
+              {isPagamento ? (
+                ''
+              ) : (
+                <button className="bg-[#65745A] rounded-[50px] mt-2 py-2 px-5 text-[#caf4b7] text-sm font-semibold w-full h-13 flex gap-3 justify-center items-center transform transition-all duration-300 ease-out group-hover:scale-110 hover:bg-[#74816b] hover:scale-97 cursor-pointer"
+
+                  onClick={() => window.location.href = '/vendedor/pagamento'}>
+                  <h3>Avançar para o pagamento</h3>
+                  <i className="bi bi-arrow-right-circle-fill text-[25px]"></i>
+                </button>
+              )}
             </div>
           </SheetFooter>
         </SheetContent>

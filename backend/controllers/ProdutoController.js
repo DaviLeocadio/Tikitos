@@ -7,7 +7,7 @@ import {
 
 import { fileURLToPath } from "url";
 import path from "path";
-import { obterCategoriaPorId } from "../models/Categorias.js";
+import { obterCategoriaPorId, listarCategorias } from "../models/Categorias.js";
 import { obterProdutoLoja } from "../models/ProdutoLoja.js";
 import { mascaraDinheiro } from "../utils/formatadorNumero.js";
 import {
@@ -23,11 +23,22 @@ const listarProdutosController = async (req, res) => {
     const usuarioEmpresa = req.usuarioEmpresa;
     const usuarioPerfil = req.usuarioPerfil;
     const produtos = await listarProdutos();
-    
-    const produtosFormatados = await formatarProdutos(
+    const categorias = await listarCategorias();
+
+    const produtosFormatadosPerfil = await formatarProdutos(
       produtos,
       usuarioPerfil !== "admin" ? usuarioEmpresa : null
     );
+
+    const produtosFormatados = produtosFormatadosPerfil.map((produto)=>{
+      const categoria = categorias.find((c)=> c.id_categoria == produto.id_categoria);
+
+      return{
+        ...produto,
+        categoria: categoria || null
+      }
+    })
+
     res.status(200).json({
       mensagem: "Listagem de produtos realizada com sucesso",
       produtosFormatados,
@@ -167,10 +178,11 @@ const desativarProdutoController = async (req, res) => {
   }
 };
 
+
 export {
   listarProdutosController,
   obterProdutoPorIdController,
   criarProdutoController,
   atualizarProdutoController,
-  desativarProdutoController
+  desativarProdutoController,
 };

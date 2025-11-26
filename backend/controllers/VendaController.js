@@ -6,6 +6,7 @@ import {
   criarVenda,
   excluirVenda,
   listarVendasPorCaixa,
+  listarVendasPorVendedor,
 } from "../models/Venda.js";
 
 import {
@@ -15,7 +16,11 @@ import {
 } from "../models/ItensVenda.js";
 
 import { obterProdutoPorId } from "../models/Produto.js";
-import { AtualizarCaixa, LerCaixaPorVendedor } from "../models/Caixa.js";
+import {
+  AtualizarCaixa,
+  CaixaAbertoVendedor,
+  LerCaixaPorVendedor,
+} from "../models/Caixa.js";
 
 import {
   obterProdutoLoja,
@@ -26,7 +31,7 @@ import { formatarNome, primeiroNome } from "../utils/formatadorNome.js";
 
 const listarVendasController = async (req, res) => {
   try {
-    const { idVendedor } = req.params;
+    const idVendedor = req.usuarioId;
 
     const caixa = await LerCaixaPorVendedor(idVendedor);
 
@@ -35,7 +40,7 @@ const listarVendasController = async (req, res) => {
         .status(404)
         .json({ mensagem: "Nenhum caixa aberto para o vendedor" });
 
-    const vendas = await listarVendasPorCaixa(caixa.id_caixa);
+    const vendas = await listarVendasPorVendedor(idVendedor);
 
     if (!vendas || vendas.lenght === 0) {
       return res
@@ -64,7 +69,7 @@ const criarVendaController = async (req, res) => {
   try {
     const {
       produtos,
-      pagamento, // Tipo de pagamento e email do pagante
+      pagamento, // Tipo de pagamento e cpf do pagante
     } = req.body;
 
     const idVendedor = req.usuarioId;
@@ -77,9 +82,9 @@ const criarVendaController = async (req, res) => {
     }
 
     // Verificar se caixa existe e se está aberto
-    const caixa = await LerCaixaPorVendedor(idVendedor);
+    const caixa = await CaixaAbertoVendedor(idVendedor);
 
-    if (!caixa || caixa.status == "fechado")
+    if (!caixa)
       return res
         .status(404)
         .json({ error: "Nenhum caixa aberto para este vendedor" });
@@ -106,8 +111,9 @@ const criarVendaController = async (req, res) => {
 
       const novoEstoque = produtoLoja.estoque - p.quantidade;
       if (novoEstoque < 0) {
+        // CORREÇÃO: usar produto.nome e produtoLoja.estoque
         return res.status(404).json({
-          error: `Não há ${p.quantidade} unidades de ${p.nome}, apenas ${produtoLoja.quantidade}`,
+          error: `Não há ${p.quantidade} unidades de ${produto.nome}, apenas ${produtoLoja.estoque}`,
         });
       }
 
@@ -138,7 +144,7 @@ const criarVendaController = async (req, res) => {
     };
 
     //Pagamento
-    if (!pagamento.email || !pagamento.tipo)
+    if (!pagamento.cpf || !pagamento.tipo)
       return res
         .status(404)
         .json({ error: "Parâmetros obrigatórios ausentes em pagamento." });
@@ -205,7 +211,7 @@ const criarVendaController = async (req, res) => {
     doc.text(`Vendedor: ${await primeiroNome(req.usuarioNome)}`);
     doc.text(`Data: ${new Date().toLocaleString()}`);
     doc.text(`Forma de pagamento: ${pagamento.tipo}`);
-    doc.text(`Cliente: ${pagamento.email}`);
+    doc.text(`CPF: ${pagamento.cpf}`);
     doc.moveDown();
 
     doc.fontSize(12).text("Itens:", { underline: true });
@@ -306,22 +312,22 @@ const listarVendasGerenteController = async (req, res) => {
 
     let conditions = [];
 
-    conditions.push(`id_empresa = ${idEmpresa}`)
-    if(data) conditions.push(`DATE(data_venda) = '${data}'`);
-    if(idVendedor) conditions.push (`id_usuario = ${idVendedor}`);
-    if(pagamento) conditions.push(`tipo_pagamento = '${pagamento}'`);
+    conditions.push(`id_empresa = ${idEmpresa}`);
+    if (data) conditions.push(`DATE(data_venda) = '${data}'`);
+    if (idVendedor) conditions.push(`id_usuario = ${idVendedor}`);
+    if (pagamento) conditions.push(`tipo_pagamento = '${pagamento}'`);
 
     const query = conditions.join(" AND ");
 
     const vendas = await listarVendas(query);
 
     if (!vendas || vendas.lenght === 0) {
-      return res
-        .status(404)
-        .json({ mensagem: "Nenhuma venda encontrada" });
+      return res.status(404).json({ mensagem: "Nenhuma venda encontrada" });
     }
 
-    return res.status(200).json({ mensagem: "Listagem de vendas realizada", vendas });
+    return res
+      .status(200)
+      .json({ mensagem: "Listagem de vendas realizada", vendas });
   } catch (err) {
     console.error("Erro ao excluir venda: ", err);
     res.status(500).json({ mensagem: "Erro ao listar vendas: ", err });
