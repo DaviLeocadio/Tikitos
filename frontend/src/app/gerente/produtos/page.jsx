@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import {  useState } from "react";
 import {
   useProdutos,
   ModalEditarDesconto,
@@ -10,11 +10,15 @@ import {
   GetColumns,
 } from "@/components/gerente/produtos";
 
+
 export default function GerenteProdutos() {
   const [sorting, setSorting] = useState([]);
   const [globalFilter, setGlobalFilter] = useState("");
   const [categoriaFiltro, setCategoriaFiltro] = useState("todas");
   const [statusFiltro, setStatusFiltro] = useState("todos");
+
+
+
 
   // Modals
   const [modalDesconto, setModalDesconto] = useState({
