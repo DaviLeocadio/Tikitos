@@ -28,21 +28,27 @@ const atualizarProdutoLojaController = async (req, res) => {
         .status(404)
         .json({ error: "Registro não encontrado em produto_loja" });
 
-    if (desconto < 0 || desconto > 100)
-      return res
-        .status(400)
-        .json({ error: "O desconto deve estar entre 0 e 100." });
+    let produtoLojaData = {};
 
-    if (estoque < 0)
-      return res
-        .status(400)
-        .json({ error: "O estoque não pode ser menor que 0." });
+    if (desconto) {
+      if (desconto < 0 || desconto > 100) {
+        return res
+          .status(400)
+          .json({ error: "O desconto deve estar entre 0 e 100." });
+      }
+      produtoLojaData.desconto = desconto;
+    }
 
-    const produtoLojaData = {
-      estoque,
-      desconto,
-    };
+    if (estoque) {
+      if (estoque < 0) {
+        return res
+          .status(400)
+          .json({ error: "O estoque não pode ser menor que 0." });
+      }
+      produtoLojaData.estoque = estoque;
+    }
 
+    
     const produtoLojaAtualizado = await atualizarProdutoLoja(
       produtoLoja.id_produto_loja,
       produtoLojaData
@@ -77,7 +83,7 @@ const estoqueBaixoController = async (req, res) => {
     if (estoqueBaixo.length == 0)
       return res.status(200).json({
         mensagem: `Nenhum produto com estoque abaixo de ${estoqueMin} unidades`,
-        code:'ESTOQUE'
+        code: "ESTOQUE",
       });
 
     let produtosComEstoqueBaixo = [];
@@ -116,7 +122,7 @@ const visualizarEstoqueController = async (req, res) => {
       return res
         .status(401)
         .json({ mensagem: "Parâmetros obrigatórios não preenchidos!" });
-        
+
     const produtosLoja = listarProdutosLoja(`id_empresa = ${idFilial}`);
 
     return res.status(200).json({
