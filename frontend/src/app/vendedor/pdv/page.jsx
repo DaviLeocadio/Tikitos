@@ -173,7 +173,7 @@ export default function PDV() {
               </div>
 
               <div className="grid gap-5 grid-cols-1 x-sm:grid-cols-1 sm:grid-cols-1 md:grid-cols-1">
-                <div className="grid gap-5 grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 overflow-y-scroll p-5 pt-0 ms-1 md:h-[80vh] wrap-anywhere">
+                <div className="grid gap-5 grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 overflow-y-scroll p-5 pt-0 ms-1 md:h-[75vh] wrap-anywhere">
                   {loading ? (
                     // Loading com Skeleton
                     <>

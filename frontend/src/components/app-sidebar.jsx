@@ -54,8 +54,8 @@ const data = {
       icon: (props) => <BiReceipt className="size-7" {...props} />,
     },
     {
-      title: "Histórico",
-      href: "/vendedor/historico",
+      title: "Vendas",
+      href: "/vendedor/configuracoes",
       icon: (props) => <BsClockHistory className="size-3" {...props} />,
     },
     {
