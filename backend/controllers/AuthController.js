@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import { read, compare, create } from "../config/database.js";
 import { JWT_SECRET } from "../config/jwt.js";
-import { encontrarUsuario, definirSenha } from "../models/AuthModel.js";
+import { encontrarUsuario, definirSenha, ObterUsuarioMiddlewareModel } from "../models/AuthModel.js";
 import { sendMail } from "../utils/mailer.js";
 import { generateHashedPassword } from "../utils/hashPassword.js";
 import { buscarToken, editarToken, registrarToken } from "../models/Token.js";
@@ -45,7 +45,7 @@ const checkEmailController = async (req, res) => {
     if (!email) {
       return res.status(401).json({ error: "Email não informado" });
     }
-    console.log(email)
+    console.log(email);
     // Procura email no bd
     const usuario = await encontrarUsuario(email);
     if (!usuario)
@@ -69,25 +69,23 @@ const verificarTokenController = async (req, res) => {
 
   // Verifica de há excesso de caracteres para proteção contra ataques
   if (email.length > 100) {
-    return res
-      .status(400)
-      .json({
-        mensagem: "Máximo de caracteres excedido",
-        code: "CARACTER_EXCEDIDO",
-      });
+    return res.status(400).json({
+      mensagem: "Máximo de caracteres excedido",
+      code: "CARACTER_EXCEDIDO",
+    });
   }
 
   try {
     if (!email || !token)
+      return res.status(400).json({
+        error: "Insira todos os parâmetros obrigatórios",
+        code: "FALTA_DADOS",
+      });
+
+    if (token.length != 6) {
       return res
         .status(400)
-        .json({
-          error: "Insira todos os parâmetros obrigatórios",
-          code: "FALTA_DADOS",
-        });
-
-    if(token.length != 6){
-      return res.status(400).json({error: "Token incorreto", code:"TOKEN_INCORRETO"})
+        .json({ error: "Token incorreto", code: "TOKEN_INCORRETO" });
     }
     const usuario = await encontrarUsuario(email);
     if (!usuario)
@@ -103,13 +101,17 @@ const verificarTokenController = async (req, res) => {
 
     // Verifica se está expirado
     if (Date.now() > new Date(record.expira_em)) {
-      return res.status(401).json({ error: "O código expirou.", code:"CODIGO_EXPIROU" });
+      return res
+        .status(401)
+        .json({ error: "O código expirou.", code: "CODIGO_EXPIROU" });
     }
 
     // Verifica se o código coincide
     const tokenCorreto = await compare(String(token), record.codigo);
     if (!tokenCorreto) {
-      return res.status(401).json({ error: "Código inválido", code:"CODIGO_INVALIDO" });
+      return res
+        .status(401)
+        .json({ error: "Código inválido", code: "CODIGO_INVALIDO" });
     }
 
     const tokenAtualizado = await editarToken(record.id_token, {
@@ -151,11 +153,11 @@ const definirSenhaController = async (req, res) => {
       });
     }
 
-    if(novaSenha < 6){
+    if (novaSenha < 6) {
       return res.status(400).json({
         mensagem: "Mínimo de caracteres é de 6",
         code: "CARACTER_MINIMO",
-      })
+      });
     }
 
     // Busca o token no banco
@@ -210,37 +212,54 @@ const loginController = async (req, res) => {
       return res.status(401).json({ error: "Senha incorreta" });
     }
 
+    const usuarioData = await ObterUsuarioMiddlewareModel(usuario.id_usuario);
+
+    const expiresIn =
+      usuario.perfil === "vendedor"
+        ? 12 * 60 * 60 // 12h em segundos
+        : 1 * 60 * 60; // 1h em segundos
+
     const token = jwt.sign(
       {
-        id_usuario: usuario.id_usuario,
-        nome: usuario.nome,
-        email: usuario.email,
-        perfil: usuario.perfil,
-        id_empresa: usuario.id_empresa,
+        id_usuario: usuarioData.id_usuario,
+        nome: usuarioData.nome,
+        email: usuarioData.email,
+        perfil: usuarioData.perfil,
+        id_empresa: usuarioData.id_empresa,
+        empresa_nome: usuarioData.empresa_nome,
       },
       JWT_SECRET,
-      { expiresIn: usuario.perfil === "vendedor" ? "12h" : "1h" }
+      { expiresIn }
     );
 
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: false, // true em produção (https)
+    const baseCookieOptions = {
+      secure: false, // true em produção HTTPS
       sameSite: "lax",
       path: "/",
-      maxAge:
-        usuario.perfil == "vendedor" ? 12 * 60 * 60 * 1000 : 1 * 60 * 60 * 1000,
+      maxAge: expiresIn * 1000, // ms
+    };
+
+    res.cookie("token", token, {
+      ...baseCookieOptions,
+      httpOnly: true,
     });
 
-    res.status(200).json({
+    res.cookie("expiresAt", Date.now() + expiresIn * 1000, {
+      ...baseCookieOptions,
+      httpOnly: false,
+    });
+
+    return res.status(200).json({
       mensagem: "Login Realizado com Sucesso",
       usuario: {
-        id: usuario.id,
-        nome: usuario.nome,
-        email: usuario.email,
-        perfil: usuario.perfil,
-        empresa: usuario.id_empresa,
-        cookie: token,
+        id_usuario: usuarioData.id_usuario,
+        nome: usuarioData.nome,
+        email: usuarioData.email,
+        perfil: usuarioData.perfil,
+        id_empresa: usuarioData.id_empresa,
+        empresa_nome: usuarioData.empresa_nome,
       },
+      expiresAt: Date.now() + expiresIn * 1000,
     });
   } catch (error) {
     console.error("Erro ao Fazer login: ", error);

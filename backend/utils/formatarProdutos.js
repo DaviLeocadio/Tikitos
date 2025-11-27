@@ -1,11 +1,13 @@
 import { obterCategoriaPorId } from "../models/Categorias.js";
 import { obterProdutoLoja } from "../models/ProdutoLoja.js";
 import { mascaraDinheiro } from "./formatadorNumero.js";
+import { obterFornecedorPorId } from "../models/Fornecedor.js";
 
 export const formatarProdutos = async (produtos, usuarioEmpresa = null) => {
   return await Promise.all(
     produtos.map(async (produto) => {
       const categoria = await obterCategoriaPorId(produto.id_categoria);
+      const fornecedor = await obterFornecedorPorId(produto.id_fornecedor);
 
       let precoProduto = produto.preco;
       let precoComDesconto = null;
@@ -26,6 +28,7 @@ export const formatarProdutos = async (produtos, usuarioEmpresa = null) => {
 
       let response = {
         ...produto,
+        fornecedor: fornecedor.nome,
         categoria: categoria.nome,
         precoFormatado: precoFormatado,
       };

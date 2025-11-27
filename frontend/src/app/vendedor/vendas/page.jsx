@@ -10,6 +10,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+
 
 export default function VendasPage() {
   const [vendas, setVendas] = useState([]);
@@ -109,35 +111,51 @@ export default function VendasPage() {
     quantidadeVendas > 0 ? totalVendas / quantidadeVendas : 0;
 
   return (
+    <>
+
+    {/* MENU DA SIDEBAR */}
+      <div className="grid gap-5 grid-cols-1 md:grid-cols-1">
+        <div className="flex m-5 gap-2 items-center">
+          <SidebarTrigger />
+        </div>
+      </div>
+
+      <div className="rounded-3xl overflow-hidden px-[45px] mb-10 sm:w-[100%] ">
+        <img
+          src="/img/suporte/topicos_suporte.png"
+          className="w-full rounded-3xl"
+        />
+      </div>
+    
     <div className="min-h-screen bg-[#DDF1D4] p-6">
-      <div className="max-w-7xl mx-auto space-y-6">
+      <div className="max-w-6xl mx-auto space-y-6">
 
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <h1 className="text-5xl font-black text-[#8c3e82] tracking-tight">
+        {/* <div className="flex items-center justify-between">
+          <h1 className="text-4xl font-black text-[#8c3e82] md:p-1 tracking-tight">
             Controle de Vendas
           </h1>
-        </div>
+        </div> */}
 
         {/* Dashboard Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-[#E5B8F1] border-[3px] border-dashed border-[#B478AB] rounded-[50px] p-6">
-            <p className="text-sm font-semibold text-[#8c3e82]">Faturamento</p>
-            <h2 className="text-4xl font-black text-[#924187]">
+        <div className="grid grid-cols-1 items-center md:grid-cols-3 gap-4">
+          <div className="bg-[#E5B8F1] border-3 border-dashed border-[#75BA51] rounded-[50px] p-3">
+            <p className="text-sm text-center items-center font-semibold text-[#70B64C]">Faturamento</p>
+            <h2 className="text-4xl text-center font-black items-center text-[#559637]">
               R$ {totalVendas.toFixed(2).replace(".", ",")}
             </h2>
           </div>
 
-          <div className="bg-[#c5ffad] border-[3px] border-dashed border-[#75ba51] rounded-[50px] p-6">
-            <p className="text-sm font-semibold text-[#8c3e82]">Vendas</p>
-            <h2 className="text-4xl font-black text-[#65745A]">
+          <div className="bg-[#c5ffad] border-3 border-dashed border-[#8C3E82] rounded-[50px] p-3">
+            <p className="text-sm text-center font-semibold text-[#8c3e82]">Vendas</p>
+            <h2 className="text-4xl text-center font-black text-[#65745A]">
               {quantidadeVendas}
             </h2>
           </div>
 
-          <div className="bg-[#D8F1DC] border-[3px] border-dashed border-[#75ba51] rounded-[50px] p-6">
-            <p className="text-sm font-semibold text-[#8c3e82]">Ticket Médio</p>
-            <h2 className="text-4xl font-black text-[#924187]">
+          <div className="bg-[#92EF6C] border-3 border-dashed border-[#B478AB] rounded-[50px] p-3">
+            <p className="text-sm text-center font-semibold text-[#8c3e82]">Ticket Médio</p>
+            <h2 className="text-4xl text-center font-black text-[#924187]">
               R$ {ticketMedio.toFixed(2).replace(".", ",")}
             </h2>
           </div>
@@ -175,7 +193,7 @@ export default function VendasPage() {
 
         {/* Lista de Vendas */}
         <div className="bg-[#c5ffad] border-[3px] border-dashed border-[#75ba51] rounded-[50px] p-6">
-          <h3 className="text-lg font-bold text-[#8c3e82] mb-4">
+          <h3 className="text-xl font-bold text-[#8c3e82] mb-4">
             Histórico de Vendas
           </h3>
 
@@ -197,7 +215,7 @@ export default function VendasPage() {
               {vendasFiltradas.map((venda) => (
                 <div
                   key={venda.id}
-                  className="bg-[#D8F1DC] border-[3px] border-dashed border-[#75ba51] rounded-[40px] p-5 hover:bg-[#C8FDB4] transition cursor-pointer"
+                  className="bg-[#E5B8F1] border-[2px] border-[#76226D] rounded-[40px] p-5 hover:bg-[#EBC7F5] transition cursor-pointer"
                 >
                   <div className="flex justify-between items-center">
                     <div>
@@ -334,5 +352,6 @@ export default function VendasPage() {
 
       </div>
     </div>
+    </>
   );
 }

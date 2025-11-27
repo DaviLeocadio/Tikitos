@@ -98,7 +98,7 @@ export default function GerenteDashboard() {
 
   useEffect(() => {
     const nome = getCookie("nome");
-    const empresa = getCookie("empresa");
+    const empresa = getCookie("empresa_nome");
     setNomeGerente(nome || "Gerente");
     setNomeFilial(empresa || "Filial");
   }, []);

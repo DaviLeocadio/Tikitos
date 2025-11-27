@@ -12,11 +12,7 @@ export function obterCarrinho() {
   if (!isBrowser()) return [];
 
   const item = localStorage.getItem(CHAVE);
-  if (!item) {
-    localStorage.setItem("carrinhoAtualizado", Date.now());
-    window.dispatchEvent(new Event("carrinhoAtualizado"));
-    return [];
-  }
+  if (!item) return [];
 
   try {
     return JSON.parse(item);
@@ -43,7 +39,7 @@ export function adicionarAoCarrinho(produto) {
 
   // Se já existe no carrinho
   if (index !== -1) {
-    const qtdAtual = carrinho[index].quantidade;    
+    const qtdAtual = carrinho[index].quantidade;
 
     // Não deixar ultrapassar o estoque do produto
     if (qtdAtual >= produto.estoque) return;
@@ -91,6 +87,7 @@ export function removerDoCarrinho(id_produto) {
   carrinho = carrinho.filter((p) => p.id_produto !== id_produto);
 
   localStorage.setItem("item_excluido", id_produto);
+
   salvarCarrinho(carrinho);
 }
 

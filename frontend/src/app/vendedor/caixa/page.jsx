@@ -108,11 +108,11 @@ export default function DashboardResumo() {
 
       {/* GRID DOS CARDS */}
       <div>
-        <div className="min-h-screen p-4 md:p-8">
+        <div className="p-4 md:p-8">
           <div className="max-w-6xl mx-auto">
 
             {/* --- CARDS PRINCIPAIS --- */}
-            <div className="flex flex-col lg:flex-row w-full gap-6 mt-[-2%]">
+            <div className="flex flex-col lg:flex-row w-full h-full gap-6 mt-[-2%]">
               {/* Fechamento do Caixa */}
               <div
                 className="w-full lg:w-1/4 bg-[#EBC7F5] border-3 border-dashed border-[#b478ab] 
@@ -168,10 +168,10 @@ export default function DashboardResumo() {
                     </div>
                     <div className="flex items-center gap-3">
                       <p className="text-6xl md:text-5xl font-black text-[#934788]">
-                        N°{resumo.categoriaMaisVendida?.numero}1
+                        N°{resumo.categoriaMaisVendida?.numero}
                       </p>
                       <p className="text-2xl font-bold text-[#76196c]">
-                        {resumo.categoriaMaisVendida?.nome} Pelúcia
+                        {resumo.categoriaMaisVendida?.nome} 
                       </p>
                     </div>
                   </div>
@@ -191,7 +191,7 @@ export default function DashboardResumo() {
                       <img src="/img/configuracoes/horario_icon.png" className="w-8 h-8 ml-auto" alt="" />
                     </div>
                     <p className="text-6xl md:text-6xl font-black text-[#934788] ">
-                      {resumo.horarioMaisVendas} 14h
+                      {resumo.horarioMaisVendas}
                     </p>
                   </div>
 
@@ -210,7 +210,7 @@ export default function DashboardResumo() {
                     </div>
                     <div className="flex items-center gap-3">
                       <p className="text-7xl md:text-6xl font-black text-[#934788] leading-none">
-                        {resumo.alertaEstoque?.toString().padStart(2, "0")} 00
+                        {resumo.alertaEstoque?.toString().padStart(2, "0")}
                       </p>
 
                       <p className="text-md font-bold text-[#76196c] leading-tight">
@@ -237,7 +237,7 @@ export default function DashboardResumo() {
                     </div>
                     <div className="flex items-center gap-3">
                       <p className="text-6xl md:text-6xl font-black text-[#934788] text-center">
-                        {resumo.produtosPromocao}12
+                        {resumo.produtosPromocao}
                       </p>
 
                       <p className="text-md font-bold text-[#76196c] leading-tight">

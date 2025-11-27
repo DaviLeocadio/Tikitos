@@ -7,10 +7,12 @@
     --form-btn-active-color: #691760;
     --form-rotation: rotate3d(0, 1, 0, 180deg);
     --form-text-padding-left: 10px;
+    
   }
   
   .stackedForm {
     transform: var(--form-rotation);
+    
   }
   
   .stackedForm .input,

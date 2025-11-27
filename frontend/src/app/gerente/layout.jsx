@@ -8,10 +8,8 @@ export default function GerenteLayout({ children }) {
     <>
       <SidebarProvider>
         <GerenteSidebar />
-        <div className="flex flex-col">
-          <main>{children}</main>
+          <main className="w-full">{children}</main>
           {/* <Footer /> */}
-        </div>
       </SidebarProvider>
     </>
   );

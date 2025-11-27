@@ -11,6 +11,15 @@ import {
   verificarEstoque,
 } from "../models/ProdutoLoja.js";
 import { formatarProdutos } from "../utils/formatarProdutos.js";
+import { mascaraDinheiro } from "../utils/formatadorNumero.js";
+import { obterFornecedorPorId } from "../models/Fornecedor.js";
+
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat.js";
+import { criarDespesa } from "../models/Despesas.js";
+import { registrarMovimento } from "../models/MovimentoEstoque.js";
+
+dayjs.extend(customParseFormat);
 
 const atualizarProdutoLojaController = async (req, res) => {
   try {
@@ -48,7 +57,6 @@ const atualizarProdutoLojaController = async (req, res) => {
       produtoLojaData.estoque = estoque;
     }
 
-    
     const produtoLojaAtualizado = await atualizarProdutoLoja(
       produtoLoja.id_produto_loja,
       produtoLojaData
@@ -137,4 +145,74 @@ const visualizarEstoqueController = async (req, res) => {
   }
 };
 
-export { atualizarProdutoLojaController, estoqueBaixoController };
+const pedidoProdutoController = async (req, res) => {
+  try {
+    const { idProduto } = req.params;
+    const { quantidade, data_pag, status } = req.body;
+    const empresaId = req.usuarioEmpresa;
+
+    const produto = await obterProdutoPorId(idProduto);
+    if (!produto)
+      return res.status(404).json({ error: "Produto não encontrado" });
+
+    // Adicionar ao estoque
+    const produtoLoja = await obterProdutoLoja(idProduto, empresaId);
+    const novoEstoque = produtoLoja.estoque + quantidade;
+    const estoqueAtualizado = await atualizarProdutoLoja(
+      produtoLoja.id_produto_loja,
+      { estoque: novoEstoque }
+    );
+
+    // Registrar em despesas
+    const valor = Number(quantidade) * parseFloat(produto.custo);
+
+    const dataPag = dayjs(data_pag, "DD/MM/YYYY");
+    const dataPagSQL = dataPag.format("YYYY-MM-DD");
+
+    const fornecedor = await obterFornecedorPorId(produto.id_fornecedor);
+
+    const descricao = `Pedido: ${quantidade} unidades de ${
+      produto.nome
+    } do fornecedor ${fornecedor.nome} - ${mascaraDinheiro(
+      produto.custo
+    )} × ${quantidade} : ${mascaraDinheiro(valor)}`;
+    const despesaData = {
+      id_empresa: empresaId,
+      data_pag: dataPagSQL,
+      descricao,
+      preco: valor,
+      status,
+    };
+    const despesaAdicionada = await criarDespesa(despesaData);
+
+    // Registrar movimento_estoque
+    const origemMovimento = `Pedido #${despesaAdicionada} - Fornecedor ${produto.id_fornecedor}`;
+    const movimentoData = {
+      id_produto: idProduto,
+      id_empresa: empresaId,
+      tipo: "entrada",
+      quantidade,
+      origem: origemMovimento,
+    };
+    const movimentoCriado = await registrarMovimento(movimentoData);
+
+    return res
+      .status(201)
+      .json({
+        mensagem: "Pedido realizado com sucesso!",
+        estoqueAtualizado,
+        despesaAdicionada,
+        movimentoCriado,
+      });
+      
+  } catch (err) {
+    console.error("Erro ao fazer pedido: ", err);
+    res.status(500).json({ err: "Erro ao fazer pedido: " });
+  }
+};
+
+export {
+  atualizarProdutoLojaController,
+  estoqueBaixoController,
+  pedidoProdutoController,
+};

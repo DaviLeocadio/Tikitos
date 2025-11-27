@@ -55,13 +55,18 @@ export default function Login() {
 
       if (response.ok) {
         aparecerToast("Login realizado com sucesso!");
-        
-        // Colocando informações nos cookies
+
         setCookie("email", data.usuario.email);
         setCookie("nome", data.usuario.nome);
-        setCookie("empresa", data.usuario.empresa);
+        setCookie("empresa", data.usuario.id_empresa); 
+        setCookie("empresa_nome", data.usuario.empresa_nome); 
         setCookie("perfil", data.usuario.perfil);
 
+        if (data.expiresAt) {
+          setCookie("expiresAt", data.expiresAt);
+        }
+
+        // Redirecionamento
         if (data.usuario.perfil == "vendedor") {
           return (window.location.href = "/vendedor/pdv");
         }
@@ -179,9 +184,7 @@ export default function Login() {
 
             {/* BOTÃO DE ENVIAR */}
             <div className="flex justify-center">
-              <button
-                className="group cursor-pointer transition-all duration-200 mt-5 rounded-full border border-transparent flex items-center justify-center gap-2 whitespace-nowrap bg-[#D6B9E2] text-[var(--color-verdao)] font-light hover:bg-[#db90e4] active:scale-95 px-8 py-3 text-[15px] sm:px-10 sm:text-[16px] md:px-14 md:text-[15px] lg:px-16 lg:text-[15px] xl:px-29"
-              >
+              <button className="group cursor-pointer transition-all duration-200 mt-5 rounded-full border border-transparent flex items-center justify-center gap-2 whitespace-nowrap bg-[#D6B9E2] text-[var(--color-verdao)] font-light hover:bg-[#db90e4] active:scale-95 px-8 py-3 text-[15px] sm:px-10 sm:text-[16px] md:px-14 md:text-[15px] lg:px-16 lg:text-[15px] xl:px-29">
                 <span className="text-end">Entre clicando aqui!</span>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

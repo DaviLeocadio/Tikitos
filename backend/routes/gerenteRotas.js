@@ -17,6 +17,7 @@ import {
 import {
   atualizarProdutoLojaController,
   estoqueBaixoController,
+  pedidoProdutoController
 } from "../controllers/ProdutoLojaController.js";
 import {
   fluxoCaixaDiarioController,
@@ -65,7 +66,7 @@ router.get("/produtos/:idProduto", obterProdutoPorIdController);
 router.put("/produtos/:idProduto", atualizarProdutoLojaController);
 
 // Fazer pedido de produto pro fornecedor
-// router.post("/produtos/:idProduto", pedidoProdutoController)
+router.post("/produtos/:idProduto/pedido", pedidoProdutoController)
 
 // Lista produtos com estoque abaixo do mínimo (alerta)
 router.get("/estoque-baixo", estoqueBaixoController);

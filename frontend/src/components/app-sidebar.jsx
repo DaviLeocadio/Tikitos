@@ -37,8 +37,8 @@ import {
 // AQUI É A IMPORTAÇÃO NECESSÁRIA PARA OS ÍCONES
 import { BiMoney, BiSearch } from "react-icons/bi";
 import { BsCart, BsClockHistory } from "react-icons/bs";
-import { BsQuestionCircle } from "react-icons/bs";
-import { BiReceipt } from "react-icons/bi";
+import { BsQuestionCircle, BsCashStack } from "react-icons/bs";
+import { BsReceiptCutoff } from "react-icons/bs";
 
 
 const data = {
@@ -46,17 +46,17 @@ const data = {
     {
       title: "Ponto de Venda",
       href: "/vendedor/pdv",
-      icon: (props) => <BiReceipt className="size-7" {...props} />,
+      icon: (props) => <BsReceiptCutoff className="size-7" {...props} />,
     },
+    // {
+    //   title: "Vendas",
+    //   href: "/vendedor/configuracoes",
+    //   icon: (props) => <BsClockHistory className="size-3" {...props} />,
+    // },
     {
-      title: "Vendas",
-      href: "/vendedor/configuracoes",
-      icon: (props) => <BsClockHistory className="size-3" {...props} />,
-    },
-    {
-      title: "Suporte",
-      href: "/vendedor/suporte",
-      icon: (props) => <BsQuestionCircle className="size-4" {...props} />,
+      title: "Caixa",
+      href: "/vendedor/caixa",
+      icon: (props) => <BsCashStack className="size-4" {...props} />,
     },
     {
       title: "Vendas",
@@ -64,10 +64,10 @@ const data = {
       icon: (props) => <BsCart className="size-4" {...props} />,
     },
     {
-      title: "Caixa",
-      href: "/vendedor/caixa",
-      icon: (props) => <BiMoney className="size-4" {...props} />,
-    }
+      title: "Suporte",
+      href: "/vendedor/suporte",
+      icon: (props) => <BsQuestionCircle className="size-4" {...props} />,
+    } 
   ],
 }
 

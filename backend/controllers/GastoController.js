@@ -6,10 +6,22 @@ import {
   excluirDespesa,
 } from "../models/Despesas.js";
 
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat.js";
+
+dayjs.extend(customParseFormat);
+
 // Listar todos os gastos
 const listarGastosController = async (req, res) => {
   try {
-    const gastos = await listarDespesas(`id_empresa = ${req.usuarioEmpresa}`);
+    const gastos =
+      await listarDespesas(`id_empresa = ${req.usuarioEmpresa} ORDER BY 
+  CASE 
+    WHEN status = 'pendente' THEN 0
+    WHEN status = 'pago' THEN 1
+    ELSE 2
+  END,
+  DATE(data_adicionado) DESC`);
     res.status(200).json({ mensagem: "Gastos listados com sucesso", gastos });
   } catch (error) {
     res
@@ -28,11 +40,14 @@ const adicionarGastoController = async (req, res) => {
         .json({ error: "Parâmetros obrigatórios ausentes" });
 
     const id_empresa = req.usuarioEmpresa;
-    const data_adicionado = new Date();
+
+    const dataPag = dayjs(data_pag, "DD/MM/YYYY");
+
+    const dataPagSQL = dataPag.format("YYYY-MM-DD");
+
     const gastoData = {
       id_empresa,
-      data_adicionado,
-      data_pag: new Date(data_pag),
+      data_pag: dataPagSQL,
       descricao,
       preco,
     };
@@ -57,7 +72,6 @@ const atualizarGastoController = async (req, res) => {
     if (descricao) gastoData.descricao = descricao;
     if (preco) gastoData.preco = preco;
     if (status) gastoData.status = status;
-
 
     const gastoAtualizado = await atualizarDespesa(idGasto, gastoData);
     if (!gastoAtualizado) {

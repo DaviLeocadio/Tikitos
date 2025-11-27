@@ -13,7 +13,6 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
 export default function GerenteVendedor() {
   const [sorting, setSorting] = useState([]);
   const [globalFilter, setGlobalFilter] = useState("");
-  const [email, setEmail] = useState("");
   const [statusFiltro, setStatusFiltro] = useState("todos");
 
   const [modalVendedor, setModalVendedor] = useState({

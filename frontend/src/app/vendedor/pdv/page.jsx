@@ -5,29 +5,13 @@ import InputWithAdornmentDemo from "@/components/input-07";
 import Carrinho from "@/components/carrinho/carrinho";
 import CarrinhoSidebar from "@/components/carrinho/carrinho-sidebar";
 import { voltarCarrinho } from "@/utils/carrinho.js";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 import { useEffect, useState } from "react";
 import Fuse from "fuse.js";
 import { setCookie, getCookie, deleteCookie } from "cookies-next/client";
+import { CardProdutoSkeleton } from "@/components/cards/cardProdutoEskeleton";
 
-// Componente de Skeleton
-function ProductSkeleton() {
-  return (
-    <div className="animate-pulse bg-white rounded-lg border-2 border-[#b478ab] p-4 h-[200px]">
-      <div className="flex flex-col h-full justify-between">
-        <div className="space-y-3">
-          <div className="h-4 bg-[#e5b8f1] rounded w-3/4"></div>
-          <div className="h-3 bg-[#e5b8f1] rounded w-1/2"></div>
-          <div className="h-3 bg-[#e5b8f1] rounded w-2/3"></div>
-        </div>
-        <div className="space-y-2">
-          <div className="h-6 bg-[#e5b8f1] rounded w-1/3"></div>
-          <div className="h-10 bg-[#e5b8f1] rounded w-full"></div>
-        </div>
-      </div>
-    </div>
-  );
-}
+
 
 export default function PDV() {
   const [query, setQuery] = useState("");
@@ -182,7 +166,7 @@ export default function PDV() {
                         <span>Carregando produtos...</span>
                       </div>
                       {[...Array(6)].map((_, index) => (
-                        <ProductSkeleton key={index} />
+                        <CardProdutoSkeleton key={index} />
                       ))}
                     </>
                   ) : nenhumProdutoEncontrado ? (
