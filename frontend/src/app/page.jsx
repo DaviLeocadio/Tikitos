@@ -3,26 +3,13 @@ import styles from "./page.module.css";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { setCookie, getCookie } from "cookies-next/client";
-import { ToastContainer, toast, Bounce } from "react-toastify";
+import { aparecerToast } from "@/utils/toast";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
 
-  function aparecerToast(msg) {
-    toast(msg, {
-      icon: (
-        <img src="/img/toast/logo_ioio.png" alt="logo" className="h-6 mt-0.5" />
-      ),
-      position: "top-right",
-      autoClose: 4000,
-      hideProgressBar: true,
-      closeOnClick: true,
-      pauseOnHover: true,
-      style: { backgroundColor: "#924187", color: "#fff" },
-      transition: Bounce,
-    });
-  }
+
 
   useEffect(() => {
     // Verifica de há excesso de caracteres para proteção contra ataques
@@ -86,7 +73,6 @@ export default function Login() {
 
   return (
     <>
-      <ToastContainer />
       <div
         className={`grid grid-cols-1 lg:grid-cols-2 gap-1 min-h-screen ${styles.login_fundo}`}
       >

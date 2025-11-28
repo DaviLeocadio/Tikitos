@@ -16,6 +16,7 @@ import {
   obterQuantidade,
   calcularTotal,
 } from "@/utils/carrinho";
+import { aparecerToast } from "@/utils/toast";
 
 export default function FinalizarPagamentoButton({ pagamento, cpf, embalagem = false }) {
   const [open, setOpen] = useState(false);
@@ -69,13 +70,13 @@ export default function FinalizarPagamentoButton({ pagamento, cpf, embalagem = f
 
     // Validação adicional antes de enviar
     if (!itens || itens.length === 0) {
-      alert("Carrinho vazio!");
+      aparecerToast("Carrinho vazio!");
       setStep("confirm");
       return;
     }
 
     if (!pagamento || !cpf) {
-      alert("Forma de pagamento ou CPF não informado!");
+      aparecerToast("Forma de pagamento ou CPF não informado!");
       setStep("confirm");
       return;
     }
@@ -84,7 +85,7 @@ export default function FinalizarPagamentoButton({ pagamento, cpf, embalagem = f
     const cpfLimpo = cpf.replace(/\D/g, '');
     
     if (cpfLimpo.length !== 11) {
-      alert("CPF inválido! Deve conter 11 dígitos.");
+      aparecerToast("CPF inválido! Deve conter 11 dígitos.");
       setStep("confirm");
       return;
     }
@@ -147,7 +148,7 @@ export default function FinalizarPagamentoButton({ pagamento, cpf, embalagem = f
       }, 1000);
 
     } catch (e) {
-      alert(`Erro ao finalizar venda: ${e.message}`);
+      aparecerToast(`Erro ao finalizar venda: ${e.message}`);
       console.error("Erro completo:", e);
       setStep("confirm");
     }

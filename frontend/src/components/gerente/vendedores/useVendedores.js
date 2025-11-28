@@ -1,4 +1,5 @@
 "use client";
+import { aparecerToast } from "@/utils/toast";
 import { useState, useEffect } from "react";
 
 export default function useProdutos() {
@@ -39,11 +40,11 @@ export default function useProdutos() {
       console.log(await response.json());
       if (response.ok) {
         await buscarVendedores();
-        alert("Vendedores atualizados com sucesso!");
+        aparecerToast("Vendedores atualizados com sucesso!");
       }
     } catch (error) {
       console.error("Erro ao salvar vendedor:", error);
-      alert("Erro ao salvar vendedor!");
+      aparecerToast("Erro ao salvar vendedor!");
     }
   };
 
@@ -54,6 +55,7 @@ export default function useProdutos() {
   return {
     vendedores,
     loading,
-    handleSalvarVendedor
+    handleSalvarVendedor,
+    buscarVendedores
   };
 }

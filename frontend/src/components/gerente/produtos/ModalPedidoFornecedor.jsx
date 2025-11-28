@@ -18,6 +18,7 @@ import {
   AlertDialogAction,
 } from "@/components/ui/alert-dialog";
 import { Package, TrendingUp, DollarSign, Calendar, CheckCircle } from "lucide-react";
+import { aparecerToast } from "@/utils/toast";
 
 // Modal de Pedido ao Fornecedor
 export default function ModalPedidoFornecedor({
@@ -47,12 +48,12 @@ export default function ModalPedidoFornecedor({
 
   const handleSalvar = async () => {
     if (!produto?.id_produto) {
-      alert("Produto inválido!");
+      aparecerToast("Produto inválido!");
       return;
     }
 
     if (quantidade < 1) {
-      alert("A quantidade deve ser maior que zero!");
+      aparecerToast("A quantidade deve ser maior que zero!");
       return;
     }
 
@@ -81,11 +82,11 @@ export default function ModalPedidoFornecedor({
         }
       } else {
         const error = await response.json();
-        alert(error.error || "Erro ao fazer pedido!");
+        aparecerToast(error.error || "Erro ao fazer pedido!");
       }
     } catch (error) {
       console.error("Erro ao fazer pedido:", error);
-      alert("Erro ao fazer pedido!");
+      aparecerToast("Erro ao fazer pedido!");
     } finally {
       setLoading(false);
     }
@@ -155,7 +156,7 @@ export default function ModalPedidoFornecedor({
 
             {/* Quantidade */}
             <div>
-              <label className="text-sm text-[#4f6940] font-semibold block mb-2 flex items-center gap-2">
+              <label className="text-sm text-[#4f6940] font-semibold mb-2 flex items-center gap-2">
                 <TrendingUp size={16} />
                 Quantidade a Pedir:
               </label>
@@ -187,7 +188,7 @@ export default function ModalPedidoFornecedor({
               </div>
 
               <div>
-                <label className="text-sm text-[#4f6940] font-semibold block mb-2 flex items-center gap-2">
+                <label className="text-sm text-[#4f6940] font-semibold mb-2 flex items-center gap-2">
                   <Calendar size={16} />
                   Data Pagamento:
                 </label>

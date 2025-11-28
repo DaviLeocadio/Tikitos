@@ -122,7 +122,7 @@ export default function VendasPage() {
 
       <div className="rounded-3xl overflow-hidden px-[45px] mb-10 sm:w-[100%] ">
         <img
-          src="/img/suporte/topicos_suporte.png"
+          src="/img/vendas/banner_vendas.png"
           className="w-full rounded-3xl"
         />
       </div>
@@ -162,8 +162,8 @@ export default function VendasPage() {
         </div>
 
         {/* Filtros */}
-        <div className="bg-[#E5B8F1] border-[3px] border-dashed border-[#B478AB] rounded-[50px] p-6">
-          <h3 className="text-lg font-bold text-[#8c3e82]">Filtros de Busca</h3>
+        <div className="bg-[#4F6940] border-[3px] border-dashed border-[#92EF6C] rounded-[50px] p-6">
+          <h3 className="text-lg font-bold text-[#92EF6C]">Filtros de Busca</h3>
 
           <div className="flex flex-col md:flex-row gap-4 mt-4">
             <input
@@ -171,22 +171,22 @@ export default function VendasPage() {
               placeholder="Buscar por ID da venda ou vendedor..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full px-4 py-3 bg-[#924187]/50 border-[2px] border-[#B478AB] rounded-[25px] text-[#DDF1D4]"
+              className="w-full px-4 py-3 bg-[#EBC7F5] border-[2px] border-[#C97FDA] rounded-[25px] text-[#9D4E92]"
             />
 
             <select
               value={filtroData}
               onChange={(e) => setFiltroData(e.target.value)}
-              className="w-full md:w-48 px-4 py-3 bg-[#924187]/50 border-[2px] border-[#B478AB] rounded-[25px] text-[#DDF1D4]"
+              className="w-full md:w-48 px-4 py-3 bg-[#EBC7F5] border-[2px] border-[#C97FDA] rounded-[25px] text-[#9D4E92]"
             >
-              <option value="todos">Todas as vendas</option>
+              <option value="todos" className="hover!:bg-red-500 rounded-xl">Todas as vendas</option>
               <option value="hoje">Hoje</option>
               <option value="semana">Última semana</option>
               <option value="mes">Último mês</option>
             </select>
           </div>
 
-          <p className="text-xs text-[#8c3e82] mt-3 font-medium">
+          <p className="text-xs text-[#92EF6C] mt-3 font-medium">
             Mostrando {vendasFiltradas.length} de {vendas.length} vendas
           </p>
         </div>
@@ -219,23 +219,23 @@ export default function VendasPage() {
                 >
                   <div className="flex justify-between items-center">
                     <div>
-                      <span className="bg-[#924187] text-[#DDF1D4] px-3 py-1 rounded-[20px] text-sm font-bold">
+                      <span className="bg-[#924187] text-[#C5FFAD] px-3 py-1 rounded-[20px] text-sm font-bold">
                         #{venda.id}
                       </span>
 
-                      <p className="text-sm text-[#8c3e82] mt-2">
-                        Data: {new Date(venda.data).toLocaleDateString("pt-BR")}
+                      <p className="text-sm text-[#569A33] font-bold mt-2">
+                        Data: <span className="text-[#4F6940] font-medium "> {new Date(venda.data).toLocaleDateString("pt-BR")}</span>
                       </p>
-                      <p className="text-sm text-[#8c3e82]">
-                        Pagamento: {venda.tipo_pagamento}
+                      <p className="text-sm text-[#569A33] font-bold">
+                        Pagamento: <span className="text-[#4F6940] font-medium">{venda.tipo_pagamento}</span>
                       </p>
-                      <p className="text-sm text-[#8c3e82]">
-                        Vendedor #{venda.vendedor_id}
+                      <p className="text-sm text-[#569A33] font-bold">
+                        Vendedor <span className="text-[#4F6940]">#{venda.vendedor_id}</span>
                       </p>
                     </div>
 
-                    <div className="bg-[#924187] border-[2px] border-[#9D4E92] rounded-[25px] px-6 py-3">
-                      <p className="text-xs text-[#c5ffad] font-semibold">
+                    <div className="bg-[#4EA912] rounded-[25px] px-6 py-3">
+                      <p className="text-xs text-[#DDF1D4] font-semibold">
                         Valor Total
                       </p>
                       <p className="text-2xl font-black text-[#DDF1D4]">
@@ -252,7 +252,7 @@ export default function VendasPage() {
                     {/* Ver Detalhes */}
                     <button
                       onClick={() => setVendaDetalhes(venda)}
-                      className="p-3 bg-[#924187] hover:bg-[#B478AB] cursor-pointer text-[#DDF1D4] rounded-[20px]"
+                      className="p-3 bg-[#76196C] hover:bg-[#8C3E82] cursor-pointer text-[#92EF6C] rounded-[20px]"
                     >
                       Ver detalhes
                     </button>
@@ -260,8 +260,9 @@ export default function VendasPage() {
                     {/* Estornar */}
                     <button
                       onClick={() => setVendaParaEstornar(venda)}
-                      className="p-3 bg-[#924187] hover:bg-[#B478AB] cursor-pointer text-[#DDF1D4] rounded-[20px]"
+                      className="p-3 bg-[#92EF6C] hover:bg-[#9BF377] font-semibold cursor-pointer text-[#9D4E92] rounded-[20px]"
                     >
+                      {/* vai fazer muito ainda?  ah até ia, mas vc vai dormir agora? manda zapzpa quando temrinadr não vai dormir agora? senão tudo bem eu paro aqui vou ficar acordadso parar um pouco tá bom então*/}
                       Estornar
                     </button>
 

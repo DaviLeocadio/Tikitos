@@ -1,4 +1,5 @@
 "use client";
+import { aparecerToast } from "@/utils/toast";
 import { useState, useEffect } from "react";
 
 export default function useProdutos() {
@@ -44,11 +45,11 @@ export default function useProdutos() {
       console.log(await response.json())
       if (response.ok) {
         await buscarProdutos();
-        alert("Desconto atualizado com sucesso!");
+        aparecerToast("Desconto atualizado com sucesso!");
       }
     } catch (error) {
       console.error("Erro ao salvar desconto:", error);
-      alert("Erro ao salvar desconto!");
+      aparecerToast("Erro ao salvar desconto!");
     }
   };
 
@@ -67,11 +68,11 @@ export default function useProdutos() {
 
       if (response.ok) {
         await buscarProdutos();
-        alert("Pedido realizado com sucesso!");
+        aparecerToast("Pedido realizado com sucesso!");
       }
     } catch (error) {
       console.error("Erro ao fazer pedido:", error);
-      alert("Erro ao fazer pedido!");
+      aparecerToast("Erro ao fazer pedido!");
     }
   };
 
