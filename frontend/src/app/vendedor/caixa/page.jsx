@@ -42,7 +42,8 @@ export default function DashboardResumo() {
     async function fetchResumo() {
       setCarregando(true);
       try {
-        const caixaId = getCookie("idCaixa");
+        // const caixaId = getCookie("idCaixa");
+        const caixaId = 7;
 
         const res = await fetch(
           `http://localhost:8080/vendedor/caixa/${caixaId}/resumo`,
@@ -74,210 +75,225 @@ export default function DashboardResumo() {
     <>
       {/* MENU DA SIDEBAR */}
       <div className="grid gap-5 grid-cols-1 md:grid-cols-1">
-        <div className="flex m-5 gap-2 items-center">
-          <SidebarTrigger />
-        </div>
-      </div>
+        <div className="flex gap-2 p-8 pb-0">
+          <div className="flex !items-start">
+            <SidebarTrigger />
+          </div>
+          <div className="flex items-center md:w-full">
+            {/* IMAGEM */}
+            <img
+              src="/img/configuracoes/titulo_historico.png"
+              className="w-[60%] md:w-[35%] items-center h-40 flex justify-center"
+              alt="Título Histórico"
+            />
 
-      <div className="flex flex-col md:flex-row items-center md:items-start w-full">
+            {/* GRÁFICO */}
+            <div className="w-full h-[260px] md:h-full items-end rounded-xl px-4 bg-[#DDF1D4]">
+              <div className="flex justify-between ps-8 pe-3">
+                <h1 className="text-[20px] font-bold text-[#9D4E92]">Registro de horas:</h1>
+                <div className="flex justify-between w-[35%]">
+                  <div className="flex gap-2">
+                    <i className="bi bi-circle-fill text-[#4C8E37]"></i>
+                    <p>Chegada</p>
+                  </div>
+                  <div className="flex gap-2">
+                    <i className="bi bi-circle-fill text-[#D8A8E5]"></i>
+                    <p>Saída</p>
+                  </div>
+                </div>
+              </div>
 
-        {/* IMAGEM */}
-        <img
-          src="/img/configuracoes/titulo_historico.png"
-          className="w-[60%] md:w-[35%] items-center p-6 md:p-15 flex justify-center"
-          alt="Título Histórico"
-        />
+              <ResponsiveContainer width="100%" height="90%">
 
-        {/* GRÁFICO */}
-        <div className="w-full h-[260px] md:h-[320px] items-end rounded-xl p-4 md:p-6 bg-[#DDF1D4]">
-          <ResponsiveContainer width="100%" height="90%">
-
-            <LineChart data={data} margin={{ top: 20, right: 20, left: 0, bottom: 20 }}>
-              <CartesianGrid stroke="#D9EBD1" strokeWidth={1} />
-              <XAxis
-                dataKey="name"
-                tick={{ fill: "#415932", fontSize: 15 }}
-                axisLine={false} tickLine={false} />
-              <YAxis tick={{ fill: "#415932", fontSize: 14 }} axisLine={false} tickLine={false} domain={[0, 50]} />
-              <Tooltip cursor={false} /> <Line type="monotone" dataKey="rosa" stroke="#D8A8E5" strokeWidth={4} dot={{ r: 5, fill: "#D8A8E5" }} />
-              <Line type="monotone" dataKey="verde" stroke="#4C8E37" strokeWidth={4} dot={{ r: 5, fill: "#4C8E37" }} />
-            </LineChart>
-          </ResponsiveContainer>
+                <LineChart data={data} margin={{ top: 20, right: 20, left: 0, bottom: 20 }}>
+                  <CartesianGrid stroke="#D9EBD1" strokeWidth={1} />
+                  <XAxis
+                    dataKey="name"
+                    tick={{ fill: "#415932", fontSize: 15 }}
+                    axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fill: "#415932", fontSize: 14 }} axisLine={false} tickLine={false} domain={[0, 50]} />
+                  <Tooltip cursor={false} /> <Line type="monotone" dataKey="rosa" stroke="#D8A8E5" strokeWidth={4} dot={{ r: 5, fill: "#D8A8E5" }} />
+                  <Line type="monotone" dataKey="verde" stroke="#4C8E37" strokeWidth={4} dot={{ r: 5, fill: "#4C8E37" }} />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
         </div>
       </div>
 
       {/* GRID DOS CARDS */}
       <div>
-        <div className="p-4 md:p-8">
+        <div className="p-3 md:p-6">
           <div className="max-w-6xl mx-auto">
 
             {/* --- CARDS PRINCIPAIS --- */}
-            <div className="flex flex-col lg:flex-row w-full h-full gap-6 mt-[-2%]">
-              {/* Fechamento do Caixa */}
-              <div
-                className="w-full lg:w-1/4 bg-[#EBC7F5] border-3 border-dashed border-[#b478ab] 
-                          rounded-3xl p-6 shadow-md">
+            <div className="flex flex-col lg:flex-row w-full gap-4 mt-[-1%]">
 
-                <div className="flex flex-col justify-start gap-6">
+              {/* Fechamento do Caixa */}
+              <div className="w-full lg:w-1/4 bg-[#EBC7F5] border-2 border-dashed border-[#b478ab]
+                        rounded-2xl p-4 shadow">
+
+                <div className="flex flex-col gap-4">
                   <div className="flex items-center gap-2">
-                    <h3 className="text-xl font-bold text-[#8B3CA6] leading-tight">
+                    <h3 className="text-lg font-bold text-[#8B3CA6]">
                       <span className="block text-[#569A33]">Fechamento</span>
                       <span className="block text-[#569A33]">de caixa</span>
                     </h3>
-                    <img src="/img/configuracoes/caixa_icon.png" className="w-10 h-9 ml-auto" alt="" />
+                    <img src="/img/configuracoes/caixa_icon.png" className="w-8 h-7 ml-auto" alt="" />
                   </div>
 
-                  <div className="flex flex-col gap-7 ">
+                  <div className="flex flex-col gap-5">
                     <div>
-                      <p className="text-4xl font-bold text-[#934788]">Total:</p>
-                      <p className="text-2xl font-black text-[#75BA51]">
+                      <p className="text-2xl font-bold text-[#934788]">Total:</p>
+                      <p className="text-xl font-black text-[#75BA51]">
                         R$ {resumo.totalCaixa?.toFixed(2).replace(".", ",")}
                       </p>
                     </div>
+
                     <div>
-                      <p className="text-4xl font-bold text-[#934788]">Produtos</p>
-                      <p className="text-2xl font-black text-[#75BA51]">
+                      <p className="text-2xl font-bold text-[#934788]">Produtos</p>
+                      <p className="text-xl font-black text-[#75BA51]">
                         {resumo.totalProdutos} vendidos
                       </p>
                     </div>
+
                     <div>
-                      <p className="text-4xl font-bold text-[#934788]">Caixa</p>
-                      <p className="text-2xl font-black text-[#75BA51]">
+                      <p className="text-2xl font-bold text-[#934788]">Caixa</p>
+                      <p className="text-xl font-black text-[#75BA51]">
                         R$ {resumo.valorCaixa?.toFixed(2).replace(".", ",")}
                       </p>
                     </div>
                   </div>
-
                 </div>
               </div>
 
               {/* Cards da direita */}
-              <div className="w-full lg:w-3/4 flex flex-col gap-6">
+              <div className="w-full lg:w-3/4 flex flex-col gap-4">
+
                 {/* LINHA 1 */}
-                <div className="flex flex-col md:flex-row gap-6">
+                <div className="flex flex-col md:flex-row gap-4">
+
                   {/* Categoria mais vendida */}
-                  <div
-                    className="w-full md:w-1/3 bg-[#c5ffad] border-3 border-dashed border-[#b478ab] 
-                              rounded-3xl p-6 shadow-md">
-                    <div className="flex items-center gap-3 mb-3">
-                      <h3 className="text-xl font-bold text-[#4F6940] leading-tight">
+                  <div className="w-full md:w-1/3 bg-[#c5ffad] border-2 border-dashed border-[#b478ab]
+                            rounded-2xl p-4 shadow">
+                    <div className="flex items-center gap-2 mb-2">
+                      <h3 className="text-lg font-bold text-[#4F6940]">
                         <span className="block text-[#569A33]">Categoria</span>
                         <span className="block text-[#569A33]">mais vendida</span>
                       </h3>
-                      <img src="/img/configuracoes/categoria_icon.png" className="w-12 h-7 ml-auto" alt="" />
+                      <img src="/img/configuracoes/categoria_icon.png" className="w-9 h-6 ml-auto" alt="" />
                     </div>
-                    <div className="flex items-center gap-3">
-                      <p className="text-6xl md:text-5xl font-black text-[#934788]">
+
+                    <div className="flex items-center gap-2">
+                      <p className="text-5xl font-black text-[#934788]">
                         N°{resumo.categoriaMaisVendida?.numero}
                       </p>
-                      <p className="text-2xl font-bold text-[#76196c]">
-                        {resumo.categoriaMaisVendida?.nome} 
+                      <p className="text-xl font-bold text-[#76196c]">
+                        {resumo.categoriaMaisVendida?.nome}
                       </p>
                     </div>
                   </div>
 
                   {/* Horário de mais vendas */}
-                  <div
-                    className="w-full md:w-1/3 bg-[#EBC7F5] border-3 border-dashed border-[#b478ab] 
-                              rounded-3xl p-6 shadow-md"
-                  >
-                    <div className="flex items-center gap-3 mb-3">
-
-                      <h3 className="text-xl font-bold text-[#8B3CA6] leading-tight">
+                  <div className="w-full md:w-1/3 bg-[#EBC7F5] border-2 border-dashed border-[#b478ab]
+                            rounded-2xl p-4 shadow">
+                    <div className="flex items-center gap-2 mb-2">
+                      <h3 className="text-lg font-bold text-[#8B3CA6]">
                         <span className="block text-[#569A33]">Horários de</span>
                         <span className="block text-[#569A33]">mais vendas</span>
                       </h3>
-
-                      <img src="/img/configuracoes/horario_icon.png" className="w-8 h-8 ml-auto" alt="" />
+                      <img src="/img/configuracoes/horario_icon.png" className="w-7 h-7 ml-auto" alt="" />
                     </div>
-                    <p className="text-6xl md:text-6xl font-black text-[#934788] ">
+
+                    <p className="text-5xl font-black text-[#934788]">
                       {resumo.horarioMaisVendas}
                     </p>
                   </div>
 
                   {/* Alerta Estoque */}
-                  <div
-                    className="w-full md:w-1/3 bg-[#dbdfe4] border-3 border-dashed border-[#b478ab] 
-                              rounded-3xl p-6 shadow-md"
-                  >
-                    <div className="flex items-center gap-3 mb-3">
-
-                      <h3 className="text-xl font-bold text-[#4F6940] leading-tight">
+                  <div className="w-full md:w-1/3 bg-[#dbdfe4] border-2 border-dashed border-[#b478ab]
+                            rounded-2xl p-4 shadow">
+                    <div className="flex items-center gap-2 mb-2">
+                      <h3 className="text-lg font-bold text-[#4F6940]">
                         <span className="block text-[#569A33]">Alerta nos</span>
                         <span className="block text-[#569A33]">estoques</span>
                       </h3>
-                      <img src="/img/configuracoes/alerta_icon.png" className="w-9 h-8 ml-auto" alt="" />
+                      <img src="/img/configuracoes/alerta_icon.png" className="w-7 h-7 ml-auto" alt="" />
                     </div>
-                    <div className="flex items-center gap-3">
-                      <p className="text-7xl md:text-6xl font-black text-[#934788] leading-none">
+
+                    <div className="flex items-center gap-2">
+                      <p className="text-6xl font-black text-[#934788] leading-none">
                         {resumo.alertaEstoque?.toString().padStart(2, "0")}
                       </p>
-
-                      <p className="text-md font-bold text-[#76196c] leading-tight">
+                      <p className="text-sm font-bold text-[#76196c] leading-tight">
                         Produtos em nível crítico
                       </p>
                     </div>
                   </div>
+
                 </div>
 
                 {/* LINHA 2 */}
-                <div className="flex flex-col md:flex-row gap-6">
-                  {/* Produtos em promoção */}
-                  <div
-                    className="w-full md:w-1/3 bg-[#dbdfe4] border-3 border-dashed border-[#b478ab] 
-                              rounded-3xl p-6 shadow-md"
-                  >
-                    <div className="flex items-center gap-3 mb-3">
+                <div className="flex flex-col md:flex-row gap-4">
 
-                      <h3 className="text-xl font-bold text-[#4F6940] leading-tight">
+                  {/* Produtos em promoção */}
+                  <div className="w-full md:w-1/3 bg-[#dbdfe4] border-2 border-dashed border-[#b478ab]
+                            rounded-2xl p-4 shadow">
+                    <div className="flex items-center gap-2 mb-2">
+                      <h3 className="text-lg font-bold text-[#4F6940]">
                         <span className="block text-[#569A33]">Produtos em</span>
                         <span className="block text-[#569A33]">promoção</span>
                       </h3>
-                      <img src="/img/configuracoes/promocao_icon.png" className="w-8 h-10 ml-auto" alt="" />
+                      <img src="/img/configuracoes/promocao_icon.png" className="w-7 h-9 ml-auto" alt="" />
                     </div>
-                    <div className="flex items-center gap-3">
-                      <p className="text-6xl md:text-6xl font-black text-[#934788] text-center">
+
+                    <div className="flex items-center gap-2">
+                      <p className="text-5xl font-black text-[#934788] text-center">
                         {resumo.produtosPromocao}
                       </p>
-
-                      <p className="text-md font-bold text-[#76196c] leading-tight">
+                      <p className="text-sm font-bold text-[#76196c] leading-tight">
                         Produtos promocionais
                       </p>
                     </div>
                   </div>
 
                   {/* Histórico */}
-                  <div
-                    className="w-full md:w-2/3 aspect-2/1 bg-[#caf4b7] border-3 border-dashed border-[#b478ab] rounded-3xl p-6 shadow-md">
-                    <div className="flex items-center gap-3 mb-3">
-                      <h3 className="text-xl font-bold text-[#4F6940] leading-tight">
+                  <div className="w-full md:w-2/3 bg-[#caf4b7] border-2 border-dashed border-[#b478ab]
+                            rounded-2xl p-4 shadow">
+                    <div className="flex items-center gap-2 mb-2">
+                      <h3 className="text-lg font-bold text-[#4F6940]">
                         <span className="block text-[#569A33]">Histórico do dia</span>
                         <span className="block text-[#569A33]">(Registro de compras)</span>
                       </h3>
-                      <img src="/img/configuracoes/historico_icon.png" className="w-8 h-9 ml-auto" alt="" />
+                      <img src="/img/configuracoes/historico_icon.png" className="w-7 h-8 ml-auto" alt="" />
                     </div>
-                    <div className="w-[100%] bg-[#92ef6c] h-[30%] rounded-xl">
-                    <div className="space-y-3 max-h-[13vh] overflow-y-scroll">
-                      {resumo.historicoCompras?.map((h, i) => (
-                        <div key={i} className="bg-[#9BF377] border-4 border-[#4F6940] rounded-2xl p-4 flex items-center justify-between">
-                          <p className="text-xl md:text-2xl font-bold text-[#4F6940]">
-                            {h.produtos.toString().padStart(2, "0")} Produtos
-                          </p>
-                          <p className="text-2xl md:text-3xl font-black text-[#8B3CA6]">
-                            R${h.valor.toFixed(2)}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  </div>
 
+                    <div className="w-full bg-[#92ef6c] h-[24%] rounded-lg">
+                      <div className="space-y-2 max-h-[12vh] overflow-y-scroll p-1">
+                        {resumo.historicoCompras?.map((h, i) => (
+                          <div key={i} className="bg-[#9BF377] border-2 border-[#4F6940]
+                                            rounded-xl p-3 flex items-center justify-between">
+                            <p className="text-lg font-bold text-[#4F6940]">
+                              {h.produtos.toString().padStart(2, "0")} Produtos
+                            </p>
+                            <p className="text-xl font-black text-[#8B3CA6]">
+                              R${h.valor.toFixed(2)}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                  </div>
                 </div>
+
               </div>
             </div>
+
           </div>
         </div>
       </div>
+
 
     </>
   );

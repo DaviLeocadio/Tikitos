@@ -248,7 +248,7 @@
           <div
             data-sidebar="sidebar"
             data-slot="sidebar-inner"
-            className="bg-sidebar jusfify-center h-[99%] sm:h-[96%] rounded-2xl border-3 border-dashed border-[#924187] group-data-[variant=floating]:border-sidebar-border flex w-full flex-col group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:shadow-sm">
+            className="bg-sidebar jusfify-center h-[99%] sm:h-[96%] rounded-4xl border-3 border-dashed border-[#924187] group-data-[variant=floating]:border-sidebar-border flex w-full flex-col group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:shadow-sm">
             {children}
           </div>
         </div>

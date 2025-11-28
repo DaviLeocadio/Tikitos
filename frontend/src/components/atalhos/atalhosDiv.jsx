@@ -63,7 +63,7 @@ export default function AtalhosDiv() {
     }, [listaProdutos]);
     return (
         <>
-            <div className="hidden lg:flex bg-[#9BF377] border-[3px] border-dashed border-[#b478ab] rounded-[50px]  p-2 px-5 text-[#8c3e82] text-sm font-semibold justify-between">
+            <div className="hidden w-full lg:flex bg-[#9BF377] border-[3px] border-dashed border-[#b478ab] rounded-[50px]  p-2 px-5 text-[#8c3e82] text-sm font-semibold justify-between">
 
                 <div className="gap-2 flex font-bold">
                     <h3>Atalhos:</h3>
