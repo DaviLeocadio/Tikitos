@@ -42,7 +42,8 @@ export default function DashboardResumo() {
     async function fetchResumo() {
       setCarregando(true);
       try {
-        const caixaId = getCookie("idCaixa");
+        // const caixaId = getCookie("idCaixa");
+        const caixaId = 7;
 
         const res = await fetch(
           `http://localhost:8080/vendedor/caixa/${caixaId}/resumo`,

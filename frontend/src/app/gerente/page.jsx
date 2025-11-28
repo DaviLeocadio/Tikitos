@@ -96,7 +96,7 @@ export default function GerenteDashboard() {
   const [periodo, setPeriodo] = useState("mes");
   const [erro, setErro] = useState(null);
 
-  useEffect(() => {
+  useEffect(() => { 
     const nome = getCookie("nome");
     const empresa = getCookie("empresa_nome");
     setNomeGerente(nome || "Gerente");
@@ -264,7 +264,7 @@ export default function GerenteDashboard() {
                   title="Alertas"
                   description="Produtos com estoque baixo"
                   icon="bell"
-                  href="/gerente/estoque-baixo"
+                  href="/gerente/alertas"
                   color="[#ff6b6b]"
                 />
               </div>

@@ -22,9 +22,6 @@ import {
   FileText,
 } from "lucide-react";
 
-// ============================
-// PALETA OFICIAL TIKITOS
-// ============================
 const TIKI = {
   roxoEscuro: "#76196c",
   roxoMedio: "#924187",
@@ -54,9 +51,6 @@ export default function RelatorioGerente() {
     { value: "cartao", label: "Cartão" },
   ];
 
-  // ===============================
-  // 🔥 BUSCAR DADOS DA API REAL
-  // ===============================
   const buscarRelatorio = async () => {
     setLoading(true);
     try {
@@ -136,18 +130,13 @@ export default function RelatorioGerente() {
     }));
   };
 
-  // ============================
-  // ESTILO TIKITOS APLICADO A TUDO
-  // ============================
   const cardStyle =
     "bg-white border-2 border-dashed rounded-2xl p-6 shadow-sm";
 
   return (
     <div
-      className="min-h-screen p-6"
-      style={{
-        background: `linear-gradient(135deg, ${TIKI.rosaTikitos}, #ffffff)`,
-      }}
+      className="min-h-screen p-6 bg-gradient-to-r from-[#DDF1D4] to-verdeclaro"
+     
     >
       <div className="max-w-7xl mx-auto">
         {/* TITULO */}
@@ -252,10 +241,8 @@ export default function RelatorioGerente() {
                 <button
                   onClick={buscarRelatorio}
                   disabled={loading}
-                  className="w-full py-3 font-semibold text-white rounded-xl transition"
-                  style={{
-                    backgroundColor: TIKI.roxoMedio,
-                  }}
+                  className="w-full py-3 font-semibold text-roxo rounded-xl transition cursor-pointer bg-verdeclaro border-3 border-dashed border-roxo hover:bg-verdefundo"
+              
                 >
                   {loading ? "Carregando..." : "Gerar"}
                 </button>
@@ -288,9 +275,7 @@ export default function RelatorioGerente() {
           </div>
         )}
 
-        {/* ==============================
-             CONTEÚDO DO RELATÓRIO
-        =============================== */}
+        {/* CONTEÚDO DO RELATÓRIO */}
         {dados && (
           <>
             {/* CARDS RESUMO */}
@@ -374,7 +359,7 @@ export default function RelatorioGerente() {
                   <table className="w-full">
                     <tbody>
                       {dados.gastos.map((g) => (
-                        <tr key={g.id_gasto} className="border-b">
+                        <tr key={g.id_despesa} className="border-b">
                           <td className="p-3">{g.descricao}</td>
                           <td className="p-3">
                             {new Date(g.data_adicionado).toLocaleDateString("pt-BR")}
