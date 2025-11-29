@@ -115,6 +115,8 @@ export default function CardProduto({ produto }) {
 
   
 
+  
+
   const categorias = [
     { categoria: "Pelúcias", img: "/img/categorias/pelucia_categoria.png" },
     { categoria: "Musical", img: "/img/categorias/musical_categoria.png" },
