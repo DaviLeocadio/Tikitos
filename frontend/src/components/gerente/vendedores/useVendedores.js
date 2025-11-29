@@ -2,7 +2,7 @@
 import { aparecerToast } from "@/utils/toast";
 import { useState, useEffect } from "react";
 
-export default function useProdutos() {
+export default function useVendedores() {
   const [vendedores, setVendedores] = useState([]);
   const [loading, setLoading] = useState(true);
 

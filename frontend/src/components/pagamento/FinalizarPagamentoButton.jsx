@@ -18,50 +18,73 @@ import {
 } from "@/utils/carrinho";
 import { aparecerToast } from "@/utils/toast";
 
-export default function FinalizarPagamentoButton({ pagamento, cpf, embalagem = false }) {
+export default function FinalizarPagamentoButton({
+  pagamento,
+  cpf,
+  embalagem = false,
+}) {
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState("confirm");
   const [contador, setContador] = useState(3);
   const [buttonActive, setButtonActive] = useState(false);
   const [mensagemValidacao, setMensagemValidacao] = useState("");
+  const [valorRecebido, setValorRecebido] = useState();
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setValorRecebido(localStorage.getItem("valorRecebido"));
+    }, 200);
+
+    return () => clearInterval(interval);
+  }, []);
 
   // Validação em tempo real
   useEffect(() => {
     const quantidadeItens = obterQuantidade();
-    const cpfLimpo = cpf ? cpf.replace(/\D/g, '') : '';
-    
+    const cpfLimpo = cpf ? cpf.replace(/\D/g, "") : "";
+    const total = calcularTotal();
+    console.log(valorRecebido);
     // Reseta mensagem
     setMensagemValidacao("");
-    
+
     // Validações
     if (quantidadeItens === 0) {
       setMensagemValidacao("Adicione produtos ao carrinho");
       setButtonActive(false);
       return;
     }
-    
+
     if (!pagamento) {
       setMensagemValidacao("Selecione um método de pagamento");
       setButtonActive(false);
       return;
     }
-    
+
     if (!cpf || cpf.trim().length === 0) {
       setMensagemValidacao("Digite o CPF para nota fiscal");
       setButtonActive(false);
       return;
     }
-    
+
     if (cpfLimpo.length !== 11) {
       setMensagemValidacao("CPF deve ter 11 dígitos");
       setButtonActive(false);
       return;
     }
-    
+
+    if (pagamento === "dinheiro") {
+      const recebido = Number(valorRecebido || 0);
+      if (recebido < total) {
+        setMensagemValidacao("Valor recebido insuficiente");
+        setButtonActive(false);
+        return;
+      }
+    }
+
     // Tudo OK
     setMensagemValidacao("");
     setButtonActive(true);
-  }, [pagamento, cpf]);
+  }, [pagamento, cpf, valorRecebido]);
 
   const finalizarVenda = async () => {
     setStep("loading");
@@ -82,8 +105,8 @@ export default function FinalizarPagamentoButton({ pagamento, cpf, embalagem = f
     }
 
     // Remove formatação do CPF
-    const cpfLimpo = cpf.replace(/\D/g, '');
-    
+    const cpfLimpo = cpf.replace(/\D/g, "");
+
     if (cpfLimpo.length !== 11) {
       aparecerToast("CPF inválido! Deve conter 11 dígitos.");
       setStep("confirm");
@@ -96,7 +119,7 @@ export default function FinalizarPagamentoButton({ pagamento, cpf, embalagem = f
 
     // Calcula o total com embalagem se necessário
     const totalCarrinho = calcularTotal();
-    const totalFinal = embalagem ? totalCarrinho + 1.50 : totalCarrinho;
+    const totalFinal = embalagem ? totalCarrinho + 1.5 : totalCarrinho;
 
     // Monta o payload
     const venda = {
@@ -126,7 +149,9 @@ export default function FinalizarPagamentoButton({ pagamento, cpf, embalagem = f
 
       if (!response.ok) {
         console.error("Erro do servidor:", data);
-        throw new Error(data.error || `Erro ${response.status}: ${response.statusText}`);
+        throw new Error(
+          data.error || `Erro ${response.status}: ${response.statusText}`
+        );
       }
 
       console.log("Venda finalizada com sucesso:", data);
@@ -146,7 +171,6 @@ export default function FinalizarPagamentoButton({ pagamento, cpf, embalagem = f
           window.location.href = "/vendedor/pdv";
         }
       }, 1000);
-
     } catch (e) {
       aparecerToast(`Erro ao finalizar venda: ${e.message}`);
       console.error("Erro completo:", e);
@@ -164,16 +188,19 @@ export default function FinalizarPagamentoButton({ pagamento, cpf, embalagem = f
           text-[#9bf377] text-sm sm:text-base font-bold 
           flex gap-2 sm:gap-3 justify-center items-center 
           transform transition-all duration-300 ease-out 
-          ${buttonActive 
-            ? 'hover:bg-[#65745A] hover:scale-[0.97] cursor-pointer' 
-            : 'pointer-events-none opacity-75 grayscale cursor-not-allowed'
+          ${
+            buttonActive
+              ? "hover:bg-[#65745A] hover:scale-[0.97] cursor-pointer"
+              : "pointer-events-none opacity-75 grayscale cursor-not-allowed"
           }
         `}
       >
-        <h3 className="text-base sm:text-lg whitespace-nowrap">Finalizar pagamento</h3>
+        <h3 className="text-base sm:text-lg whitespace-nowrap">
+          Finalizar pagamento
+        </h3>
         <ChevronRight size={20} className="sm:w-6 sm:h-6" />
       </button>
-      
+
       {/* Mensagem de validação */}
       {mensagemValidacao && (
         <p className="text-xs sm:text-sm text-[#924187] font-semibold text-right animate-pulse mx-auto">
@@ -205,11 +232,15 @@ export default function FinalizarPagamentoButton({ pagamento, cpf, embalagem = f
                 </p>
                 {embalagem && (
                   <p className="text-[#76196c] font-semibold">
-                    Embalagem: <span className="font-normal">Sim (+R$1,50)</span>
+                    Embalagem:{" "}
+                    <span className="font-normal">Sim (+R$1,50)</span>
                   </p>
                 )}
                 <p className="text-[#4f6940] font-bold mt-2">
-                  Total: R$ {(calcularTotal() + (embalagem ? 1.50 : 0)).toFixed(2).replace('.', ',')}
+                  Total: R${" "}
+                  {(calcularTotal() + (embalagem ? 1.5 : 0))
+                    .toFixed(2)
+                    .replace(".", ",")}
                 </p>
               </div>
             </div>

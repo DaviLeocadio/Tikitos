@@ -12,12 +12,7 @@ import InputTelefoneMask from "@/components/inputMasks/InputCEPMask";
 import InputCPFMask from "@/components/inputMasks/InputCPFMask";
 import InputDataMask from "@/components/inputMasks/InputDataMask";
 
-export default function ModalEditarVendedor({
-  vendedor,
-  open,
-  onClose,
-  onSalvar,
-}) {
+export default function ModalEditarDesconto({ vendedor, open, onClose, onSalvar }) {
   const [vendedorInfo, setVendedorInfo] = useState(vendedor);
   const [loading, setLoading] = useState(false);
 
