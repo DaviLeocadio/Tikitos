@@ -1,103 +1,203 @@
-import Image from "next/image";
+"use client";
+import styles from "./page.module.css";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { setCookie, getCookie } from "cookies-next/client";
+import { aparecerToast } from "@/utils/toast";
 
-export default function Home() {
+export default function Login() {
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
+
+
+
+  useEffect(() => {
+    // Verifica de há excesso de caracteres para proteção contra ataques
+    const temporizador = setTimeout(() => {
+      if (email.length > 100 || senha.length > 25) {
+        return aparecerToast("Máximo de caracteres excedido!");
+      }
+    }, 100);
+
+    return () => clearTimeout(temporizador);
+  }, [email, senha]);
+
+  async function loginUser() {
+    if (!email || !senha) return aparecerToast("Preencha todos os campos!");
+
+    try {
+      const response = await fetch("http://localhost:8080/auth/login", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email, senha: senha }),
+      });
+
+      const data = await response.json();
+
+      //Tratamento de erro caso o email ou a senha estiver incorreta
+      if (response.status == 404 || response.status == 401) {
+        return aparecerToast("Email ou senha incorretos!");
+      }
+
+      if (response.ok) {
+        aparecerToast("Login realizado com sucesso!");
+
+        setCookie("email", data.usuario.email);
+        setCookie("nome", data.usuario.nome);
+        setCookie("empresa", data.usuario.id_empresa); 
+        setCookie("empresa_nome", data.usuario.empresa_nome); 
+        setCookie("perfil", data.usuario.perfil);
+
+        if (data.expiresAt) {
+          setCookie("expiresAt", data.expiresAt);
+        }
+
+        // Redirecionamento
+        if (data.usuario.perfil == "vendedor") {
+          return (window.location.href = "/vendedor/pdv");
+        }
+        if (data.usuario.perfil == "gerente") {
+          return (window.location.href = "/gerente");
+        }
+        if (data.usuario.perfil == "admin") {
+          return (window.location.href = "/admin");
+        }
+      }
+
+      return;
+    } catch (error) {
+      return console.error("Erro na requisição", error);
+    }
+  }
+
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.js
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <>
+      <div
+        className={`grid grid-cols-1 lg:grid-cols-2 gap-1 min-h-screen ${styles.login_fundo}`}
+      >
+        {/* IMAGEM DA MENINA PULANDO */}
+        <div className="hidden lg:block m-0 p-0">
+          <img
+            className="m-0 p-0 w-full h-full "
+            src="/img/login/login_imagem.png"
+            alt="Imagem grande"
+          />
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
+
+        <div className="hidden lg:hidden m-0 p-0">
+          <img
+            className="m-0 p-0 w-full h-full"
+            src="/img/login/login_imagem2.png"
+            alt="Imagem pequena"
           />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+        </div>
+
+        {/* TÍTULO DE LOGIN E TEXTINHO */}
+        <div className="p-17 sm:p-15 md:p-18 flex flex-col justify-center">
+          <div className="pb-5 pl-0 ml-0 sm:p-7 md:p-10 sm:pb-15 md:pb-7 md:pt-0">
+            <div className=" block lg:hidden ">
+              {/* imagem logo Tikitos */}
+              <img
+                className="w-full h-auto"
+                src="/img/logos/logo_comprida.png"
+                alt=""
+              />
+            </div>
+
+            <img
+              src="/img/login/login_titulo.png"
+              className="w-full h-auto"
+              alt=""
+            />
+
+            <div className="relative flex flex-col items-center">
+              <h3
+                className={`text-[14px] xs:text-[17px] sm:text-[23px] md:text-[26px] lg:text-[14px] xl:text-[17px] leading-tight z-10 text-center text-[var(--color-verdao)] `}
+              >
+                Acesse e continue espalhando encanto!
+              </h3>
+
+              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 bg-[#E5B8F1] rounded-lg h-3 z-0 w-0 xs:w-92 sm:w-120 md:w-136 lg:w-80 xl:w-90"></div>
+            </div>
+          </div>
+
+          {/* LOGIN */}
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              loginUser();
+            }}
+          >
+            <div className={`bg-[#9CD089] ${styles.form_container}`}>
+              {/* INPUT DE EMAIL */}
+              <div className={`${styles.form_group} flex flex-col`}>
+                <label className={`text-[var(--color-verdao)]`} htmlFor="email">
+                  Insira o seu e-mail:
+                </label>
+                <input
+                  type="text"
+                  id="email"
+                  name="email"
+                  placeholder="E-mail"
+                  required=""
+                  className={`bg-[#DABCE1] focus:border-color[#9CD089]`}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
+
+              {/* INPUT DE SENHA */}
+              <div className={`${styles.form_group} flex flex-col`}>
+                <label
+                  className={`text-[var(--color-verdao)] `}
+                  htmlFor="email"
+                >
+                  Insira a sua senha:
+                </label>
+                <input
+                  type="password"
+                  id="email"
+                  name="email"
+                  placeholder="Senha"
+                  required=""
+                  className={`bg-[#DABCE1]`}
+                  value={senha}
+                  onChange={(e) => setSenha(e.target.value)}
+                />
+              </div>
+            </div>
+
+            {/* BOTÃO DE ENVIAR */}
+            <div className="flex justify-center">
+              <button className="group cursor-pointer transition-all duration-200 mt-5 rounded-full border border-transparent flex items-center justify-center gap-2 whitespace-nowrap bg-[#D6B9E2] text-[var(--color-verdao)] font-light hover:bg-[#db90e4] active:scale-95 px-8 py-3 text-[15px] sm:px-10 sm:text-[16px] md:px-14 md:text-[15px] lg:px-16 lg:text-[15px] xl:px-29">
+                <span className="text-end">Entre clicando aqui!</span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 16 16"
+                  fill="currentColor"
+                  className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7 text-[#6a0d75] transition-transform duration-300 ease-in-out group-hover:translate-x-[3px]"
+                >
+                  <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z" />
+                </svg>
+              </button>
+            </div>
+          </form>
+
+          {/* ESCRITA COM O LINK */}
+          <p
+            className={`mt-5 mb-0 pb-0 text-center text-[#76216d]  ${styles.signup_link}`}
+          >
+            Esqueceu ou não tem senha?
+            <Link
+              href="/login/token"
+              className={`no-underline hover:underline mx-1 ${styles.signup_link} ${styles.link}`}
+            >
+              Clique aqui!
+            </Link>
+          </p>
+        </div>
+      </div>
+    </>
   );
 }

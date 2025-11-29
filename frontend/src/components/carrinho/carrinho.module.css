@@ -1,0 +1,93 @@
+.rotate_on_hover {
+  display: inline-block;
+  transition: transform 2s;
+}
+
+.rotate_on_hover:hover {
+  animation: spin 0.6s linear 1;
+}
+
+.rotate_on_hover:active {
+  animation: spin 0.6s linear 1;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.brush_animate {
+  display: inline-block;
+  transition: transform .3s;
+}
+
+
+.brush_animate:hover {
+  transform: rotate(100%);
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #924187;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #b96aae;
+}
+
+/* ========== APROXIMAR O FORM DO ACCORDION (PRESERVA 3D) ========== */
+
+/* faz o 3D ter menos projeção para a direita */
+.stackedForm {
+  transform-origin: center left; /* puxa mais para o lado do accordion */
+}
+
+/* reduz o skew que empurra visualmente */
+.stackedForm .wrapper {
+  transform: skewY(-10deg); /* antes era -14deg */
+}
+
+/* diminui largura total para encaixar melhor */
+.stackedForm .wrapper li,
+.stackedForm button {
+  width: 180px; /* antes era 200px */
+}
+
+/* diminui os pseudo elementos que empurram para a direita */
+.stackedForm .wrapper li::before,
+.stackedForm button::before {
+  left: -22px; /* antes era -40px → enorme */
+  width: 32px; /* antes era 40px */
+}
+
+.stackedForm .wrapper li::after,
+.stackedForm button::after {
+  width: 180px; /* para acompanhar a nova width */
+}
+
+/* mantém o efeito de camadas mas reduz a projeção "para fora" */
+.stackedForm .wrapper li:hover,
+.stackedForm button:hover {
+  transform: translateX(-12px); /* antes -20 */
+}
+
+/* reduz distância entre o accordion e o form */
+.supportRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 1.25rem; /* MUITO mais perto */
+  perspective: 900px; /* mantém 3D porém controlado */
+}

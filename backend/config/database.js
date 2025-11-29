@@ -1,11 +1,15 @@
 import mysql from 'mysql2/promise.js';
 import bcrypt from 'bcryptjs';
 
+import dotenv from "dotenv";
+
+dotenv.config();
+
 const pool = mysql.createPool({
-  host: 'localhost',
-  user: 'root',
-  password: '',
-  database: 'tikitos',
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
@@ -124,4 +128,16 @@ async function compare(senha, hash) {
   }
 }
 
-export { create, readAll, read, update, deleteRecord, compare };
+
+async function readRaw(sql, params = []) {
+  const connection = await getConnection();
+  try {
+    const [rows] = await connection.execute(sql, params);
+    return rows;
+  } finally {
+    connection.release();
+  }
+}
+
+
+export { create, readAll, read, update, deleteRecord, compare, readRaw };
