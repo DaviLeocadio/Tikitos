@@ -8,12 +8,14 @@ export default function GetColumns({ setModalDesconto, setModalPedido }) {
       header: ({ column }) => (
         <button
           className="flex items-center gap-2 font-bold hover:text-[#924187]"
-          onClick={() =>
-            column.toggleSorting(column.getIsSorted() === "asc")
-          }
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           ID
-          <i className={`bi bi-arrow-${column.getIsSorted() === "asc" ? "up" : "down"}-short text-lg`} />
+          <i
+            className={`bi bi-arrow-${
+              column.getIsSorted() === "asc" ? "up" : "down"
+            }-short text-lg`}
+          />
         </button>
       ),
       cell: ({ row }) => (
@@ -29,12 +31,14 @@ export default function GetColumns({ setModalDesconto, setModalPedido }) {
       header: ({ column }) => (
         <button
           className="flex items-center gap-2 font-bold hover:text-[#924187]"
-          onClick={() =>
-            column.toggleSorting(column.getIsSorted() === "asc")
-          }
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           Produto
-          <i className={`bi bi-arrow-${column.getIsSorted() === "asc" ? "up" : "down"}-short text-lg`} />
+          <i
+            className={`bi bi-arrow-${
+              column.getIsSorted() === "asc" ? "up" : "down"
+            }-short text-lg`}
+          />
         </button>
       ),
       cell: ({ row }) => (
@@ -44,7 +48,6 @@ export default function GetColumns({ setModalDesconto, setModalPedido }) {
         </div>
       ),
     },
-
 
     {
       accessorKey: "categoria.nome",
@@ -61,12 +64,14 @@ export default function GetColumns({ setModalDesconto, setModalPedido }) {
       header: ({ column }) => (
         <button
           className="flex items-center gap-2 font-bold hover:text-[#924187]"
-          onClick={() =>
-            column.toggleSorting(column.getIsSorted() === "asc")
-          }
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           Preço
-          <i className={`bi bi-arrow-${column.getIsSorted() === "asc" ? "up" : "down"}-short text-lg`} />
+          <i
+            className={`bi bi-arrow-${
+              column.getIsSorted() === "asc" ? "up" : "down"
+            }-short text-lg`}
+          />
         </button>
       ),
       cell: ({ row }) => (
@@ -81,20 +86,32 @@ export default function GetColumns({ setModalDesconto, setModalPedido }) {
       header: ({ column }) => (
         <button
           className="flex items-center gap-2 font-bold hover:text-[#924187]"
-          onClick={() =>
-            column.toggleSorting(column.getIsSorted() === "asc")
-          }
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           Estoque
-          <i className={`bi bi-arrow-${column.getIsSorted() === "asc" ? "up" : "down"}-short text-lg`} />
+          <i
+            className={`bi bi-arrow-${
+              column.getIsSorted() === "asc" ? "up" : "down"
+            }-short text-lg`}
+          />
         </button>
       ),
       cell: ({ row }) => {
         const estoque = row.getValue("estoque");
         return (
-          <span className={`font-bold ${estoque < 10 ? "text-red-600" : "text-[#569a33]"}`}>
+          <span
+            className={`font-bold ${
+              estoque <= 5
+                ? "text-red-600"
+                : estoque <= 10
+                ? "text-orange-600"
+                : estoque < 20
+                ? "text-yellow-600"
+                :"text-[#569a33]"
+            }`}
+          >
             {estoque}
-            {estoque < 10 && " ⚠️"}
+            {estoque < 20 && " ⚠️"}
           </span>
         );
       },

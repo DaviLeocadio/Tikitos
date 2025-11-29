@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import { useEffect, forwardRef } from "react";
 import { atualizarQuantidade, removerDoCarrinho } from "@/utils/carrinho.js";
 
@@ -52,14 +52,21 @@ export default forwardRef(function CarrinhoCard(props, ref) {
           <p className="w-full flex items-center gap-2">
             <span className="text-[#8C3E82] text-[15px] font-bold">
               {" R$ "}
-              {Number(produto.preco * produto.quantidade)
-                .toFixed(2)
-                .replace(".", ",")}
+              {parseInt(produto.desconto) == 0
+                ? Number(produto.preco * produto.quantidade)
+                    .toFixed(2)
+                    .replace(".", ",")
+                : Number(produto.precoComDesconto * produto.quantidade)
+                    .toFixed(2)
+                    .replace(".", ",")}
             </span>
 
             <span className="text-[#c97fda] text-[13px]">
-              ({produto.quantidade}× {produto.precoFormatado})
-             
+              ({produto.quantidade}×{" "}
+              {parseInt(produto.desconto) == 0
+                ? produto.precoFormatado
+                : produto.precoFormatadoComDesconto}
+              )
             </span>
           </p>
         </div>
@@ -75,7 +82,11 @@ export default forwardRef(function CarrinhoCard(props, ref) {
                   produto.quantidade == 1 ? "pointer-events-none" : ""
                 }`}
               >
-                <svg className="w-3 h-5" viewBox="0 0 24 24" stroke="currentColor">
+                <svg
+                  className="w-3 h-5"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
                   <path d="M5 12h14" />
                 </svg>
               </button>
@@ -94,7 +105,11 @@ export default forwardRef(function CarrinhoCard(props, ref) {
                   produto.quantidade == 10 ? "pointer-events-none" : ""
                 }`}
               >
-                <svg className="w-3 h-5" viewBox="0 0 24 24" stroke="currentColor">
+                <svg
+                  className="w-3 h-5"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
                   <path d="M5 12h14" />
                   <path d="M12 5v14" />
                 </svg>

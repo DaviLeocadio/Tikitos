@@ -116,38 +116,14 @@ export default function CardProduto({ produto }) {
   
 
   const categorias = [
-    {
-      categoria: "Pelúcias",
-      img: "/img/categorias/pelucia_categoria.png",
-    },
-    {
-      categoria: "Musical",
-      img: "/img/categorias/musical_categoria.png",
-    },
-    {
-      categoria: "Fantasia e Aventura",
-      img: "/img/categorias/fantasia_categoria.png",
-    },
-    {
-      categoria: "Movimento",
-      img: "/img/categorias/movimento_categoria.png",
-    },
-    {
-      categoria: "Jogos",
-      img: "/img/categorias/jogos_categoria.png",
-    },
-    {
-      categoria: "Construção",
-      img: "/img/categorias/construcao_categoria.png",
-    },
-    {
-      categoria: "Veículos",
-      img: "/img/categorias/veiculo_categoria.png",
-    },
-    {
-      categoria: "Bonecos",
-      img: "/img/categorias/bonecos_categoria.png",
-    },
+    { categoria: "Pelúcias", img: "/img/categorias/pelucia_categoria.png" },
+    { categoria: "Musical", img: "/img/categorias/musical_categoria.png" },
+    { categoria: "Fantasia e Aventura", img: "/img/categorias/fantasia_categoria.png" },
+    { categoria: "Movimento", img: "/img/categorias/movimento_categoria.png" },
+    { categoria: "Jogos", img: "/img/categorias/jogos_categoria.png" },
+    { categoria: "Construção", img: "/img/categorias/construcao_categoria.png" },
+    { categoria: "Veículos", img: "/img/categorias/veiculo_categoria.png" },
+    { categoria: "Bonecos", img: "/img/categorias/bonecos_categoria.png" },
   ];
 
     // function Highlight({ text, matches }) {
@@ -191,7 +167,22 @@ export default function CardProduto({ produto }) {
           <h3 className="text-[#8C3E82] text-[12px] tracking-tighter">
             {produto.nome}
           </h3>
-          <p className="text-[#c97fda] text-[12px]">{produto.precoFormatado}</p>
+          {parseInt(produto.desconto) !== 0 ? (
+            <>
+              <p className=" text-[12px] ">
+                <span className="line-through text-[#c97fda] opacity-75">
+                  {produto.precoFormatado}
+                </span>{" "}
+                <span className="no-line-through text-red-700">
+                  {produto.precoFormatadoComDesconto}
+                </span>
+              </p>
+            </>
+          ) : (
+            <p className="text-[#c97fda] text-[12px]">
+              {produto.precoFormatado}
+            </p>
+          )}
         </div>
 
         <div className="w-11 h-full flex justify-between items-center gap-2">
