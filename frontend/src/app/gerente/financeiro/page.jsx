@@ -49,7 +49,7 @@ export default function GerenteFinanceiro() {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#f0e5f5] to-[#e8f5e8] p-5 lg:p-8">
+    <div className="min-h-screen bg-gradient-to-br [#e8f5e8] p-5 lg:p-8">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
