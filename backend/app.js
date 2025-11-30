@@ -19,7 +19,7 @@ import { metaController } from "./controllers/MetaController.js";
 //Configurações das permissões do cors
 app.use(cors({
   credentials: true, // Permite envio de cookies
-  origin: "http://localhost:3000", // Frontend Next.js
+  origin: ["http://localhost:3000", "http://localhost:3001"], // Frontend Next.js (allow dev ports)
 }));
 
 app.use((req, res, next) => {

@@ -9,8 +9,6 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
 
-
-
   useEffect(() => {
     // Verifica de há excesso de caracteres para proteção contra ataques
     const temporizador = setTimeout(() => {
@@ -45,8 +43,8 @@ export default function Login() {
 
         setCookie("email", data.usuario.email);
         setCookie("nome", data.usuario.nome);
-        setCookie("empresa", data.usuario.id_empresa); 
-        setCookie("empresa_nome", data.usuario.empresa_nome); 
+        setCookie("empresa", data.usuario.id_empresa);
+        setCookie("empresa_nome", data.usuario.empresa_nome);
         setCookie("perfil", data.usuario.perfil);
 
         if (data.expiresAt) {

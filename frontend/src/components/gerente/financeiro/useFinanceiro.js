@@ -54,8 +54,8 @@ export default function useFinanceiro() {
     const { inicio, fim } = calcularIntervalo(periodAtual, dataAtual);
 
     // Restrição: não permitir datas futuras (fim não pode ser depois de hoje)
-    if (fim > hoje) {
-      aparecerToast("Não é possível visualizar dados de períodos futuros!");
+    if (inicio > hoje) {
+      aparecerToast("Não é possível visualizar períodos que começam no futuro!");
       return false;
     }
 
@@ -63,7 +63,7 @@ export default function useFinanceiro() {
   };
 
   const buscarDados = async (periodoAtual, dataAtual) => {
-    // Validar se a data não é futura
+    // Validar início não esteja no futuro (permite clamping do fim)
     if (!validarData(periodoAtual, dataAtual)) {
       setLoading(false);
       return;
@@ -71,7 +71,13 @@ export default function useFinanceiro() {
 
     setLoading(true);
     try {
-      const { inicio, fim } = calcularIntervalo(periodoAtual, dataAtual);
+      const { inicio: rawInicio, fim: rawFim } = calcularIntervalo(periodoAtual, dataAtual);
+      const hoje = new Date();
+      hoje.setHours(23, 59, 59, 999);
+
+      // Clamp fim to today to avoid querying future dates (server has no future data)
+      const inicio = rawInicio;
+      const fim = rawFim > hoje ? hoje : rawFim;
 
       const queryParams = new URLSearchParams({
         dataInicio: inicio.toISOString().split("T")[0],
@@ -88,6 +94,16 @@ export default function useFinanceiro() {
       if (resDespesas.ok) {
         const dataRes = await resDespesas.json();
         setDespesas(dataRes.gastos || []);
+      } else {
+        // Provide better feedback when the request fails (e.g., 403 unauthorized)
+        let msg = `Erro ao buscar despesas: ${resDespesas.status}`;
+        try {
+          const errJson = await resDespesas.json();
+          msg += ` - ${errJson.mensagem || errJson.message || JSON.stringify(errJson)}`;
+        } catch (e) {}
+        console.error(msg);
+        aparecerToast("Erro ao buscar despesas. Verifique autenticação.");
+        setDespesas([]);
       }
 
       // Buscar fluxo de caixa
@@ -100,6 +116,14 @@ export default function useFinanceiro() {
       if (resFluxo.ok) {
         const dataRes = await resFluxo.json();
         setFluxoCaixa(dataRes.caixaData || []);
+      } else {
+        let msg = `Erro ao buscar fluxo de caixa: ${resFluxo.status}`;
+        try {
+          const errJson = await resFluxo.json();
+          msg += ` - ${errJson.mensagem || errJson.message || JSON.stringify(errJson)}`;
+        } catch (e) {}
+        console.error(msg);
+        setFluxoCaixa([]);
       }
     } catch (error) {
       console.error("Erro ao buscar dados:", error);
@@ -211,6 +235,10 @@ export default function useFinanceiro() {
       buscarDados("mes", hoje);
     }
   }, []);
+
+  useEffect(() => {
+    console.log(despesas)
+  }, [despesas, fluxoCaixa])
 
   return {
     despesas,

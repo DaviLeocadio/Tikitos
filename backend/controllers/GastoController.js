@@ -14,14 +14,20 @@ dayjs.extend(customParseFormat);
 // Listar todos os gastos
 const listarGastosController = async (req, res) => {
   try {
-    const gastos =
-      await listarDespesas(`id_empresa = ${req.usuarioEmpresa} ORDER BY 
+    const { dataInicio, dataFim } = req.query;
+    let where = `id_empresa = ${req.usuarioEmpresa}`;
+    if (dataInicio && dataFim) {
+      where += ` AND DATE(data_adicionado) BETWEEN '${dataInicio}' AND '${dataFim}'`;
+    }
+    where += ` ORDER BY 
   CASE 
     WHEN status = 'pendente' THEN 0
     WHEN status = 'pago' THEN 1
     ELSE 2
   END,
-  DATE(data_adicionado) DESC`);
+  DATE(data_adicionado) DESC`;
+
+    const gastos = await listarDespesas(where);
     res.status(200).json({ mensagem: "Gastos listados com sucesso", gastos });
   } catch (error) {
     res
@@ -56,7 +62,7 @@ const adicionarGastoController = async (req, res) => {
       .status(200)
       .json({ mensagem: "Gasto registrado com sucesso", gastoCriado });
   } catch (error) {
-    console.error("Erro ao registrar gasto: ", err);
+    console.error("Erro ao registrar gasto: ", error);
     res.status(500).json({ mensagem: "Erro ao registrar gasto" });
   }
 };

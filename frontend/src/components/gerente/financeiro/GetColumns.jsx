@@ -6,32 +6,22 @@ export function GetColumns({ setDialogExcluir, setDialogMarcarPago }) {
     {
       accessorKey: "descricao",
       enableGlobalFilter: true,
-      header: ({ column }) => (
-        <button
-          className="flex items-center gap-2 font-bold hover:text-[#924187]"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Descrição
-          <i
-            className={`bi bi-arrow-${
-              column.getIsSorted() === "asc" ? "up" : "down"
-            }-short text-lg`}
-          />
-        </button>
-      ),
+      header: "Descrição",
       cell: ({ row }) => (
-        <div className="font-semibold text-[#4f6940]">
-          {row.getValue("descricao")}
-        </div>
+        <div className="font-semibold text-[#4f6940]">{row.getValue("descricao")}</div>
       ),
     },
+    
 
     {
       accessorKey: "preco",
       header: ({ column }) => (
-        <button
-          className="flex items-center gap-2 font-bold hover:text-[#924187]"
+        <div
+          role="button"
+          tabIndex={0}
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') column.toggleSorting(column.getIsSorted() === 'asc'); }}
+          className="flex items-center gap-2 font-bold hover:text-[#924187] cursor-pointer"
         >
           Valor
           <i
@@ -39,7 +29,7 @@ export function GetColumns({ setDialogExcluir, setDialogMarcarPago }) {
               column.getIsSorted() === "asc" ? "up" : "down"
             }-short text-lg`}
           />
-        </button>
+        </div>
       ),
       cell: ({ row }) => {
         const preco = parseFloat(row.getValue("preco"));
@@ -54,9 +44,12 @@ export function GetColumns({ setDialogExcluir, setDialogMarcarPago }) {
     {
       accessorKey: "data_adicionado",
       header: ({ column }) => (
-        <button
-          className="flex items-center gap-2 font-bold hover:text-[#924187]"
+        <div
+          role="button"
+          tabIndex={0}
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') column.toggleSorting(column.getIsSorted() === 'asc'); }}
+          className="flex items-center gap-2 font-bold hover:text-[#924187] cursor-pointer"
         >
           Data Adicionado
           <i
@@ -64,7 +57,7 @@ export function GetColumns({ setDialogExcluir, setDialogMarcarPago }) {
               column.getIsSorted() === "asc" ? "up" : "down"
             }-short text-lg`}
           />
-        </button>
+        </div>
       ),
       cell: ({ row }) => {
         const data = new Date(row.getValue("data_adicionado"));
@@ -88,9 +81,12 @@ export function GetColumns({ setDialogExcluir, setDialogMarcarPago }) {
     {
       accessorKey: "status",
       header: ({ column }) => (
-        <button
-          className="flex items-center gap-2 font-bold hover:text-[#924187]"
+        <div
+          role="button"
+          tabIndex={0}
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') column.toggleSorting(column.getIsSorted() === 'asc'); }}
+          className="flex items-center gap-2 font-bold hover:text-[#924187] cursor-pointer"
         >
           Status
           <i
@@ -98,7 +94,7 @@ export function GetColumns({ setDialogExcluir, setDialogMarcarPago }) {
               column.getIsSorted() === "asc" ? "up" : "down"
             }-short text-lg`}
           />
-        </button>
+        </div>
       ),
       cell: ({ row }) => {
         const status = row.getValue("status");

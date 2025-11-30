@@ -9,7 +9,12 @@ import {
   estoqueTodasFiliaisController,
 } from "../controllers/FilialController.js";
 
-import { atualizarGerenteController, criarGerenteController, desativarGerenteController, listarGerentesController } from "../controllers/GerenteController.js";
+import {
+  atualizarGerenteController,
+  criarGerenteController,
+  desativarGerenteController,
+  listarGerentesController,
+} from "../controllers/GerenteController.js";
 
 import {
   listarProdutosController,
@@ -34,7 +39,12 @@ import {
   desativarVendedorController,
 } from "../controllers/VendedorController.js";
 
-import { gerarRelatorioFiliaisController, relatorioVendasGeralController } from "../controllers/RelatorioController.js";
+import { dashboardAdminController } from "../controllers/DashboardAdminController.js";
+
+import {
+  gerarRelatorioFiliaisController,
+  relatorioVendasGeralController,
+} from "../controllers/RelatorioController.js";
 
 import multer from "multer";
 import path from "path";
@@ -59,6 +69,9 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage: storage });
+
+/* ===== DASHBOARD ===== */
+router.get('/dashboard', dashboardAdminController)
 
 /* ===== FILIAIS ===== */
 
