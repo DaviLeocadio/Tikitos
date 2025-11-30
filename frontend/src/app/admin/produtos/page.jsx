@@ -8,7 +8,7 @@ import {
   ProdutosFilters,
   ProdutosTable,
   GetColumns,
-} from "@/components/gerente/produtos";
+} from "@/components/admin/produtos";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { useSearchParams } from "next/navigation";
 
@@ -33,7 +33,6 @@ export default function AdminProduto() {
     produtos,
     categorias,
     loading,
-    handleSalvarDesconto,
     handleFazerPedido,
   } = useProdutos();
 
@@ -65,6 +64,7 @@ export default function AdminProduto() {
         produto: produto,
       });
     }
+    console.log(produtos)
   }, [produtos]);
 
   return (
@@ -104,12 +104,12 @@ export default function AdminProduto() {
       </div>
 
       {/* Modals */}
-      <ModalEditarDesconto
+      {/* <ModalEditarDesconto
         produto={modalDesconto.produto}
         open={modalDesconto.open}
         onClose={() => setModalDesconto({ open: false, produto: null })}
         onSalvar={handleSalvarDesconto}
-      />
+      /> */}
 
       <ModalPedidoFornecedor
         produto={modalPedido.produto}

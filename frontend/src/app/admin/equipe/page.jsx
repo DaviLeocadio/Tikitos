@@ -6,7 +6,7 @@ import {
   VendedoresFilters,
   VendedoresTable,
   GetColumns,
-} from "@/components/gerente/vendedores";
+} from "@/components/admin/vendedores";
 import ModalEditarVendedor from "@/components/gerente/vendedores/ModalEditarVendedor";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 
@@ -21,7 +21,7 @@ export default function AdminEquipes() {
   });
 
   // Hook customizado
-  const { vendedores, loading, handleSalvarVendedor } = useVendedores();
+  const { vendedores, gerentes, loading, handleSalvarVendedor } = useVendedores();
 
   // Colunas da tabela
   const columns = GetColumns({ setModalVendedor });
@@ -31,6 +31,19 @@ export default function AdminEquipes() {
 
   // Filtragem customizada
   const vendedoresFiltrados = vendedores.filter((v) => {
+    const termo = (globalFilter ?? "").toLowerCase().trim();
+
+    const matchStatus =
+      statusFiltro === "todos" ||
+      (statusFiltro === "ativo" && v.status === "ativo") ||
+      (statusFiltro === "inativo" && v.status === "inativo");
+
+    const matchBusca =
+      termo === "" || applyGlobalFilter(termo, [v.email, v.nome, v.id_usuario]);
+    return matchStatus && matchBusca;
+  });
+
+    const gerentesFiltrados = gerentes.filter((v) => {
     const termo = (globalFilter ?? "").toLowerCase().trim();
 
     const matchStatus =
@@ -66,7 +79,7 @@ export default function AdminEquipes() {
 
         {/* Tabela */}
         <VendedoresTable
-          data={vendedoresFiltrados}
+          data={[...vendedoresFiltrados, ...gerentesFiltrados]}
           columns={columns}
           loading={loading}
           globalFilter={globalFilter}
