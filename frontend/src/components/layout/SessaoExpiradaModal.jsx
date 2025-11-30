@@ -48,10 +48,11 @@ export default function SessaoExpiradaModal() {
           espalhando encanto!
         </div>
 
-        <DialogFooter className="flex justify-center mt-4">
+        <DialogFooter className="w-full flex md:justify-center items-center mt-4">
           <Button
             onClick={fazerLogin}
-            className="bg-[#924187] hover:bg-[#76196c] text-white rounded-full px-6 py-3 text-md shadow-md transition-all cursor-pointer"
+            className="bg-[#924187] hover:bg-[#76196c] outline-none  border-3 border-[#d695e7] hover:border-[#924187] border-dashed text-white rounded-xl px-6 py-3
+            text-md  transition-all cursor-pointer"
           >
             Fazer login novamente
           </Button>

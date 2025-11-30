@@ -288,14 +288,14 @@ export default function RelatorioGerente() {
               <div className={cardStyle}>
                 <p className="text-sm text-gray-700">Faturamento</p>
                 <h2 className="text-3xl font-bold text-green-700">
-                  R$ {totais.faturamento.toFixed(2)}
+                  R$ {totais.faturamento.toFixed(2).replace(".", ",")}
                 </h2>
               </div>
 
               <div className={cardStyle}>
                 <p className="text-sm text-gray-700">Ticket Médio</p>
                 <h2 className="text-3xl font-bold">
-                  R$ {totais.ticket.toFixed(2)}
+                  R$ {totais.ticket.toFixed(2).replace(".", ",")}
                 </h2>
               </div>
 
@@ -307,7 +307,7 @@ export default function RelatorioGerente() {
                     color: saldoLiquido >= 0 ? TIKI.verdeTikitos : "red",
                   }}
                 >
-                  R$ {saldoLiquido.toFixed(2)}
+                  R$ {saldoLiquido.toFixed(2).replace(".", ",")}
                 </h2>
               </div>
             </div>

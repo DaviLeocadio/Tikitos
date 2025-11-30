@@ -6,6 +6,7 @@ import {
   VendedoresFilters,
   VendedoresTable,
   GetColumns,
+  ModalDesativarVendedor,
 } from "@/components/gerente/vendedores";
 import ModalEditarVendedor from "@/components/gerente/vendedores/ModalEditarVendedor";
 import { SidebarTrigger } from "@/components/ui/sidebar";
@@ -20,11 +21,17 @@ export default function GerenteVendedor() {
     vendedor: null,
   });
 
+  const [modalDesativar, setModalDesativar] = useState({
+    open: false,
+    vendedor: null,
+  });
+
   // Hook customizado
-  const { vendedores, loading, handleSalvarVendedor } = useVendedores();
+  const { vendedores, loading, handleSalvarVendedor, buscarVendedores } =
+    useVendedores();
 
   // Colunas da tabela
-  const columns = GetColumns({ setModalVendedor });
+  const columns = GetColumns({ setModalVendedor, setModalDesativar });
 
   const applyGlobalFilter = (value, fields) =>
     fields.some((field) => field?.toString().toLowerCase().includes(value));
@@ -55,32 +62,36 @@ export default function GerenteVendedor() {
             {vendedoresFiltrados.length} vendedores encontrados
           </p>
         </div>
-
         {/* Filtros */}
         <VendedoresFilters
           globalFilter={globalFilter}
           setGlobalFilter={setGlobalFilter}
           statusFiltro={statusFiltro}
           setStatusFiltro={setStatusFiltro}
+          buscarVendedores={buscarVendedores}
         />
-
         {/* Tabela */}
         <VendedoresTable
           data={vendedoresFiltrados}
           columns={columns}
           loading={loading}
           globalFilter={globalFilter}
-          setGlobalFilter={setGlobalFilter}
-          sorting={sorting}
-          setSorting={setSorting}
         />
-
         {/* Modals */}
         <ModalEditarVendedor
           vendedor={modalVendedor.vendedor}
           open={modalVendedor.open}
-          onClose={() => setModalVendedor({ open: false, produto: null })}
+          onClose={() => {
+            setModalVendedor({ open: false, vendedor: null });
+            buscarVendedores();
+          }}
           onSalvar={handleSalvarVendedor}
+        />
+        <ModalDesativarVendedor
+          vendedor={modalDesativar.vendedor}
+          open={modalDesativar.open}
+          onClose={() => setModalDesativar({ open: false, vendedor: null })}
+          onSalvar={buscarVendedores}
         />
       </div>
     </div>

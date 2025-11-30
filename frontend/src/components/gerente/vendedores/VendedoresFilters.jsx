@@ -7,6 +7,7 @@ const VendedoresFilters = memo(function VendedoresFilters({
   setStatusFiltro,
   globalFilter,
   setGlobalFilter,
+  buscarVendedores,
 }) {
   return (
     <div className="bg-white rounded-xl border-3 border-dashed border-[#b478ab] p-5 space-y-4">
@@ -45,7 +46,7 @@ const VendedoresFilters = memo(function VendedoresFilters({
         </div>
         <div className="flex items-end ">
           {/* Cadastrar novo vendedor */}
-          <CadastrarVendedorModal />
+          <CadastrarVendedorModal buscarVendedores={buscarVendedores} />
         </div>
       </div>
     </div>

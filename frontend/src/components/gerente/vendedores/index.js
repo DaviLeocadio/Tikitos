@@ -4,6 +4,7 @@ import VendedoresTable from "./VendedoresTable";
 import GetColumns from "./GetColumns";
 import useVendedores from "./useVendedores";
 import ModalEditarVendedor from "./ModalEditarVendedor";
+import ModalDesativarVendedor from "./ModalDesativarVendedor";
 
 const Components = {
   Table: TableInline.Table,
@@ -16,7 +17,8 @@ const Components = {
   VendedoresTable,
   GetColumns,
   useVendedores,
-  ModalEditarVendedor
+  ModalEditarVendedor,
+  ModalDesativarVendedor,
 };
 
 export default Components;
@@ -25,3 +27,4 @@ export { default as VendedoresTable } from "./VendedoresTable";
 export { default as GetColumns } from "./GetColumns";
 export { default as useVendedores } from "./useVendedores";
 export { default as ModalEditarVendedor } from './ModalEditarVendedor';
+export { default as ModalDesativarVendedor } from './ModalDesativarVendedor';

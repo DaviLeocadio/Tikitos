@@ -26,10 +26,18 @@ import {
 import { OctagonAlert } from "lucide-react";
 
 import React, { useEffect, useState } from "react";
-import { adicionarAoCarrinho, obterCarrinho,removerDoCarrinho } from "@/utils/carrinho.js";
+import {
+  adicionarAoCarrinho,
+  obterCarrinho,
+  removerDoCarrinho,
+} from "@/utils/carrinho.js";
 
 const getId = (p) =>
-  p?.id ?? p?._id ?? p?.codigo ?? p?.sku ?? (typeof p?.nome === "string" ? p.nome : undefined);
+  p?.id ??
+  p?._id ??
+  p?.codigo ??
+  p?.sku ??
+  (typeof p?.nome === "string" ? p.nome : undefined);
 
 export default function CardProduto({ produto }) {
   const [cardSelecionado, setCardSelecionado] = useState(false);
@@ -45,7 +53,7 @@ export default function CardProduto({ produto }) {
     );
   };
 
-  const handleAdd = (e) => {
+  const handleClickCard = (e) => {
     // só responde a clique primário (botão esquerdo)
     if (e && typeof e.button === "number" && e.button !== 0) return;
 
@@ -61,28 +69,22 @@ export default function CardProduto({ produto }) {
       // Usa o estado local como fonte da verdade para toggle:
       if (cardSelecionado) {
         // já selecionado -> remover
-        removerDoCarrinho(produto);
+        removerDoCarrinho(produto.id_produto);
         setCardSelecionado(false);
       } else {
         // não selecionado -> adicionar
         adicionarAoCarrinho(produto);
         setCardSelecionado(true);
       }
-
-      // notifica outros componentes/cards que o carrinho mudou
-      try {
-        window.dispatchEvent(new CustomEvent("carrinho:update"));
-      } catch (err) {
-        // noop
-      }
+      
     } catch (err) {
       // noop
     }
   };
+  const myId = getId(produto);
 
   useEffect(() => {
     let mounted = true;
-    const myId = getId(produto);
 
     const checkCarrinho = () => {
       try {
@@ -103,30 +105,32 @@ export default function CardProduto({ produto }) {
       if (!ev.key || ev.key === "carrinho") checkCarrinho();
     };
 
-    window.addEventListener("storage", handleStorage);
+    window.addEventListener("storage", onStorage);
 
-    estoqueProdutos();
-    categoriaProdutos();
     return () => {
-      unsub();
-      window.removeEventListener("storage", handleStorage);
+      mounted = false;
+      window.removeEventListener("storage", onStorage);
     };
   }, [myId]);
-
-  
 
   const categorias = [
     { categoria: "Pelúcias", img: "/img/categorias/pelucia_categoria.png" },
     { categoria: "Musical", img: "/img/categorias/musical_categoria.png" },
-    { categoria: "Fantasia e Aventura", img: "/img/categorias/fantasia_categoria.png" },
+    {
+      categoria: "Fantasia e Aventura",
+      img: "/img/categorias/fantasia_categoria.png",
+    },
     { categoria: "Movimento", img: "/img/categorias/movimento_categoria.png" },
     { categoria: "Jogos", img: "/img/categorias/jogos_categoria.png" },
-    { categoria: "Construção", img: "/img/categorias/construcao_categoria.png" },
+    {
+      categoria: "Construção",
+      img: "/img/categorias/construcao_categoria.png",
+    },
     { categoria: "Veículos", img: "/img/categorias/veiculo_categoria.png" },
     { categoria: "Bonecos", img: "/img/categorias/bonecos_categoria.png" },
   ];
 
-    // function Highlight({ text, matches }) {
+  // function Highlight({ text, matches }) {
   //   if (!matches || matches.length === 0) return text;
 
   //   const nomeMatch = matches.find(m => m.key === "nome");
@@ -155,12 +159,13 @@ export default function CardProduto({ produto }) {
   return (
     <Card
       // ALTERAÇÃO APLICADA AQUI: Estilização condicional para hover/seleção
-      className={`group min-w-53 shadow-none gap-0 pt-0 pb-0 border-[3px] border-dashed border-[#75ba51] rounded-[50px] p-2 transition 
-        ${cardSelecionado 
-          ? "bg-[#C8FDB4] shadow-md hover:shadow-lg" // SELECIONADO: Fundo destacado + feedback de hover por sombra
-          : "bg-[#D8F1DC] hover:bg-[#C8FDB4]"       // NÃO SELECIONADO: Fundo normal + feedback de hover por destaque de cor
+      className={`group min-w-53 shadow-none gap-0 pt-0 pb-0 border-[3px] border-dashed border-[#75ba51] rounded-[50px] p-2 transition cursor-pointer
+        ${
+          cardSelecionado
+            ? "bg-[#C8FDB4] shadow-md hover:shadow-lg" // SELECIONADO: Fundo destacado + feedback de hover por sombra
+            : "bg-[#D8F1DC] hover:bg-[#C8FDB4]" // NÃO SELECIONADO: Fundo normal + feedback de hover por destaque de cor
         }`}
-      onClick={handleAdd}
+      onClick={handleClickCard}
     >
       <CardHeader className="pt-3 px-6 flex items-center flex-row justify-between gap-2 font-semibold text-sm">
         <div className="flex flex-col align-center">
@@ -213,7 +218,9 @@ export default function CardProduto({ produto }) {
                   />
                   <div className="flex flex-col justify-center items-center text-sm/6">
                     <h4 className="text-[14px] text-[#75BA51]">CATEGORIA</h4>
-                    <h1 className="font-bold mt-[-7px] text-[20px] text-[#76196c]">Bonecos</h1>
+                    <h1 className="font-bold mt-[-7px] text-[20px] text-[#76196c]">
+                      Bonecos
+                    </h1>
                   </div>
                 </AlertDialogTitle>
                 <AlertDialogDescription className="text-[15px] text-center">
@@ -223,8 +230,12 @@ export default function CardProduto({ produto }) {
               </AlertDialogHeader>
 
               <AlertDialogFooter className="mt-2 sm:justify-center">
-                <AlertDialogCancel className="bg-[#65745A] rounded-[50px] mt-2 py-2 px-5 text-[#caf4b7] text-sm font-semibold w-50 h-13 flex gap-3 justify-center items-center transform transition-all duration-300 ease-out group-hover:scale-110 hover:bg-[#74816b] hover:scale-97">Fechar</AlertDialogCancel>
-                <button className="bg-[#65745A] rounded-[50px] mt-2 py-2 px-5 text-[#caf4b7] text-sm font-semibold w-50 h-13 flex gap-3 justify-center items-center transform transition-all duration-300 ease-out group-hover:scale-110 hover:bg-[#74816b] hover:scale-97">Relatar erro</button>
+                <AlertDialogCancel className="bg-[#65745A] rounded-[50px] mt-2 py-2 px-5 text-[#caf4b7] text-sm font-semibold w-50 h-13 flex gap-3 justify-center items-center transform transition-all duration-300 ease-out group-hover:scale-110 hover:bg-[#74816b] hover:scale-97">
+                  Fechar
+                </AlertDialogCancel>
+                <button className="bg-[#65745A] rounded-[50px] mt-2 py-2 px-5 text-[#caf4b7] text-sm font-semibold w-50 h-13 flex gap-3 justify-center items-center transform transition-all duration-300 ease-out group-hover:scale-110 hover:bg-[#74816b] hover:scale-97">
+                  Relatar erro
+                </button>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
@@ -261,9 +272,15 @@ export default function CardProduto({ produto }) {
               </AlertDialogHeader>
 
               <AlertDialogFooter className="mt-2 sm:justify-center">
-                <AlertDialogCancel className="bg-[#65745A] rounded-[50px] mt-2 py-2 px-5 text-[#caf4b7] text-sm font-semibold w-30 h-13 flex gap-3 justify-center items-center transform transition-all duration-300 ease-out group-hover:scale-110 hover:bg-[#74816b] hover:scale-97">Fechar</AlertDialogCancel>
-                <button className="bg-[#65745A] rounded-[50px] mt-2 py-2 px-5 text-[#caf4b7] text-sm font-semibold w-40 h-13 flex gap-3 justify-center items-center transform transition-all duration-300 ease-out group-hover:scale-110 hover:bg-[#74816b] hover:scale-97">Relatar defeito</button>
-                <button className="bg-[#65745A] rounded-[50px] mt-2 py-2 px-5 text-[#caf4b7] text-sm font-semibold w-40 h-13 flex gap-3 justify-center items-center transform transition-all duration-300 ease-out group-hover:scale-110 hover:bg-[#74816b] hover:scale-97">Lista de espera</button>
+                <AlertDialogCancel className="bg-[#65745A] rounded-[50px] mt-2 py-2 px-5 text-[#caf4b7] text-sm font-semibold w-30 h-13 flex gap-3 justify-center items-center transform transition-all duration-300 ease-out group-hover:scale-110 hover:bg-[#74816b] hover:scale-97">
+                  Fechar
+                </AlertDialogCancel>
+                <button className="bg-[#65745A] rounded-[50px] mt-2 py-2 px-5 text-[#caf4b7] text-sm font-semibold w-40 h-13 flex gap-3 justify-center items-center transform transition-all duration-300 ease-out group-hover:scale-110 hover:bg-[#74816b] hover:scale-97">
+                  Relatar defeito
+                </button>
+                <button className="bg-[#65745A] rounded-[50px] mt-2 py-2 px-5 text-[#caf4b7] text-sm font-semibold w-40 h-13 flex gap-3 justify-center items-center transform transition-all duration-300 ease-out group-hover:scale-110 hover:bg-[#74816b] hover:scale-97">
+                  Lista de espera
+                </button>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>

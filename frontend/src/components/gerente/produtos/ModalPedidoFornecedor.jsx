@@ -277,20 +277,20 @@ export default function ModalPedidoFornecedor({
             <AlertDialogTitle className="text-[#4f6940] font-extrabold text-2xl text-center">
               Pedido Realizado com Sucesso!
             </AlertDialogTitle>
-            <AlertDialogDescription className="text-center space-y-2">
-              <p className="text-[#4f6940] font-semibold text-lg">
+            <div className="space-y-2 text-center">
+              <div className="text-[#4f6940] font-semibold text-lg">
                 {quantidade} unidades de <span className="font-bold text-[#569a33]">{produto?.nome}</span>
-              </p>
-              <p className="text-gray-600 font-semibold">
-                Estoque atualizado para <span className="font-bold text-[#924187]">{novoEstoque} unidades</span>
-              </p>
-              <div className="bg-white rounded-lg p-3 mt-3 border-2 border-[#569a33] border-dashed">
-                <p className="text-sm text-gray-500 font-semibold">Custo Total</p>
-                <p className="text-2xl font-bold text-[#569a33]">
-                  R$ {custoTotal.toFixed(2).replace(".", ",")}
-                </p>
               </div>
-            </AlertDialogDescription>
+              <div className="text-gray-600 font-semibold">
+                Estoque atualizado para <span className="font-bold text-[#924187]">{novoEstoque} unidades</span>
+              </div>
+              <div className="bg-white rounded-lg p-3 mt-3 border-2 border-[#569a33] border-dashed">
+                <div className="text-sm text-gray-500 font-semibold">Custo Total</div>
+                <div className="text-2xl font-bold text-[#569a33]">
+                  R$ {custoTotal.toFixed(2).replace(".", ",")}
+                </div>
+              </div>
+            </div>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogAction

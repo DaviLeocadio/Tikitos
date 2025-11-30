@@ -200,6 +200,27 @@ const desativarVendedorController = async (req, res) => {
       .json({ error: "Erro ao atualizar o status do vendedor" });
   }
 };
+const reativarVendedorController = async (req, res) => {
+  try {
+    const { vendedorId } = req.params;
+
+    const vendedorReativado = atualizarUsuario(vendedorId, {
+      status: "ativo",
+    });
+    if (!vendedorReativado)
+      return res.status(404).json({ error: "Vendedor não encontrado" });
+
+    return res.status(200).json({
+      mensagem: "Vendedor com status ativo realizado!",
+      vendedorReativado,
+    });
+  } catch (error) {
+    consoler.error("Erro ao atualizar o status do vendedor: ", error);
+    return res
+      .status(500)
+      .json({ error: "Erro ao atualizar o status do vendedor" });
+  }
+};
 
 export {
   listarVendedoresController,
@@ -207,4 +228,5 @@ export {
   criarVendedorController,
   atualizarVendedorController,
   desativarVendedorController,
+  reativarVendedorController
 };

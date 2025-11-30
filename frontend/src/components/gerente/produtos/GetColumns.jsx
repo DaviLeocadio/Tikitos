@@ -74,11 +74,36 @@ export default function GetColumns({ setModalDesconto, setModalPedido }) {
           />
         </button>
       ),
-      cell: ({ row }) => (
-        <div className="font-bold text-[#569a33]">
-          R$ {Number(row.getValue("preco")).toFixed(2).replace(".", ",")}
-        </div>
-      ),
+      cell: ({ row }) => {
+        const produto = row.original || {};
+        const desconto = parseInt(produto.desconto) || 0;
+
+        const precoFormatado = produto.precoFormatado ?? `R$ ${Number(
+          row.getValue("preco") || 0
+        ).toFixed(2).replace(".", ",")}`;
+
+        const precoComDesconto =
+          produto.precoFormatadoComDesconto ?? `R$ ${(
+            (Number(row.getValue("preco") || 0) * (1 - desconto / 100))
+          ).toFixed(2).replace(".", ",")}`;
+
+        return desconto !== 0 ? (
+          <div>
+            <p className="text-[12px]">
+              <span className="line-through text-[#569a33] opacity-75">
+                {precoFormatado}
+              </span>{" "}
+              <span className="no-line-through text-red-700 font-bold">
+                {precoComDesconto}
+              </span>
+            </p>
+          </div>
+        ) : (
+          <div className="font-bold text-[#569a33]">
+            {precoFormatado}
+          </div>
+        );
+      },
     },
 
     {

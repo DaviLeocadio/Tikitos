@@ -35,7 +35,7 @@ import {
 import { useEffect, useState } from "react";
 import { aparecerToast } from "@/utils/toast";
 
-export function CadastrarVendedorModal() {
+export function CadastrarVendedorModal({ buscarVendedores: buscarVendedoresExterno }) {
   const [open, setOpen] = useState(false);
   const [passo, setPasso] = useState("Informações");
   const [loading, setLoading] = useState(false);
@@ -57,7 +57,10 @@ export function CadastrarVendedorModal() {
     cep: "",
   });
   const [buscandoCep, setBuscandoCep] = useState(false);
-  const { buscarVendedores } = useVendedores();
+  const { buscarVendedores: buscarVendedoresInterno } = useVendedores();
+  
+  // Usa a função externa se fornecida, caso contrário usa a interna
+  const buscarVendedores = buscarVendedoresExterno || buscarVendedoresInterno;
 
   // Reset ao abrir modal
   useEffect(() => {
@@ -241,7 +244,7 @@ export function CadastrarVendedorModal() {
       if (response.ok) {
         setDialogSucesso(true);
         setOpen(false);
-        buscarVendedores()
+        await buscarVendedores();
       } else {
         const error = await response.json();
         aparecerToast(error.error || "Erro ao cadastrar vendedor!");
@@ -406,10 +409,10 @@ export function CadastrarVendedorModal() {
                   onChange={handleChangeEndereco}
                 />
                 {buscandoCep && (
-                  <p className="text-xs text-[#569a33] mt-1 flex items-center gap-1">
+                  <div className="text-xs text-[#569a33] mt-1 flex items-center gap-1">
                     <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-[#569a33]"></div>
                     Buscando CEP...
-                  </p>
+                  </div>
                 )}
               </div>
 
@@ -600,32 +603,32 @@ export function CadastrarVendedorModal() {
             <AlertDialogTitle className="text-[#4f6940] font-extrabold text-2xl text-center">
               Vendedor Cadastrado com Sucesso!
             </AlertDialogTitle>
-            <AlertDialogDescription className="text-center space-y-2">
-              <p className="text-[#4f6940] font-semibold text-lg">
+            <div className="text-center space-y-2">
+              <div className="text-[#4f6940] font-semibold text-lg">
                 <span className="font-bold text-[#569a33]">
                   {vendedorInfo.nome}
                 </span>{" "}
                 foi cadastrado
-              </p>
+              </div>
               <div className="bg-white rounded-lg p-3 mt-3 border-2 border-[#569a33] border-dashed space-y-1">
-                <p className="text-sm text-gray-600">
+                <div className="text-sm text-gray-600">
                   Email:{" "}
                   <span className="font-bold text-[#76196c]">
                     {vendedorInfo.email}
                   </span>
-                </p>
-                <p className="text-sm text-gray-600">
+                </div>
+                <div className="text-sm text-gray-600">
                   CPF:{" "}
                   <span className="font-bold text-[#76196c]">
                     {vendedorInfo.cpf}
                   </span>
-                </p>
+                </div>
               </div>
-              <p className="text-xs text-amber-700 bg-amber-50 p-2 rounded-lg border border-amber-200 mt-3">
+              <div className="text-xs text-amber-700 bg-amber-50 p-2 rounded-lg border border-amber-200 mt-3">
                 <AlertCircle size={14} className="inline mr-1" />
                 Senha padrão: <strong>deve_mudar</strong>
-              </p>
-            </AlertDialogDescription>
+              </div>
+            </div>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogAction

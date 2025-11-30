@@ -8,19 +8,42 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import InputTelefoneMask from "@/components/inputMasks/InputCEPMask";
+import InputTelefoneMask from "@/components/inputMasks/InputTelefoneMask";
 import InputCPFMask from "@/components/inputMasks/InputCPFMask";
 import InputDataMask from "@/components/inputMasks/InputDataMask";
 
-export default function ModalEditarDesconto({ vendedor, open, onClose, onSalvar }) {
-  const [vendedorInfo, setVendedorInfo] = useState(vendedor);
+export default function ModalEditarDesconto({
+  vendedor,
+  open,
+  onClose,
+  onSalvar,
+}) {
+  const [vendedorInfo, setVendedorInfo] = useState({
+    nome: "",
+    email: "",
+    telefone: "",
+    cpf: "",
+    data_nasc: "",
+    endereco: "",
+    status: "ativo",
+  });
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const data = new Date(vendedor?.data_nasc);
-    const dataNasc = data.toLocaleDateString("pt-BR");
-    setVendedorInfo({ ...vendedor, data_nasc: dataNasc });
-  }, [vendedor]);
+    if (vendedor && open) {
+      const data = new Date(vendedor.data_nasc);
+      const dataNasc = data.toLocaleDateString("pt-BR");
+      setVendedorInfo({
+        nome: vendedor.nome || "",
+        email: vendedor.email || "",
+        telefone: vendedor.telefone || "",
+        cpf: vendedor.cpf || "",
+        data_nasc: dataNasc || "",
+        endereco: vendedor.endereco || "",
+        status: vendedor.status || "ativo",
+      });
+    }
+  }, [vendedor, open]);
 
   const handleSalvar = async () => {
     setLoading(true);
@@ -59,7 +82,7 @@ export default function ModalEditarDesconto({ vendedor, open, onClose, onSalvar 
               id="nome"
               name="nome"
               className="text-md font-semibold focus-visible:outline-none text-[#76196c] bg-verdeclaro px-2 py-1 rounded-lg border-1 border-dashed border-roxoescuro"
-              value={vendedorInfo?.nome}
+              value={vendedorInfo.nome}
               onChange={handleChange}
             />
           </div>
@@ -76,7 +99,7 @@ export default function ModalEditarDesconto({ vendedor, open, onClose, onSalvar 
               id="email"
               name="email"
               className="text-md font-semibold focus-visible:outline-none text-[#76196c] bg-verdeclaro px-2 py-1 rounded-lg border-1 border-dashed border-roxoescuro"
-              value={vendedorInfo?.email}
+              value={vendedorInfo.email}
               onChange={handleChange}
             />
           </div>
@@ -92,7 +115,7 @@ export default function ModalEditarDesconto({ vendedor, open, onClose, onSalvar 
               id="telefone"
               name="telefone"
               className="text-md font-semibold focus-visible:outline-none text-[#76196c] bg-verdeclaro px-2 py-1 rounded-lg border-1 border-dashed border-roxoescuro"
-              value={vendedorInfo?.telefone}
+              value={vendedorInfo.telefone}
               onChange={handleChange}
             />
           </div>
@@ -108,7 +131,7 @@ export default function ModalEditarDesconto({ vendedor, open, onClose, onSalvar 
               id="cpf"
               name="cpf"
               className="text-md font-semibold focus-visible:outline-none text-[#76196c] bg-verdeclaro px-2 py-1 rounded-lg border-1 border-dashed border-roxoescuro"
-              value={vendedorInfo?.cpf}
+              value={vendedorInfo.cpf}
               onChange={handleChange}
             />
           </div>
@@ -124,7 +147,7 @@ export default function ModalEditarDesconto({ vendedor, open, onClose, onSalvar 
               id="data_nasc"
               name="data_nasc"
               className="text-md font-semibold focus-visible:outline-none text-[#76196c] bg-verdeclaro px-2 py-1 rounded-lg border-1 border-dashed border-roxoescuro"
-              value={vendedorInfo?.data_nasc}
+              value={vendedorInfo.data_nasc}
               onChange={handleChange}
             />
           </div>
@@ -140,7 +163,7 @@ export default function ModalEditarDesconto({ vendedor, open, onClose, onSalvar 
               id="endereco"
               name="endereco"
               className="text-md font-semibold focus-visible:outline-none text-[#76196c] bg-verdeclaro px-2 py-1 rounded-lg border-1 border-dashed border-roxoescuro"
-              value={vendedorInfo?.endereco}
+              value={vendedorInfo.endereco}
               onChange={handleChange}
             />
           </div>

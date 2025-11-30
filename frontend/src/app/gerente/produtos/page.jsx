@@ -35,6 +35,7 @@ export default function GerenteProdutos() {
     loading,
     handleSalvarDesconto,
     handleFazerPedido,
+    buscarProdutos,
   } = useProdutos();
 
   // Colunas da tabela
@@ -107,14 +108,20 @@ export default function GerenteProdutos() {
       <ModalEditarDesconto
         produto={modalDesconto.produto}
         open={modalDesconto.open}
-        onClose={() => setModalDesconto({ open: false, produto: null })}
+        onClose={() => {
+          setModalDesconto({ open: false, produto: null });
+          buscarProdutos();
+        }}
         onSalvar={handleSalvarDesconto}
       />
 
       <ModalPedidoFornecedor
         produto={modalPedido.produto}
         open={modalPedido.open}
-        onClose={() => setModalPedido({ open: false, produto: null })}
+        onClose={() => {
+          setModalPedido({ open: false, produto: null });
+          buscarProdutos();
+        }}
         onSalvar={handleFazerPedido}
       />
     </div>
