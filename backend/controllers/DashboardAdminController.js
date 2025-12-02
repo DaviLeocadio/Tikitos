@@ -25,8 +25,6 @@ const dashboardAdminController = async (req, res) => {
       });
     }
 
-    console.log(`Buscando dados do dashboard ADMIN para empresa ${idEmpresa}, período: ${periodo}`);
-
     // Busca todas as informações em paralelo para performance
     const [
       resumoVendas,
@@ -95,8 +93,6 @@ const dashboardAdminController = async (req, res) => {
       },
       periodo: periodo
     };
-
-    console.log(`Dashboard Admin carregado com sucesso`);
 
     return res.status(200).json({
       mensagem: "Dashboard Admin carregado com sucesso",

@@ -1,13 +1,32 @@
 "use client";
+
 import { aparecerToast } from "@/utils/toast";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
+
+// 🔧 Formatar data sem problemas de timezone
+const formatarDataLocal = (data) => {
+  const ano = data.getFullYear();
+  const mes = String(data.getMonth() + 1).padStart(2, "0");
+  const dia = String(data.getDate()).padStart(2, "0");
+  return `${ano}-${mes}-${dia}`;
+};
 
 export default function useFinanceiro() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  const periodo = searchParams.get("periodo") || "mes";
+  // Don't default immediately: keep raw as null when not present so we can initialize URL once
+  const dataInicioRaw = searchParams.get("dataInicio");
+  const dataInicio = useMemo(() => (dataInicioRaw ? new Date(dataInicioRaw) : null), [dataInicioRaw]);
+  const filtroStatus = searchParams.get("status") || "todos";
+
   const [despesas, setDespesas] = useState([]);
   const [fluxoCaixa, setFluxoCaixa] = useState([]);
+  const [vendas, setVendas] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [periodo, setPeriodo] = useState("mes");
-  const [dataInicio, setDataInicio] = useState(new Date());
+
   const montadoRef = useRef(false);
 
   const calcularIntervalo = (periodoAtual, data) => {
@@ -15,25 +34,25 @@ export default function useFinanceiro() {
     let inicio, fim;
 
     switch (periodoAtual) {
-      case "semana":
-        // Volta para segunda-feira da semana atual
+      case "semana": {
         const dia = d.getDay();
         const diff = d.getDate() - dia + (dia === 0 ? -6 : 1);
-        const dataCopia = new Date(d);
-        dataCopia.setDate(diff);
-        inicio = new Date(dataCopia);
+        const inicioSemana = new Date(d);
+        inicioSemana.setDate(diff);
+        inicio = new Date(inicioSemana);
         fim = new Date(inicio);
         fim.setDate(fim.getDate() + 6);
         break;
+      }
 
       case "mes":
         inicio = new Date(d.getFullYear(), d.getMonth(), 1);
         fim = new Date(d.getFullYear(), d.getMonth() + 1, 0);
         break;
 
-      case "ano":
-        inicio = new Date(d.getFullYear(), 0, 1);
-        fim = new Date(d.getFullYear(), 11, 31);
+      case "dia":
+        inicio = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+        fim = new Date(d.getFullYear(), d.getMonth(), d.getDate());
         break;
 
       default:
@@ -44,16 +63,20 @@ export default function useFinanceiro() {
     inicio.setHours(0, 0, 0, 0);
     fim.setHours(23, 59, 59, 999);
 
-    return { inicio, fim };
-  };
-
-  const validarData = (periodAtual, dataAtual) => {
     const hoje = new Date();
     hoje.setHours(23, 59, 59, 999);
 
-    const { inicio, fim } = calcularIntervalo(periodAtual, dataAtual);
+    if (fim > hoje) fim = hoje;
 
-    // Restrição: não permitir datas futuras (fim não pode ser depois de hoje)
+    return { inicio, fim };
+  };
+
+  const validarData = (periodoAtual, dataAtual) => {
+    const hoje = new Date();
+    hoje.setHours(23, 59, 59, 999);
+
+    const { inicio } = calcularIntervalo(periodoAtual, dataAtual);
+
     if (inicio > hoje) {
       aparecerToast("Não é possível visualizar períodos que começam no futuro!");
       return false;
@@ -62,71 +85,82 @@ export default function useFinanceiro() {
     return true;
   };
 
-  const buscarDados = async (periodoAtual, dataAtual) => {
-    // Validar início não esteja no futuro (permite clamping do fim)
+  const buscarDados = async (periodoAtual, dataAtual, statusOverride) => {
     if (!validarData(periodoAtual, dataAtual)) {
       setLoading(false);
       return;
     }
 
     setLoading(true);
-    try {
-      const { inicio: rawInicio, fim: rawFim } = calcularIntervalo(periodoAtual, dataAtual);
-      const hoje = new Date();
-      hoje.setHours(23, 59, 59, 999);
 
-      // Clamp fim to today to avoid querying future dates (server has no future data)
-      const inicio = rawInicio;
-      const fim = rawFim > hoje ? hoje : rawFim;
+    try {
+      const { inicio, fim } = calcularIntervalo(periodoAtual, dataAtual);
+
+      // ✅ CORREÇÃO: Usar formatarDataLocal e adicionar +1 dia na data final
+      const dataInicioStr = formatarDataLocal(inicio);
+      
+      // ⚡ IMPORTANTE: Adicionar 1 dia porque BETWEEN é inclusivo
+      const fimMaisUmDia = new Date(fim);
+      fimMaisUmDia.setDate(fimMaisUmDia.getDate() + 1);
+      const dataFimStr = formatarDataLocal(fimMaisUmDia);
+
+      console.log("📅 Enviando para backend:", { dataInicioStr, dataFimStr, filtroStatus });
 
       const queryParams = new URLSearchParams({
-        dataInicio: inicio.toISOString().split("T")[0],
-        dataFim: fim.toISOString().split("T")[0],
+        dataInicio: dataInicioStr,
+        dataFim: dataFimStr,
       });
+      
+      // ✅ Incluir status na query apenas se não for "todos". permite override para chamadas imediatas
+      const statusParaUsar = typeof statusOverride !== "undefined" ? statusOverride : filtroStatus;
+      if (statusParaUsar && statusParaUsar !== "todos") {
+        queryParams.set("status", statusParaUsar);
+      }
 
       // Buscar despesas
       const resDespesas = await fetch(
         `http://localhost:8080/gerente/gastos?${queryParams.toString()}`,
-        {
-          credentials: "include",
-        }
+        { credentials: "include" }
       );
+
       if (resDespesas.ok) {
         const dataRes = await resDespesas.json();
         setDespesas(dataRes.gastos || []);
       } else {
-        // Provide better feedback when the request fails (e.g., 403 unauthorized)
-        let msg = `Erro ao buscar despesas: ${resDespesas.status}`;
-        try {
-          const errJson = await resDespesas.json();
-          msg += ` - ${errJson.mensagem || errJson.message || JSON.stringify(errJson)}`;
-        } catch (e) {}
-        console.error(msg);
-        aparecerToast("Erro ao buscar despesas. Verifique autenticação.");
+        console.error("Erro despesas:", resDespesas.status);
         setDespesas([]);
       }
 
       // Buscar fluxo de caixa
       const resFluxo = await fetch(
         `http://localhost:8080/gerente/caixa?${queryParams.toString()}`,
-        {
-          credentials: "include",
-        }
+        { credentials: "include" }
       );
+
       if (resFluxo.ok) {
         const dataRes = await resFluxo.json();
         setFluxoCaixa(dataRes.caixaData || []);
       } else {
-        let msg = `Erro ao buscar fluxo de caixa: ${resFluxo.status}`;
-        try {
-          const errJson = await resFluxo.json();
-          msg += ` - ${errJson.mensagem || errJson.message || JSON.stringify(errJson)}`;
-        } catch (e) {}
-        console.error(msg);
+        console.error("Erro fluxo caixa:", resFluxo.status);
         setFluxoCaixa([]);
       }
+
+      // Buscar vendas
+      const resVendas = await fetch(
+        `http://localhost:8080/gerente/vendas?${queryParams.toString()}`,
+        { credentials: "include" }
+      );
+
+      if (resVendas.ok) {
+        const dataRes = await resVendas.json();
+        setVendas(dataRes.vendas || []);
+      } else {
+        console.error("Erro vendas:", resVendas.status);
+        setVendas([]);
+      }
+
     } catch (error) {
-      console.error("Erro ao buscar dados:", error);
+      console.error("Erro geral ao buscar dados:", error);
       aparecerToast("Erro ao buscar dados financeiros!");
     } finally {
       setLoading(false);
@@ -158,10 +192,7 @@ export default function useFinanceiro() {
     try {
       const response = await fetch(
         `http://localhost:8080/gerente/gastos/${idDespesa}`,
-        {
-          method: "DELETE",
-          credentials: "include",
-        }
+        { method: "DELETE", credentials: "include" }
       );
 
       if (response.ok) {
@@ -186,7 +217,7 @@ export default function useFinanceiro() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             status: "pago",
-            data_pag: new Date().toISOString().split("T")[0],
+            data_pag: formatarDataLocal(new Date()),
           }),
         }
       );
@@ -204,53 +235,76 @@ export default function useFinanceiro() {
   };
 
   const mudarPeriodo = (novoPeriodo) => {
-    setPeriodo(novoPeriodo);
-    buscarDados(novoPeriodo, dataInicio);
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("periodo", novoPeriodo);
+    params.set("dataInicio", new Date().toISOString());
+    router.push(`?${params.toString()}`);
   };
 
   const navegar = (direcao) => {
-    const novaData = new Date(dataInicio);
+    const nova = new Date(dataInicio);
 
     switch (periodo) {
       case "semana":
-        novaData.setDate(novaData.getDate() + direcao * 7);
+        nova.setDate(nova.getDate() + direcao * 7);
         break;
       case "mes":
-        novaData.setMonth(novaData.getMonth() + direcao);
+        nova.setMonth(nova.getMonth() + direcao);
         break;
-      case "ano":
-        novaData.setFullYear(novaData.getFullYear() + direcao);
+      case "dia":
+        nova.setDate(nova.getDate() + direcao);
         break;
     }
 
-    setDataInicio(novaData);
-    buscarDados(periodo, novaData);
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("dataInicio", nova.toISOString());
+    router.push(`?${params.toString()}`);
   };
 
-  useEffect(() => {
-    // Carregar dados apenas uma vez na montagem
-    if (!montadoRef.current) {
-      montadoRef.current = true;
-      const hoje = new Date();
-      buscarDados("mes", hoje);
+  const mudarFiltroStatus = (novoStatus) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("status", novoStatus);
+    router.push(`?${params.toString()}`);
+    // Disparar busca imediata com o novo status sem depender do useEffect
+    try {
+      buscarDados(periodo, dataInicio, novoStatus);
+    } catch (err) {
+      console.error("Erro ao buscar dados após mudar status:", err);
     }
-  }, []);
+  };
 
+  // ✅ CORREÇÃO: useEffect que dispara buscarDados quando período ou data mudam (usar a string estável dataInicioRaw)
+  // Inicializar query params caso não existam — evita loop quando a página carrega sem queries
   useEffect(() => {
-    console.log(despesas)
-  }, [despesas, fluxoCaixa])
+    if (!dataInicioRaw) {
+      const params = new URLSearchParams(searchParams.toString());
+      params.set("periodo", periodo);
+      params.set("dataInicio", new Date().toISOString());
+      if (!params.get("status")) params.set("status", "todos");
+      // Use replace para não empilhar histórico
+      router.replace(`?${params.toString()}`);
+      return;
+    }
+
+    if (dataInicio) {
+      buscarDados(periodo, dataInicio);
+    }
+  }, [periodo, dataInicioRaw]);
 
   return {
     despesas,
     fluxoCaixa,
+    vendas,
     loading,
     periodo,
     dataInicio,
+    filtroStatus,
     buscarDados,
+    mudarPeriodo,
+    navegar,
+    mudarFiltroStatus,
     handleAdicionarDespesa,
     handleExcluirDespesa,
     handleMarcarComoPago,
-    mudarPeriodo,
-    navegar,
   };
 }

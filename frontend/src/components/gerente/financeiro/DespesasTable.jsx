@@ -9,15 +9,11 @@ const DespesasTable = memo(function DespesasTable({
   columns,
   loading,
   filtroStatus,
-  setFiltroStatus,
+  mudarFiltroStatus,
+  setModalAberto
 }) {
-  // Filtro memoizado
-  const despesasFiltradas = useMemo(() => {
-    return data.filter((d) => {
-      if (filtroStatus === "todos") return true;
-      return d.status === filtroStatus;
-    });
-  }, [data, filtroStatus]);
+  // Data is now server-side filtered, so no client-side filtering needed
+  const despesasFiltradas = data;
 
   // Sorting state
   const [sortKey, setSortKey] = useState(null);
@@ -164,13 +160,21 @@ const DespesasTable = memo(function DespesasTable({
       <div className="p-5 bg-[#e8c5f1] border-b-2 border-[#b478ab]">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <h2 className="text-xl font-bold text-[#76196c]">Despesas</h2>
+          <button
+            onClick={() => {
+              if (typeof setModalAberto === 'function') setModalAberto(true);
+            }}
+            className="px-3 py-2 bg-[#76196c] text-white rounded-lg font-semibold hover:bg-[#924187] transition cursor-pointer"
+          >
+            Nova Despesa
+          </button>
 
           <div className="flex gap-2">
             {["todos", "pago", "pendente"].map((status) => (
               <button
                 key={status}
                 onClick={() => {
-                  setFiltroStatus(status);
+                  mudarFiltroStatus(status);
                   setPageIndex(0);
                 }}
                 className={`px-4 py-2 rounded-lg font-semibold text-sm transition cursor-pointer ${

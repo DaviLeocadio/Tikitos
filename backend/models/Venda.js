@@ -5,10 +5,21 @@ import {
   update,
   create,
 } from "../config/database.js";
-
+  
 const listarVendas = async (query = null) => {
   try {
-    return await readAll("vendas", query);
+    const table = `
+      (
+        SELECT
+          v.*,
+          u.nome AS nome_usuario
+        FROM vendas v
+        INNER JOIN usuarios u
+          ON v.id_usuario = u.id_usuario
+      ) AS v_with_user
+    `;
+
+    return await readAll(table, query);
   } catch (err) {
     console.error("Erro ao listar vendas: ", err);
     throw err;
@@ -17,7 +28,10 @@ const listarVendas = async (query = null) => {
 
 const listarVendasPorVendedor = async (idVendedor) => {
   try {
-    return await readAll("vendas", `id_usuario = ${idVendedor} ORDER BY data_venda DESC`);
+    return await readAll(
+      "vendas",
+      `id_usuario = ${idVendedor} ORDER BY data_venda DESC`
+    );
   } catch (err) {
     console.error("Erro ao listar vendas: ", err);
     throw err;
@@ -124,5 +138,5 @@ export {
   excluirVenda,
   obterVendasIntervaloUsuario,
   obterVendaPorDataUsuario,
-  listarVendasPorVendedor
+  listarVendasPorVendedor,
 };

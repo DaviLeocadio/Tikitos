@@ -26,8 +26,12 @@ const FinanceiroFilters = memo(function FinanceiroFilters({
           month: "long",
         });
 
-      case "ano":
-        return dataInicio.toLocaleDateString("pt-BR", { year: "numeric" });
+      case "dia":
+        return dataInicio.toLocaleDateString("pt-BR", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        });
 
       default:
         return dataInicio.toLocaleDateString("pt-BR", opcoes);
@@ -43,7 +47,7 @@ const FinanceiroFilters = memo(function FinanceiroFilters({
             Período
           </label>
           <div className="flex gap-2">
-            {["semana", "mes", "ano"].map((p) => (
+            {["semana", "mes", "dia"].map((p) => (
               <button
                 key={p}
                 onClick={() => mudarPeriodo(p)}
@@ -53,7 +57,7 @@ const FinanceiroFilters = memo(function FinanceiroFilters({
                     : "bg-gray-100 text-[#76196c] hover:bg-gray-200"
                 }`}
               >
-                {p.charAt(0).toUpperCase() + p.slice(1)}
+                {p === "dia" ? "Dia" : p.charAt(0).toUpperCase() + p.slice(1)}
               </button>
             ))}
           </div>

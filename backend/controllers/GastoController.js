@@ -11,28 +11,46 @@ import customParseFormat from "dayjs/plugin/customParseFormat.js";
 
 dayjs.extend(customParseFormat);
 
+
 // Listar todos os gastos
 const listarGastosController = async (req, res) => {
   try {
-    const { dataInicio, dataFim } = req.query;
-    let where = `id_empresa = ${req.usuarioEmpresa}`;
+    const { dataInicio, dataFim, status } = req.query;
+    const idEmpresa = req.usuarioEmpresa;
+    
+    console.log("📅 Parâmetros recebidos:", { dataInicio, dataFim, status, idEmpresa });
+    
+    let where = `id_empresa = ${idEmpresa}`;
+    
     if (dataInicio && dataFim) {
-      where += ` AND DATE(data_adicionado) BETWEEN '${dataInicio}' AND '${dataFim}'`;
+      // ✅ CORREÇÃO: Usar >= e < ao invés de BETWEEN
+      // Isso garante que pegue todo o intervalo corretamente
+      where += ` AND DATE(data_adicionado) >= '${dataInicio}' AND DATE(data_adicionado) < '${dataFim}'`;
     }
+    
+    // ✅ NOVO: Suporte a filtro de status
+    if (status && status !== "todos") {
+      where += ` AND status = '${status}'`;
+    }
+    
+    console.log("🔎 Query WHERE:", where);
+    
     where += ` ORDER BY 
-  CASE 
-    WHEN status = 'pendente' THEN 0
-    WHEN status = 'pago' THEN 1
-    ELSE 2
-  END,
-  DATE(data_adicionado) DESC`;
+      CASE 
+        WHEN status = 'pendente' THEN 0
+        WHEN status = 'pago' THEN 1
+        ELSE 2
+      END,
+      DATE(data_adicionado) DESC`;
 
     const gastos = await listarDespesas(where);
+    
+    console.log("💰 Gastos encontrados:", gastos.length);
+    
     res.status(200).json({ mensagem: "Gastos listados com sucesso", gastos });
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Erro ao listar gastos", error: error.message });
+    console.error("❌ Erro ao listar gastos:", error);
+    res.status(500).json({ message: "Erro ao listar gastos", error: error.message });
   }
 };
 

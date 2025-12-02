@@ -60,7 +60,6 @@ export default function GerenteProdutos() {
     const produto = produtos.find((p) => p.id_produto == idProduto);
     if (produtoNome && idProduto) {
       setGlobalFilter(produtoNome);
-      console.log(produto);
       setModalPedido({
         open: true,
         produto: produto,

@@ -248,10 +248,10 @@ export default function GerenteDashboard() {
                   color="[#569a33]"
                 />
                 <QuickActionCard
-                  title="Fornecedores"
-                  description="Cadastrar e gerenciar fornecedores"
-                  icon="truck"
-                  href="/gerente/fornecedores"
+                  title="Vendas"
+                  description="Gerenciar vendas"
+                  icon="cart"
+                  href="/gerente/vendas"
                   color="[#4f6940]"
                 />
                 <QuickActionCard

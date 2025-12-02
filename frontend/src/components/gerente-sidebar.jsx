@@ -32,6 +32,11 @@ const data = {
       icon: (props) => <i className="bi bi-people" {...props} />,
     },
     {
+      title: "Vendas",
+      href: "/gerente/vendas",
+      icon: (props) => <i className="bi bi-cart" {...props} />,
+    },
+    {
       title: "Financeiro",
       href: "/gerente/financeiro",
       icon: (props) => <i className="bi bi-cash-coin" {...props} />,
@@ -59,7 +64,7 @@ export function GerenteSidebar({
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton asChild className="data-[slot=sidebar-menu-button]:!p-1.5">
-              <Link href="/vendedor/pdv">
+              <Link href="/gerente/">
                 <img src="/img/logos/logo_ioio.png" alt="" className="max-h-full"/>
                 <span className="text-base font-semibold text-[#76216D] hover:bg-[#ffffff00]">Tikitos</span>
               </Link>

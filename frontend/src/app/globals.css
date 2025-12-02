@@ -150,3 +150,8 @@ body {
   background-color: var(--color-verdinho);
   color: #924187;
 }
+
+button{ 
+  cursor: pointer !important;
+
+}

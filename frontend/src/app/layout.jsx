@@ -1,8 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
-import SessaoExpiradaModal from "@/components/layout/SessaoExpiradaModal";
-import { ToastContainer } from "react-toastify";
+import ClientOnlyUI from "@/components/layout/ClientOnlyUI";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,9 +24,8 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#DABCE1]`}
       >
-        <ToastContainer />
+        <ClientOnlyUI />
         {children}
-        <SessaoExpiradaModal />
       </body>
     </html>
   );
