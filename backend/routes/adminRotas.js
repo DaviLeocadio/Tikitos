@@ -39,7 +39,7 @@ import {
   desativarVendedorController,
 } from "../controllers/VendedorController.js";
 
-import { dashboardAdminController } from "../controllers/DashboardAdminController.js";
+import { AdminDashboardController } from "../controllers/DashboardAdminController.js";
 
 import {
   gerarRelatorioFiliaisController,
@@ -71,7 +71,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 /* ===== DASHBOARD ===== */
-router.get('/dashboard', dashboardAdminController)
+router.get('/dashboard', AdminDashboardController)
 
 /* ===== FILIAIS ===== */
 

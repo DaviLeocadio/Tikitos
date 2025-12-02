@@ -54,5 +54,5 @@ app.listen(port, () => {
 
 
 setInterval(function () {
-  console.log("Bernado Davi Wesley");
+  console.log("Bernardo Davi Wesley");
 }, 10 * 60 * 1000)

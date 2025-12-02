@@ -9,7 +9,7 @@ import { criarProdutoLoja, obterProdutoLoja } from "../models/ProdutoLoja.js";
 
 const listarEmpresasController = async (req, res) => {
   try {
-    const empresas = await listarEmpresas();
+    const empresas = await listarEmpresas('tipo = "filial"');
 
     if (empresas.length == 0)
       return res.status(404).json({ error: "Nenhuma empresa encontrada" });

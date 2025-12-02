@@ -1,0 +1,14 @@
+{
+  "verbose": true,
+  "ignore": ["node_modules", ".next", "public", "uploads"],
+  "watch": ["app.js", "controllers", "models", "routes", "config", "utils"],
+  "ext": "js,json",
+  "delay": "2500",
+  "legacyWatch": true,
+  "env": {
+    "NODE_ENV": "development"
+  },
+  "execMap": {
+    "js": "node --enable-source-maps"
+  }
+}
