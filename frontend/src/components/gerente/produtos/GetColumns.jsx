@@ -123,6 +123,7 @@ export default function GetColumns({ setModalDesconto, setModalPedido }) {
       ),
       cell: ({ row }) => {
         const estoque = row.getValue("estoque");
+        console.log(row)
         return (
           <span
             className={`font-bold ${

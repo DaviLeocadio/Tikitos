@@ -1,6 +1,6 @@
 "use client";
 
-export default function GetColumns({ setModalDesconto, setModalPedido }) {
+export default function GetColumns({ setModalProduto, setModalPedido }) {
   return [
     {
       accessorKey: "id_produto",
@@ -78,14 +78,17 @@ export default function GetColumns({ setModalDesconto, setModalPedido }) {
         const produto = row.original || {};
         const desconto = parseInt(produto.desconto) || 0;
 
-        const precoFormatado = produto.precoFormatado ?? `R$ ${Number(
-          row.getValue("preco") || 0
-        ).toFixed(2).replace(".", ",")}`;
+        const precoFormatado =
+          produto.precoFormatado ??
+          `R$ ${Number(row.getValue("preco") || 0)
+            .toFixed(2)
+            .replace(".", ",")}`;
 
         const precoComDesconto =
-          produto.precoFormatadoComDesconto ?? `R$ ${(
-            (Number(row.getValue("preco") || 0) * (1 - desconto / 100))
-          ).toFixed(2).replace(".", ",")}`;
+          produto.precoFormatadoComDesconto ??
+          `R$ ${(Number(row.getValue("preco") || 0) * (1 - desconto / 100))
+            .toFixed(2)
+            .replace(".", ",")}`;
 
         return desconto !== 0 ? (
           <div>
@@ -99,21 +102,19 @@ export default function GetColumns({ setModalDesconto, setModalPedido }) {
             </p>
           </div>
         ) : (
-          <div className="font-bold text-[#569a33]">
-            {precoFormatado}
-          </div>
+          <div className="font-bold text-[#569a33]">{precoFormatado}</div>
         );
       },
     },
 
     {
-      accessorKey: "estoque",
+      accessorKey: "fornecedor",
       header: ({ column }) => (
         <button
           className="flex items-center gap-2 font-bold hover:text-[#924187]"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Estoque
+          Fornecedor
           <i
             className={`bi bi-arrow-${
               column.getIsSorted() === "asc" ? "up" : "down"
@@ -121,25 +122,11 @@ export default function GetColumns({ setModalDesconto, setModalPedido }) {
           />
         </button>
       ),
-      cell: ({ row }) => {
-        const estoque = row.getValue("estoque");
-        return (
-          <span
-            className={`font-bold ${
-              estoque <= 5
-                ? "text-red-600"
-                : estoque <= 10
-                ? "text-orange-600"
-                : estoque < 20
-                ? "text-yellow-600"
-                :"text-[#569a33]"
-            }`}
-          >
-            {estoque}
-            {estoque < 20 && " ⚠️"}
-          </span>
-        );
-      },
+      cell: ({ row }) => (
+        <span className="font-bold text-[#569a33]">
+          {row.original.fornecedor}
+        </span>
+      ),
     },
 
     {
@@ -151,11 +138,11 @@ export default function GetColumns({ setModalDesconto, setModalPedido }) {
         return (
           <div className="flex gap-2">
             <button
-              onClick={() => setModalDesconto({ open: true, produto })}
+              onClick={() => setModalProduto({ open: true, produto })}
               className="px-3 py-1 bg-[#76196c] text-white rounded-lg text-sm font-semibold hover:bg-[#924187] transition cursor-pointer"
-              title="Editar desconto"
+              title="Editar produto"
             >
-              <i className="bi bi-percent"></i>
+              <i class="bi bi-xbox"></i>
             </button>
 
             <button

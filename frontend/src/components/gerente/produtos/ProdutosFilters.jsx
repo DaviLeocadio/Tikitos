@@ -11,9 +11,13 @@ const ProdutosFilters = memo(function ProdutosFilters({
   setGlobalFilter
 }) {
   return (
-    <div className="bg-white rounded-xl border-3 border-dashed border-[#b478ab] p-5 space-y-4">
+    <>
+    <div className="md:mt-[-80px]">
+    <img src="/img/gerenciar_produtos/criancas_gerenciar_produtos.png" className="w-[45%] md:mb-[-2%] px-8"/>
+    <div className="bg-[#C5FFAD] rounded-xl border-3 border-dashed border-[#4EA912] p-5 space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
 
+        
         {/* Busca */}
         <div className="md:col-span-2">
           <label className="text-sm font-semibold text-[#76196c] block mb-2">Buscar produto</label>
@@ -23,7 +27,7 @@ const ProdutosFilters = memo(function ProdutosFilters({
               type="text"
               value={globalFilter}
               onChange={(e) => setGlobalFilter(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 rounded-lg border-2 border-[#b478ab] focus:outline-none focus:border-[#76196c]"
+              className="w-full pl-10 pr-4 py-2 rounded-lg border-2 border-[#B478AB] focus:outline-none focus:border-[#8F3D84]"
               placeholder="Nome, código ou descrição..."
             />
           </div>
@@ -58,6 +62,8 @@ const ProdutosFilters = memo(function ProdutosFilters({
         </div>
       </div>
     </div>
+    </div>
+    </>
   );
 });
 
