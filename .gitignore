@@ -1,7 +1,6 @@
-# Node modules
-node_modules/
-**/node_modules/
+# Ignorar somente os node_modules de backend e frontend
 backend/node_modules/
+frontend/node_modules/
 
 # Logs
 logs
