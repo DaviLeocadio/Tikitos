@@ -4,6 +4,7 @@ import {
   FecharCaixa,
   ListarCaixasPorEmpresa,
   RelatorioCaixa,
+  RelatorioCaixaIntervalo,
   obterCaixaPorId,
   resumoVendasCaixa,
   CaixaAbertoVendedor,
@@ -310,27 +311,24 @@ const ResumoCaixaController = async (req, res) => {
 const fluxoCaixaDiarioController = async (req, res) => {
   try {
     const idEmpresa = req.usuarioEmpresa;
-    const { dataCaixa } = req.query;
+    const { dataCaixa, dataInicio, dataFim } = req.query;
 
     let caixaData = [];
 
-    if (dataCaixa) {
+    if (dataInicio && dataFim) {
+      caixaData = await RelatorioCaixaIntervalo(idEmpresa, dataInicio, dataFim);
+    } else if (dataCaixa) {
       const caixas = await ListarCaixasPorEmpresa(idEmpresa, dataCaixa);
-
       caixas.forEach((caixa) => {
-        const valor = (caixa.valor_final - caixa.valor_inicial).toFixed(2);
-        caixaData.push({
-          data: caixa.abertura,
-          valor: valor,
-          idCaixa: caixa.id_caixa,
-        });
+        const valor_total = (parseFloat(caixa.valor_final || 0) - parseFloat(caixa.valor_inicial || 0)).toFixed(2);
+        caixaData.push({ data: caixa.abertura, valor_total, caixas: 1, idCaixa: caixa.id_caixa });
       });
     } else {
-      caixaData = await RelatorioCaixa(idEmpresa);
+      // Full report grouped by date
+      const relatorio = await RelatorioCaixa(idEmpresa);
+      caixaData = relatorio;
     }
-    return res
-      .status(200)
-      .json({ mensagem: "Caixas listados com sucesso", caixaData });
+    return res.status(200).json({ mensagem: "Caixas listados com sucesso", caixaData });
   } catch (error) {
     console.error("Erro ao montar resumo diário de caixa", error);
     res.status(500).json({ error: "Erro ao montar resumo diário de caixa" });

@@ -8,12 +8,14 @@ export default function GetColumns({ setModalDesconto, setModalPedido }) {
       header: ({ column }) => (
         <button
           className="flex items-center gap-2 font-bold hover:text-[#924187]"
-          onClick={() =>
-            column.toggleSorting(column.getIsSorted() === "asc")
-          }
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           ID
-          <i className={`bi bi-arrow-${column.getIsSorted() === "asc" ? "up" : "down"}-short text-lg`} />
+          <i
+            className={`bi bi-arrow-${
+              column.getIsSorted() === "asc" ? "up" : "down"
+            }-short text-lg`}
+          />
         </button>
       ),
       cell: ({ row }) => (
@@ -29,12 +31,14 @@ export default function GetColumns({ setModalDesconto, setModalPedido }) {
       header: ({ column }) => (
         <button
           className="flex items-center gap-2 font-bold hover:text-[#924187]"
-          onClick={() =>
-            column.toggleSorting(column.getIsSorted() === "asc")
-          }
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           Produto
-          <i className={`bi bi-arrow-${column.getIsSorted() === "asc" ? "up" : "down"}-short text-lg`} />
+          <i
+            className={`bi bi-arrow-${
+              column.getIsSorted() === "asc" ? "up" : "down"
+            }-short text-lg`}
+          />
         </button>
       ),
       cell: ({ row }) => (
@@ -44,7 +48,6 @@ export default function GetColumns({ setModalDesconto, setModalPedido }) {
         </div>
       ),
     },
-
 
     {
       accessorKey: "categoria.nome",
@@ -61,19 +64,46 @@ export default function GetColumns({ setModalDesconto, setModalPedido }) {
       header: ({ column }) => (
         <button
           className="flex items-center gap-2 font-bold hover:text-[#924187]"
-          onClick={() =>
-            column.toggleSorting(column.getIsSorted() === "asc")
-          }
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           Preço
-          <i className={`bi bi-arrow-${column.getIsSorted() === "asc" ? "up" : "down"}-short text-lg`} />
+          <i
+            className={`bi bi-arrow-${
+              column.getIsSorted() === "asc" ? "up" : "down"
+            }-short text-lg`}
+          />
         </button>
       ),
-      cell: ({ row }) => (
-        <div className="font-bold text-[#569a33]">
-          R$ {Number(row.getValue("preco")).toFixed(2).replace(".", ",")}
-        </div>
-      ),
+      cell: ({ row }) => {
+        const produto = row.original || {};
+        const desconto = parseInt(produto.desconto) || 0;
+
+        const precoFormatado = produto.precoFormatado ?? `R$ ${Number(
+          row.getValue("preco") || 0
+        ).toFixed(2).replace(".", ",")}`;
+
+        const precoComDesconto =
+          produto.precoFormatadoComDesconto ?? `R$ ${(
+            (Number(row.getValue("preco") || 0) * (1 - desconto / 100))
+          ).toFixed(2).replace(".", ",")}`;
+
+        return desconto !== 0 ? (
+          <div>
+            <p className="text-[12px]">
+              <span className="line-through text-[#569a33] opacity-75">
+                {precoFormatado}
+              </span>{" "}
+              <span className="no-line-through text-red-700 font-bold">
+                {precoComDesconto}
+              </span>
+            </p>
+          </div>
+        ) : (
+          <div className="font-bold text-[#569a33]">
+            {precoFormatado}
+          </div>
+        );
+      },
     },
 
     {
@@ -81,20 +111,33 @@ export default function GetColumns({ setModalDesconto, setModalPedido }) {
       header: ({ column }) => (
         <button
           className="flex items-center gap-2 font-bold hover:text-[#924187]"
-          onClick={() =>
-            column.toggleSorting(column.getIsSorted() === "asc")
-          }
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           Estoque
-          <i className={`bi bi-arrow-${column.getIsSorted() === "asc" ? "up" : "down"}-short text-lg`} />
+          <i
+            className={`bi bi-arrow-${
+              column.getIsSorted() === "asc" ? "up" : "down"
+            }-short text-lg`}
+          />
         </button>
       ),
       cell: ({ row }) => {
         const estoque = row.getValue("estoque");
+        console.log(row)
         return (
-          <span className={`font-bold ${estoque < 10 ? "text-red-600" : "text-[#569a33]"}`}>
+          <span
+            className={`font-bold ${
+              estoque <= 5
+                ? "text-red-600"
+                : estoque <= 10
+                ? "text-orange-600"
+                : estoque < 20
+                ? "text-yellow-600"
+                :"text-[#569a33]"
+            }`}
+          >
             {estoque}
-            {estoque < 10 && " ⚠️"}
+            {estoque < 20 && " ⚠️"}
           </span>
         );
       },

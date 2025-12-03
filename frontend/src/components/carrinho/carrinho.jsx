@@ -28,6 +28,7 @@ export default function Carrinho({ isPagamento = false }) {
       setCarrinho(carrinho);
       setTotal(calcularTotal());
       setQuantidade(obterQuantidade());
+      localStorage.setItem("total", calcularTotal().toFixed(2));
     };
 
     checkCarrinho();
@@ -106,7 +107,8 @@ export default function Carrinho({ isPagamento = false }) {
 
   return (
     <>
-      <div className={`hidden lg:grid grid-cols-7 ${isPagamento? "md:max-h-[100%]": scroll? "md:h-[96%]" : "md:h-[100%]"} `} >
+      <div className={`hidden lg:grid grid-cols-7 ${isPagamento ? "md:max-h-[100%]" : scroll ? "md:h-[96%]" : "md:h-[100%]"} `} >
+
         <div className="flex col-span-5 bg-[#E5B8F1] border-[3px] border-dashed border-[#B478AB] rounded-[50px] text-[#8c3e82] text-sm font-semibold p-5 min-h-[100%]  ">
           <div className="flex w-full h-full flex-col justify-between gap-3">
             <div className="flex w-full h-[100%] flex-col gap-3 justify-between">
@@ -120,9 +122,8 @@ export default function Carrinho({ isPagamento = false }) {
                     size={20}
                     id="brushElement"
                     onClick={handleResetarCarrinho}
-                    className={`text-[25px] cursor-pointer ${
-                      styles.brush_animate
-                    }
+                    className={`text-[25px] cursor-pointer ${styles.brush_animate
+                      }
                     ${carrinho.length == 0 ? "pointer-events-none" : ""}`}
                   />
                 </div>
@@ -131,10 +132,9 @@ export default function Carrinho({ isPagamento = false }) {
               <div
                 ref={carrinhoRef}
                 id="carrinho"
-                className={`flex flex-col gap-3 overflow-y-scroll pt-0 ms-1 ${
-                  scroll ? "pe-6" : "pe-0"
-                } ${ isPagamento ? "max-h-8/12 2xl:h-11/15" : "max-h-7/12 2xl:h-10/15" }`
-              }
+                className={`flex flex-col gap-3 overflow-y-scroll pt-0 ms-1 ${scroll ? "pe-6" : "pe-0"
+                  } ${isPagamento ? "max-h-8/12 2xl:h-11/15" : "max-h-7/12 2xl:h-10/15"}`
+                }
               >
                 {loading ? (
                   <h1> Carregando carrinho...</h1>
@@ -157,9 +157,8 @@ export default function Carrinho({ isPagamento = false }) {
               </div>
 
               <div
-                className={`px-1 flex flex-col justify-between gap-1 ${
-                  isPagamento ? "h-3/12 2xl:h-3/15" : " h-4/12 2xl:h-4/15"
-                }`}
+                className={`px-1 flex flex-col justify-between gap-1 ${isPagamento ? "h-3/12 2xl:h-3/15" : " h-4/12 2xl:h-4/15"
+                  }`}
               >
                 <CardDemo
                   quantidade={quantidade}

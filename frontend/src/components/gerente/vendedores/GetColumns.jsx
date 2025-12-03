@@ -1,6 +1,6 @@
 "use client";
 
-export default function GetColumns({setModalVendedor}) {
+export default function GetColumns({setModalVendedor, setModalDesativar}) {
   return [
     {
       accessorKey: "id_usuario",
@@ -38,8 +38,8 @@ export default function GetColumns({setModalVendedor}) {
         </button>
       ),
       cell: ({ row }) => (
-        <div>
-          <p className="font-semibold text-[#4f6940]">{row.getValue("nome")}</p>
+        <div className="max-w-[120px] truncate">
+          <p className="font-semibold truncate text-[#4f6940]">{row.getValue("nome")}</p>
         </div>
       ),
     },
@@ -113,6 +113,17 @@ export default function GetColumns({setModalVendedor}) {
               title="Editar vendedor"
             >
               <i className="bi bi-person"></i>
+            </button>
+            <button
+              onClick={() => setModalDesativar({ open: true, vendedor })}
+              className={`px-3 py-1 text-white rounded-lg text-sm font-semibold transition cursor-pointer ${
+                vendedor.status === "ativo"
+                  ? "bg-[#ff6b35] hover:bg-[#e55a2b]"
+                  : "bg-[#569a33] hover:bg-[#4f6940]"
+              }`}
+              title={vendedor.status === "ativo" ? "Desativar vendedor" : "Reativar vendedor"}
+            >
+              <i className={`bi bi-power ${vendedor.status === "ativo" ? "" : ""}`}></i>
             </button>
           </div>
         );

@@ -84,12 +84,34 @@ const RelatorioCaixa = async (idEmpresa) => {
   }
 };
 
+const RelatorioCaixaIntervalo = async (idEmpresa, dataInicio, dataFim) => {
+  try {
+    // Use full-day datetime range to avoid DATE(...) timezone/truncation issues
+    const sql = `
+    SELECT
+      DATE(abertura) as data,
+      SUM(valor_final - valor_inicial) AS valor_total,
+      COUNT(*) AS caixas
+    FROM caixa
+    WHERE id_empresa = ? AND abertura BETWEEN ? AND ?
+    GROUP BY DATE(abertura)
+    ORDER BY data;
+    `;
+    const start = `${dataInicio} 00:00:00`;
+    const end = `${dataFim} 23:59:59`;
+    return await readRaw(sql, [idEmpresa, start, end]);
+  } catch (err) {
+    console.error("Erro ao listar caixas por intervalo: ", err);
+    throw err;
+  }
+};
+
 const obterCaixaPorId = async (idCaixa) => {
   try {
     return await read("caixa", `id_caixa = ${idCaixa}`);
   } catch (error) {
-    console.error("Erro ao obter caixa por ID: ", err);
-    throw err;
+    console.error("Erro ao obter caixa por ID: ", error);
+    throw error;
   }
 };
 
@@ -117,6 +139,7 @@ export {
   AtualizarCaixa,
   ListarCaixasPorEmpresa,
   RelatorioCaixa,
+  RelatorioCaixaIntervalo,
   obterCaixaPorId,
   resumoVendasCaixa,
   CaixaAbertoVendedor

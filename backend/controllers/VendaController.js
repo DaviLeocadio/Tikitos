@@ -307,29 +307,54 @@ const excluirVendaController = async (req, res) => {
 
 const listarVendasGerenteController = async (req, res) => {
   try {
-    const { data, idVendedor, pagamento } = req.query;
+    const { data, idVendedor, pagamento, dataInicio, dataFim } = req.query;
+    const includeItems = req.query.itens === "true" || req.query.itens === "1" || req.query.includeItems === "true";
     const idEmpresa = req.usuarioEmpresa;
+
+    console.log(req.query)
 
     let conditions = [];
 
     conditions.push(`id_empresa = ${idEmpresa}`);
     if (data) conditions.push(`DATE(data_venda) = '${data}'`);
+    if (dataInicio && dataFim) conditions.push(`DATE(data_venda) >= '${dataInicio}' AND DATE(data_venda) < '${dataFim}'`);
     if (idVendedor) conditions.push(`id_usuario = ${idVendedor}`);
     if (pagamento) conditions.push(`tipo_pagamento = '${pagamento}'`);
 
     const query = conditions.join(" AND ");
 
-    const vendas = await listarVendas(query);
 
-    if (!vendas || vendas.lenght === 0) {
+    const vendas = await listarVendas(query + " ORDER BY data_venda DESC");
+
+    if (!vendas || vendas.length === 0) {
       return res.status(404).json({ mensagem: "Nenhuma venda encontrada" });
     }
 
-    return res
-      .status(200)
-      .json({ mensagem: "Listagem de vendas realizada", vendas });
+    // Se solicitado, buscar itens de cada venda e anexar
+    if (includeItems) {
+      try {
+        const vendasComItens = await Promise.all(
+          vendas.map(async (v) => {
+            const itens = await listarItensVenda(`id_venda = ${v.id_venda}`);
+            return { ...v, itens };
+          })
+        );
+
+        return res
+          .status(200)
+          .json({ mensagem: "Listagem de vendas realizada", vendas: vendasComItens });
+      } catch (errItems) {
+        console.error("Erro ao buscar itens das vendas:", errItems);
+        // Mesmo que falhem os itens, retornamos as vendas sem itens
+        return res
+          .status(200)
+          .json({ mensagem: "Listagem de vendas realizada (itens falharam)", vendas });
+      }
+    }
+
+    return res.status(200).json({ mensagem: "Listagem de vendas realizada", vendas });
   } catch (err) {
-    console.error("Erro ao excluir venda: ", err);
+    console.error("Erro ao listar vendas: ", err);
     res.status(500).json({ mensagem: "Erro ao listar vendas: ", err });
   }
 };

@@ -8,7 +8,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { 
+import {
   AlertDialog,
   AlertDialogContent,
   AlertDialogHeader,
@@ -17,8 +17,15 @@ import {
   AlertDialogFooter,
   AlertDialogAction,
 } from "@/components/ui/alert-dialog";
-import { Package, TrendingUp, DollarSign, Calendar, CheckCircle } from "lucide-react";
+import {
+  Package,
+  TrendingUp,
+  DollarSign,
+  Calendar,
+  CheckCircle,
+} from "lucide-react";
 import { aparecerToast } from "@/utils/toast";
+import { useRouter, useSearchParams } from "next/navigation";
 
 // Modal de Pedido ao Fornecedor
 export default function ModalPedidoFornecedor({
@@ -28,21 +35,35 @@ export default function ModalPedidoFornecedor({
   onSalvar,
 }) {
   const [quantidade, setQuantidade] = useState(10);
-  const [dataPag, setDataPag] = useState(new Date().toISOString().split('T')[0]);
+  const [dataPag, setDataPag] = useState(
+    new Date().toISOString().split("T")[0]
+  );
   const [status, setStatus] = useState("pendente");
   const [loading, setLoading] = useState(false);
   const [dialogSucesso, setDialogSucesso] = useState(false);
+
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const limparQuery = () => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete("produtoNome");
+    params.delete("idProduto");
+    router.replace(`?${params.toString()}`, { scroll: false });
+  };
 
   // Resetar campos quando abrir o modal
   useEffect(() => {
     if (open) {
       setQuantidade(10);
-      setDataPag(new Date().toISOString().split('T')[0]);
+      setDataPag(new Date().toISOString().split("T")[0]);
       setStatus("pendente");
     }
   }, [open]);
 
-  const custoUnitario = produto?.custo ? parseFloat(produto.custo.replace('R$', '').replace(',', '.').trim()) : 0;
+  const custoUnitario = produto?.custo
+    ? parseFloat(produto.custo.replace("R$", "").replace(",", ".").trim())
+    : 0;
   const custoTotal = custoUnitario * quantidade;
   const novoEstoque = (produto?.estoque || 0) + quantidade;
 
@@ -69,7 +90,7 @@ export default function ModalPedidoFornecedor({
           },
           body: JSON.stringify({
             quantidade,
-            data_pag: new Date(dataPag).toLocaleDateString('pt-BR'),
+            data_pag: new Date(dataPag).toLocaleDateString("pt-BR"),
             status,
           }),
         }
@@ -93,6 +114,7 @@ export default function ModalPedidoFornecedor({
   };
 
   const handleFecharSucesso = () => {
+    limparQuery();
     setDialogSucesso(false);
     onClose();
   };
@@ -206,13 +228,15 @@ export default function ModalPedidoFornecedor({
               <p className="text-sm font-semibold opacity-90 mb-3 uppercase tracking-wide">
                 Resumo do Pedido
               </p>
-              
+
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
                   <span className="font-semibold">Quantidade:</span>
-                  <span className="text-xl font-bold">{quantidade} unidades</span>
+                  <span className="text-xl font-bold">
+                    {quantidade} unidades
+                  </span>
                 </div>
-                
+
                 <div className="flex justify-between items-center">
                   <span className="font-semibold">Custo Total:</span>
                   <span className="text-2xl font-bold">
@@ -238,7 +262,10 @@ export default function ModalPedidoFornecedor({
               <Button
                 variant="secondary"
                 className="flex-1 bg-white text-[#4f6940] hover:bg-gray-100 font-bold border-2 border-[#569a33] cursor-pointer transition"
-                onClick={onClose}
+                onClick={() => {
+                  limparQuery();
+                  onClose();
+                }}
                 disabled={loading}
               >
                 Cancelar
@@ -277,20 +304,28 @@ export default function ModalPedidoFornecedor({
             <AlertDialogTitle className="text-[#4f6940] font-extrabold text-2xl text-center">
               Pedido Realizado com Sucesso!
             </AlertDialogTitle>
-            <AlertDialogDescription className="text-center space-y-2">
-              <p className="text-[#4f6940] font-semibold text-lg">
-                {quantidade} unidades de <span className="font-bold text-[#569a33]">{produto?.nome}</span>
-              </p>
-              <p className="text-gray-600 font-semibold">
-                Estoque atualizado para <span className="font-bold text-[#924187]">{novoEstoque} unidades</span>
-              </p>
-              <div className="bg-white rounded-lg p-3 mt-3 border-2 border-[#569a33] border-dashed">
-                <p className="text-sm text-gray-500 font-semibold">Custo Total</p>
-                <p className="text-2xl font-bold text-[#569a33]">
-                  R$ {custoTotal.toFixed(2).replace(".", ",")}
-                </p>
+            <div className="space-y-2 text-center">
+              <div className="text-[#4f6940] font-semibold text-lg">
+                {quantidade} unidades de{" "}
+                <span className="font-bold text-[#569a33]">
+                  {produto?.nome}
+                </span>
               </div>
-            </AlertDialogDescription>
+              <div className="text-gray-600 font-semibold">
+                Estoque atualizado para{" "}
+                <span className="font-bold text-[#924187]">
+                  {novoEstoque} unidades
+                </span>
+              </div>
+              <div className="bg-white rounded-lg p-3 mt-3 border-2 border-[#569a33] border-dashed">
+                <div className="text-sm text-gray-500 font-semibold">
+                  Custo Total
+                </div>
+                <div className="text-2xl font-bold text-[#569a33]">
+                  R$ {custoTotal.toFixed(2).replace(".", ",")}
+                </div>
+              </div>
+            </div>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogAction

@@ -4,6 +4,15 @@ import { useState, useEffect } from "react";
 import { getCookie } from "cookies-next/client";
 import Link from "next/link";
 import { SidebarTrigger } from "@/components/ui/sidebar";
+import {
+  AlertTriangle,
+  BarChart,
+  BarChart2,
+  BarChart3,
+  BarChart3Icon,
+  BarChartIcon,
+  Trophy,
+} from "lucide-react";
 
 // Componente de Card de Métrica
 function MetricCard({ title, value, icon, color, trend }) {
@@ -152,7 +161,6 @@ export default function GerenteDashboard() {
             </h1>
             <p className="text-lg text-[#8c3e82]">
               Bem-vindo, <span className="font-semibold">{nomeGerente}</span>!
-              👋
             </p>
           </div>
 
@@ -240,10 +248,10 @@ export default function GerenteDashboard() {
                   color="[#569a33]"
                 />
                 <QuickActionCard
-                  title="Fornecedores"
-                  description="Cadastrar e gerenciar fornecedores"
-                  icon="truck"
-                  href="/gerente/fornecedores"
+                  title="Vendas"
+                  description="Gerenciar vendas"
+                  icon="cart"
+                  href="/gerente/vendas"
                   color="[#4f6940]"
                 />
                 <QuickActionCard
@@ -264,7 +272,7 @@ export default function GerenteDashboard() {
                   title="Alertas"
                   description="Produtos com estoque baixo"
                   icon="bell"
-                  href="/gerente/estoque-baixo"
+                  href="/gerente/alertas"
                   color="[#ff6b6b]"
                 />
               </div>
@@ -313,9 +321,9 @@ export default function GerenteDashboard() {
                   <i className="bi bi-trophy text-2xl text-[#76196c]"></i>
                 </div>
                 <div className="space-y-4">
-                  <div className="p-4 bg-[#e8c5f1] rounded-lg">
-                    <p className="text-sm text-gray-600 mb-1">
-                      🏆 Melhor Vendedor do Período
+                  <div className="p-4 bg-[#e8c5f1] rounded-lg border-2 border-dashed border-[#8c3e82]">
+                    <p className="text-sm text-gray-600 mb-1 flex items-center gap-1">
+                      <Trophy color="#FF9800" /> Melhor Vendedor do Período
                     </p>
                     <p className="text-xl font-bold text-[#76196c]">
                       {dashboardData.vendedores.melhorVendedor}
@@ -328,9 +336,9 @@ export default function GerenteDashboard() {
                         .replace(".", ",")}
                     </p>
                   </div>
-                  <div className="p-4 bg-[#c5ffad] rounded-lg">
-                    <p className="text-sm text-gray-600 mb-1">
-                      📊 Total de Transações
+                  <div className="p-4 bg-[#c5ffad] rounded-lg border-2 border-dashed border-[#569a33]">
+                    <p className="text-sm text-gray-600 mb-1 flex items-center gap-1">
+                      <BarChart3Icon color="#569a33"/> Total de Transações
                     </p>
                     <p className="text-xl font-bold text-[#569a33]">
                       {dashboardData.vendas.totalTransacoes} vendas
@@ -340,14 +348,16 @@ export default function GerenteDashboard() {
                     </p>
                   </div>
                   {dashboardData.produtos.baixoEstoque > 0 && (
-                    <div className="p-4 bg-orange-50 rounded-lg border-2 border-orange-300">
-                      <p className="text-sm text-gray-600 mb-1">⚠️ Atenção</p>
+                    <div className="p-4 bg-orange-50 rounded-lg border-2 border-dashed border-orange-300">
+                      <p className="text-sm text-gray-600 mb-1 flex items-center gap-1">
+                        <AlertTriangle color="#FF9800" /> Atenção
+                      </p>
                       <p className="text-base font-semibold text-orange-700">
                         {dashboardData.produtos.baixoEstoque} produtos com
                         estoque baixo
                       </p>
                       <Link
-                        href="/gerente/estoque-baixo"
+                        href="/gerente/alertas"
                         className="text-sm text-orange-600 hover:text-orange-800 underline mt-1 inline-block"
                       >
                         Ver detalhes →
@@ -364,7 +374,7 @@ export default function GerenteDashboard() {
                 Pagamentos do Período
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="p-4 bg-[#e8f5e8] rounded-lg border-2 border-[#569a33]">
+                <div className="p-4 bg-[#e8f5e8] rounded-lg border-2 border-dashed border-[#569a33]">
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm text-gray-600 mb-1">PIX</p>
@@ -378,7 +388,7 @@ export default function GerenteDashboard() {
                     <i className="bi bi-qr-code text-3xl text-[#569a33]"></i>
                   </div>
                 </div>
-                <div className="p-4 bg-[#fff5e6] rounded-lg border-2 border-[#ff9800]">
+                <div className="p-4 bg-[#fff5e6] rounded-lg border-2 border-dashed border-[#ff9800]">
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm text-gray-600 mb-1">Dinheiro</p>
@@ -392,7 +402,7 @@ export default function GerenteDashboard() {
                     <i className="bi bi-cash-coin text-3xl text-[#ff9800]"></i>
                   </div>
                 </div>
-                <div className="p-4 bg-[#f0e5f5] rounded-lg border-2 border-[#76196c]">
+                <div className="p-4 bg-[#f0e5f5] rounded-lg border-2 border-dashed border-[#76196c]">
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm text-gray-600 mb-1">Cartão</p>

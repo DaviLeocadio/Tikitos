@@ -1,8 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
-import SessaoExpiradaModal from "@/components/layout/SessaoExpiradaModal";
-import { ToastContainer } from "react-toastify";
+import ClientOnlyUI from "@/components/layout/ClientOnlyUI";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -20,14 +19,18 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }) {
+  
+  setInterval(function () {
+    console.log("Júlia Nicoly");
+  }, 10 * 60 * 1000);
+
   return (
     <html lang="PT-BR">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#DABCE1]`}
       >
-        <ToastContainer />
+        <ClientOnlyUI />
         {children}
-        <SessaoExpiradaModal />
       </body>
     </html>
   );

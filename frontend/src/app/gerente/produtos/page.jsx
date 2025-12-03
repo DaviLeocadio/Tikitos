@@ -1,6 +1,6 @@
 "use client";
 
-import {  useState } from "react";
+import { useEffect, useState } from "react";
 import {
   useProdutos,
   ModalEditarDesconto,
@@ -10,16 +10,13 @@ import {
   GetColumns,
 } from "@/components/gerente/produtos";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-
+import { useSearchParams } from "next/navigation";
 
 export default function GerenteProdutos() {
   const [sorting, setSorting] = useState([]);
   const [globalFilter, setGlobalFilter] = useState("");
   const [categoriaFiltro, setCategoriaFiltro] = useState("todas");
   const [statusFiltro, setStatusFiltro] = useState("todos");
-
-
-
 
   // Modals
   const [modalDesconto, setModalDesconto] = useState({
@@ -38,6 +35,7 @@ export default function GerenteProdutos() {
     loading,
     handleSalvarDesconto,
     handleFazerPedido,
+    buscarProdutos,
   } = useProdutos();
 
   // Colunas da tabela
@@ -55,17 +53,35 @@ export default function GerenteProdutos() {
     return matchCategoria && matchStatus;
   });
 
+  const searchParams = useSearchParams();
+  useEffect(() => {
+    const produtoNome = searchParams.get("produtoNome");
+    const idProduto = searchParams.get("idProduto");
+    const produto = produtos.find((p) => p.id_produto == idProduto);
+    if (produtoNome && idProduto) {
+      setGlobalFilter(produtoNome);
+      setModalPedido({
+        open: true,
+        produto: produto,
+      });
+    }
+  }, [produtos]);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#DDF1D4] to-verdeclaro p-5 lg:p-8">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div>
-          <h1 className="text-3xl lg:text-4xl font-bold text-[#76196c]">
-           <SidebarTrigger/> Gerenciar Produtos
-          </h1>
-          <p className="text-lg text-[#8c3e82] mt-1">
-            {produtosFiltrados.length} produtos encontrados
-          </p>
+          <SidebarTrigger />
+          <img
+            src="/img/gerenciar_produtos/gerenciar_produtos.png"
+            className="md:p-3 md:w-[70%] mx-auto md:mb-[7%]"
+          />
+          <div className="flex justify-end">
+            <p className="text-md text-[#4F6940]">
+              {produtosFiltrados.length} produtos encontrados
+            </p>
+          </div>
         </div>
 
         {/* Filtros */}
@@ -95,14 +111,20 @@ export default function GerenteProdutos() {
       <ModalEditarDesconto
         produto={modalDesconto.produto}
         open={modalDesconto.open}
-        onClose={() => setModalDesconto({ open: false, produto: null })}
+        onClose={() => {
+          setModalDesconto({ open: false, produto: null });
+          buscarProdutos();
+        }}
         onSalvar={handleSalvarDesconto}
       />
 
       <ModalPedidoFornecedor
         produto={modalPedido.produto}
         open={modalPedido.open}
-        onClose={() => setModalPedido({ open: false, produto: null })}
+        onClose={() => {
+          setModalPedido({ open: false, produto: null });
+          buscarProdutos();
+        }}
         onSalvar={handleFazerPedido}
       />
     </div>

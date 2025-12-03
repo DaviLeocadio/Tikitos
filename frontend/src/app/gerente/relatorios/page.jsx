@@ -22,9 +22,6 @@ import {
   FileText,
 } from "lucide-react";
 
-// ============================
-// PALETA OFICIAL TIKITOS
-// ============================
 const TIKI = {
   roxoEscuro: "#76196c",
   roxoMedio: "#924187",
@@ -34,7 +31,7 @@ const TIKI = {
   verdeClaro: "#9bf377",
 };
 
-export default function RelatorioGerente() {
+export default function AdminRelatorios() {
   const [filtros, setFiltros] = useState({
     inicio: "",
     fim: "",
@@ -54,10 +51,8 @@ export default function RelatorioGerente() {
     { value: "cartao", label: "Cartão" },
   ];
 
-  // ===============================
-  // 🔥 BUSCAR DADOS DA API REAL
-  // ===============================
   const buscarRelatorio = async () => {
+    console.debug("[ADMIN RELATORIOS] buscarRelatorio chamado", { filtros });
     setLoading(true);
     try {
       const params = new URLSearchParams();
@@ -76,6 +71,7 @@ export default function RelatorioGerente() {
       );
 
       const data = await response.json();
+      console.log(data);
       setDados(data.retorno);
     } catch (error) {
       console.error("Erro ao buscar relatório:", error);
@@ -83,7 +79,7 @@ export default function RelatorioGerente() {
       setLoading(false);
     }
   };
-
+  
   // Datas iniciais (últimos 7 dias)
   useEffect(() => {
     const hoje = new Date();
@@ -97,32 +93,38 @@ export default function RelatorioGerente() {
     }));
   }, []);
 
-  // Cálculos
-  const calcularTotais = () => {
-    if (!dados?.resumo) return { vendas: 0, faturamento: 0, ticket: 0 };
+  // Totais fornecidos pelo backend (fallback para cálculo local se não existir)
+  const totais = dados?.totais
+    ? {
+        vendas: Number(dados.totais.totalVendas) || 0,
+        faturamento: Number(dados.totais.totalFaturamento) || 0,
+        ticket:
+          (Number(dados.totais.totalVendas) || 0) > 0
+            ? Number(dados.totais.totalFaturamento) /
+              Number(dados.totais.totalVendas)
+            : 0,
+      }
+    : {
+        vendas:
+          dados?.resumo?.reduce(
+            (acc, dia) => acc + Number(dia.total_vendas || 0),
+            0
+          ) || 0,
+        faturamento:
+          dados?.resumo?.reduce(
+            (acc, dia) => acc + Number(dia.saldo_total || 0),
+            0
+          ) || 0,
+        ticket: 0,
+      };
 
-    const vendas = dados.resumo.reduce(
-      (acc, dia) => acc + Number(dia.total_vendas),
-      0
-    );
-    const faturamento = dados.resumo.reduce(
-      (acc, dia) => acc + Number(dia.saldo_total),
-      0
-    );
+  const totalGastos = dados?.totais
+    ? Number(dados.totais.totalGastos) || 0
+    : dados?.gastos?.reduce((acc, g) => acc + (Number(g.preco) || 0), 0) || 0;
 
-    return {
-      vendas,
-      faturamento,
-      ticket: vendas > 0 ? faturamento / vendas : 0,
-    };
-  };
-
-  const totais = calcularTotais();
-
-  const totalGastos =
-    dados?.gastos?.reduce((acc, g) => acc + Number(g.valor), 0) || 0;
-
-  const saldoLiquido = totais.faturamento - totalGastos;
+  const saldoLiquido = dados?.totais
+    ? Number(dados.totais.saldoLiquido) || totais.faturamento - totalGastos
+    : totais.faturamento - totalGastos;
 
   const prepararDadosGrafico = () => {
     if (!dados?.resumo) return [];
@@ -136,19 +138,22 @@ export default function RelatorioGerente() {
     }));
   };
 
-  // ============================
-  // ESTILO TIKITOS APLICADO A TUDO
-  // ============================
-  const cardStyle =
-    "bg-white border-2 border-dashed rounded-2xl p-6 shadow-sm";
+  const formatCurrency = (value) => {
+    const num = Number(value) || 0;
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    }).format(num);
+  };
+
+  useEffect(() => {
+    console.log(dados);
+  }, [dados]);
+
+  const cardStyle = "bg-white border-2 border-dashed rounded-2xl p-6 shadow-sm";
 
   return (
-    <div
-      className="min-h-screen p-6"
-      style={{
-        background: `linear-gradient(135deg, ${TIKI.rosaTikitos}, #ffffff)`,
-      }}
-    >
+    <div className="min-h-screen p-6 bg-gradient-to-r from-[#DDF1D4] to-verdeclaro">
       <div className="max-w-7xl mx-auto">
         {/* TITULO */}
         <div className="mb-6">
@@ -252,10 +257,7 @@ export default function RelatorioGerente() {
                 <button
                   onClick={buscarRelatorio}
                   disabled={loading}
-                  className="w-full py-3 font-semibold text-white rounded-xl transition"
-                  style={{
-                    backgroundColor: TIKI.roxoMedio,
-                  }}
+                  className="w-full py-3 font-semibold text-roxo rounded-xl transition cursor-pointer bg-verdeclaro border-3 border-dashed border-roxo hover:bg-verdefundo"
                 >
                   {loading ? "Carregando..." : "Gerar"}
                 </button>
@@ -281,16 +283,19 @@ export default function RelatorioGerente() {
         {!dados && !loading && (
           <div className={`${cardStyle} text-center py-12`}>
             <Calendar className="mx-auto w-16 h-16 text-gray-300" />
-            <h3 className="text-xl font-semibold mt-4" style={{ color: TIKI.roxoEscuro }}>
+            <h3
+              className="text-xl font-semibold mt-4"
+              style={{ color: TIKI.roxoEscuro }}
+            >
               Nenhum relatório gerado
             </h3>
-            <p className="text-gray-600">Configure os filtros e gere um relatório.</p>
+            <p className="text-gray-600">
+              Configure os filtros e gere um relatório.
+            </p>
           </div>
         )}
 
-        {/* ==============================
-             CONTEÚDO DO RELATÓRIO
-        =============================== */}
+        {/* CONTEÚDO DO RELATÓRIO */}
         {dados && (
           <>
             {/* CARDS RESUMO */}
@@ -303,14 +308,14 @@ export default function RelatorioGerente() {
               <div className={cardStyle}>
                 <p className="text-sm text-gray-700">Faturamento</p>
                 <h2 className="text-3xl font-bold text-green-700">
-                  R$ {totais.faturamento.toFixed(2)}
+                  {formatCurrency(totais.faturamento)}
                 </h2>
               </div>
 
               <div className={cardStyle}>
                 <p className="text-sm text-gray-700">Ticket Médio</p>
                 <h2 className="text-3xl font-bold">
-                  R$ {totais.ticket.toFixed(2)}
+                  {formatCurrency(totais.ticket)}
                 </h2>
               </div>
 
@@ -322,7 +327,7 @@ export default function RelatorioGerente() {
                     color: saldoLiquido >= 0 ? TIKI.verdeTikitos : "red",
                   }}
                 >
-                  R$ {saldoLiquido.toFixed(2)}
+                  {formatCurrency(saldoLiquido)}
                 </h2>
               </div>
             </div>
@@ -330,7 +335,9 @@ export default function RelatorioGerente() {
             {/* GRÁFICOS */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
               <div className={cardStyle}>
-                <h3 className="text-lg font-semibold mb-3">Faturamento Diário</h3>
+                <h3 className="text-lg font-semibold mb-3">
+                  Faturamento Diário
+                </h3>
                 <ResponsiveContainer width="100%" height={300}>
                   <LineChart data={prepararDadosGrafico()}>
                     <CartesianGrid strokeDasharray="3 3" />
@@ -349,7 +356,9 @@ export default function RelatorioGerente() {
               </div>
 
               <div className={cardStyle}>
-                <h3 className="text-lg font-semibold mb-3">Quantidade de Vendas</h3>
+                <h3 className="text-lg font-semibold mb-3">
+                  Quantidade de Vendas
+                </h3>
                 <ResponsiveContainer width="100%" height={300}>
                   <BarChart data={prepararDadosGrafico()}>
                     <CartesianGrid strokeDasharray="3 3" />
@@ -366,21 +375,32 @@ export default function RelatorioGerente() {
               </div>
             </div>
 
-            {/* DESPESAS */}
-            {dados.gastos && dados.gastos.length > 0 && (
+            {/* VENDAS DETALHADAS (aparece quando 'detalhado' está marcado) */}
+            {filtros.detalhado && dados.vendas && dados.vendas.length > 0 && (
               <div className={cardStyle}>
-                <h3 className="text-lg font-semibold mb-4">Despesas</h3>
+                <h3 className="text-lg font-semibold mb-4">Vendas Detalhadas</h3>
                 <div className="overflow-auto">
                   <table className="w-full">
+                    <thead>
+                      <tr className="text-left border-b">
+                        <th className="p-3">ID</th>
+                        <th className="p-3">Data</th>
+                        <th className="p-3">Usuário</th>
+                        <th className="p-3">Pagamento</th>
+                        <th className="p-3">Total</th>
+                      </tr>
+                    </thead>
                     <tbody>
-                      {dados.gastos.map((g) => (
-                        <tr key={g.id_gasto} className="border-b">
-                          <td className="p-3">{g.descricao}</td>
+                      {dados.vendas.map((v) => (
+                        <tr key={v.id_venda} className="border-b">
+                          <td className="p-3">{v.id_venda}</td>
                           <td className="p-3">
-                            {new Date(g.data_adicionado).toLocaleDateString("pt-BR")}
+                            {new Date(v.data_venda).toLocaleString("pt-BR")}
                           </td>
-                          <td className="p-3 text-red-600">
-                            R$ {Number(g.preco).toFixed(2)}
+                          <td className="p-3">{v.nome_usuario}</td>
+                          <td className="p-3">{v.tipo_pagamento}</td>
+                          <td className="p-3 font-semibold">
+                            {formatCurrency(Number(v.total))}
                           </td>
                         </tr>
                       ))}

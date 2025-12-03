@@ -86,5 +86,6 @@ export default function useProdutos() {
     loading,
     handleSalvarDesconto,
     handleFazerPedido,
+    buscarProdutos,
   };
 }

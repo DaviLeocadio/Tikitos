@@ -5,6 +5,7 @@ import {
   criarVendedorController,
   atualizarVendedorController,
   desativarVendedorController,
+  reativarVendedorController,
 } from "../controllers/VendedorController.js";
 
 import {
@@ -53,6 +54,9 @@ router.put("/vendedores/:vendedorId", atualizarVendedorController);
 
 // Status do vendedor inativo
 router.delete("/vendedores/:vendedorId/desativar", desativarVendedorController);
+
+// Status do vendedor ativo
+router.post("/vendedores/:vendedorId/reativar", reativarVendedorController);
 
 /* ===== Produtos e Estoque ===== */
 
