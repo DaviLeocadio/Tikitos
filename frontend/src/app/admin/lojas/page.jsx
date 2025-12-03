@@ -1,11 +1,8 @@
 "use client";
 
-export default function AdminLojas() {
-  
+import React from "react";
+import LojasContainer from "@/components/admin/lojas/LojasContainer";
 
-  return (
-    <>
-        <h1>Admin - Lojas</h1>
-    </>
-  );
+export default function Page() {
+  return <LojasContainer />;
 }
