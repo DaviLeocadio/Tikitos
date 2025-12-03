@@ -43,7 +43,7 @@ export default function LojaCard({ loja }) {
   } = loja;
 
   const handleDetailsClick = () => {
-    window.location.href = `/lojas/${id_empresa}`;
+    window.location.href = `/admin/lojas/${id_empresa}`;
   };
 
   const statusColor =

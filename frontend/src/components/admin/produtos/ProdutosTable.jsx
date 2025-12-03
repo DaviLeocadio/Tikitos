@@ -57,6 +57,7 @@ const ProdutosTable = memo(function ProdutosTable({
     }
   });
 
+
   return (
     <div className="bg-white rounded-xl border-3 border-dashed border-[#b478ab] overflow-hidden">
       <div className="overflow-x-auto">

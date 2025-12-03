@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import {
   useProdutos,
-  ModalEditarDesconto,
   ModalPedidoFornecedor,
   ProdutosFilters,
   ProdutosTable,
@@ -11,6 +10,7 @@ import {
 } from "@/components/admin/produtos";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { useSearchParams } from "next/navigation";
+import ModalEditarProduto from "@/components/admin/produtos/ModalEditarProduto";
 
 export default function AdminProduto() {
   const [sorting, setSorting] = useState([]);
@@ -18,11 +18,12 @@ export default function AdminProduto() {
   const [categoriaFiltro, setCategoriaFiltro] = useState("todas");
   const [statusFiltro, setStatusFiltro] = useState("todos");
 
-  // Modals
-  const [modalDesconto, setModalDesconto] = useState({
+  // Modals - CORRIGIDO: inicialização correta
+  const [modalProduto, setModalProduto] = useState({
     open: false,
     produto: null,
   });
+
   const [modalPedido, setModalPedido] = useState({
     open: false,
     produto: null,
@@ -34,10 +35,14 @@ export default function AdminProduto() {
     categorias,
     loading,
     handleFazerPedido,
+    handleEditarProduto,
   } = useProdutos();
 
-  // Colunas da tabela
-  const columns = GetColumns({ setModalDesconto, setModalPedido });
+  // Colunas da tabela - CORRIGIDO: passando setModalProduto ao invés de setModalDesconto
+  const columns = GetColumns({
+    setModalProduto, // Renomeado para manter compatibilidade
+    setModalPedido,
+  });
 
   // Filtragem customizada
   const produtosFiltrados = produtos.filter((p) => {
@@ -52,20 +57,23 @@ export default function AdminProduto() {
   });
 
   const searchParams = useSearchParams();
+
   useEffect(() => {
     const produtoNome = searchParams.get("produtoNome");
     const idProduto = searchParams.get("idProduto");
-    const produto = produtos.find((p) => p.id_produto == idProduto);
-    if (produtoNome && idProduto) {
-      setGlobalFilter(produtoNome);
-      console.log(produto);
-      setModalPedido({
-        open: true,
-        produto: produto,
-      });
+
+    if (produtoNome && idProduto && produtos.length > 0) {
+      const produto = produtos.find((p) => p.id_produto == idProduto);
+
+      if (produto) {
+        setGlobalFilter(produtoNome);
+        setModalPedido({
+          open: true,
+          produto: produto,
+        });
+      }
     }
-    console.log(produtos)
-  }, [produtos]);
+  }, [produtos, searchParams]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#DDF1D4] to-verdeclaro p-5 lg:p-8">
@@ -104,12 +112,15 @@ export default function AdminProduto() {
       </div>
 
       {/* Modals */}
-      {/* <ModalEditarDesconto
-        produto={modalDesconto.produto}
-        open={modalDesconto.open}
-        onClose={() => setModalDesconto({ open: false, produto: null })}
-        onSalvar={handleSalvarDesconto}
-      /> */}
+      <ModalEditarProduto
+        produto={modalProduto.produto}
+        open={modalProduto.open}
+        onClose={() => {
+          setModalProduto({ open: false, produto: null });
+          produtos;
+        }}
+        onSalvar={handleEditarProduto}
+      />
 
       <ModalPedidoFornecedor
         produto={modalPedido.produto}

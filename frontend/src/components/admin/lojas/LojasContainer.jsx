@@ -3,7 +3,9 @@
 import React, { useState, useEffect } from "react";
 import { RefreshCw } from "lucide-react";
 import LojaCard from "@/components/admin/lojas/LojaCard";
-
+import MapaFiliais from "@/components/mapaFiliais/mapaFiliais";
+import { SlideOpacity } from "@/components/carousel-10";
+import Link from "next/link"
 const API_URL = "http://localhost:8080/admin/filiais";
 
 export default function LojasContainer() {
@@ -41,7 +43,8 @@ export default function LojasContainer() {
         }
       } catch (err) {
         lastError = err;
-        if (i < retries - 1) await new Promise((r) => setTimeout(r, 1000 * Math.pow(2, i)));
+        if (i < retries - 1)
+          await new Promise((r) => setTimeout(r, 1000 * Math.pow(2, i)));
       }
     }
 
@@ -54,7 +57,9 @@ export default function LojasContainer() {
       return (
         <div className="text-center py-10 flex flex-col items-center">
           <RefreshCw className="w-8 h-8 text-[#924187] animate-spin mb-3" />
-          <p className="text-lg font-bold text-[#76196c]">Carregando filiais...</p>
+          <p className="text-lg font-bold text-[#76196c]">
+            Carregando filiais...
+          </p>
         </div>
       );
     }
@@ -93,20 +98,33 @@ export default function LojasContainer() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-[#DDF1D4] via-[#DDF1D4] to-verdinho p-4 sm:p-8">
+    <div className="min-h-screen bg-[#DDF1D4] p-4 sm:p-8">
       <div className="max-w-7xl mx-auto">
         <header className="mb-8 border-b-2 border-dashed border-[#d695e7] pb-4 flex justify-between items-center">
-          <h1 className="text-4xl font-extrabold text-[#76196c]">Filiais Tikitos</h1>
-
+          <h1 className="text-4xl font-extrabold text-[#76196c]">
+            Filiais Tikitos
+          </h1>
+          <div className="flex gap-1">
+            <Link href="/admin/cadastrar" className="flex items-center px-4 py-2 bg-roxo text-white font-bold rounded-lg shadow hover:bg-roxoescuro transition text-sm disabled:opacity-50">
+             Nova Filial
+            </Link>
           <button
             onClick={() => fetchLojas()}
             disabled={loading}
             className="flex items-center px-4 py-2 bg-roxo text-white font-bold rounded-lg shadow hover:bg-roxoescuro transition text-sm disabled:opacity-50"
           >
-            <RefreshCw size={16} className={`mr-2 ${loading ? "animate-spin" : ""}`} />
+            <RefreshCw
+              size={16}
+              className={`mr-2 ${loading ? "animate-spin" : ""}`}
+            />
             Atualizar
           </button>
+            </div>
         </header>
+
+        <SlideOpacity lojas={lojas} />
+
+        <MapaFiliais></MapaFiliais>
 
         {renderContent()}
       </div>

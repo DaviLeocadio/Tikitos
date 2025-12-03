@@ -32,6 +32,12 @@ import {
 } from "../controllers/FornecedorController.js";
 
 import {
+  atualizarProdutoLojaController,
+  estoqueBaixoController,
+  pedidoProdutoController
+} from "../controllers/ProdutoLojaController.js";
+
+import {
   listarVendedoresController,
   obterVendedorPorIdController,
   criarVendedorController,

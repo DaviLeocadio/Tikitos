@@ -1,3 +1,4 @@
+
 "use client";
 import { memo } from "react";
 import {
@@ -9,30 +10,36 @@ import {
   useReactTable
 } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
-import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "./TableInline";
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "./TableInline"; // Certifique-se que o caminho está correto
 
-const ProdutosTable = memo(function ProdutosTable({ 
-  data, 
-  columns, 
+const FornecedoresTable = memo(function FornecedoresTable({
+  data,
+  columns,
   loading,
   globalFilter,
   setGlobalFilter,
   sorting,
   setSorting
 }) {
-  // Função customizada para filtrar por múltiplos campos
+  // Função customizada para filtrar por múltiplos campos de FORNECEDOR
   const fuzzyFilter = (row, columnId, value) => {
     const searchText = value.toLowerCase();
-    
-    // Buscar em id_produto, nome e descricao
-    const id = String(row.original.id_produto || "").toLowerCase();
+
+    // Buscar em campos relevantes do fornecedor
+    const id = String(row.original.id_fornecedor || "").toLowerCase();
     const nome = (row.original.nome || "").toLowerCase();
-    const descricao = (row.original.descricao || "").toLowerCase();
-    
+    const cnpj = (row.original.cnpj || "").toLowerCase();
+    const email = (row.original.email || "").toLowerCase();
+    const cidade = (row.original.cidade || "").toLowerCase();
+    const status = (row.original.status || "").toLowerCase();
+
     return (
       id.includes(searchText) ||
       nome.includes(searchText) ||
-      descricao.includes(searchText)
+      cnpj.includes(searchText) ||
+      email.includes(searchText) ||
+      cidade.includes(searchText) ||
+      status.includes(searchText)
     );
   };
 
@@ -58,7 +65,7 @@ const ProdutosTable = memo(function ProdutosTable({
   });
 
   return (
-    <div className="bg-[#EBC7F5] rounded-xl border-3 border-dashed border-[#b478ab] overflow-hidden">
+    <div className="bg-white rounded-xl border-3 border-dashed border-[#b478ab] overflow-hidden">
       <div className="overflow-x-auto">
         <Table>
           <TableHeader className="bg-[#e8c5f1]">
@@ -79,7 +86,7 @@ const ProdutosTable = memo(function ProdutosTable({
                 <TableCell colSpan={columns.length} className="h-24 text-center">
                   <div className="flex items-center justify-center gap-2">
                     <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#76196c]"></div>
-                    <span className="text-[#8c3e82]">Carregando produtos...</span>
+                    <span className="text-[#8c3e82]">Carregando fornecedores...</span>
                   </div>
                 </TableCell>
               </TableRow>
@@ -96,9 +103,9 @@ const ProdutosTable = memo(function ProdutosTable({
             ) : (
               <TableRow>
                 <TableCell colSpan={columns.length} className="h-24 text-center">
-                  <i className="bi bi-inbox text-4xl text-[#b478ab] opacity-50"></i>
+                  <i className="bi bi-truck text-4xl text-[#b478ab] opacity-50"></i>
                   <p className="text-lg font-semibold text-[#8c3e82] mt-2">
-                    Nenhum produto encontrado
+                    Nenhum fornecedor encontrado
                   </p>
                 </TableCell>
               </TableRow>
@@ -115,7 +122,7 @@ const ProdutosTable = memo(function ProdutosTable({
             (table.getState().pagination.pageIndex + 1) * table.getState().pagination.pageSize,
             table.getFilteredRowModel().rows.length
           )}{" "}
-          de {table.getFilteredRowModel().rows.length} produtos
+          de {table.getFilteredRowModel().rows.length} fornecedores
         </div>
         <div className="flex gap-2">
           <Button
@@ -142,4 +149,4 @@ const ProdutosTable = memo(function ProdutosTable({
   );
 });
 
-export default ProdutosTable;
+export default FornecedoresTable;

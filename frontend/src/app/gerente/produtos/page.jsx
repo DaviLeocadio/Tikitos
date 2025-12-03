@@ -72,12 +72,16 @@ export default function GerenteProdutos() {
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div>
-          <h1 className="text-3xl lg:text-4xl font-bold text-[#76196c]">
-            <SidebarTrigger /> Gerenciar Produtos
-          </h1>
-          <p className="text-lg text-[#8c3e82] mt-1">
-            {produtosFiltrados.length} produtos encontrados
-          </p>
+          <SidebarTrigger />
+          <img
+            src="/img/gerenciar_produtos/gerenciar_produtos.png"
+            className="md:p-3 md:w-[70%] mx-auto md:mb-[7%]"
+          />
+          <div className="flex justify-end">
+            <p className="text-md text-[#4F6940]">
+              {produtosFiltrados.length} produtos encontrados
+            </p>
+          </div>
         </div>
 
         {/* Filtros */}

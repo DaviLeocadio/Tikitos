@@ -53,6 +53,25 @@ export default function useProdutos() {
   //   }
   // };
 
+  const handleEditarProduto = async (idProduto, dataProduto) => {
+    try {
+      const response = await fetch(`http://localhost:8080/admin/produtos/${idProduto}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ dataProduto }),
+        credentials: 'include'
+      })
+
+      if (response.ok) {
+        await buscarProdutos();
+        aparecerToast("Produto atualizado com sucesso!");
+      }
+    } catch (error) {
+      console.error("Erro ao atualizar produto:", error);
+      aparecerToast("Erro ao atualizar produto!");
+    }
+  }
+
   const handleFazerPedido = async (idProduto, idFornecedor, quantidade) => {
     try {
       const response = await fetch("http://localhost:8080/admin/pedidos", {
@@ -84,7 +103,7 @@ export default function useProdutos() {
     produtos,
     categorias,
     loading,
-    // handleSalvarDesconto,
+    handleEditarProduto,
     handleFazerPedido,
     buscarProdutos,
   };
