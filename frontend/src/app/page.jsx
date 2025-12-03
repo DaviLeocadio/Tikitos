@@ -61,7 +61,7 @@ export default function Login() {
           return (window.location.href = "/gerente");
         }
         if (data.usuario.perfil == "admin") {
-          return (window.location.href = "/");
+          return (window.location.href = "/admin");
         }
       }
 
@@ -157,8 +157,8 @@ export default function Login() {
                 </label>
                 <input
                   type="password"
-                  id="email"
-                  name="email"
+                  id="senha"
+                  name="senha"
                   placeholder="Senha"
                   required=""
                   className={`bg-[#DABCE1]`}

@@ -216,7 +216,7 @@ export default function VendasPage() {
                 {vendasFiltradas.map((venda) => (
                   <div
                     key={venda.id}
-                    className="bg-[#E5B8F1] w-[100%] order-[#76226D] rounded-[40px] p-5 hover:bg-[#EBC7F5] transition cursor-pointer"
+                    className="bg-[#E5B8F1] w-[100%] border-[#76226D] border-2 rounded-[40px] p-5 hover:bg-[#EBC7F5] transition"
                   >
                     <div className="flex flex-col gap-4 xs:flex-row xs:items-center xs:justify-between">
                       <div>
