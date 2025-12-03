@@ -1,6 +1,6 @@
 import TableInline from "./TableInline";
 import ModalEditarProduto from "./ModalEditarProduto";
-import ModalPedidoFornecedor from "./ModalPedidoFornecedor";
+import ModalDesativarProduto from "./ModalDesativarProduto";
 import ProdutosFilters from "./ProdutosFilters";
 import ProdutosTable from "./ProdutosTable";
 import GetColumns from "./GetColumns";
@@ -14,7 +14,7 @@ const Components = {
   TableHead: TableInline.TableHead,
   TableCell: TableInline.TableCell,
   ModalEditarProduto,
-  ModalPedidoFornecedor,
+  ModalDesativarProduto,
   ProdutosFilters,
   ProdutosTable,
   GetColumns,
@@ -23,7 +23,7 @@ const Components = {
 
 export default Components;
 export { default as ModalEditarProduto } from "./ModalEditarProduto";
-export { default as ModalPedidoFornecedor } from "./ModalPedidoFornecedor";
+export { default as ModalDesativarProduto } from './ModalDesativarProduto'
 export { default as ProdutosFilters } from "./ProdutosFilters";
 export { default as ProdutosTable } from "./ProdutosTable";
 export { default as GetColumns } from "./GetColumns";

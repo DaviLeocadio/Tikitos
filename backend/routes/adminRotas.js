@@ -22,6 +22,7 @@ import {
   criarProdutoController,
   atualizarProdutoController,
   desativarProdutoController,
+  ativarProdutoController,
 } from "../controllers/ProdutoController.js";
 
 import {
@@ -150,7 +151,10 @@ router.put(
 );
 
 // Desativar um produto
-router.delete("/produtos/:id", desativarProdutoController);
+router.delete("/produtos/:idProduto/desativar", desativarProdutoController);
+
+// Ativar um produto
+router.post("/produtos/:idProduto/ativar", ativarProdutoController);
 
 /* ===================== FORNECEDORES ===================== */
 

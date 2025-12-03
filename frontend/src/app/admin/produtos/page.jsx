@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import {
   useProdutos,
-  ModalPedidoFornecedor,
   ProdutosFilters,
   ProdutosTable,
   GetColumns,
@@ -11,6 +10,7 @@ import {
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { useSearchParams } from "next/navigation";
 import ModalEditarProduto from "@/components/admin/produtos/ModalEditarProduto";
+import ModalDesativarProduto from "@/components/admin/produtos/ModalDesativarProduto";
 
 export default function AdminProduto() {
   const [sorting, setSorting] = useState([]);
@@ -24,24 +24,19 @@ export default function AdminProduto() {
     produto: null,
   });
 
-  const [modalPedido, setModalPedido] = useState({
+  const [modalDesativar, setModalDesativar] = useState({
     open: false,
     produto: null,
   });
 
   // Hook customizado
-  const {
-    produtos,
-    categorias,
-    loading,
-    handleFazerPedido,
-    handleEditarProduto,
-  } = useProdutos();
+  const { produtos, categorias, loading, buscarProdutos, handleEditarProduto } =
+    useProdutos();
 
   // Colunas da tabela - CORRIGIDO: passando setModalProduto ao invés de setModalDesconto
   const columns = GetColumns({
-    setModalProduto, // Renomeado para manter compatibilidade
-    setModalPedido,
+    setModalProduto,
+    setModalDesativar,
   });
 
   // Filtragem customizada
@@ -67,10 +62,6 @@ export default function AdminProduto() {
 
       if (produto) {
         setGlobalFilter(produtoNome);
-        setModalPedido({
-          open: true,
-          produto: produto,
-        });
       }
     }
   }, [produtos, searchParams]);
@@ -122,11 +113,11 @@ export default function AdminProduto() {
         onSalvar={handleEditarProduto}
       />
 
-      <ModalPedidoFornecedor
-        produto={modalPedido.produto}
-        open={modalPedido.open}
-        onClose={() => setModalPedido({ open: false, produto: null })}
-        onSalvar={handleFazerPedido}
+      <ModalDesativarProduto
+        produto={modalDesativar.produto}
+        open={modalDesativar.open}
+        onClose={() => setModalDesativar({ open: false, produto: null })}
+        onSalvar={buscarProdutos}
       />
     </div>
   );

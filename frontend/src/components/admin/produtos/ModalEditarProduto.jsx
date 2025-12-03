@@ -16,42 +16,95 @@ export default function ModalEditarProduto({
   onSalvar,
 }) {
   const [produtoInfo, setProdutoInfo] = useState({
+    idCategoria: null,
+    idFornecedor: null,
     nome: "",
     descricao: "",
-    categoria:"",
+    categoria: "",
     custo: "",
     lucro: "",
-    preco: "",
     imagem: "",
-    status: "ativo",
   });
   const [loading, setLoading] = useState(false);
 
-  console.log(produto)
+  // Calcula o preço automaticamente baseado em custo e lucro
+  const calcularPreco = (custo, lucro) => {
+    const custoNum = parseFloat(custo) || 0;
+    const lucroNum = parseFloat(lucro) || 0;
+    return (custoNum * (1 + lucroNum / 100)).toFixed(2);
+  };
+
+  const precoCalculado = calcularPreco(produtoInfo.custo, produtoInfo.lucro);
+
   useEffect(() => {
     if (produto && open) {
       setProdutoInfo({
+        idCategoria: produto.categoria?.id_categoria || null,
+        idFornecedor: produto.id_fornecedor || null,
         nome: produto.nome || "",
         descricao: produto.descricao || "",
-        categoria: produto.categoria.nome || "",
-        custo: produto.custo || "",
-        lucro: produto.lucro || "",
-        preco: produto.preco || "",
+        categoria: produto.categoria?.nome || "",
+        custo: produto.custo?.toString() || "",
+        lucro: produto.lucro?.toString() || "",
         imagem: produto.imagem || "",
-        status: produto.status || "ativo",
       });
     }
   }, [produto, open]);
 
   const handleSalvar = async () => {
+    // Validação básica
+    if (!produtoInfo.nome.trim()) {
+      alert("O nome do produto é obrigatório");
+      return;
+    }
+
+    if (!produtoInfo.custo || parseFloat(produtoInfo.custo) < 0) {
+      alert("O custo deve ser um valor válido");
+      return;
+    }
+
+    if (!produtoInfo.lucro || parseFloat(produtoInfo.lucro) < 0) {
+      alert("O lucro deve ser um valor válido");
+      return;
+    }
+
     setLoading(true);
-    await onSalvar(produto.id_produto, produtoInfo);
-    setLoading(false);
-    onClose();
+    
+    // Prepara os dados para enviar ao backend
+    // Converte undefined para null para evitar erro no MySQL
+    const dadosParaEnviar = {
+      idCategoria: produtoInfo.idCategoria || null,
+      idFornecedor: produtoInfo.idFornecedor || null,
+      nome: produtoInfo.nome.trim(),
+      descricao: produtoInfo.descricao?.trim() || null,
+      custo: parseFloat(produtoInfo.custo),
+      lucro: parseFloat(produtoInfo.lucro),
+      imagem: produtoInfo.imagem?.trim() || null,
+    };
+
+    try {
+      await onSalvar(produto.id_produto, dadosParaEnviar);
+      console.log("Dados enviados:", dadosParaEnviar);
+      onClose();
+    } catch (error) {
+      console.error("Erro ao salvar produto:", error);
+      alert("Erro ao salvar o produto. Tente novamente.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleChange = (event) => {
     const { name, value } = event.target;
+    
+    // Validação para campos numéricos
+    if (name === "custo" || name === "lucro") {
+      // Permite apenas números e ponto decimal
+      if (value !== "" && !/^\d*\.?\d*$/.test(value)) {
+        return;
+      }
+    }
+
     setProdutoInfo((prevState) => ({
       ...prevState,
       [name]: value,
@@ -67,13 +120,13 @@ export default function ModalEditarProduto({
           </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-3">
+        <div className="space-y-3 max-h-[60vh] overflow-y-auto pr-2">
           <div className="mb-2 flex flex-col">
             <label
               htmlFor="nome"
               className="text-sm text-[#569a33] font-semibold"
             >
-              Nome:
+              Nome: <span className="text-red-600">*</span>
             </label>
             <input
               type="text"
@@ -82,6 +135,7 @@ export default function ModalEditarProduto({
               className="text-md font-semibold focus-visible:outline-none text-[#76196c] bg-verdeclaro px-2 py-1 rounded-lg border-1 border-dashed border-roxoescuro"
               value={produtoInfo.nome}
               onChange={handleChange}
+              required
             />
           </div>
 
@@ -93,10 +147,10 @@ export default function ModalEditarProduto({
               Descrição:
             </label>
             <textarea
-              type="text"
               id="descricao"
               name="descricao"
-              className="text-md h-25 font-semibold focus-visible:outline-none text-[#76196c] bg-verdeclaro px-2 py-1 rounded-lg border-1 border-dashed border-roxoescuro"
+              rows="3"
+              className="text-md font-semibold focus-visible:outline-none text-[#76196c] bg-verdeclaro px-2 py-1 rounded-lg border-1 border-dashed border-roxoescuro resize-none"
               value={produtoInfo.descricao}
               onChange={handleChange}
             />
@@ -104,20 +158,23 @@ export default function ModalEditarProduto({
 
           <div className="mb-2 flex flex-col">
             <label
-              htmlFor="custo"
+              htmlFor="categoria"
               className="text-sm text-[#569a33] font-semibold"
             >
               Categoria:
             </label>
             <input
               type="text"
-    
               id="categoria"
               name="categoria"
-              className="text-md font-semibold focus-visible:outline-none text-[#76196c] bg-verdeclaro px-2 py-1 rounded-lg border-1 border-dashed border-roxoescuro"
+              className="text-md font-semibold focus-visible:outline-none text-[#76196c] bg-gray-200 px-2 py-1 rounded-lg border-1 border-dashed border-roxoescuro cursor-not-allowed"
               value={produtoInfo.categoria}
-              onChange={handleChange}
+              disabled
+              title="A categoria não pode ser alterada aqui"
             />
+            <span className="text-xs text-gray-600 mt-1">
+              Para alterar a categoria, use o campo apropriado
+            </span>
           </div>
 
           <div className="mb-2 flex flex-col">
@@ -125,16 +182,17 @@ export default function ModalEditarProduto({
               htmlFor="custo"
               className="text-sm text-[#569a33] font-semibold"
             >
-              Custo:
+              Custo (R$): <span className="text-red-600">*</span>
             </label>
             <input
               type="text"
-              step="0.01"
               id="custo"
               name="custo"
+              placeholder="0.00"
               className="text-md font-semibold focus-visible:outline-none text-[#76196c] bg-verdeclaro px-2 py-1 rounded-lg border-1 border-dashed border-roxoescuro"
               value={produtoInfo.custo}
               onChange={handleChange}
+              required
             />
           </div>
 
@@ -143,35 +201,30 @@ export default function ModalEditarProduto({
               htmlFor="lucro"
               className="text-sm text-[#569a33] font-semibold"
             >
-              Lucro:
+              Lucro (%): <span className="text-red-600">*</span>
             </label>
             <input
               type="text"
-              step="0.01"
               id="lucro"
               name="lucro"
+              placeholder="0.00"
               className="text-md font-semibold focus-visible:outline-none text-[#76196c] bg-verdeclaro px-2 py-1 rounded-lg border-1 border-dashed border-roxoescuro"
               value={produtoInfo.lucro}
               onChange={handleChange}
+              required
             />
           </div>
 
           <div className="mb-2 flex flex-col">
-            <label
-              htmlFor="preco"
-              className="text-sm text-[#569a33] font-semibold"
-            >
-              Preço:
+            <label className="text-sm text-[#569a33] font-semibold">
+              Preço Calculado (R$):
             </label>
-            <input
-              type="text"
-              step="0.01"
-              id="preco"
-              name="preco"
-              className="text-md font-semibold focus-visible:outline-none text-[#76196c] bg-verdeclaro px-2 py-1 rounded-lg border-1 border-dashed border-roxoescuro"
-              value={produtoInfo.preco}
-              onChange={handleChange}
-            />
+            <div className="text-lg font-bold text-[#76196c] bg-gray-100 px-2 py-1 rounded-lg border-1 border-dashed border-[#924187]">
+              R$ {precoCalculado}
+            </div>
+            <span className="text-xs text-gray-600 mt-1">
+              Calculado automaticamente: Custo × (1 + Lucro/100)
+            </span>
           </div>
 
           <div className="flex flex-col">
@@ -185,6 +238,7 @@ export default function ModalEditarProduto({
               type="text"
               id="imagem"
               name="imagem"
+              placeholder="https://exemplo.com/imagem.jpg"
               className="text-md font-semibold focus-visible:outline-none text-[#76196c] bg-verdeclaro px-2 py-1 rounded-lg border-1 border-dashed border-roxoescuro"
               value={produtoInfo.imagem}
               onChange={handleChange}

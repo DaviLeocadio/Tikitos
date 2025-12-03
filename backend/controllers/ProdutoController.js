@@ -30,10 +30,10 @@ const listarProdutosController = async (req, res) => {
       usuarioPerfil !== "admin" ? usuarioEmpresa : null
     );
 
-    const produtosFormatados = produtosFormatadosPerfil.map((produto)=>{
-      const categoria = categorias.find((c)=> c.id_categoria == produto.id_categoria);
+    const produtosFormatados = produtosFormatadosPerfil.map((produto) => {
+      const categoria = categorias.find((c) => c.id_categoria == produto.id_categoria);
 
-      return{
+      return {
         ...produto,
         categoria: categoria || null
       }
@@ -116,9 +116,9 @@ const criarProdutoController = async (req, res) => {
 
 const atualizarProdutoController = async (req, res) => {
   try {
-    const { idProduto } = req.params;
+    const { idProduto } = req.params.id;
+    const { idEmpresa } = req.usuarioEmpresa;
     const {
-      idEmpresa,
       idCategoria,
       idFornecedor,
       nome,
@@ -127,7 +127,20 @@ const atualizarProdutoController = async (req, res) => {
       lucro,
     } = req.body;
 
-    const preco = custo * (1 + lucro / 100);
+    // Validação básica
+    if (!nome || nome.trim() === "") {
+      return res.status(400).json({ mensagem: "Nome do produto é obrigatório" });
+    }
+
+    if (custo === undefined || custo === null || custo === "") {
+      return res.status(400).json({ mensagem: "Custo é obrigatório" });
+    }
+
+    if (lucro === undefined || lucro === null || lucro === "") {
+      return res.status(400).json({ mensagem: "Lucro é obrigatório" });
+    }
+
+    const preco = parseFloat(custo) * (1 + parseFloat(lucro) / 100);
 
     let imagemPath = null;
     if (req.file) {
@@ -137,19 +150,20 @@ const atualizarProdutoController = async (req, res) => {
       );
     }
 
+    // Garante que valores undefined sejam convertidos para null
     const produtoData = {
-      id_empresa: idEmpresa,
-      id_categoria: idCategoria,
-      id_fornecedor: idFornecedor,
+      id_empresa: 100,
+      id_categoria: idCategoria || null,
+      id_fornecedor: idFornecedor || null,
       nome: nome,
-      descricao: descricao,
-      custo: custo,
-      lucro: lucro,
+      descricao: descricao || null,
+      custo: parseFloat(custo),
+      lucro: parseFloat(lucro),
       preco: preco,
-      imagem: imagemPath,
+      imagem: imagemPath || null,
     };
 
-    const produto = await atualizarProduto(idProduto, produtoData);
+    const produto = await atualizarProduto(req.params.id, produtoData);
     res
       .status(200)
       .json({ mensagem: "Produto atualizado com sucesso", produto });
@@ -166,15 +180,37 @@ const desativarProdutoController = async (req, res) => {
     const produtoDesativado = await atualizarProduto(idProduto, {
       status: "inativo",
     });
-    if (!produtoDesativado)
+
+
+    if (produtoDesativado == 0)
       return res.status(404).json({ error: "Produto não encontrado" });
 
     return res
       .status(200)
       .json({ mensagem: "Produto desativado com sucesso", produtoDesativado });
   } catch (error) {
-    console.error("Erro ao desativar produto: ", err);
+    console.error("Erro ao desativar produto: ", error);
     res.status(500).json({ mensagem: "Erro ao desativar produto" });
+  }
+};
+
+const ativarProdutoController = async (req, res) => {
+  try {
+    const { idProduto } = req.params;
+
+    const produtoAtivado = await atualizarProduto(idProduto, {
+      status: "ativo",
+    });
+
+    if (produtoAtivado == 0)
+      return res.status(404).json({ error: "Produto não encontrado" });
+
+    return res
+      .status(200)
+      .json({ mensagem: "Produto ativado com sucesso", produtoAtivado });
+  } catch (error) {
+    console.error("Erro ao ativar produto: ", err);
+    res.status(500).json({ mensagem: "Erro ao ativar produto" });
   }
 };
 
@@ -185,4 +221,5 @@ export {
   criarProdutoController,
   atualizarProdutoController,
   desativarProdutoController,
+  ativarProdutoController
 };
