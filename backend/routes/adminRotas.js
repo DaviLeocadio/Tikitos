@@ -29,6 +29,7 @@ import {
   listarFornecedoresController,
   obterFornecedorPorIdController,
   atualizarFornecedorController,
+  desativarFornecedorController
 } from "../controllers/FornecedorController.js";
 
 import {
@@ -162,6 +163,9 @@ router.get("/fornecedores", listarFornecedoresController);
 
 // Editar fornecedor
 router.put("/fornecedores/:id", atualizarFornecedorController);
+
+// Desativar um fornecedor
+router.delete("/fornecedores/:id", desativarFornecedorController);
 
 /* ===================== FINANCEIRO ===================== */
 
