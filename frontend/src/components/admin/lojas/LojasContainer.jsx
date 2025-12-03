@@ -5,7 +5,8 @@ import { RefreshCw } from "lucide-react";
 import LojaCard from "@/components/admin/lojas/LojaCard";
 import MapaFiliais from "@/components/mapaFiliais/mapaFiliais";
 import { SlideOpacity } from "@/components/carousel-10";
-import Link from "next/link"
+import Link from "next/link";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 const API_URL = "http://localhost:8080/admin/filiais";
 
 export default function LojasContainer() {
@@ -89,7 +90,7 @@ export default function LojasContainer() {
     }
 
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-3 md:grid-cols-3 lg:grid-cols-3 gap-8">
         {lojas.map((loja) => (
           <LojaCard key={loja.id_empresa} loja={loja} />
         ))}
@@ -100,33 +101,28 @@ export default function LojasContainer() {
   return (
     <div className="min-h-screen bg-[#DDF1D4] p-4 sm:p-8">
       <div className="max-w-7xl mx-auto">
-        <header className="mb-8 border-b-2 border-dashed border-[#d695e7] pb-4 flex justify-between items-center">
-          <h1 className="text-4xl font-extrabold text-[#76196c]">
-            Filiais Tikitos
-          </h1>
-          <div className="flex gap-1">
-            <Link href="/admin/cadastrar" className="flex items-center px-4 py-2 bg-roxo text-white font-bold rounded-lg shadow hover:bg-roxoescuro transition text-sm disabled:opacity-50">
-             Nova Filial
-            </Link>
-          <button
-            onClick={() => fetchLojas()}
-            disabled={loading}
-            className="flex items-center px-4 py-2 bg-roxo text-white font-bold rounded-lg shadow hover:bg-roxoescuro transition text-sm disabled:opacity-50"
-          >
-            <RefreshCw
-              size={16}
-              className={`mr-2 ${loading ? "animate-spin" : ""}`}
-            />
-            Atualizar
-          </button>
+        <div className="grid lg:grid-cols-5 relative">
+          <div className="lg:col-span-3 z-50 p-5 pt-0 ps-0 pb-0">
+            <div>
+              <h1 className="text-3xl lg:text-4xl font-bold text-[#76196c] flex items-center gap-2">
+                <SidebarTrigger /> Unidades em destaque
+              </h1>
+              
             </div>
-        </header>
 
-        <SlideOpacity lojas={lojas} />
+            <SlideOpacity lojas={lojas} />
+          </div>
 
-        <MapaFiliais></MapaFiliais>
+          <div className="lg:col-span-2 z-10">
+            <MapaFiliais></MapaFiliais>
+          </div>
+        </div>
 
-        {renderContent()}
+
+<img src="/img/adm/filiais_destaque.png" className="w-full rounded-lg pt-1" />
+
+        
+        <div className="">{renderContent()}</div>
       </div>
     </div>
   );

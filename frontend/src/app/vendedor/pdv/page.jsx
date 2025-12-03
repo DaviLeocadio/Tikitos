@@ -11,8 +11,6 @@ import Fuse from "fuse.js";
 import { setCookie, getCookie, deleteCookie } from "cookies-next/client";
 import { CardProdutoSkeleton } from "@/components/cards/cardProdutoEskeleton";
 
-
-
 export default function PDV() {
   const [query, setQuery] = useState("");
   const [produtos, setProdutos] = useState([]);
@@ -108,12 +106,9 @@ export default function PDV() {
     );
 
     const produtosAtivos = produtos.filter((p) => p.status === "ativo");
-    const produtosInativos = produtos.filter(
-      (p) => p.status === "inativo"
-    );
+    const produtosInativos = produtos.filter((p) => p.status === "inativo");
     setProdutosInativos(produtosInativos);
     setProdutosAtivos(produtosAtivos);
-
   }, [query, listaProdutos]);
 
   // Config Atalhos

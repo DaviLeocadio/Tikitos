@@ -7,6 +7,7 @@ import {
   desativarFilialController,
   estoqueFilialController,
   estoqueTodasFiliaisController,
+  transferirFuncionarioController,
 } from "../controllers/FilialController.js";
 
 import {
@@ -95,6 +96,12 @@ router.put("/filiais/:empresaId", atualizarEmpresaController);
 
 // Desativar uma filial
 router.delete("/filiais/:empresaId", desativarFilialController);
+
+
+// Trasferir gerente
+router.post("/filiais/:empresaId/transferir-funcionario", transferirFuncionarioController);
+
+
 
 // Informações de estoque de uma filial
 router.get("/filiais/:empresaId/estoque", estoqueFilialController);

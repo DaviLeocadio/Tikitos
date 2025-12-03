@@ -17,6 +17,7 @@ import {
   ShoppingCart,
   Banknote,
 } from "lucide-react";
+import { useParams } from "next/navigation";
 
 const TIKITOS_COLORS = {
   primary: "#76196c",
@@ -460,8 +461,9 @@ const LojaHeader = ({ lojaName, status, loading, handleRefresh }) => {
 };
 
 // Main component (exported)
-export default function LojaDetalhesComponent({ params }) {
-  const lojaId = params?.id || 200;
+export default function LojaDetalhesComponent() {
+  const params = useParams()
+  const lojaId = params?.id
   const [loja, setLoja] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);

@@ -153,5 +153,14 @@ body {
 
 button{ 
   cursor: pointer !important;
+}
 
+/* Cor de fundo do autocomplete */
+input:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0 30px rgba(241, 184, 232, 50%) inset;
+}
+
+/* Cor do texto do autocomplete */
+input:-webkit-autofill {
+    -webkit-text-fill-color: var(--color-roxoescuro) !important;
 }

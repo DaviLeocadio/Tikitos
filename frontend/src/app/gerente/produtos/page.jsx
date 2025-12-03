@@ -75,10 +75,10 @@ export default function GerenteProdutos() {
           <SidebarTrigger />
           <img
             src="/img/gerenciar_produtos/gerenciar_produtos.png"
-            className="md:p-3 md:w-[70%] mx-auto md:mb-[7%]"
+            className="md:p-3 md:w-[60%] mx-auto md:mb-[7%]"
           />
           <div className="flex justify-end">
-            <p className="text-md text-[#4F6940]">
+            <p className="text-md text-[#9D4E92] font-semibold md:mb-[-30%] xs:text-center">
               {produtosFiltrados.length} produtos encontrados
             </p>
           </div>
