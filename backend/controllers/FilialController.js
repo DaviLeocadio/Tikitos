@@ -17,6 +17,7 @@ import {
 import { readRaw } from "../config/database.js";
 import { listarProdutos } from "../models/Produto.js";
 import { criarProdutoLoja, obterProdutoLoja } from "../models/ProdutoLoja.js";
+import { atualizarUsuario, obterGerentePorEmpresa, obterUsuarioPorId } from "../models/Usuario.js";
 
 const listarEmpresasController = async (req, res) => {
   try {
@@ -52,7 +53,8 @@ const listarEmpresasController = async (req, res) => {
         );
         const totalVendasMes = Number(vendasResumo[0]?.total_vendas || 0);
         const faturamentoMes = Number(vendasResumo[0]?.faturamento || 0);
-        const ticketMedio = totalVendasMes > 0 ? faturamentoMes / totalVendasMes : 0;
+        const ticketMedio =
+          totalVendasMes > 0 ? faturamentoMes / totalVendasMes : 0;
 
         // Verificar estoque: OK se todos os produtos da loja têm estoque > 5
         const estoqueResumo = await readRaw(
@@ -63,7 +65,8 @@ const listarEmpresasController = async (req, res) => {
         );
         const totalProdutos = Number(estoqueResumo[0]?.total_produtos || 0);
         const acimaLimite = Number(estoqueResumo[0]?.acima_limite || 0);
-        const estoqueStatus = totalProdutos > 0 && acimaLimite === totalProdutos ? "OK" : "BAIXO";
+        const estoqueStatus =
+          totalProdutos > 0 && acimaLimite === totalProdutos ? "OK" : "BAIXO";
 
         // Última venda
         const ultimaVendaRows = await readRaw(
@@ -101,7 +104,8 @@ const obterEmpresaPorIdController = async (req, res) => {
 
     // Verificar existência da loja
     const empresa = await getLojaById(empresaId);
-    if (!empresa) return res.status(404).json({ error: "Empresa não encontrada" });
+    if (!empresa)
+      return res.status(404).json({ error: "Empresa não encontrada" });
 
     // Período: primeiro dia do mês até hoje
     const hoje = new Date();
@@ -110,7 +114,15 @@ const obterEmpresaPorIdController = async (req, res) => {
     const dataFim = hoje.toISOString().split("T")[0];
 
     // Reunir dados auxiliares
-    const [gerente, vendedores, financeiro, estoque, ultimas_vendas, caixa, despesas] = await Promise.all([
+    const [
+      gerente,
+      vendedores,
+      financeiro,
+      estoque,
+      ultimas_vendas,
+      caixa,
+      despesas,
+    ] = await Promise.all([
       getGerenteByLoja(empresaId),
       getVendedoresByLoja(empresaId),
       getResumoFinanceiro(empresaId, dataInicio, dataFim),
@@ -129,8 +141,18 @@ const obterEmpresaPorIdController = async (req, res) => {
       endereco: empresa.endereco,
       gerente: gerente || null,
       vendedores: vendedores || [],
-      financeiro: financeiro || { faturamento_mes: 0, total_vendas_mes: 0, ticket_medio: 0, ultima_venda: null },
-      estoque: estoque || { estoque_status: "OK", total_itens: 0, produtos_criticos: 0, produtos: [] },
+      financeiro: financeiro || {
+        faturamento_mes: 0,
+        total_vendas_mes: 0,
+        ticket_medio: 0,
+        ultima_venda: null,
+      },
+      estoque: estoque || {
+        estoque_status: "OK",
+        total_itens: 0,
+        produtos_criticos: 0,
+        produtos: [],
+      },
       ultimas_vendas: ultimas_vendas || [],
       caixa: caixa || { aberturas: [], fechamentos: [] },
       despesas: despesas || [],
@@ -289,15 +311,14 @@ const estoqueTodasFiliaisController = async (req, res) => {
   try {
     const filiais = await listarEmpresas("tipo = 'filial'");
     const produtos = await listarProdutos();
-    
+
     let listaEstoque = {};
-    
 
     await Promise.all(
       filiais.map(async (filial) => {
         const idEmpresa = filial.id_empresa;
 
-        if(!listaEstoque[idEmpresa]) listaEstoque[idEmpresa] = {}
+        if (!listaEstoque[idEmpresa]) listaEstoque[idEmpresa] = {};
 
         for (const produto of produtos) {
           const produtoLoja = await obterProdutoLoja(
@@ -322,6 +343,41 @@ const estoqueTodasFiliaisController = async (req, res) => {
   }
 };
 
+const transferirFuncionarioController = async (req, res) => {
+  try {
+    const { idUsuario, perfil } = req.body;
+    const { empresaId } = req.params;
+
+    const usuario = await obterUsuarioPorId(`id_usuario = ${idUsuario}`);
+    if (!usuario)
+      return res.status(404).json({ error: "Usuário não encontrado" });
+
+    const empresa = await obterEmpresaPorId(empresaId);
+    if (!empresa)
+      return res.status(404).json({ error: "Empresa não encontrada" });
+
+    if (perfil && perfil !== "vendedor" && perfil !== "gerente")
+      return res.status(400).json({ error: "Perfil inválido" });
+    
+    const hasGerente = await obterGerentePorEmpresa(empresaId);
+    if(hasGerente && perfil === 'gerente') return res.status(409).json({error: 'A empresa já tem um gerente'})
+    
+    const usuarioData = {
+      id_empresa: empresaId,
+    };
+    if (perfil) usuarioData.perfil = perfil;
+    
+    const usuarioAtualizado = await atualizarUsuario(idUsuario, usuarioData);
+
+    return res
+      .status(200)
+      .json({ mensagem: "Usuário transferido com sucesso", usuarioAtualizado });
+  } catch (error) {
+    console.error("Erro ao transferir funcionario: ", error);
+    res.status(500).json({ error: "Erro ao transferir funcionario" });
+  }
+};
+
 export {
   listarEmpresasController,
   obterEmpresaPorIdController,
@@ -330,4 +386,5 @@ export {
   desativarFilialController,
   estoqueFilialController,
   estoqueTodasFiliaisController,
+  transferirFuncionarioController,
 };

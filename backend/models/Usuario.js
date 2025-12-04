@@ -32,6 +32,7 @@ const listarUsuarios = async (whereClause = null) => {
 const obterUsuarioPorId = async (whereClause) => {
   try {
     const usuario = await read("usuarios", whereClause);
+    if(!usuario) return usuario
     delete usuario.senha;
 
     return {
@@ -39,7 +40,6 @@ const obterUsuarioPorId = async (whereClause) => {
       cpf: mascaraCpf(usuario.cpf),
       telefone: mascaraTelefone(usuario.telefone),
     };
-    
   } catch (err) {
     console.error("Erro ao obter usuario por ID: ", err);
     throw err;
@@ -64,5 +64,17 @@ const atualizarUsuario = async (id, usuarioData) => {
   }
 };
 
+const obterGerentePorEmpresa = async (empresaId) => {
+  try {
+    const gerente = await read(
+      "usuarios",
+      `id_empresa = ${empresaId} AND perfil = 'gerente'`
+    );
+    return (gerente ? true : false);
+  } catch (error) {
+    console.error("Erro ao obter gerente por empresa: ", err);
+    throw err;
+  }
+};
 
-export { listarUsuarios, obterUsuarioPorId, criarUsuario, atualizarUsuario };
+export { listarUsuarios, obterUsuarioPorId, criarUsuario, atualizarUsuario,obterGerentePorEmpresa };

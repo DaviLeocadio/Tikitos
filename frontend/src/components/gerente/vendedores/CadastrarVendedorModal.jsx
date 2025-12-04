@@ -263,7 +263,7 @@ export function CadastrarVendedorModal({ buscarVendedores: buscarVendedoresExter
         <DialogTrigger asChild>
           <Button
             variant="outline"
-            className="cursor-pointer text-roxo bg-verdefundo/50 hover:bg-verdefundo hover:text-roxo border-3 py-5 w-full border-dashed border-roxo rounded-2xl"
+            className="cursor-pointer text-roxo bg-verdefundo hover:bg-[#C5FFAD] hover:text-roxo border-3 py-5 w-full border-dashed border-roxo rounded-2xl"
           >
             <PlusCircle /> Cadastrar Vendedor
           </Button>

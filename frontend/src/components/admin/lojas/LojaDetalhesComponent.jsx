@@ -16,7 +16,12 @@ import {
   ClipboardList,
   ShoppingCart,
   Banknote,
+  PersonStanding,
+  User2Icon,
 } from "lucide-react";
+import { useParams } from "next/navigation";
+import Link from "next/link";
+import EditarFilialDialog from "./EditarFilialDialog";
 
 const TIKITOS_COLORS = {
   primary: "#76196c",
@@ -412,7 +417,14 @@ const DespesasCard = ({ despesas }) => (
   </DashedCard>
 );
 
-const LojaHeader = ({ lojaName, status, loading, handleRefresh }) => {
+const LojaHeader = ({
+  lojaName,
+  status,
+  loading,
+  handleRefresh,
+  lojaId,
+  idGerente,
+}) => {
   const statusColor =
     status === "ativo" ? TIKITOS_COLORS.success : "rgb(239 68 68)";
   const handleGoBack = () => (window.location.href = "/admin/lojas");
@@ -442,6 +454,15 @@ const LojaHeader = ({ lojaName, status, loading, handleRefresh }) => {
         >
           <CornerUpLeft size={16} className="mr-2" /> Voltar
         </button>
+        {idGerente && (
+          <Link
+            href={`/admin/lojas/cadastrar?step=2&id_empresa=${lojaId}`}
+            className="flex items-center px-4 py-2 bg-roxo text-white font-medium rounded-lg shadow-sm hover:bg- transition duration-150 text-sm "
+          >
+            {" "}
+            <User2Icon /> Atribuir Gerente{" "}
+          </Link>
+        )}
         <button
           onClick={handleRefresh}
           disabled={loading}
@@ -454,14 +475,16 @@ const LojaHeader = ({ lojaName, status, loading, handleRefresh }) => {
           />{" "}
           Atualizar Dados
         </button>
+        <EditarFilialDialog loja={loja}/>
       </div>
     </header>
   );
 };
 
 // Main component (exported)
-export default function LojaDetalhesComponent({ params }) {
-  const lojaId = params?.id || 200;
+export default function LojaDetalhesComponent() {
+  const params = useParams();
+  const lojaId = params?.id;
   const [loja, setLoja] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -560,8 +583,8 @@ export default function LojaDetalhesComponent({ params }) {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <div className="lg:col-span-1 space-y-8 flex">
             <GerenteVendedoresCard
-            gerente={loja.gerente}
-            vendedores={loja.vendedores}
+              gerente={loja.gerente}
+              vendedores={loja.vendedores}
             />
           </div>
           <div className="lg:col-span-1 space-y-8 flex w-full">
@@ -570,33 +593,12 @@ export default function LojaDetalhesComponent({ params }) {
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <div className="lg:col-span-1 space-y-8 flex">
-           <CaixaCard caixa={loja.caixa} />
+            <CaixaCard caixa={loja.caixa} />
           </div>
           <div className="lg:col-span-1 space-y-8 flex w-full">
             <DespesasCard despesas={loja.despesas} />
           </div>
         </div>
-
-      {/* <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-1 space-y-8">
-          <LojaInfoCard loja={loja} />
-          <GerenteVendedoresCard
-            gerente={loja.gerente}
-            vendedores={loja.vendedores}
-          />
-        </div>
-        <div className="lg:col-span-2 space-y-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <FinancasCard financeiro={loja.financeiro} />
-            <EstoqueCard estoque={loja.estoque} />
-          </div>
-          <VendasCard ultimas_vendas={loja.ultimas_vendas} />
-        </div>
-        <div className="lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-8">
-          <CaixaCard caixa={loja.caixa} />
-          <DespesasCard despesas={loja.despesas} />
-        </div>
-      </div> */}
       </div>
     );
   }, [loading, error, loja, lojaId, fetchLojaDetails]);
@@ -609,6 +611,8 @@ export default function LojaDetalhesComponent({ params }) {
           status={loja?.status || "desconhecido"}
           loading={loading}
           handleRefresh={() => fetchLojaDetails(1)}
+          lojaId={lojaId}
+          idGerente={!loja?.gerente}
         />
         {renderContent}
       </div>
