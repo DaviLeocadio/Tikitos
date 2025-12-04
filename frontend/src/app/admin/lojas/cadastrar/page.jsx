@@ -77,7 +77,7 @@ const TikitosButton = ({
   const variants = {
     primary: "bg-roxo text-white hover:bg-roxoescuro hover:shadow-purple-200",
     success:
-      "bg-[#10B981] text-white hover:bg-[#059669] hover:shadow-green-200",
+      "bg-verdefolha text-white hover:bg-verdao hover:shadow-green-200",
     outline:
       "bg-white text-purple-600 border-2 border-purple-200 hover:border-purple-500 hover:bg-purple-50",
     ghost:
@@ -302,7 +302,7 @@ export default function NovaLojaPage() {
       if (!res.ok) throw new Error("Falha na operação do gerente");
 
       aparecerToast("Tudo pronto! Redirecionando...");
-      setTimeout(() => router.push(`/lojas/${createdFilialId}`), 1500);
+      setTimeout(() => router.push(`/admin/lojas/${createdFilialId}`), 1500);
     } catch (error) {
       aparecerToast(error.message || "Erro ao processar gerente.");
     } finally {
@@ -566,7 +566,7 @@ export default function NovaLojaPage() {
                       <option value="">-- Escolha da lista --</option>
                       {(managerOption == "transfer" ? gerentes : vendores).map(
                         (emp) => (
-                          <option key={emp.id} value={emp.id}>
+                          <option key={emp.id_usuario} value={emp.id_usuario}>
                             {emp.nome} - {emp.perfil.charAt(0).toUpperCase() + emp.perfil.slice(1) || "Funcionário"} (ID:{" "}
                             {emp.id_usuario})
                           </option>
