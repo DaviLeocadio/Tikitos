@@ -183,7 +183,7 @@ const desativarVendedorController = async (req, res) => {
   try {
     const { vendedorId } = req.params;
 
-    const vendedorDesativado = atualizarUsuario(vendedorId, {
+    const vendedorDesativado = await atualizarUsuario(vendedorId, {
       status: "inativo",
     });
     if (!vendedorDesativado)
@@ -204,7 +204,7 @@ const reativarVendedorController = async (req, res) => {
   try {
     const { vendedorId } = req.params;
 
-    const vendedorReativado = atualizarUsuario(vendedorId, {
+    const vendedorReativado = await atualizarUsuario(vendedorId, {
       status: "ativo",
     });
     if (!vendedorReativado)

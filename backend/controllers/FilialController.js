@@ -222,45 +222,43 @@ const criarEmpresaController = async (req, res) => {
 const atualizarEmpresaController = async (req, res) => {
   try {
     const { empresaId } = req.params;
+    const { nome, endereco } = req.body;
 
-    const { nome, endereco, status } = req.body;
-
-    if (!nome || !status)
+    // Validação básica
+    if (!nome) {
       return res
-        .status(404)
-        .json({ error: "Parâmetros obrigatórios ausentes" });
-
-    const empresaData = {
-      nome: nome,
-      status: status,
-    };
-
-    if (endereco) {
-      const { logradouro, numero, complemento, bairro, cidade, uf, cep } =
-        endereco;
-
-      if (!logradouro || !numero || !bairro || !cidade || !uf || !cep)
-        return res
-          .status(404)
-          .json({ error: "Parâmetros do endereço faltando." });
-
-      const enderecoFormatado = `${logradouro}, ${numero}${
-        complemento ? `, ${complemento}` : ""
-      } - ${bairro}, ${cidade} - ${uf}, ${cep}`;
-
-      empresaData.push(enderecoFormatado);
+        .status(400)
+        .json({ error: "Parâmetros obrigatórios ausentes (nome)" });
     }
 
+    const empresaData = {
+      nome: nome.trim()
+    };
+
+    // Endereço opcional, mas se vier, precisa ser string válida
+    if (endereco !== undefined) {
+      if (typeof endereco !== "string" || !endereco.trim()) {
+        return res
+          .status(400)
+          .json({ error: "Endereço inválido: deve ser uma string não vazia." });
+      }
+
+      empresaData.endereco = endereco.trim();
+    }
+
+    // Atualiza no banco
     const empresaAtualizada = await atualizarEmpresa(empresaId, empresaData);
 
-    return res
-      .status(201)
-      .json({ mensagem: "Empresa atualizada com sucesso", empresaAtualizada });
+    return res.status(200).json({
+      mensagem: "Empresa atualizada com sucesso.",
+      empresaAtualizada,
+    });
   } catch (error) {
     console.error("Erro ao atualizar empresa: ", error);
-    res.status(500).json({ error: "Erro ao atualizar empresa" });
+    return res.status(500).json({ error: "Erro ao atualizar empresa" });
   }
 };
+
 
 const desativarFilialController = async (req, res) => {
   try {
@@ -270,14 +268,43 @@ const desativarFilialController = async (req, res) => {
       status: "inativo",
     });
 
-    return res
-      .status(201)
-      .json({ mensagem: "Empresa desativada com sucesso!", empresaDesativada });
+    if (!empresaDesativada) {
+      return res.status(404).json({ error: "Filial não encontrada" });
+    }
+
+    return res.status(200).json({
+      mensagem: "Filial desativada com sucesso!",
+      empresaDesativada,
+    });
   } catch (error) {
     console.error("Erro ao desativar filial: ", error);
-    res.status(500).json({ error: "Erro ao desativar filial" });
+    return res.status(500).json({ error: "Erro ao desativar filial" });
   }
 };
+
+
+const reativarFilialController = async (req, res) => {
+  try {
+    const { empresaId } = req.params;
+
+    const empresaReativada = await atualizarEmpresa(empresaId, {
+      status: "ativo",
+    });
+
+    if (!empresaReativada) {
+      return res.status(404).json({ error: "Filial não encontrada" });
+    }
+
+    return res.status(200).json({
+      mensagem: "Filial reativada com sucesso!",
+      empresaReativada,
+    });
+  } catch (error) {
+    console.error("Erro ao reativar filial: ", error);
+    return res.status(500).json({ error: "Erro ao reativar filial" });
+  }
+};
+
 
 const estoqueFilialController = async (req, res) => {
   try {
@@ -384,6 +411,7 @@ export {
   criarEmpresaController,
   atualizarEmpresaController,
   desativarFilialController,
+  reativarFilialController,
   estoqueFilialController,
   estoqueTodasFiliaisController,
   transferirFuncionarioController,

@@ -424,6 +424,8 @@ const LojaHeader = ({
   handleRefresh,
   lojaId,
   idGerente,
+  buscarDados,
+  loja,
 }) => {
   const statusColor =
     status === "ativo" ? TIKITOS_COLORS.success : "rgb(239 68 68)";
@@ -475,7 +477,7 @@ const LojaHeader = ({
           />{" "}
           Atualizar Dados
         </button>
-        <EditarFilialDialog loja={loja}/>
+        <EditarFilialDialog loja={loja} onUpdated={buscarDados} />
       </div>
     </header>
   );
@@ -523,6 +525,7 @@ export default function LojaDetalhesComponent() {
     },
     [API_URL, lojaId]
   );
+  const buscarDados = fetchLojaDetails;
 
   useEffect(() => {
     fetchLojaDetails();
@@ -613,6 +616,8 @@ export default function LojaDetalhesComponent() {
           handleRefresh={() => fetchLojaDetails(1)}
           lojaId={lojaId}
           idGerente={!loja?.gerente}
+          loja={loja}
+          buscarDados={buscarDados}
         />
         {renderContent}
       </div>

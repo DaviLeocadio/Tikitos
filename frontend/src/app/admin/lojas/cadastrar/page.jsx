@@ -16,6 +16,10 @@ import {
   Users,
 } from "lucide-react";
 import { aparecerToast } from "@/utils/toast";
+import InputCEPMask from "@/components/inputMasks/InputCEPMask";
+import InputCPFMask from "@/components/inputMasks/InputCPFMask";
+import InputTelefoneMask from "@/components/inputMasks/InputTelefoneMask";
+import InputDataMask from "@/components/inputMasks/InputDataMask";
 
 // --- CONFIG ---
 const API_BASE = "http://localhost:8080/admin";
@@ -76,8 +80,7 @@ const TikitosButton = ({
     "px-6 py-3 rounded-xl font-bold transition-all duration-200 flex items-center justify-center gap-2 shadow-md active:scale-95 disabled:opacity-70 disabled:pointer-events-none";
   const variants = {
     primary: "bg-roxo text-white hover:bg-roxoescuro hover:shadow-purple-200",
-    success:
-      "bg-verdefolha text-white hover:bg-verdao hover:shadow-green-200",
+    success: "bg-verdefolha text-white hover:bg-verdao hover:shadow-green-200",
     outline:
       "bg-white text-purple-600 border-2 border-purple-200 hover:border-purple-500 hover:bg-purple-50",
     ghost:
@@ -212,8 +215,6 @@ export default function NovaLojaPage() {
         credentials: "include",
         body: JSON.stringify({
           nome: filialForm.nome,
-          tipo: "filial",
-          status: "ativo",
           endereco: {
             cep: filialForm.cep,
             logradouro: filialForm.logradouro,
@@ -310,26 +311,23 @@ export default function NovaLojaPage() {
     }
   };
 
-  useEffect(() => {
-    const buscarDados = async () => {
-      try {
-        const resVendedores = await fetch(`${API_BASE}/vendedores`, {
-          credentials: "include",
-        });
-        const dataVendedores = await resVendedores.json();
-        setVendedores(dataVendedores);
+  const fetchEmployees = async () => {
+    try {
+      const resVendedores = await fetch(`${API_BASE}/vendedores`, {
+        credentials: "include",
+      });
+      const dataVendedores = await resVendedores.json();
+      setVendedores(dataVendedores);
 
-        const resGerentes = await fetch(`${API_BASE}/gerentes`, {
-          credentials: "include",
-        });
-        const dataGerentes = await resGerentes.json();
-        setGerentes(dataGerentes.gerentes);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-    buscarDados();
-  }, []);
+      const resGerentes = await fetch(`${API_BASE}/gerentes`, {
+        credentials: "include",
+      });
+      const dataGerentes = await resGerentes.json();
+      setGerentes(dataGerentes.gerentes);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   // -- RENDER --
 
@@ -403,14 +401,21 @@ export default function NovaLojaPage() {
             <TikitosCard title="Localização" icon={MapPin}>
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div className="md:col-span-1">
-                  <TikitosInput
-                    label="CEP"
-                    name="cep"
-                    placeholder="00000-000"
-                    maxLength={9}
-                    value={filialForm.cep}
-                    onChange={handleFilialChange}
-                  />
+                  <div className="flex flex-col gap-1 mb-4 w-full">
+                    <label className="text-xs font-bold text-roxo uppercase tracking-wide ml-1">CEP</label>
+                    <InputCEPMask
+                      className={`
+                        w-full px-4 py-3 rounded-xl border-2 outline-none transition-all font-medium text-gray-700
+                        border-purple-100 bg-purple-50/50 focus:border-roxo focus:bg-purple-50 focus:shadow-[0_0_0_4px_rgba(124,58,237,0.1)]
+                        disabled:opacity-60 disabled:cursor-not-allowed
+                      `}
+                      name="cep"
+                      placeholder="00000-000"
+                      maxLength={9}
+                      value={filialForm.cep}
+                      onChange={handleFilialChange}
+                    />
+                  </div>
                 </div>
                 <div className="md:col-span-3">
                   <TikitosInput
@@ -567,8 +572,10 @@ export default function NovaLojaPage() {
                       {(managerOption == "transfer" ? gerentes : vendores).map(
                         (emp) => (
                           <option key={emp.id_usuario} value={emp.id_usuario}>
-                            {emp.nome} - {emp.perfil.charAt(0).toUpperCase() + emp.perfil.slice(1) || "Funcionário"} (ID:{" "}
-                            {emp.id_usuario})
+                            {emp.nome} -{" "}
+                            {emp.perfil.charAt(0).toUpperCase() +
+                              emp.perfil.slice(1) || "Funcionário"}{" "}
+                            (ID: {emp.id_usuario})
                           </option>
                         )
                       )}
@@ -609,26 +616,50 @@ export default function NovaLojaPage() {
                     />
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <TikitosInput
-                      label="CPF"
-                      name="cpf"
-                      placeholder="000.000.000-00"
-                      value={managerForm.cpf}
-                      onChange={handleManagerFormChange}
-                    />
-                    <TikitosInput
-                      label="Telefone"
-                      name="telefone"
-                      value={managerForm.telefone}
-                      onChange={handleManagerFormChange}
-                    />
-                    <TikitosInput
-                      label="Data Nasc."
-                      name="data_nasc"
-                      type="date"
-                      value={managerForm.data_nasc}
-                      onChange={handleManagerFormChange}
-                    />
+                    <div className="flex flex-col gap-1 mb-4 w-full">
+                      <label className="text-xs font-bold text-roxo uppercase tracking-wide ml-1">CPF</label>
+                      <InputCPFMask
+                        className={`
+                          w-full px-4 py-3 rounded-xl border-2 outline-none transition-all font-medium text-gray-700
+                          border-purple-100 bg-purple-50/50 focus:border-roxo focus:bg-purple-50 focus:shadow-[0_0_0_4px_rgba(124,58,237,0.1)]
+                          disabled:opacity-60 disabled:cursor-not-allowed
+                        `}
+                        id="cpf"
+                        name="cpf"
+                        placeholder="000.000.000-00"
+                        value={managerForm.cpf}
+                        onChange={handleManagerFormChange}
+                      />
+                    </div>
+
+                    <div className="flex flex-col gap-1 mb-4 w-full">
+                      <label className="text-xs font-bold text-roxo uppercase tracking-wide ml-1">Telefone</label>
+                      <InputTelefoneMask
+                        className={`
+                          w-full px-4 py-3 rounded-xl border-2 outline-none transition-all font-medium text-gray-700
+                          border-purple-100 bg-purple-50/50 focus:border-roxo focus:bg-purple-50 focus:shadow-[0_0_0_4px_rgba(124,58,237,0.1)]
+                          disabled:opacity-60 disabled:cursor-not-allowed
+                        `}
+                        name="telefone"
+                        value={managerForm.telefone}
+                        onChange={handleManagerFormChange}
+                      />
+                    </div>
+
+                    <div className="flex flex-col gap-1 mb-4 w-full">
+                      <label className="text-xs font-bold text-roxo uppercase tracking-wide ml-1">Data Nasc.</label>
+                      <InputDataMask
+                        className={`
+                          w-full px-4 py-3 rounded-xl border-2 outline-none transition-all font-medium text-gray-700
+                          border-purple-100 bg-purple-50/50 focus:border-roxo focus:bg-purple-50 focus:shadow-[0_0_0_4px_rgba(124,58,237,0.1)]
+                          disabled:opacity-60 disabled:cursor-not-allowed
+                        `}
+                        name="data_nasc"
+                        placeholder="DD/MM/AAAA"
+                        value={managerForm.data_nasc}
+                        onChange={handleManagerFormChange}
+                      />
+                    </div>
                   </div>
 
                   <div className="my-4 border-t border-dashed border-gray-200"></div>
@@ -638,13 +669,20 @@ export default function NovaLojaPage() {
                     Endereço Residencial
                   </h4>
                   <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                    <TikitosInput
-                      label="CEP"
-                      name="cep"
-                      value={managerAddress.cep}
-                      onChange={handleManagerAddressChange}
-                      maxLength={9}
-                    />
+                    <div className="flex flex-col gap-1 mb-4 w-full">
+                      <label className="text-xs font-bold text-roxo uppercase tracking-wide ml-1">CEP</label>
+                      <InputCEPMask
+                        className={`
+                          w-full px-4 py-3 rounded-xl border-2 outline-none transition-all font-medium text-gray-700
+                          border-purple-100 bg-purple-50/50 focus:border-roxo focus:bg-purple-50 focus:shadow-[0_0_0_4px_rgba(124,58,237,0.1)]
+                          disabled:opacity-60 disabled:cursor-not-allowed
+                        `}
+                        name="cep"
+                        value={managerAddress.cep}
+                        onChange={handleManagerAddressChange}
+                        maxLength={9}
+                      />
+                    </div>
                     <div className="md:col-span-3">
                       <TikitosInput
                         label="Logradouro"
