@@ -3,6 +3,7 @@ import {
   obterFornecedorPorId,
   criarFornecedor,
   atualizarFornecedor,
+  desativarFornecedor,
 } from "../models/Fornecedor.js";
 
 const listarFornecedoresController = async (req, res) => {
@@ -73,10 +74,20 @@ const atualizarFornecedorController = async (req, res) => {
     res.status(500).json({ mensagem: "Erro ao atualizar o fornecedor" });
   }
 };
-
+const desativarFornecedorController = async (req, res) => {
+  try {
+    const { id } = req.params;
+    await desativarFornecedor(id);
+    res.status(200).json({ mensagem: "Fornecedor desativado com sucesso!" });
+  } catch (err) {
+    console.error("Erro ao desativar o fornecedor: ", err);
+    res.status(500).json({ mensagem: "Erro ao desativar o fornecedor" });
+  }
+};
 export {
   criarFornecedorController,
   listarFornecedoresController,
   obterFornecedorPorIdController,
   atualizarFornecedorController,
+  desativarFornecedorController,
 };

@@ -3,10 +3,11 @@ import { aparecerToast } from "@/utils/toast";
 import { useState, useEffect } from "react";
 
 export default function useFornecedores() {
+  // Inicializa com array vazio para evitar erro de .filter na renderização inicial
   const [fornecedores, setFornecedores] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // --- Buscar Lista ---
+  // --- Função de Busca ---
   const buscarFornecedores = async () => {
     setLoading(true);
     try {
@@ -18,23 +19,36 @@ export default function useFornecedores() {
 
       if (response.ok) {
         const data = await response.json();
-        // Garante que seja um array para não quebrar o map
-        setFornecedores(data || []);
+        
+        // BLINDAGEM: Verifica o formato da resposta
+        if (Array.isArray(data)) {
+            setFornecedores(data);
+        } else if (data && Array.isArray(data.fornecedores)) {
+            // Caso a API retorne { fornecedores: [...] }
+            setFornecedores(data.fornecedores);
+        } else if (data && Array.isArray(data.data)) {
+             // Caso a API retorne { data: [...] }
+            setFornecedores(data.data);
+        } else {
+            console.warn("API retornou formato inesperado:", data);
+            setFornecedores([]); // Garante array vazio em caso de formato estranho
+        }
       } else {
-        console.error("Falha na resposta da API");
+        console.error("Erro na resposta da API:", response.status);
+        setFornecedores([]);
       }
     } catch (error) {
       console.error("Erro ao buscar fornecedores:", error);
-      aparecerToast("Erro ao carregar lista de fornecedores.", "error");
+      setFornecedores([]);
     } finally {
       setLoading(false);
     }
   };
 
-  // --- Salvar (Criar ou Editar) ---
+  // --- Função de Salvar (Criação e Edição) ---
   const handleSalvarFornecedor = async (fornecedorData) => {
     try {
-      // Verifica se existe ID para decidir entre CRIAR (POST) ou EDITAR (PUT)
+      // Verifica se existe ID para decidir o método
       const id = fornecedorData.id_fornecedor;
       const method = id ? "PUT" : "POST";
       const url = id 
@@ -51,27 +65,27 @@ export default function useFornecedores() {
       const result = await response.json();
 
       if (response.ok) {
-        await buscarFornecedores(); // Atualiza a lista
-        aparecerToast(id ? "Fornecedor atualizado!" : "Fornecedor cadastrado com sucesso!", "success");
-        return true; // Retorna sucesso para fechar o modal
+        await buscarFornecedores(); // Recarrega a lista
+        aparecerToast(id ? "Fornecedor atualizado!" : "Fornecedor cadastrado!", "success");
+        return true; // Retorna true para fechar o modal
       } else {
         aparecerToast(result.error || "Erro ao salvar fornecedor.", "error");
         return false;
       }
     } catch (error) {
-      console.error("Erro ao salvar fornecedor:", error);
+      console.error("Erro ao salvar:", error);
       aparecerToast("Erro de conexão ao salvar.", "error");
       return false;
     }
   };
 
-  // --- Excluir / Desativar ---
+  // --- Função de Excluir ---
   const handleExcluirFornecedor = async (idFornecedor) => {
     try {
       const response = await fetch(
         `http://localhost:8080/admin/fornecedores/${idFornecedor}`,
         {
-          method: "DELETE", // Ou PUT se for apenas mudar status para inativo
+          method: "DELETE",
           credentials: "include",
           headers: { "Content-Type": "application/json" },
         }
@@ -79,26 +93,27 @@ export default function useFornecedores() {
 
       if (response.ok) {
         await buscarFornecedores();
-        aparecerToast("Fornecedor removido/desativado com sucesso!", "success");
+        aparecerToast("Fornecedor removido com sucesso!", "success");
       } else {
-        aparecerToast("Erro ao excluir fornecedor.", "error");
+        const err = await response.json();
+        aparecerToast(err.error || "Erro ao excluir fornecedor.", "error");
       }
     } catch (error) {
-      console.error("Erro ao excluir fornecedor:", error);
+      console.error("Erro ao excluir:", error);
       aparecerToast("Erro de conexão ao excluir.", "error");
     }
   };
 
-  // Carrega ao montar o componente
+  // Carrega lista ao montar
   useEffect(() => {
     buscarFornecedores();
   }, []);
 
   return {
-    fornecedores,
+    fornecedores, // Garantido ser um array
     loading,
     buscarFornecedores,
     handleSalvarFornecedor,
     handleExcluirFornecedor
   };
-}
+}   

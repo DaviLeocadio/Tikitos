@@ -1,4 +1,4 @@
-ola"use client";
+"use client";
 
 export default function GetFornecedorColumns({ setModalFornecedor, onDelete }) {
   return [
