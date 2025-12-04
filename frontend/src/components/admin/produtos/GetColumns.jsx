@@ -1,6 +1,6 @@
 "use client";
 
-export default function GetColumns({ setModalProduto, setModalPedido }) {
+export default function GetColumns({ setModalProduto,setModalDesativar }) {
   return [
     {
       accessorKey: "id_produto",
@@ -142,15 +142,23 @@ export default function GetColumns({ setModalProduto, setModalPedido }) {
               className="px-3 py-1 bg-[#76196c] text-white rounded-lg text-sm font-semibold hover:bg-[#924187] transition cursor-pointer"
               title="Editar produto"
             >
-              <i class="bi bi-xbox"></i>
+              <i class="bi bi-pencil"></i>
             </button>
 
             <button
-              onClick={() => setModalPedido({ open: true, produto })}
-              className="px-3 py-1 bg-[#569a33] text-white rounded-lg text-sm font-semibold hover:bg-[#4f6940] transition cursor-pointer"
+              onClick={() => setModalDesativar({ open: true, produto })}
+              className={`px-3 py-1 text-white rounded-lg text-sm font-semibold transition cursor-pointer ${
+                produto.status === "ativo"
+                  ? "bg-[#ff6b35] hover:bg-[#e55a2b]"
+                  : "bg-[#c48dbb] hover:bg-[#8d6987]"
+              }`}
               title="Fazer pedido"
             >
-              <i className="bi bi-box-seam"></i>
+              <i
+                className={`bi bi-power ${
+                  produto.status === "ativo" ? "" : ""
+                }`}
+              ></i>
             </button>
           </div>
         );

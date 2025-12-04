@@ -31,6 +31,7 @@ import {
   obterCarrinho,
   removerDoCarrinho,
 } from "@/utils/carrinho.js";
+import { fa } from "zod/v4/locales";
 
 const getId = (p) =>
   p?.id ??
@@ -41,8 +42,8 @@ const getId = (p) =>
 
 export default function CardProduto({ produto }) {
   const [cardSelecionado, setCardSelecionado] = useState(false);
+  const [inativo, setInativo] = useState(false);
   const [categoria, setCategoria] = useState();
-  const [estoqueBaixo, setEstoqueBaixo] = useState(false);
 
   const isInteractiveElement = (el) => {
     if (!el || !el.closest) return false;
@@ -76,7 +77,6 @@ export default function CardProduto({ produto }) {
         adicionarAoCarrinho(produto);
         setCardSelecionado(true);
       }
-      
     } catch (err) {
       // noop
     }
@@ -107,29 +107,45 @@ export default function CardProduto({ produto }) {
 
     window.addEventListener("storage", onStorage);
 
+    const buscarCategoria = async () => {
+      const response = await fetch(
+        `http://localhost:8080/vendedor/categorias/${produto.id_produto}`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        return setCategoria(data.categoriaProduto.nome);
+      }
+
+      return;
+    };
+
+    buscarCategoria();
+
     return () => {
       mounted = false;
       window.removeEventListener("storage", onStorage);
     };
   }, [myId]);
 
+  const categorias = {
+    Pelúcias: "/img/categorias/pelucia_categoria.png",
+    Musical: "/img/categorias/musical_categoria.png",
+    "Fantasia e Aventura": "/img/categorias/fantasia_categoria.png",
+    Movimento: "/img/categorias/movimento_categoria.png",
+    Jogos: "/img/categorias/jogos_categoria.png",
+    Construção: "/img/categorias/construcao_categoria.png",
+    Veículos: "/img/categorias/veiculo_categoria.png",
+    Bonecos: "/img/categorias/bonecos_categoria.png",
+  };
 
-  const categorias = [
-    { categoria: "Pelúcias", img: "/img/categorias/pelucia_categoria.png" },
-    { categoria: "Musical", img: "/img/categorias/musical_categoria.png" },
-    {
-      categoria: "Fantasia e Aventura",
-      img: "/img/categorias/fantasia_categoria.png",
-    },
-    { categoria: "Movimento", img: "/img/categorias/movimento_categoria.png" },
-    { categoria: "Jogos", img: "/img/categorias/jogos_categoria.png" },
-    {
-      categoria: "Construção",
-      img: "/img/categorias/construcao_categoria.png",
-    },
-    { categoria: "Veículos", img: "/img/categorias/veiculo_categoria.png" },
-    { categoria: "Bonecos", img: "/img/categorias/bonecos_categoria.png" },
-  ];
+  useEffect(() => {
+    if (produto.status == "inativo") return setInativo(true);
+  }, []);
 
   // function Highlight({ text, matches }) {
   //   if (!matches || matches.length === 0) return text;
@@ -165,7 +181,8 @@ export default function CardProduto({ produto }) {
           cardSelecionado
             ? "bg-[#C8FDB4] shadow-md hover:shadow-lg" // SELECIONADO: Fundo destacado + feedback de hover por sombra
             : "bg-[#D8F1DC] hover:bg-[#C8FDB4]" // NÃO SELECIONADO: Fundo normal + feedback de hover por destaque de cor
-        }`}
+        }
+        ${inativo ? "grayscale-80 opacity-85" : ""}`}
       onClick={handleClickCard}
     >
       <CardHeader className="pt-3 px-6 flex items-center flex-row justify-between gap-2 font-semibold text-sm">
@@ -214,13 +231,13 @@ export default function CardProduto({ produto }) {
                 <AlertDialogTitle className="flex flex-col justify-center items-center">
                   <img
                     className="h-25"
-                    src="/img/categorias/bonecos_categoria.png"
+                    src={`${categorias[categoria]}`}
                     alt="categoria"
                   />
                   <div className="flex flex-col justify-center items-center text-sm/6">
                     <h4 className="text-[14px] text-[#75BA51]">CATEGORIA</h4>
                     <h1 className="font-bold mt-[-7px] text-[20px] text-[#76196c]">
-                      Bonecos
+                      {categoria}
                     </h1>
                   </div>
                 </AlertDialogTitle>

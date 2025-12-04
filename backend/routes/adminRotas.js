@@ -24,6 +24,7 @@ import {
   criarProdutoController,
   atualizarProdutoController,
   desativarProdutoController,
+  ativarProdutoController,
 } from "../controllers/ProdutoController.js";
 
 import {
@@ -31,6 +32,7 @@ import {
   listarFornecedoresController,
   obterFornecedorPorIdController,
   atualizarFornecedorController,
+  desativarFornecedorController
 } from "../controllers/FornecedorController.js";
 
 import {
@@ -160,7 +162,10 @@ router.put(
 );
 
 // Desativar um produto
-router.delete("/produtos/:id", desativarProdutoController);
+router.delete("/produtos/:idProduto/desativar", desativarProdutoController);
+
+// Ativar um produto
+router.post("/produtos/:idProduto/ativar", ativarProdutoController);
 
 /* ===================== FORNECEDORES ===================== */
 
@@ -172,6 +177,9 @@ router.get("/fornecedores", listarFornecedoresController);
 
 // Editar fornecedor
 router.put("/fornecedores/:id", atualizarFornecedorController);
+
+// Desativar um fornecedor
+router.delete("/fornecedores/:id", desativarFornecedorController);
 
 /* ===================== FINANCEIRO ===================== */
 

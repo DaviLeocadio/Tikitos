@@ -67,6 +67,8 @@ export default function PDV() {
         setLoading(false);
       }
     };
+
+    
     buscarProdutos();
   }, []);
 

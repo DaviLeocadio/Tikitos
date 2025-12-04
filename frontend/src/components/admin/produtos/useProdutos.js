@@ -31,34 +31,12 @@ export default function useProdutos() {
     }
   };
 
-  // const handleSalvarDesconto = async (idProduto, desconto) => {
-  //   try {
-  //     const response = await fetch(
-  //       `http://localhost:8080/admin/produtos/${idProduto}/`,
-  //       {
-  //         method: "PUT",
-  //         credentials: "include",
-  //         headers: { "Content-Type": "application/json" },
-  //         body: JSON.stringify({ desconto }),
-  //       }
-  //     );
-  //     console.log(await response.json())
-  //     if (response.ok) {
-  //       await buscarProdutos();
-  //       aparecerToast("Desconto atualizado com sucesso!");
-  //     }
-  //   } catch (error) {
-  //     console.error("Erro ao salvar desconto:", error);
-  //     aparecerToast("Erro ao salvar desconto!");
-  //   }
-  // };
-
   const handleEditarProduto = async (idProduto, dataProduto) => {
     try {
       const response = await fetch(`http://localhost:8080/admin/produtos/${idProduto}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ dataProduto }),
+        body: JSON.stringify(dataProduto),
         credentials: 'include'
       })
 
@@ -72,28 +50,6 @@ export default function useProdutos() {
     }
   }
 
-  const handleFazerPedido = async (idProduto, idFornecedor, quantidade) => {
-    try {
-      const response = await fetch("http://localhost:8080/admin/pedidos", {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          id_produto: idProduto,
-          id_fornecedor: idFornecedor,
-          quantidade,
-        }),
-      });
-
-      if (response.ok) {
-        await buscarProdutos();
-        aparecerToast("Pedido realizado com sucesso!");
-      }
-    } catch (error) {
-      console.error("Erro ao fazer pedido:", error);
-      aparecerToast("Erro ao fazer pedido!");
-    }
-  };
 
   useEffect(() => {
     buscarProdutos();
@@ -104,7 +60,6 @@ export default function useProdutos() {
     categorias,
     loading,
     handleEditarProduto,
-    handleFazerPedido,
     buscarProdutos,
   };
 }

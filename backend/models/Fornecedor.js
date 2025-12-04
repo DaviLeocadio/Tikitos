@@ -3,6 +3,7 @@ import {
   readAll,
   update,
   create,
+  deleteRecord
 } from "../config/database.js";
 
 const listarFornecedor = async (whereClause = null) => {
@@ -41,9 +42,19 @@ const atualizarFornecedor = async (idFornecedor, fornecedorData) => {
   }
 };
 
+deletarFornecedor = async (idFornecedor) => {
+  try {
+    await deleteRecord("fornecedores", `id_fornecedor = ${idFornecedor}`);
+  } catch (err) {
+    console.error("Erro ao deletar fornecedor: ", err);
+    throw err;
+  }
+};
+
 export {
   listarFornecedor,
   obterFornecedorPorId,
   criarFornecedor,
-  atualizarFornecedor
+  atualizarFornecedor,
+  deletarFornecedor
 };
