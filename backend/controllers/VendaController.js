@@ -54,6 +54,27 @@ const listarVendasController = async (req, res) => {
   }
 };
 
+const obterVendaController = async (req, res) => {
+  try {
+    const vendas = await listarVendas();
+
+    const valorTotal = vendas.reduce(
+      (total, venda) => total + Number(venda.total),
+      0
+    );
+
+    res.status(200).json({
+      mensagem: "Vendas obtidas com sucesso",
+      valorTotal
+    });
+  } catch (err) {
+    res.status(500).json({
+      erro: "Erro ao obter vendas",
+      detalhe: err.message
+    });
+  }
+};
+
 const obterVendaPorIdController = async (req, res) => {
   try {
     const { id_venda } = req.body;
@@ -365,4 +386,5 @@ export {
   criarVendaController,
   excluirVendaController,
   listarVendasGerenteController,
+  obterVendaController
 };

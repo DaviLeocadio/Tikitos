@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import Link from 'next/link';
-import { NavMain } from "@/components/nav-main"
-import { NavUser } from "@/components/nav-user"
+import * as React from "react";
+import Link from "next/link";
+import { NavMain } from "@/components/nav-main";
+import { NavUser } from "@/components/nav-user";
 import {
   Sidebar,
   SidebarContent,
@@ -55,32 +55,50 @@ const data = {
     {
       title: "Relatórios de Rede",
       href: "/admin/relatorios", // Comparativo entre lojas, Curva ABC, etc.
-      icon: (props) => <i className="bi bi-file-earmark-bar-graph" {...props} />,
-    }
+      icon: (props) => (
+        <i className="bi bi-file-earmark-bar-graph" {...props} />
+      ),
+    },
   ],
-}
+};
 
-export function AdminSidebar({
-  ...props
-}) {
+export function AdminSidebar({ ...props }) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton asChild className="data-[slot=sidebar-menu-button]:!p-1.5">
+            <SidebarMenuButton
+              asChild
+              className="
+              transform transition-all duration-300 ease-out
+              data-[slot=sidebar-menu-button]:!p-1.5 bg-transparent 
+              group-hover:scale-102 hover:scale-97 cursor-pointer
+    hover:bg-transparent 
+    focus:bg-transparent 
+    active:bg-transparent 
+    data-[active=true]:bg-transparent"
+    
+            >
               {/* O Admin deve ser direcionado para o Dashboard Admin ao clicar no Logo, não para o PDV */}
               <Link href="/admin">
-                <img src="/img/logos/logo_ioio.png" alt="Tikitos Logo" className="max-h-full"/>
+                <img
+                  src="/img/logos/logo_ioio.png"
+                  alt="Tikitos Logo"
+                  className="max-h-full"
+                />
                 <span className="text-base font-semibold text-[#76216D] hover:bg-[#ffffff00]">
-                  Tikitos <small className="text-xs text-gray-500 block font-normal">Matriz</small>
+                  Tikitos{" "}
+                  <small className="text-xs text-gray-500 block font-normal">
+                    Matriz
+                  </small>
                 </span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
-      
+
       <SidebarContent>
         <NavMain items={data.navMain} />
       </SidebarContent>

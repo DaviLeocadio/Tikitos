@@ -410,6 +410,7 @@ export default function RelatorioFilial() {
                           "pt-BR",
                           {
                             minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
                           }
                         ) || "0,00"}
                       </h2>

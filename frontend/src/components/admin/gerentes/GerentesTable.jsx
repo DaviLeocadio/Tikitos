@@ -100,7 +100,7 @@ const VendedoresTable = memo(function VendedoresTable({
                 <TableCell colSpan={columns.length} className="h-24 text-center">
                   <i className="bi bi-inbox text-4xl text-[#b478ab] opacity-50"></i>
                   <p className="text-lg font-semibold text-[#8c3e82] mt-2">
-                    Nenhum vendedor encontrado
+                    Nenhum gerente encontrado
                   </p>
                 </TableCell>
               </TableRow>

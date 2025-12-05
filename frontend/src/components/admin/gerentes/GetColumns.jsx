@@ -68,7 +68,7 @@ export default function GetColumns({ setModalGerente, setModalDesativar, setModa
       header: "Endereço",
       cell: ({ row }) => (
         <div className="">
-          <span className="px-2 py-1 text-[#76196c]  text-xs font-normal block">
+          <span className="px-2 py-1 text-[#76196c] max-w-25 truncate text-xs font-normal block">
             {row.original.endereco}
           </span>
         </div>

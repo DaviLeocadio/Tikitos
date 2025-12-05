@@ -42,18 +42,18 @@ export default function AlertasEstoque() {
   const getNivelCriticidade = (estoque) => {
     if (estoque <= 5)
       return {
-        cor: "bg-red-100 border-red-300",
+        cor: "bg-red-100 ",
         texto: "text-red-800",
         badge: "bg-red-500",
       };
     if (estoque <= 10)
       return {
-        cor: "bg-orange-100 border-orange-300",
+        cor: "bg-orange-100 ",
         texto: "text-orange-800",
         badge: "bg-orange-500",
       };
     return {
-      cor: "bg-yellow-100 border-yellow-300",
+      cor: "bg-yellow-100 ",
       texto: "text-yellow-800",
       badge: "bg-yellow-500",
     };
@@ -61,7 +61,7 @@ export default function AlertasEstoque() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 p-6">
+      <div className="min-h-screen p-6">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-center h-64">
             <div className="text-center">
@@ -104,6 +104,7 @@ export default function AlertasEstoque() {
 
       <div className="min-h-screen p-6">
         <div className="max-w-7xl mx-auto">
+
           {/* Cabeçalho */}
           <div className="mb-8">
             <div className="flex items-center justify-between mb-6">
@@ -120,9 +121,11 @@ export default function AlertasEstoque() {
                   </p>
                 </div>
               </div>
+
+              {/* BOTÃO DE ATUALIZAR */}
               <button
                 onClick={carregarProdutos}
-                className="bg-white cursor-pointer hover:bg-gray-50 border-2 border-dashed border-roxo text-roxo px-6 py-3 rounded-xl font-bold transition-all shadow-md hover:shadow-lg flex items-center gap-2"
+                className="cursor-pointer text-roxo px-6 py-3 rounded-xl font-bold transition-all flex items-center gap-2"
               >
                 <RefreshCw className="w-5 h-5" />
                 Atualizar
@@ -130,14 +133,14 @@ export default function AlertasEstoque() {
             </div>
 
             {/* Resumo */}
-            <div className="bg-gray-50 rounded-2xl shadow-xl p-6 border-3 border-dashed border-roxo">
+            <div className="bg-[#EBC7F5] rounded-4xl shadow-xl p-6 border-3 border-dashed border-[#76196C]">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="flex items-center gap-4">
-                  <div className="bg-red-100 p-3 rounded-xl">
+                  <div className="bg-red-200 p-3 rounded-xl">
                     <TrendingDown className="w-6 h-6 text-red-600" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600 font-medium">
+                    <p className="text-sm text-red-600 font-medium">
                       Crítico (≤5)
                     </p>
                     <p className="text-2xl font-black text-red-600">
@@ -146,11 +149,11 @@ export default function AlertasEstoque() {
                   </div>
                 </div>
                 <div className="flex items-center gap-4">
-                  <div className="bg-orange-100 p-3 rounded-xl">
+                  <div className="bg-orange-200 p-3 rounded-xl">
                     <AlertTriangle className="w-6 h-6 text-orange-600" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600 font-medium">
+                    <p className="text-sm text-orange-600 font-medium">
                       Alerta (6-10)
                     </p>
                     <p className="text-2xl font-black text-orange-600">
@@ -162,11 +165,11 @@ export default function AlertasEstoque() {
                   </div>
                 </div>
                 <div className="flex items-center gap-4">
-                  <div className="bg-yellow-100 p-3 rounded-xl">
+                  <div className="bg-yellow-200 p-3 rounded-xl">
                     <Package className="w-6 h-6 text-yellow-600" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600 font-medium">
+                    <p className="text-sm text-yellow-600 font-medium">
                       Atenção (11-20)
                     </p>
                     <p className="text-2xl font-black text-yellow-600">
@@ -198,7 +201,7 @@ export default function AlertasEstoque() {
                   return (
                     <Link
                       key={produto.id_produto}
-                      className={`${nivel.cor} border-3 border-dashed rounded-2xl p-5 transition-all`}
+                      className={`${nivel.cor} border-1 rounded-4xl p-5 transition-all duration-300 hover:scale-101`}
                       href={`/gerente/produtos/?produtoNome=${produto.nome}&idProduto=${produto.id_produto}`}
                     >
                       <div className="flex items-start gap-5">
@@ -226,14 +229,14 @@ export default function AlertasEstoque() {
                               >
                                 {produto.nome}
                               </h3>
-                              <p className="text-sm text-gray-700 font-medium mb-2">
+                              <p className="text-sm text-[#4F6940] font-medium mb-2">
                                 {produto.descricao}
                               </p>
                               <div className="flex items-center gap-3 flex-wrap">
-                                <span className="text-xs bg-white/60 px-3 py-1 rounded-full font-bold text-gray-700">
+                                <span className="text-xs bg-[#E5B8F1] px-3 py-1 rounded-full font-bold text-[#76196C]">
                                   {produto.categoria}
                                 </span>
-                                <span className="text-xs bg-white/60 px-3 py-1 rounded-full font-bold text-gray-700">
+                                <span className="text-xs bg-[#E5B8F1] px-3 py-1 rounded-full font-bold text-[#76196C]">
                                   ID: {produto.id_produto}
                                 </span>
                               </div>
@@ -242,7 +245,7 @@ export default function AlertasEstoque() {
                             {/* Badge de Estoque */}
                             <div className="text-center">
                               <div
-                                className={`${nivel.badge} text-white px-4 py-2 rounded-xl shadow-md`}
+                                className={`${nivel.badge} text-[#D8F1DC] px-4 py-2 rounded-xl shadow-md`}
                               >
                                 <p className="text-xs font-bold mb-1">
                                   ESTOQUE
@@ -255,20 +258,20 @@ export default function AlertasEstoque() {
                           </div>
 
                           {/* Informações Adicionais */}
-                          <div className="bg-white/60 rounded-xl p-4 grid grid-cols-2 md:grid-cols-5 gap-4">
+                          <div className="bg-[#CAF4B7]/50 rounded-xl p-4 grid grid-cols-2 md:grid-cols-5 gap-4">
                             <div>
-                              <p className="text-xs text-gray-600 font-medium mb-1">
+                              <p className="text-xs text-[#4F6940] font-medium mb-1">
                                 Preço
                               </p>
-                              <p className="text-lg font-black text-gray-800">
+                              <p className="text-lg font-black text-[#4EA912]">
                                 {produto.precoFormatado}
                               </p>
                             </div>
                             <div>
-                              <p className="text-xs text-gray-600 font-medium mb-1">
+                              <p className="text-xs text-[#4F6940] font-medium mb-1">
                                 Custo
                               </p>
-                              <p className="text-lg font-black text-gray-800">
+                              <p className="text-lg font-black text-[#4EA912]">
                                 R${" "}
                                 {parseFloat(produto.custo)
                                   .toFixed(2)
@@ -276,18 +279,18 @@ export default function AlertasEstoque() {
                               </p>
                             </div>
                             <div>
-                              <p className="text-xs text-gray-600 font-medium mb-1">
+                              <p className="text-xs text-[#4F6940] font-medium mb-1">
                                 Lucro
                               </p>
-                              <p className="text-lg font-black text-green-600">
+                              <p className="text-lg font-black text-[#4EA912]">
                                 {produto.lucro}%
                               </p>
                             </div>
                             <div className="col-span-2">
-                              <p className="text-xs text-gray-600 font-medium mb-1">
+                              <p className="text-xs text-[#4F6940] font-medium mb-1">
                                 Fornecedor
                               </p>
-                              <p className="text-sm font-bold text-gray-800 truncate">
+                              <p className="text-sm font-bold text-[#76196C] truncate">
                                 {produto.fornecedor}
                               </p>
                             </div>

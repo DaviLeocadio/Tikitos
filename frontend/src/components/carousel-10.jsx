@@ -55,14 +55,24 @@ function SlideOpacity({ lojas }) {
             <p className="text-lg text-[#8c3e82]">Veja o TOP 03 em vendas</p>
           </div>
           <div className="flex gap-2">
-            <CarouselPrevious className="static translate-y-0" />
-            <CarouselNext className="static translate-y-0" />
+            <CarouselPrevious className="static translate-y-0 p-1 rounded-full text-[#7D2373] bg-[#92EF6C] hover:bg-[#92ce72] transition-colors hover:text-[#7D2373]">
+              <div className="bg-[#7D2373] rounded-full p-2 flex items-center justify-center">
+                <CarouselPrevious.icon className="text-white" />
+              </div>
+            </CarouselPrevious>
+
+            <CarouselNext className="static translate-y-0 p-1 rounded-full text-[#7D2373] bg-[#92EF6C] hover:bg-[#92ce72] transition-colors hover:text-[#7D2373]">
+              <div className="bg-[#7D2373] rounded-full p-2 flex items-center justify-center">
+                <CarouselNext.icon className="text-white" />
+              </div>
+            </CarouselNext>
           </div>
         </div>
 
         <CarouselContent className="w-full">
           {lojas?.map((loja, index) => {
-            const medalColor = index === 0 ? "#FFD700" : index === 1 ? "#C0C0C0" : "#CD7F32";
+            const medalColor =
+              index === 0 ? "#FFD700" : index === 1 ? "#C0C0C0" : "#CD7F32";
             const medalLabel = index === 0 ? "1" : index === 1 ? "2" : "3";
             return (
               <CarouselItem

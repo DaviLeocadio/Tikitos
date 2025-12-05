@@ -132,6 +132,15 @@ const resumoVendasCaixa = async (idCaixa) => {
     throw err;
   }
 }
+
+const listarCaixa = async ()=>{
+  try {
+    return await readAll("caixa");
+  } catch (err) {
+    console.error("Erro ao obter listagem do caixa: ", err);
+    throw err;
+  }
+}
 export {
   AbrirCaixa,
   LerCaixaPorVendedor,
@@ -142,5 +151,6 @@ export {
   RelatorioCaixaIntervalo,
   obterCaixaPorId,
   resumoVendasCaixa,
-  CaixaAbertoVendedor
+  CaixaAbertoVendedor,
+  listarCaixa
 }

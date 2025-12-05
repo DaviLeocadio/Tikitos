@@ -11,10 +11,11 @@ import {
 import { Button } from "@/components/ui/button";
 import { CheckCircle, Trash } from "lucide-react";
 import InputDataMask from "@/components/inputMasks/InputDataMask";
+import {aparecerToast} from "@/utils/toast.js";
 
 
 // Modal Adicionar Despesa
-export default function ModalAdicionarDespesa({ open, onClose, onSalvar }) {
+export default function ModalAdicionarDespesa({ open, onClose }) {
   const [descricao, setDescricao] = useState("");
   const [preco, setPreco] = useState("");
 
@@ -28,22 +29,46 @@ export default function ModalAdicionarDespesa({ open, onClose, onSalvar }) {
       return;
     }
 
-    setLoading(true);
-    await onSalvar({
-      descricao,
-      preco: parseFloat(preco),
-      data_pag: dataPag,
-      status,
-    });
-    setLoading(false);
-    setDescricao("");
-    setPreco("");
-    setDataPag("");
-    setStatus("pendente");
-    onClose();
+    try {
+      setLoading(true);
+
+      const response = await fetch("http://localhost:8080/admin/despesas", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          descricao,
+          preco: Number(preco),
+          data_pag: dataPag,
+          status,
+        }),
+      });
+
+      if (response.ok) {
+        return aparecerToast("Despesa criada com sucesso!");
+      }
+
+      aparecerToast("Erro na criação de depesa!");
+
+      // limpa formulário
+      setDescricao("");
+      setPreco("");
+      setDataPag("");
+      setStatus("pendente");
+
+      onClose();
+    } catch (error) {
+      console.error(error);
+      alert("Erro ao salvar despesa");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
+    
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md bg-[#e8c5f1] border-3 border-[#924187] border-dashed rounded-3xl">
         <DialogHeader>

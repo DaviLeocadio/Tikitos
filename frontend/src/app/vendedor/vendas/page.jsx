@@ -120,7 +120,7 @@ export default function VendasPage() {
         </div>
       </div>
 
-      <div className="rounded-3xl overflow-hidden px-[45px] mb-10 sm:w-[100%] ">
+      <div className="rounded-3xl overflow-hidden px-[45px] mb-0 sm:w-[100%] ">
         <img
           src="/img/vendas/banner_vendas.png"
           className="w-full rounded-3xl"

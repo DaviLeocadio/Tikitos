@@ -7,6 +7,7 @@ import {
   RelatorioCaixaIntervalo,
   obterCaixaPorId,
   resumoVendasCaixa,
+  listarCaixa,
   CaixaAbertoVendedor,
 } from "../models/Caixa.js";
 
@@ -23,12 +24,13 @@ import {
 } from "../models/ProdutoLoja.js";
 import { obterProdutoPorId } from "../models/Produto.js";
 import { obterCategoriaPorId } from "../models/Categorias.js";
+import { readRaw } from "../config/database.js";
+import "dotenv/config";
 
 const AbrirCaixaController = async (req, res) => {
   try {
     const idEmpresa = req.usuarioEmpresa;
     const idVendedor = req.usuarioId;
-   
 
     //Verifica se a variavel está certo
     if (!idVendedor || !idEmpresa) {
@@ -144,17 +146,15 @@ const ResumoCaixaController = async (req, res) => {
         .json({ mensagem: "Parâmetros necessários incompletos" });
     }
 
-    // Data formatada
-    const hoje = (new Date()).toLocaleDateString("pt-BR");
-    const date = new Date().getFullYear() +
-      "-" +
-      (new Date().getMonth() + 1) +
-      "-" +
-      new Date().getDate()
-    
+    const dataHoje = new Date().toISOString().split("T")[0]; // yyyy-mm-dd
 
-    // 1. VENDAS DO DIA (pelo usuário, não pelo caixa)
-    const vendas = await obterVendaPorDataUsuario(date, idUsuario, idEmpresa);
+    // 1. BUSCAR TODAS AS VENDAS DO DIA DO USUÁRIO
+    const vendas = await readRaw(
+      `SELECT id_venda, total, data_venda 
+       FROM vendas 
+       WHERE id_usuario = ? AND id_empresa = ? AND DATE(data_venda) = ? AND id_caixa = ?`,
+      [idUsuario, idEmpresa, dataHoje, idCaixa]
+    );
 
     if (vendas.length === 0) {
       return res.status(200).json({
@@ -172,124 +172,186 @@ const ResumoCaixaController = async (req, res) => {
       });
     }
 
-    const idVenda = vendas.map((v) => v.id_venda);
+    const idsVenda = vendas.map((v) => v.id_venda);
 
-    // Itens das vendas
-    let itensVendaTotal = [];
-    for (const id of idVenda) {
-      const itens = await listarItensVenda(id);
-      itensVendaTotal.push(...itens);
-    }
+    // 2. BUSCAR ITENS DE TODAS AS VENDAS EM UMA SÓ QUERY
+    const itensVendaTotal = await readRaw(
+      `SELECT id_venda, id_produto, quantidade
+       FROM venda_itens
+       WHERE id_venda IN (${idsVenda.map(() => "?").join(",")})`,
+      idsVenda
+    );
 
-    // Total de produtos vendidos
+    // TOTAL DE PRODUTOS
     const totalProdutos = itensVendaTotal.reduce(
-      (acc, item) => acc + item.quantidade,
+      (acc, i) => acc + i.quantidade,
       0
     );
 
-    // Valor total
-    const valorTotalVendas = vendas.reduce(
-      (acc, v) => acc + parseFloat(v.total),
-      0
-    );
-
-    // Total de vendas
+    // TOTAL DE VENDAS
     const totalVendas = vendas.length;
 
-    // 2. CATEGORIA MAIS VENDIDA
-    const categoriasPorQuantidade = {};
+    // TOTAL EM R$
+    const totalCaixa = vendas.reduce((acc, v) => acc + parseFloat(v.total), 0);
 
-    for (const item of itensVendaTotal) {
-      const produto = await obterProdutoPorId(item.id_produto);
+    // 3. CATEGORIA MAIS VENDIDA (OTIMIZADO)
+    const produtosIds = [...new Set(itensVendaTotal.map((i) => i.id_produto))];
 
-      if (produto && produto.id_categoria) {
-        const categoriaId = produto.id_categoria;
-        const categoria = await obterCategoriaPorId(categoriaId);
+    const produtos = await readRaw(
+      `SELECT id_produto, id_categoria 
+       FROM produtos 
+       WHERE id_produto IN (${produtosIds.map(() => "?").join(",")})`,
+      produtosIds
+    );
 
-        if (!categoriasPorQuantidade[categoriaId]) {
-          categoriasPorQuantidade[categoriaId] = {
-            id: categoriaId,
-            nome: categoria ? categoria.nome : "Categoria " + categoriaId,
-            quantidade: 0,
-          };
-        }
+    const categoriasIds = [...new Set(produtos.map((p) => p.id_categoria))];
 
-        categoriasPorQuantidade[categoriaId].quantidade += item.quantidade;
+    const categorias = await readRaw(
+      `SELECT id_categoria, nome 
+       FROM categorias 
+       WHERE id_categoria IN (${categoriasIds.map(() => "?").join(",")})`,
+      categoriasIds
+    );
+
+    const catMap = {};
+    categorias.forEach((c) => {
+      catMap[c.id_categoria] = c.nome;
+    });
+
+    const contadorCategorias = {};
+
+    itensVendaTotal.forEach((item) => {
+      const prod = produtos.find((p) => p.id_produto === item.id_produto);
+      if (!prod) return;
+
+      const catId = prod.id_categoria;
+      if (!contadorCategorias[catId]) {
+        contadorCategorias[catId] = {
+          id: catId,
+          nome: catMap[catId],
+          quantidade: 0,
+        };
       }
-    }
+      contadorCategorias[catId].quantidade += item.quantidade;
+    });
 
-    const categoriasArray = Object.values(categoriasPorQuantidade);
-    const categoriaMaisVendida =
-      categoriasArray.length > 0
-        ? categoriasArray.sort((a, b) => b.quantidade - a.quantidade)[0]
-        : { nome: "N/A", id: 0 };
+    const categoriaMaisVendida = Object.values(contadorCategorias).sort(
+      (a, b) => b.quantidade - a.quantidade
+    )[0] || { id: 0, nome: "N/A" };
 
-    // 3. HORÁRIO DE MAIS VENDAS
+    // 4. HORÁRIO COM MAIS VENDAS
     const vendasPorHora = {};
-    for (const venda of vendas) {
-      const hora = new Date(venda.data_venda).getHours();
-      vendasPorHora[hora] = (vendasPorHora[hora] || 0) + 1;
-    }
 
-    let horaMaisVendas = Object.keys(vendasPorHora).reduce((a, b) =>
+    vendas.forEach((v) => {
+      const hora = new Date(v.data_venda).getHours();
+      vendasPorHora[hora] = (vendasPorHora[hora] || 0) + 1;
+    });
+
+    const horaMaisVendas = Object.keys(vendasPorHora).reduce((a, b) =>
       vendasPorHora[a] > vendasPorHora[b] ? a : b
     );
     const horarioMaisVendas = `${horaMaisVendas}h`;
 
-    // 4. ALERTA DE ESTOQUE
-    const alertaEstoque = (await obterProdutosEstoqueCritico(idEmpresa)).length;
+    // 5. ALERTA DE ESTOQUE (READRAW)
+    const alertaEstoque = (
+      await readRaw(
+        `SELECT COUNT(*) AS total 
+       FROM produto_loja 
+       WHERE id_empresa = ? AND estoque <= ${process.env.ESTOQUE_MINIMO}`,
+        [idEmpresa]
+      )
+    )[0].total;
 
-    // 5. PRODUTOS EM PROMOÇÃO
-    const produtosPromocao = (await contarProdutosEmPromocao(idEmpresa)).length;
+    // 6. PRODUTOS EM PROMOÇÃO (READRAW)
+    const produtosPromocao = (
+      await readRaw(
+        `SELECT COUNT(*) AS total 
+       FROM produto_loja 
+       WHERE id_empresa = ? AND desconto > 0`,
+        [idEmpresa]
+      )
+    )[0].total;
 
-    // 6. HISTÓRICO
-    const historicoCompras = vendas.map((venda) => {
-      const itensDestaVenda = itensVendaTotal.filter(
-        (item) => item.id_venda === venda.id_venda
+    // 7. HISTÓRICO DE COMPRAS
+    const historicoCompras = vendas.map((v) => {
+      const itensDaVenda = itensVendaTotal.filter(
+        (i) => i.id_venda === v.id_venda
       );
-      const totalProdutosVenda = itensDestaVenda.reduce(
-        (acc, item) => acc + item.quantidade,
-        0
-      );
-
       return {
-        produtos: totalProdutosVenda,
-        valor: parseFloat(venda.total),
+        produtos: itensDaVenda.reduce((acc, i) => acc + i.quantidade, 0),
+        valor: parseFloat(v.total),
       };
     });
 
-    // 7. VENDAS DA SEMANA (USANDO idUsuario)
+    // 8. VENDAS DA SEMANA + SEMANA PASSADA - TUDO EM SQL
+    const diasSemanaPt = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
+
+    const linhas = await readRaw(`
+    WITH RECURSIVE ultimos14dias AS (
+        SELECT CURDATE() - INTERVAL 13 DAY AS data
+        UNION ALL
+        SELECT data + INTERVAL 1 DAY
+        FROM ultimos14dias
+        WHERE data < CURDATE()
+    )
+
+    SELECT 
+        d.data,
+        DAYOFWEEK(d.data) AS dia_semana_num,
+        CASE 
+            WHEN d.data >= CURDATE() - INTERVAL 6 DAY THEN 'semana_atual'
+            ELSE 'semana_passada'
+        END AS semana,
+        COALESCE(v.total, 0) AS total_vendas
+    FROM ultimos14dias d
+    LEFT JOIN (
+        SELECT DATE(data_venda) AS data, COUNT(*) AS total
+        FROM vendas
+        WHERE id_usuario = ?
+          AND id_empresa = ?
+          AND DATE(data_venda) BETWEEN CURDATE() - INTERVAL 13 DAY AND CURDATE()
+        GROUP BY DATE(data_venda)
+    ) v ON d.data = v.data
+    ORDER BY d.data;
+`,
+      [idUsuario, idEmpresa]
+    );
+
+    // MONTAR LISTAS FINAIS PARA O GRÁFICO
     const vendasSemana = [];
-    const diasSemana = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
+    const vendasSemanaPassada = [];
 
-    for (let i = 4; i >= 0; i--) {
-      const data = new Date();
-      data.setDate(data.getDate() - i);
-      const dataFormatada = data.toISOString().split("T")[0];
+    linhas.forEach((row) => {
+      const nomeDia = diasSemanaPt[row.dia_semana_num - 1];
+      const item = {
+        dia: nomeDia,
+        vendas: row.total_vendas,
+        data: row.data,
+      };
 
-      const vendasDia = await obterVendaPorDataUsuario(
-        dataFormatada,
-        idUsuario,
-        idEmpresa
-      );
+      if (row.semana === "semana_atual") {
+        vendasSemana.push(item);
+      } else {
+        vendasSemanaPassada.push(item);
+      }
+    });
 
-      vendasSemana.push({
-        dia: diasSemana[data.getDay()],
-        valor: vendasDia.length,
-      });
-    }
+    // 9. VALOR DO CAIXA
+    const caixa = await readRaw(
+      `SELECT valor_inicial, valor_final 
+       FROM caixa 
+       WHERE id_caixa = ?`,
+      [idCaixa]
+    );
 
-    // 8. VALOR DO CAIXA ATUAL (aqui sim usa idCaixa)
-    const caixa = await obterCaixaPorId(idCaixa);
-    const valorCaixa = caixa
-      ? parseFloat(caixa.valor_final || 0) -
-        parseFloat(caixa.valor_inicial || 0)
+    const valorCaixa = caixa.length
+      ? parseFloat(caixa[0].valor_final || 0) -
+        parseFloat(caixa[0].valor_inicial || 0)
       : 0;
 
-    // RESPOSTA
-    res.status(200).json({
+    return res.status(200).json({
       mensagem: "Resumo do caixa enviado com sucesso",
-      totalCaixa: valorTotalVendas,
+      totalCaixa,
       totalProdutos,
       valorCaixa,
       totalVendas,
@@ -302,6 +364,7 @@ const ResumoCaixaController = async (req, res) => {
       produtosPromocao,
       historicoCompras,
       vendasSemana,
+      vendasSemanaPassada,
     });
   } catch (error) {
     console.error("Erro ao demonstrar o resumo do caixa no dia", error);
@@ -321,15 +384,25 @@ const fluxoCaixaDiarioController = async (req, res) => {
     } else if (dataCaixa) {
       const caixas = await ListarCaixasPorEmpresa(idEmpresa, dataCaixa);
       caixas.forEach((caixa) => {
-        const valor_total = (parseFloat(caixa.valor_final || 0) - parseFloat(caixa.valor_inicial || 0)).toFixed(2);
-        caixaData.push({ data: caixa.abertura, valor_total, caixas: 1, idCaixa: caixa.id_caixa });
+        const valor_total = (
+          parseFloat(caixa.valor_final || 0) -
+          parseFloat(caixa.valor_inicial || 0)
+        ).toFixed(2);
+        caixaData.push({
+          data: caixa.abertura,
+          valor_total,
+          caixas: 1,
+          idCaixa: caixa.id_caixa,
+        });
       });
     } else {
       // Full report grouped by date
       const relatorio = await RelatorioCaixa(idEmpresa);
       caixaData = relatorio;
     }
-    return res.status(200).json({ mensagem: "Caixas listados com sucesso", caixaData });
+    return res
+      .status(200)
+      .json({ mensagem: "Caixas listados com sucesso", caixaData });
   } catch (error) {
     console.error("Erro ao montar resumo diário de caixa", error);
     res.status(500).json({ error: "Erro ao montar resumo diário de caixa" });
@@ -343,6 +416,7 @@ const obterResumoCaixaController = async (req, res) => {
     if (!caixa) return res.status(404).json({ error: "Caixa não encontrado" });
 
     const vendas = await listarVendasPorCaixa(idCaixa);
+    console.log(idCaixa)
 
     const resumoCaixa = await resumoVendasCaixa(idCaixa);
 
@@ -357,10 +431,21 @@ const obterResumoCaixaController = async (req, res) => {
   }
 };
 
+const listarCaixaController = async (req, res) => {
+  try {
+    const caixaListado = await listarCaixa();
+    res.status(200).json({ mensagem: "listar caixa", caixaListado })
+  } catch (error) {
+    console.error("Erro ao obter listagem de um caixa", error);
+    res.status(500).json({ error: "Erro ao obter listagem de um caixa" });
+  }
+}
+
 export {
   AbrirCaixaController,
   FecharCaixaController,
   ResumoCaixaController,
   fluxoCaixaDiarioController,
   obterResumoCaixaController,
+  listarCaixaController
 };

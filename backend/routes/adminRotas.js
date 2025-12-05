@@ -39,6 +39,9 @@ import {
 import {
   despesasPagasController,
   despesasPendentesController,
+  criarDespesaController,
+  listarDespesasController,
+  pagarDespesaController
 } from "../controllers/DespesasController.js";
 
 /* ==== Fornecedores ==== */
@@ -83,6 +86,15 @@ import {
   relatorioGeral,            // Relatório 4 — Master (de tudo)
   relatorioProdutos,         // Relatório 5 — Produtos
 } from "../controllers/RelatorioAdminController.js";
+
+/* ==== VENDAS ==== */
+import {
+  obterVendaController
+} from "../controllers/VendaController.js"
+
+import{
+  listarCaixaController
+} from "../controllers/CaixaController.js"
 
 /* ===================== CONFIG UPLOAD ===================== */
 
@@ -147,6 +159,9 @@ router.post("/gerentes/:gerenteId/ativar", ativarGerenteController);
 
 router.get("/despesas-pagas", despesasPagasController);
 router.get("/despesas-pendentes", despesasPendentesController);
+router.post("/despesas", criarDespesaController);
+router.get("/despesas", listarDespesasController);
+router.put("/despesas/:despesaId", pagarDespesaController)
 
 /* ===================== PRODUTOS ===================== */
 
@@ -168,6 +183,10 @@ router.delete("/fornecedores/:id", desativarFornecedorController);
 /* ===================== VENDAS ===================== */
 
 router.get("/vendas", listarVendasController);
+router.get("/vendasTotais", obterVendaController);
+
+/* ===================== CAIXA ===================== */
+router.get("/caixa", listarCaixaController);
 
 /* ===================== RELATÓRIOS (ADMIN) ===================== */
 

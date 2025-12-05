@@ -47,7 +47,7 @@ const FinanceiroFilters = memo(function FinanceiroFilters({
             Período
           </label>
           <div className="flex gap-2">
-            {["semana", "mes", "dia"].map((p) => (
+            {["semana", "mês", "dia"].map((p) => (
               <button
                 key={p}
                 onClick={() => mudarPeriodo(p)}

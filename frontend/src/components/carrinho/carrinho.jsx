@@ -133,7 +133,7 @@ export default function Carrinho({ isPagamento = false }) {
                 ref={carrinhoRef}
                 id="carrinho"
                 className={`flex flex-col gap-3 overflow-y-scroll pt-0 ms-1 ${scroll ? "pe-6" : "pe-0"
-                  } ${isPagamento ? "max-h-8/12 2xl:h-11/15" : "max-h-7/12 2xl:h-10/15"}`
+                  } ${isPagamento ? "h-8/12 2xl:h-11/15" : "h-7/12 2xl:h-10/15"}`
                 }
               >
                 {loading ? (

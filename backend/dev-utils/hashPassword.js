@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
 
 async function generateHashedPassword() {
-    const password = 'Bern@s2401' // senha que deseja hashear
+    const password = 'tikitos123' // senha que deseja hashear
     try {
         //gerar o salt
         const salt = await bcrypt.genSalt(10);

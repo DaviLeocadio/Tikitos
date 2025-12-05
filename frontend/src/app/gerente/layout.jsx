@@ -13,9 +13,10 @@ export default function GerenteLayout({ children }) {
     <>
       <SidebarProvider>
         <GerenteSidebar />
-        <main className="w-full">{children}</main>
+        <main className="w-full">
+          {children}</main>
       </SidebarProvider> 
-      {/* <Footer /> */}
+      <Footer/>
     </>
   );
 }

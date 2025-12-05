@@ -32,6 +32,7 @@ import {
   removerDoCarrinho,
 } from "@/utils/carrinho.js";
 import { fa } from "zod/v4/locales";
+import { aparecerToast } from "@/utils/toast";
 
 const getId = (p) =>
   p?.id ??
@@ -74,6 +75,9 @@ export default function CardProduto({ produto }) {
         removerDoCarrinho(produto.id_produto);
         setCardSelecionado(false);
       } else {
+        if(inativo) {
+          return aparecerToast("Produto Inativo")
+        }
         // não selecionado -> adicionar
         adicionarAoCarrinho(produto);
         setCardSelecionado(true);

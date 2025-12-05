@@ -19,14 +19,6 @@ export default forwardRef(function CarrinhoCard(props, ref) {
     }
   };
 
-  // input manual
-  const handleAtualizar = (e) => {
-    const qtd = Number(e.target.value);
-    if (qtd <= 10 && qtd >= 1) {
-      atualizarQuantidade(produto.id_produto, qtd);
-    }
-  };
-
   // corrigir limites
   useEffect(() => {
     if (produto.quantidade > 10) atualizarQuantidade(produto.id_produto, 10);
@@ -90,13 +82,9 @@ export default forwardRef(function CarrinhoCard(props, ref) {
                   <path d="M5 12h14" />
                 </svg>
               </button>
-
-              <input
-                type="number"
-                value={produto.quantidade}
-                disabled
-                className="w-8 semBordar text-center text-sm text-[#DDF1D4] bg-[#9D4E92] border-0"
-              />
+              <div className="w-8 semBordar text-center text-sm text-[#DDF1D4] bg-[#9D4E92] border-0">
+                {produto.quantidade}
+              </div>
 
               <button
                 type="button"

@@ -1,3 +1,5 @@
+import { SidebarTrigger } from "@/components/ui/sidebar";
+
 export default function RelatoriosIndex() {
   const cards = [
     {
@@ -29,11 +31,14 @@ export default function RelatoriosIndex() {
   return (
     <div className="p-10 animate-fadeIn">
       {/* Título principal */}
-      <div className="mb-10 text-center">
-        <h1 className="text-4xl font-extrabold text-roxo drop-shadow-sm">
-          Relatórios Administrativos
-        </h1>
-        <p className="text-neutral-600 dark:text-neutral-300 mt-2 text-lg">
+
+      <div>
+        <div>
+          <h1 className="text-3xl lg:text-4xl font-bold text-[#76196c] flex items-center gap-2">
+            <SidebarTrigger /> Relatórios Administrativos
+          </h1>
+        </div>
+        <p className="text-gray-700 mt-1 font-medium">
           Escolha um relatório para visualizar informações detalhadas
         </p>
       </div>

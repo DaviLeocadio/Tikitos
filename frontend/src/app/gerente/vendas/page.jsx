@@ -148,38 +148,27 @@ const GerenteVendasPage = () => {
 
   return (
     <>
-      <div className="flex m-5 gap-2 items-center">
-        <SidebarTrigger />
-      </div>
-
       <div className="min-h-screen p-6">
         <div className="max-w-7xl mx-auto">
-          
           <div className="flex items-center justify-between mb-6">
+            <div>
               <div>
-                <h1
-                  className="text-3xl font-bold flex items-center gap-3"
-                  style={{ color: TIKI.roxoEscuro }}
-                >
-                  Gerenciamento de Vendas
+                <h1 className="text-3xl lg:text-4xl font-bold text-[#76196c] flex items-center gap-2">
+                  <SidebarTrigger /> Gerenciamento de vendas
                 </h1>
-                <p className="text-gray-700 mt-1 font-medium">
-                  Tikitos - Pequenos momentos, grandes resultados
-                </p>
               </div>
+              <p className="text-gray-700 mt-1 font-medium">
+                Tikitos - Pequenos momentos, grandes resultados
+              </p>
             </div>
+          </div>
 
           {/* Header */}
-          <div
-            className="bg-[#75B851] border-3 border-[#4F6940] border-dashed rounded-4xl shadow-lg p-6 mb-6">
-            
-
+          <div className="bg-[#75B851] border-3 border-[#4F6940] border-dashed rounded-4xl shadow-lg p-6 mb-6">
             {/* Filtros */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-
               <div>
-                <label
-                  className="block text-sm text-[#9BF377] font-semibold mb-2">
+                <label className="block text-sm text-[#9BF377] font-semibold mb-2">
                   <Search size={16} className="inline mr-1" />
                   Buscar
                 </label>
@@ -193,8 +182,7 @@ const GerenteVendasPage = () => {
               </div>
 
               <div>
-                <label
-                  className="block text-sm text-[#9BF377] font-semibold mb-2">
+                <label className="block text-sm text-[#9BF377] font-semibold mb-2">
                   <Calendar size={16} className="inline mr-1" />
                   Data Início
                 </label>
@@ -207,8 +195,7 @@ const GerenteVendasPage = () => {
               </div>
 
               <div>
-                <label
-                  className="block text-sm text-[#9BF377] font-semibold mb-2">
+                <label className="block text-sm text-[#9BF377] font-semibold mb-2">
                   <Calendar size={16} className="inline mr-1" />
                   Data Fim
                 </label>
@@ -221,8 +208,7 @@ const GerenteVendasPage = () => {
               </div>
 
               <div>
-                <label
-                  className="block text-sm text-[#9BF377] font-semibold mb-2">
+                <label className="block text-sm text-[#9BF377] font-semibold mb-2">
                   <Filter size={16} className="inline mr-1" />
                   Pagamento
                 </label>
@@ -237,13 +223,11 @@ const GerenteVendasPage = () => {
                   <option value="cartão">Cartão</option>
                 </select>
               </div>
-
             </div>
           </div>
 
           {/* Cards de Resumo */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-6 py-4">
-            
             <div
               className="rounded-[50px] shadow-lg p-6 text-[#CAF4B7]"
               style={{
@@ -330,16 +314,15 @@ const GerenteVendasPage = () => {
               vendasFiltradas().map((venda) => (
                 <div
                   key={venda.id_venda}
-                  className="bg-[#D695E7] rounded-[30px] border-1 border-[#8C3E82] shadow-lg overflow-hidden transition-all hover:!bg-[#EBC7F5]"                >
+                  className="bg-[#D695E7] rounded-[30px] border-1 border-[#8C3E82] shadow-lg overflow-hidden transition-all hover:!bg-[#EBC7F5]"
+                >
                   <div
                     onClick={() => toggleVenda(venda.id_venda)}
                     className="p-6 cursor-pointer transition-all duration-300"
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-6 flex-1">
-                        <div
-                          className="rounded-2xl p-3 bg-[#75BA51]"
-                        >
+                        <div className="rounded-2xl p-3 bg-[#75BA51]">
                           <Package
                             size={24}
                             style={{ color: TIKI.roxoMedio }}
@@ -347,9 +330,12 @@ const GerenteVendasPage = () => {
                         </div>
                         <div className="flex-1">
                           <div className="flex items-center gap-3 mb-2">
-                            <span
-                              className="font-bold text-[#4F6940]">
-                              Venda <span className="text-[#4EA912]">#{venda.id_venda}</span> - Caixa {venda.id_caixa}
+                            <span className="font-bold text-[#4F6940]">
+                              Venda{" "}
+                              <span className="text-[#4EA912]">
+                                #{venda.id_venda}
+                              </span>{" "}
+                              - Caixa {venda.id_caixa}
                             </span>
 
                             <span
@@ -379,8 +365,7 @@ const GerenteVendasPage = () => {
                           >
                             Total
                           </p>
-                          <p
-                            className="text-2xl font-bold text-[#4EA912]">
+                          <p className="text-2xl font-bold text-[#4EA912]">
                             {formatarMoeda(venda.total)}
                           </p>
                           <p className="text-sm text-[#4F6940] font-medium">
@@ -499,8 +484,7 @@ const GerenteVendasPage = () => {
                                       >
                                         Preço Unit.
                                       </p>
-                                      <p
-                                        className="text-lg font-semibold text-[#4EA912]">
+                                      <p className="text-lg font-semibold text-[#4EA912]">
                                         {formatarMoeda(item.preco_unitario)}
                                       </p>
                                     </div>
@@ -511,12 +495,10 @@ const GerenteVendasPage = () => {
                                         borderColor: TIKI.verdeTikitos,
                                       }}
                                     >
-                                      <p
-                                        className="text-sm text-[#4EA912] font-semibold">
+                                      <p className="text-sm text-[#4EA912] font-semibold">
                                         Subtotal
                                       </p>
-                                      <p
-                                        className="text-xl font-bold text-[#4EA912]">
+                                      <p className="text-xl font-bold text-[#4EA912]">
                                         {formatarMoeda(item.subtotal)}
                                       </p>
                                     </div>

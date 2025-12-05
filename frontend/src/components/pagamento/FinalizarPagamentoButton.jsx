@@ -138,7 +138,7 @@ export default function FinalizarPagamentoButton({
 
     console.log("Payload sendo enviado:", JSON.stringify(venda, null, 2));
 
-    function baixarPdf(base64) {
+    function baixarPdf(base64, idVenda) {
       const byteCharacters = atob(base64);
       const byteNumbers = new Array(byteCharacters.length);
 
@@ -152,11 +152,12 @@ export default function FinalizarPagamentoButton({
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = "comprovante-venda.pdf";
+      a.download = `comprovante-venda#${idVenda}.pdf`;
       a.click();
 
       URL.revokeObjectURL(url);
     }
+
     try {
       const response = await fetch("http://localhost:8080/vendedor/vendas", {
         method: "POST",
@@ -176,7 +177,7 @@ export default function FinalizarPagamentoButton({
 
       console.log("Venda finalizada com sucesso:", data);
       setPdfBase64(data.pdf);
-      baixarPdf(data.pdf);
+      baixarPdf(data.pdf, data.vendaCriada);
       setStep("success");
 
       // Countdown para fechar

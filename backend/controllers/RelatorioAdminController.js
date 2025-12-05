@@ -783,181 +783,116 @@ export const relatorioGeral = async (req, res) => {
 
 export const relatorioProdutos = async (req, res) => {
   try {
-    const { dataInicio, dataFim, filialId } = req.query;
+    const { id_produto, dataInicio, dataFim } = req.query;
 
-    // -----------------------------------
-    // 1 — Datas padrão (últimos 30 dias)
-    // -----------------------------------
+    if (!id_produto) {
+      return res.status(400).json({
+        mensagem: "É necessário informar o id_produto.",
+      });
+    }
+
+    // -----------------------------
+    // 1 — Intervalo de datas
+    // -----------------------------
     const end = dataFim ? new Date(dataFim) : new Date();
     const start = dataInicio
       ? new Date(dataInicio)
-      : new Date(Date.now() - 1000 * 60 * 60 * 24 * 30);
+      : new Date(Date.now() - 1000 * 60 * 60 * 24 * 30); // Últimos 30 dias
 
-    const startISO = new Date(
-      start.getFullYear(),
-      start.getMonth(),
-      start.getDate()
-    )
-      .toISOString()
-      .slice(0, 19)
-      .replace("T", " ");
+    const startISO = `${start.getFullYear()}-${String(start.getMonth() + 1).padStart(2, "0")}-${String(start.getDate()).padStart(2, "0")} 00:00:00`;
+    const endISO = `${end.getFullYear()}-${String(end.getMonth() + 1).padStart(2, "0")}-${String(end.getDate()).padStart(2, "0")} 23:59:59`;
 
-    const endISO = new Date(
-      end.getFullYear(),
-      end.getMonth(),
-      end.getDate() + 1
-    )
-      .toISOString()
-      .slice(0, 19)
-      .replace("T", " ");
-
-    let filtroFilial = "";
-    const params = [startISO, endISO];
-
-    if (filialId) {
-      filtroFilial = "AND v.id_empresa = ?";
-      params.push(filialId);
-    }
-
-    // -----------------------------------
-    // 2 — Resumo geral de produtos
-    // -----------------------------------
-    const resumoSql = `
+    // -----------------------------
+    // 2 — Dados financeiros gerais
+    // -----------------------------
+    const financeiroSql = `
       SELECT
-        COUNT(DISTINCT p.id_produto) AS total_produtos,
-        SUM(CASE WHEN pl.estoque <= 3 THEN 1 ELSE 0 END) AS estoque_baixo,
-        SUM(CASE WHEN pl.estoque = 0 THEN 1 ELSE 0 END) AS ruptura
-      FROM produto_loja pl
-      JOIN produtos p ON p.id_produto = pl.id_produto;
-    `;
-    const [resumo] = await readRaw(resumoSql);
-
-    // -----------------------------------
-    // 3 — Top 20 produtos mais vendidos
-    // -----------------------------------
-    const topProdutosSql = `
-      SELECT
-        p.id_produto,
-        p.nome,
-        SUM(i.quantidade) AS quantidade_vendida,
-        SUM(i.quantidade * i.preco_unitario) AS faturamento_produto
+        SUM(i.quantidade) AS totalVendido,
+        SUM(i.quantidade * i.preco_unitario) AS faturamento,
+        (SUM(i.quantidade * i.preco_unitario) / NULLIF(SUM(i.quantidade), 0)) AS ticketMedio
       FROM venda_itens i
       JOIN vendas v ON v.id_venda = i.id_venda
-      JOIN produtos p ON p.id_produto = i.id_produto
-      WHERE v.data_venda BETWEEN ? AND ?
-      ${filtroFilial}
-      GROUP BY p.id_produto, p.nome
-      ORDER BY quantidade_vendida DESC
-      LIMIT 20;
+      WHERE i.id_produto = ?
+        AND v.data_venda BETWEEN ? AND ?;
     `;
-    const topProdutos = await readRaw(topProdutosSql, params);
 
-    // -----------------------------------
-    // 4 — Produtos com estoque baixo
-    // -----------------------------------
-    const estoqueBaixoSql = `
-      SELECT p.id_produto, p.nome, pl.estoque as quantidade
-      FROM produto_loja pl
-      JOIN produtos p ON p.id_produto = pl.id_produto
-      WHERE pl.estoque <= 3
-      ORDER BY pl.estoque ASC;
-    `;
-    const produtosBaixoEstoque = await readRaw(estoqueBaixoSql);
+    const [financeiro] = await readRaw(financeiroSql, [id_produto, startISO, endISO]);
 
-    // -----------------------------------
-    // 5 — Produtos em ruptura (zerados)
-    // -----------------------------------
-    const rupturaSql = `
-      SELECT p.id_produto, p.nome, pl.estoque as quantidade
-      FROM produto_loja pl
-      JOIN produtos p ON p.id_produto = pl.id_produto
-      WHERE pl.estoque = 0;
-    `;
-    const produtosRuptura = await readRaw(rupturaSql);
-
-    // -----------------------------------
-    // 6 — Produtos que NÃO venderam no período
-    // -----------------------------------
-    const semVendaSql = `
-      SELECT 
-        p.id_produto,
-        p.nome,
-        COALESCE((SELECT SUM(pl.estoque) FROM produto_loja pl WHERE pl.id_produto = p.id_produto), 0) AS estoque
-      FROM produtos p
-      LEFT JOIN (
-        SELECT DISTINCT i.id_produto
-        FROM venda_itens i
-        JOIN vendas v ON v.id_venda = i.id_venda
-        WHERE v.data_venda BETWEEN ? AND ?
-        ${filtroFilial}
-      ) AS vendidos ON vendidos.id_produto = p.id_produto
-      WHERE vendidos.id_produto IS NULL;
-    `;
-    const produtosSemVenda = await readRaw(semVendaSql, params);
-
-    // -----------------------------------
-    // 7 — Estoque por filial (resumo)
-    // -----------------------------------
-    const estoqueFilialSql = `
+    // -----------------------------
+    // 3 — Vendas por dia (gráfico)
+    // -----------------------------
+    const vendasPorDiaSql = `
       SELECT
-        e.id_empresa,
-        e.nome AS nome_filial,
-        COUNT(pl.id_produto) AS total_produtos,
-        SUM(CASE WHEN pl.estoque <= 3 THEN 1 ELSE 0 END) AS estoque_baixo,
-        SUM(CASE WHEN pl.estoque = 0 THEN 1 ELSE 0 END) AS ruptura
-      FROM empresas e
-      LEFT JOIN produto_loja pl ON pl.id_empresa = e.id_empresa
-      WHERE e.tipo = 'filial' AND e.status = 'ativo'
-      GROUP BY e.id_empresa, e.nome
-      ORDER BY e.nome ASC;
-    `;
-
-    const estoquePorFilial = await readRaw(estoqueFilialSql);
-
-    // -----------------------------------
-    // 8 — Gráfico geral por produto (total vendido por dia)
-    // -----------------------------------
-    const vendasPorProdutoDiaSql = `
-      SELECT
-        p.id_produto,
-        p.nome,
         DATE(v.data_venda) AS dia,
-        SUM(i.quantidade) AS quantidade_vendida
+        SUM(i.quantidade) AS total_vendido,
+        SUM(i.quantidade * i.preco_unitario) AS total_faturado
       FROM venda_itens i
-      JOIN produtos p ON p.id_produto = i.id_produto
       JOIN vendas v ON v.id_venda = i.id_venda
-      WHERE v.data_venda BETWEEN ? AND ?
-      ${filtroFilial}
-      GROUP BY p.id_produto, DATE(v.data_venda)
-      ORDER BY p.id_produto, dia;
+      WHERE i.id_produto = ?
+        AND v.data_venda BETWEEN ? AND ?
+      GROUP BY DATE(v.data_venda)
+      ORDER BY dia ASC;
     `;
 
-    const vendasPorProdutoDia = await readRaw(vendasPorProdutoDiaSql, params);
+    const vendasPorDia = await readRaw(vendasPorDiaSql, [id_produto, startISO, endISO]);
 
-    // -----------------------------------
-    // 9 — Resposta final
-    // -----------------------------------
+    // -----------------------------
+    // 4 — Top filiais que mais venderam esse produto
+    // -----------------------------
+    const topFiliaisSql = `
+      SELECT
+        e.nome AS nome,
+        SUM(i.quantidade) AS total_vendas,
+        SUM(i.quantidade * i.preco_unitario) AS total_faturado
+      FROM venda_itens i
+      JOIN vendas v ON v.id_venda = i.id_venda
+      JOIN empresas e ON e.id_empresa = v.id_empresa
+      WHERE i.id_produto = ?
+        AND v.data_venda BETWEEN ? AND ?
+      GROUP BY e.id_empresa
+      ORDER BY total_vendas DESC;
+    `;
+
+    const topFiliais = await readRaw(topFiliaisSql, [id_produto, startISO, endISO]);
+
+    // -----------------------------
+    // 5 — Vendas detalhadas (tabela)
+    // -----------------------------
+    const vendasDetalhadasSql = `
+      SELECT
+        v.id_venda,
+        e.nome AS nome_filial,
+        i.quantidade,
+        (i.quantidade * i.preco_unitario) AS valor,
+        v.data_venda
+      FROM venda_itens i
+      JOIN vendas v ON v.id_venda = i.id_venda
+      JOIN empresas e ON e.id_empresa = v.id_empresa
+      WHERE i.id_produto = ?
+        AND v.data_venda BETWEEN ? AND ?
+      ORDER BY v.data_venda DESC;
+    `;
+
+    const vendasDetalhadas = await readRaw(vendasDetalhadasSql, [id_produto, startISO, endISO]);
+
+    // -----------------------------
+    // 6 — Resposta final no padrão exato do frontend
+    // -----------------------------
     return res.status(200).json({
-      mensagem: "Relatório de produtos gerado com sucesso.",
-      periodo: { dataInicio: startISO, dataFim: endISO },
-
-      resumo: {
-        totalProdutos: Number(resumo.total_produtos),
-        estoqueBaixo: Number(resumo.estoque_baixo),
-        ruptura: Number(resumo.ruptura),
+      financeiro: {
+        faturamento: Number(financeiro.faturamento || 0),
+        totalVendido: Number(financeiro.totalVendido || 0),
+        ticketMedio: Number(financeiro.ticketMedio || 0),
       },
-
-      topProdutos,
-      produtosBaixoEstoque,
-      produtosRuptura,
-      produtosSemVenda,
-      estoquePorFilial,
-      vendasPorProdutoDia,
+      vendasPorDia,
+      topFiliais,
+      vendasDetalhadas,
     });
+
   } catch (error) {
-    console.error("Erro relatorioProdutos:", error);
+    console.error("Erro relatorioProdutoIndividual:", error);
     return res.status(500).json({
-      mensagem: "Erro ao gerar relatório de produtos",
+      mensagem: "Erro ao gerar relatório do produto",
       erro: error.message,
     });
   }
