@@ -107,7 +107,7 @@ export default function Carrinho({ isPagamento = false }) {
 
   return (
     <>
-      <div className={`hidden lg:grid grid-cols-7 ${isPagamento ? "md:max-h-[100%]" : scroll ? "md:h-[96%]" : "md:h-[100%]"} `} >
+      <div className={`hidden lg:grid grid-cols-7 ${isPagamento ? "md:min-h-[100%]" : scroll ? "md:h-[96%]" : "md:h-[100%]"} `} >
 
         <div className="flex col-span-5 bg-[#E5B8F1] border-[3px] border-dashed border-[#B478AB] rounded-[50px] text-[#8c3e82] text-sm font-semibold p-5 min-h-[100%]  ">
           <div className="flex w-full h-full flex-col justify-between gap-3">
@@ -133,7 +133,7 @@ export default function Carrinho({ isPagamento = false }) {
                 ref={carrinhoRef}
                 id="carrinho"
                 className={`flex flex-col gap-3 overflow-y-scroll pt-0 ms-1 ${scroll ? "pe-6" : "pe-0"
-                  } ${isPagamento ? "max-h-8/12 2xl:h-11/15" : "max-h-7/12 2xl:h-10/15"}`
+                  } ${isPagamento ? "h-8/12 2xl:h-11/15" : "h-7/12 2xl:h-10/15"}`
                 }
               >
                 {loading ? (

@@ -67,13 +67,13 @@ export default function LojaCard({ loja }) {
 
   return (
     <div
-      className={` p-6 rounded-2xl  transition duration-300 border-2 border-dashed border-[#d695e7] flex flex-col h-full  ${
+      className={` p-6 rounded-2xl  transition duration-300 border-2 border-dashed border-[#91cf85] flex flex-col h-full  ${
         loja.status === "inativo"
-          ? "bg-gray-00 shadow-none"
-          : "bg-white shadow-md hover:shadow-xl"
+          ? "bg-verdinho grayscale-70 opacity-65"
+          : "bg-[#cbf9b9] shadow-md hover:shadow-xl"
       }`}
     >
-      <div className="flex justify-between items-start mb-4 border-b border-[#e8c5f1] pb-3">
+      <div className="flex justify-between items-start mb-4 border-b border-[#91cf85] pb-3">
         <h3 className="text-xl font-extrabold text-[#76196c] line-clamp-2">
           {nome}
         </h3>
@@ -85,11 +85,11 @@ export default function LojaCard({ loja }) {
       </div>
 
       <div className="space-y-2 mb-4">
-        <p className={`flex items-center text-sm text-[#924187] font-semibold ${loja.status === "inativo" ? "opacity-50" : ""}`}>
+        <p className={`flex items-center text-sm text-[#924187] font-semibold ${loja.status === "inativo" ? "opacity-100" : ""}`}>
           <Users size={16} className="mr-2 text-[#75ba51]" />
           {gerenteDisplay}
         </p>
-        <p className="text-xs text-[#76196c] italic opacity-70">
+        <p className="text-xs text-[#76196c] italic opacity-100">
           ID: {id_empresa} • {tipo}
         </p>
       </div>
@@ -99,7 +99,7 @@ export default function LojaCard({ loja }) {
         <p className="leading-relaxed line-clamp-2">{endereco}</p>
       </div>
 
-      <div className={`grid grid-cols-2 gap-4 mb-5 pt-3 border-t border-[#e8c5f1] ${loja.status === "inativo" ? "opacity-50" : ""}`}>
+      <div className={`grid grid-cols-2 gap-4 mb-5 pt-3 border-t border-[#91cf85] ${loja.status === "inativo" ? "opacity-100" : ""}`}>
         <div className="flex items-center space-x-2">
           <DollarSign size={18} className="text-[#75ba51]" />
           <div>
@@ -143,8 +143,8 @@ export default function LojaCard({ loja }) {
         </div>
       </div>
 
-      <div className={`"mt-auto pt-4 border-t border-[#e8c5f1] flex flex-col sm:flex-row justify-between items-center space-y-3 sm:space-y-0" `}>
-        <p className={`flex items-center text-xs text-[#76196c]  ${loja.status === "inativo" ? "opacity-50" : "opacity-80 "}`}>
+      <div className={`"mt-auto pt-4 border-t border-[#91cf85] flex flex-col sm:flex-row justify-between items-center space-y-3 sm:space-y-0" `}>
+        <p className={`flex items-center text-xs text-[#76196c]  ${loja.status === "inativo" ? "opacity-50" : "opacity-100 "}`}>
           <Clock size={14} className="mr-1" />
           Última Venda:{" "}
           <span className="ml-1 font-semibold">{formatDate(ultima_venda)}</span>
@@ -152,7 +152,7 @@ export default function LojaCard({ loja }) {
 
         <button
           onClick={handleDetailsClick}
-          className="w-full sm:w-auto px-5 py-2 bg-[#76196c] text-white font-semibold rounded-xl shadow-md hover:bg-[#924187] transition text-sm"
+          className="w-full sm:w-auto px-5 py-2 bg-[#7d3676] text-[#c8a0c4] font-semibold rounded-xl shadow-md hover:bg-[#924187] transition text-sm"
         >
           Ver detalhes
         </button>
