@@ -68,11 +68,15 @@ export default function GerenteProdutos() {
   }, [produtos]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#DDF1D4] to-verdeclaro p-5 lg:p-8">
+    <>
+    <div className="flex m-5 gap-2 items-center">
+        <SidebarTrigger />
+      </div>
+
+    <div className="min-h-screen p-5 lg:p-8">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div>
-          <SidebarTrigger />
           <img
             src="/img/gerenciar_produtos/gerenciar_produtos.png"
             className="md:p-3 md:w-[60%] mx-auto md:mb-[7%]"
@@ -128,5 +132,6 @@ export default function GerenteProdutos() {
         onSalvar={handleFazerPedido}
       />
     </div>
+    </>
   );
 }

@@ -53,10 +53,12 @@ export default function GerenteFinanceiro() {
   );
 
   return (
-    <div className="min-h-screen p-8 space-y-6">
-      <h1 className="text-3xl font-bold">
+    <>
+    <div className="flex m-5 gap-2 items-center">
         <SidebarTrigger />
-      </h1>
+      </div>
+
+    <div className="min-h-screen p-8 space-y-6">
 
       <div>
         <FinanceiroFilters
@@ -140,7 +142,7 @@ export default function GerenteFinanceiro() {
           setDialogMarcarPago({ open: false, despesa: null })
         }
       >
-        <DialogContent className="sm:max-w-md bg-white border-3 border-[#569a33] border-dashed rounded-3xl">
+        <DialogContent className="sm:max-w-md bg-[#C5FFAD] border-2 border-[#569a33] rounded-3xl">
           <DialogHeader>
             <DialogTitle className="text-[#569a33] font-extrabold text-xl">
               Marcar como Pago
@@ -153,7 +155,7 @@ export default function GerenteFinanceiro() {
           <DialogFooter className="flex gap-2">
             <Button
               variant="secondary"
-              className="flex-1 bg-gray-200 text-gray-700 hover:bg-gray-300 font-bold"
+              className="flex-1 bg-[#92EF6C] text-[#4F6940] hover:bg-[#92EF6C] font-bold"
               onClick={() =>
                 setDialogMarcarPago({ open: false, despesa: null })
               }
@@ -161,7 +163,7 @@ export default function GerenteFinanceiro() {
               Cancelar
             </Button>
             <Button
-              className="flex-1 bg-[#569a33] text-white hover:bg-[#4f6940] font-bold"
+              className="flex-1 bg-[#569a33] text-[#C5FFAD] hover:bg-[#569a33] font-bold"
               onClick={() => {
                 handleMarcarComoPago(dialogMarcarPago.despesa);
                 setDialogMarcarPago({ open: false, despesa: null });
@@ -173,5 +175,6 @@ export default function GerenteFinanceiro() {
         </DialogContent>
       </Dialog>
     </div>
+    </>
   );
 }

@@ -132,7 +132,7 @@ export default function ModalPedidoFornecedor({
 
           <div className="space-y-4">
             {/* Card Info do Produto */}
-            <div className="bg-white rounded-xl p-4 border-2 border-[#569a33] border-dashed">
+            <div className=" rounded-xl p-4">
               <div className="space-y-3">
                 <div>
                   <p className="text-xs text-gray-500 font-semibold uppercase tracking-wide">

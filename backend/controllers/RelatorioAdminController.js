@@ -103,7 +103,7 @@ export const relatorioVendas = async (req, res) => {
       LEFT JOIN vendas v
         ON v.id_empresa = e.id_empresa
        AND v.data_venda BETWEEN ? AND ?
-      WHERE e.tipo = 'filial'
+      WHERE e.tipo = 'filial' AND e.status = 'ativo'
       GROUP BY e.id_empresa, e.nome
       ORDER BY faturamento DESC;
     `;
@@ -251,9 +251,9 @@ export const relatorioFinanceiro = async (req, res) => {
     }
 
     const despesasSql = `
-      SELECT COALESCE(SUM(d.valor), 0) AS total_saidas
+      SELECT COALESCE(SUM(d.preco), 0) AS total_saidas
       FROM despesas d
-      WHERE d.data_despesa BETWEEN ? AND ?
+      WHERE d.data_pag BETWEEN ? AND ?
       ${despesasFilter};
     `;
     const [despesas] = await readRaw(despesasSql, paramsDespesas);
@@ -288,16 +288,16 @@ export const relatorioFinanceiro = async (req, res) => {
         e.nome AS nome_filial,
         COALESCE(SUM(v.total), 0) AS total_entradas,
         (
-          SELECT COALESCE(SUM(valor), 0)
-          FROM despesas d
-          WHERE d.id_empresa = e.id_empresa
-            AND d.data_despesa BETWEEN ? AND ?
-        ) AS total_saidas
+              SELECT COALESCE(SUM(preco), 0)
+              FROM despesas d
+              WHERE d.id_empresa = e.id_empresa
+                AND d.data_pag BETWEEN ? AND ?
+            ) AS total_saidas
       FROM empresas e
       LEFT JOIN vendas v
         ON v.id_empresa = e.id_empresa
        AND v.data_venda BETWEEN ? AND ?
-      WHERE e.tipo = 'filial'
+      WHERE e.tipo = 'filial' AND e.status = 'ativo'
       GROUP BY e.id_empresa, e.nome
       ORDER BY total_entradas DESC;
     `;
@@ -315,12 +315,12 @@ export const relatorioFinanceiro = async (req, res) => {
       SELECT
         id_despesa,
         descricao,
-        valor,
-        data_despesa
+        preco,
+        data_pag
       FROM despesas
-      WHERE data_despesa BETWEEN ? AND ?
+      WHERE data_pag BETWEEN ? AND ?
       ${despesasFilter}
-      ORDER BY valor DESC
+      ORDER BY preco DESC
       LIMIT 10;
     `;
     const topDespesas = await readRaw(topDespesasSql, paramsDespesas);
@@ -332,12 +332,12 @@ export const relatorioFinanceiro = async (req, res) => {
       SELECT
         id_despesa,
         descricao,
-        valor,
-        data_despesa
+        preco,
+        data_pag
       FROM despesas
-      WHERE data_despesa BETWEEN ? AND ?
+      WHERE data_pag BETWEEN ? AND ?
       ${despesasFilter}
-      ORDER ORDER BY data_despesa DESC
+      ORDER BY data_pag DESC
       LIMIT 15;
     `;
     const ultimasDespesas = await readRaw(
@@ -419,7 +419,7 @@ export const relatorioPorFilial = async (req, res) => {
     // 2 — Dados básicos da Filial
     // -----------------------------------
     const filialSql = `
-      SELECT id_empresa, nome, status, cidade, estado
+      SELECT id_empresa, nome, tipo, endereco, status
       FROM empresas
       WHERE id_empresa = ?;
     `;
@@ -450,9 +450,9 @@ export const relatorioPorFilial = async (req, res) => {
     // 4 — Total de Saídas (Despesas)
     // -----------------------------------
     const despesasSql = `
-      SELECT COALESCE(SUM(valor),0) AS total_saidas
+      SELECT COALESCE(SUM(preco),0) AS total_saidas
       FROM despesas
-      WHERE data_despesa BETWEEN ? AND ?
+      WHERE data_pag BETWEEN ? AND ?
         AND id_empresa = ?;
     `;
     const [despesas] = await readRaw(despesasSql, params);
@@ -498,11 +498,11 @@ export const relatorioPorFilial = async (req, res) => {
     // -----------------------------------
     const estoqueSql = `
       SELECT
-        COUNT(*) AS total_produtos,
-        SUM(CASE WHEN quantidade <= 3 THEN 1 ELSE 0 END) AS produtos_baixos,
-        SUM(CASE WHEN quantidade = 0 THEN 1 ELSE 0 END) AS ruptura
-      FROM produtos
-      WHERE id_empresa = ?;
+        COUNT(pl.id_produto) AS total_produtos,
+        SUM(CASE WHEN pl.estoque <= 3 THEN 1 ELSE 0 END) AS produtos_baixos,
+        SUM(CASE WHEN pl.estoque = 0 THEN 1 ELSE 0 END) AS ruptura
+      FROM produto_loja pl
+      WHERE pl.id_empresa = ?;
     `;
     const [estoque] = await readRaw(estoqueSql, [id_empresa]);
 
@@ -624,9 +624,9 @@ export const relatorioGeral = async (req, res) => {
 
     // Despesas gerais
     const despesasSql = `
-      SELECT COALESCE(SUM(valor),0) AS total_saidas
+      SELECT COALESCE(SUM(preco),0) AS total_saidas
       FROM despesas
-      WHERE data_despesa BETWEEN ? AND ?;
+      WHERE data_pag BETWEEN ? AND ?;
     `;
     const [despesas] = await readRaw(despesasSql, params);
 
@@ -661,7 +661,7 @@ export const relatorioGeral = async (req, res) => {
       LEFT JOIN vendas v
         ON v.id_empresa = e.id_empresa
        AND v.data_venda BETWEEN ? AND ?
-      WHERE e.tipo = 'filial'
+      WHERE e.tipo = 'filial' AND e.status = 'ativo'
       GROUP BY e.id_empresa, e.nome
       ORDER BY faturamento DESC;
     `;
@@ -691,10 +691,11 @@ export const relatorioGeral = async (req, res) => {
     // -----------------------------------
     const estoqueSql = `
       SELECT
-        COUNT(*) AS total_produtos,
-        SUM(CASE WHEN quantidade <= 3 THEN 1 ELSE 0 END) AS produtos_baixos,
-        SUM(CASE WHEN quantidade = 0 THEN 1 ELSE 0 END) AS ruptura
-      FROM produtos;
+        COUNT(DISTINCT p.id_produto) AS total_produtos,
+        SUM(CASE WHEN pl.estoque <= 3 THEN 1 ELSE 0 END) AS produtos_baixos,
+        SUM(CASE WHEN pl.estoque = 0 THEN 1 ELSE 0 END) AS ruptura
+      FROM produto_loja pl
+      JOIN produtos p ON p.id_produto = pl.id_produto;
     `;
     const [estoque] = await readRaw(estoqueSql);
 
@@ -721,11 +722,11 @@ export const relatorioGeral = async (req, res) => {
       SELECT
         id_despesa,
         descricao,
-        valor,
-        data_despesa
+        preco,
+        data_pag
       FROM despesas
-      WHERE data_despesa BETWEEN ? AND ?
-      ORDER BY valor DESC
+      WHERE data_pag BETWEEN ? AND ?
+      ORDER BY preco DESC
       LIMIT 10;
     `;
     const topDespesas = await readRaw(topDespesasSql, params);
@@ -737,10 +738,10 @@ export const relatorioGeral = async (req, res) => {
       SELECT
         id_despesa,
         descricao,
-        valor,
-        data_despesa
+        preco,
+        data_pag
       FROM despesas
-      ORDER BY data_despesa DESC
+      ORDER BY data_pag DESC
       LIMIT 15;
     `;
     const ultimasDespesas = await readRaw(ultimasDespesasSql);
@@ -823,10 +824,11 @@ export const relatorioProdutos = async (req, res) => {
     // -----------------------------------
     const resumoSql = `
       SELECT
-        COUNT(*) AS total_produtos,
-        SUM(CASE WHEN quantidade <= 3 THEN 1 ELSE 0 END) AS estoque_baixo,
-        SUM(CASE WHEN quantidade = 0 THEN 1 ELSE 0 END) AS ruptura
-      FROM produtos;
+        COUNT(DISTINCT p.id_produto) AS total_produtos,
+        SUM(CASE WHEN pl.estoque <= 3 THEN 1 ELSE 0 END) AS estoque_baixo,
+        SUM(CASE WHEN pl.estoque = 0 THEN 1 ELSE 0 END) AS ruptura
+      FROM produto_loja pl
+      JOIN produtos p ON p.id_produto = pl.id_produto;
     `;
     const [resumo] = await readRaw(resumoSql);
 
@@ -854,10 +856,11 @@ export const relatorioProdutos = async (req, res) => {
     // 4 — Produtos com estoque baixo
     // -----------------------------------
     const estoqueBaixoSql = `
-      SELECT id_produto, nome, quantidade
-      FROM produtos
-      WHERE quantidade <= 3
-      ORDER BY quantidade ASC;
+      SELECT p.id_produto, p.nome, pl.estoque as quantidade
+      FROM produto_loja pl
+      JOIN produtos p ON p.id_produto = pl.id_produto
+      WHERE pl.estoque <= 3
+      ORDER BY pl.estoque ASC;
     `;
     const produtosBaixoEstoque = await readRaw(estoqueBaixoSql);
 
@@ -865,9 +868,10 @@ export const relatorioProdutos = async (req, res) => {
     // 5 — Produtos em ruptura (zerados)
     // -----------------------------------
     const rupturaSql = `
-      SELECT id_produto, nome, quantidade
-      FROM produtos
-      WHERE quantidade = 0;
+      SELECT p.id_produto, p.nome, pl.estoque as quantidade
+      FROM produto_loja pl
+      JOIN produtos p ON p.id_produto = pl.id_produto
+      WHERE pl.estoque = 0;
     `;
     const produtosRuptura = await readRaw(rupturaSql);
 
@@ -878,7 +882,7 @@ export const relatorioProdutos = async (req, res) => {
       SELECT 
         p.id_produto,
         p.nome,
-        p.quantidade
+        COALESCE((SELECT SUM(pl.estoque) FROM produto_loja pl WHERE pl.id_produto = p.id_produto), 0) AS estoque
       FROM produtos p
       LEFT JOIN (
         SELECT DISTINCT i.id_produto
@@ -898,12 +902,12 @@ export const relatorioProdutos = async (req, res) => {
       SELECT
         e.id_empresa,
         e.nome AS nome_filial,
-        COUNT(p.id_produto) AS total_produtos,
-        SUM(CASE WHEN p.quantidade <= 3 THEN 1 ELSE 0 END) AS estoque_baixo,
-        SUM(CASE WHEN p.quantidade = 0 THEN 1 ELSE 0 END) AS ruptura
+        COUNT(pl.id_produto) AS total_produtos,
+        SUM(CASE WHEN pl.estoque <= 3 THEN 1 ELSE 0 END) AS estoque_baixo,
+        SUM(CASE WHEN pl.estoque = 0 THEN 1 ELSE 0 END) AS ruptura
       FROM empresas e
-      LEFT JOIN produtos p ON p.id_empresa = e.id_empresa
-      WHERE e.tipo = 'filial'
+      LEFT JOIN produto_loja pl ON pl.id_empresa = e.id_empresa
+      WHERE e.tipo = 'filial' AND e.status = 'ativo'
       GROUP BY e.id_empresa, e.nome
       ORDER BY e.nome ASC;
     `;

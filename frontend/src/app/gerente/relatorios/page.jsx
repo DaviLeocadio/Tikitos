@@ -22,6 +22,9 @@ import {
   FileText,
 } from "lucide-react";
 
+import { SidebarTrigger } from "@/components/ui/sidebar";
+
+
 const TIKI = {
   roxoEscuro: "#76196c",
   roxoMedio: "#924187",
@@ -29,6 +32,7 @@ const TIKI = {
   rosaTikitos: "#e8c5f1",
   verdeTikitos: "#75ba51",
   verdeClaro: "#9bf377",
+  verdao: "#92EF6C",
 };
 
 export default function AdminRelatorios() {
@@ -153,7 +157,13 @@ export default function AdminRelatorios() {
   const cardStyle = "bg-white border-2 border-dashed rounded-2xl p-6 shadow-sm";
 
   return (
-    <div className="min-h-screen p-6 bg-gradient-to-r from-[#DDF1D4] to-verdeclaro">
+    <>
+
+    <div className="flex m-5 gap-2 items-center">
+        <SidebarTrigger />
+      </div>
+
+    <div className="min-h-screen p-6">
       <div className="max-w-7xl mx-auto">
         {/* TITULO */}
         <div className="mb-6">
@@ -169,18 +179,12 @@ export default function AdminRelatorios() {
         </div>
 
         {/* FILTROS */}
-        <div className={`${cardStyle} mb-6`}>
+        <div className=" mb-6 bg-[#C97FDA] border-3 border-[#76196C] border-dashed rounded-2xl p-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold flex items-center gap-2">
-              <Filter color={TIKI.roxoMedio} />
-              Filtros
-            </h2>
-
+        
             <button
               onClick={() => setMostrarFiltros(!mostrarFiltros)}
-              className="text-sm font-medium"
-              style={{ color: TIKI.roxoMedio }}
-            >
+              className="text-sm font-medium text-[#76196C]">
               {mostrarFiltros ? "Ocultar" : "Mostrar"}
             </button>
           </div>
@@ -189,7 +193,7 @@ export default function AdminRelatorios() {
             <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
               {/* DATA INÍCIO */}
               <div>
-                <label className="block text-sm font-medium mb-1">
+                <label className="block text-sm font-medium mb-1 text-[#76196C]">
                   Data Início
                 </label>
                 <input
@@ -198,13 +202,13 @@ export default function AdminRelatorios() {
                   onChange={(e) =>
                     setFiltros({ ...filtros, inicio: e.target.value })
                   }
-                  className="w-full px-3 py-2 rounded-xl border border-dashed border-gray-300"
+                  className="w-full bg-[#E5B8F1] active:border-[#76196C] px-3 py-2 rounded-xl border border-[#76196C] text-[#76196C]"
                 />
               </div>
 
               {/* DATA FIM */}
               <div>
-                <label className="block text-sm font-medium mb-1">
+                <label className="block text-sm font-medium mb-1 text-[#76196C]">
                   Data Fim
                 </label>
                 <input
@@ -213,13 +217,13 @@ export default function AdminRelatorios() {
                   onChange={(e) =>
                     setFiltros({ ...filtros, fim: e.target.value })
                   }
-                  className="w-full px-3 py-2 rounded-xl border border-dashed border-gray-300"
+                  className="w-full bg-[#E5B8F1] px-3 py-2 rounded-xl border border-[#76196C] text-[#76196C]"
                 />
               </div>
 
               {/* ID CAIXA */}
               <div>
-                <label className="block text-sm font-medium mb-1">
+                <label className="block text-sm font-medium mb-1 text-[#76196C] ">
                   ID Caixa
                 </label>
                 <input
@@ -228,13 +232,13 @@ export default function AdminRelatorios() {
                   onChange={(e) =>
                     setFiltros({ ...filtros, idCaixa: e.target.value })
                   }
-                  className="w-full px-3 py-2 rounded-xl border border-dashed border-gray-300"
+                  className="w-full bg-[#E5B8F1] px-3 py-2 rounded-xl border border-[#76196C] text-[#76196C]"
                 />
               </div>
 
               {/* PAGAMENTO */}
               <div>
-                <label className="block text-sm font-medium mb-1">
+                <label className="block text-sm font-medium mb-1 text-[#76196C] ">
                   Tipo Pagamento
                 </label>
                 <select
@@ -242,7 +246,7 @@ export default function AdminRelatorios() {
                   onChange={(e) =>
                     setFiltros({ ...filtros, pagamento: e.target.value })
                   }
-                  className="w-full px-3 py-2 rounded-xl border border-dashed border-gray-300"
+                  className="w-full bg-[#E5B8F1] px-3 py-2 rounded-xl border border-[#76196C] text-[#76196C]"
                 >
                   {tiposPagamento.map((t) => (
                     <option key={t.value} value={t.value}>
@@ -257,7 +261,7 @@ export default function AdminRelatorios() {
                 <button
                   onClick={buscarRelatorio}
                   disabled={loading}
-                  className="w-full py-3 font-semibold text-roxo rounded-xl transition cursor-pointer bg-verdeclaro border-3 border-dashed border-roxo hover:bg-verdefundo"
+                  className="w-full py-3 font-semibold text-roxo rounded-xl transition cursor-pointer bg-[#C5FFAD] border-2 border-roxo hover:bg-verdefundo"
                 >
                   {loading ? "Carregando..." : "Gerar"}
                 </button>
@@ -266,14 +270,14 @@ export default function AdminRelatorios() {
           )}
 
           {/* Checkbox detalhado */}
-          <label className="flex items-center gap-2 mt-4 cursor-pointer">
+          <label className="flex items-center text-[#76196C] gap-2 mt-4 cursor-pointer">
             <input
               type="checkbox"
               checked={filtros.detalhado}
               onChange={(e) =>
                 setFiltros({ ...filtros, detalhado: e.target.checked })
               }
-              className="w-4 h-4"
+              className="w-4 h-4 "
             />
             Incluir vendas detalhadas
           </label>
@@ -281,15 +285,15 @@ export default function AdminRelatorios() {
 
         {/* SEÇÃO SEM RELATÓRIO */}
         {!dados && !loading && (
-          <div className={`${cardStyle} text-center py-12`}>
-            <Calendar className="mx-auto w-16 h-16 text-gray-300" />
+          <div className="bg-[#92EF6C] rounded-2xl p-6 shadow-sm text-center py-12">
+            <Calendar className="mx-auto w-16 h-16 text-[#76216D]" />
             <h3
               className="text-xl font-semibold mt-4"
               style={{ color: TIKI.roxoEscuro }}
             >
               Nenhum relatório gerado
             </h3>
-            <p className="text-gray-600">
+            <p className="text-[#8F3D84]">
               Configure os filtros e gere um relatório.
             </p>
           </div>
@@ -300,31 +304,32 @@ export default function AdminRelatorios() {
           <>
             {/* CARDS RESUMO */}
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-6">
-              <div className={cardStyle}>
-                <p className="text-sm text-gray-700">Total de Vendas</p>
-                <h2 className="text-3xl font-bold">{totais.vendas}</h2>
+
+              <div className="bg-[#B478AB] rounded-2xl p-6 shadow-sm">
+                <p className="text-sm text-[#EBC7F5]">Total de Vendas</p>
+                <h2 className="text-3xl font-bold text-[#EBC7F5]">{totais.vendas}</h2>
               </div>
 
-              <div className={cardStyle}>
-                <p className="text-sm text-gray-700">Faturamento</p>
-                <h2 className="text-3xl font-bold text-green-700">
+              <div className="bg-[#9BF377] rounded-2xl p-6 shadow-sm">
+                <p className="text-sm text-[#4EA912]">Faturamento</p>
+                <h2 className="text-3xl font-bold text-[#4EA912]">
                   {formatCurrency(totais.faturamento)}
                 </h2>
               </div>
 
-              <div className={cardStyle}>
-                <p className="text-sm text-gray-700">Ticket Médio</p>
-                <h2 className="text-3xl font-bold">
+              <div className="bg-[#76226D] rounded-2xl p-6 shadow-sm">
+                <p className="text-sm text-[#D594E6]">Ticket Médio</p>
+                <h2 className="text-3xl font-bold text-[#D594E6]">
                   {formatCurrency(totais.ticket)}
                 </h2>
               </div>
 
-              <div className={cardStyle}>
-                <p className="text-sm text-gray-700">Saldo Líquido</p>
+              <div className="bg-[#559637] rounded-2xl p-6 shadow-sm">
+                <p className="text-sm text-[#92EF6C]">Saldo Líquido</p>
                 <h2
                   className="text-3xl font-bold"
                   style={{
-                    color: saldoLiquido >= 0 ? TIKI.verdeTikitos : "red",
+                    color: saldoLiquido >= 0 ? TIKI.verdao : "red",
                   }}
                 >
                   {formatCurrency(saldoLiquido)}
@@ -334,13 +339,13 @@ export default function AdminRelatorios() {
 
             {/* GRÁFICOS */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-              <div className={cardStyle}>
-                <h3 className="text-lg font-semibold mb-3">
+              <div className="bg-[#C5FFAD] rounded-2xl p-6 shadow-sm">
+                <h3 className="text-lg font-semibold mb-3 text-[#559637]">
                   Faturamento Diário
                 </h3>
                 <ResponsiveContainer width="100%" height={300}>
-                  <LineChart data={prepararDadosGrafico()}>
-                    <CartesianGrid strokeDasharray="3 3" />
+                  <LineChart data={prepararDadosGrafico()} >
+                    <CartesianGrid strokeDasharray="3 3"  />
                     <XAxis dataKey="data" />
                     <YAxis />
                     <Tooltip />
@@ -355,8 +360,8 @@ export default function AdminRelatorios() {
                 </ResponsiveContainer>
               </div>
 
-              <div className={cardStyle}>
-                <h3 className="text-lg font-semibold mb-3">
+              <div className="bg-[#EBC7F5]/70 rounded-2xl p-6 shadow-sm">
+                <h3 className="text-lg font-semibold mb-3 text-[#924187]">
                   Quantidade de Vendas
                 </h3>
                 <ResponsiveContainer width="100%" height={300}>
@@ -413,5 +418,6 @@ export default function AdminRelatorios() {
         )}
       </div>
     </div>
+    </>
   );
 }

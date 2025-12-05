@@ -151,13 +151,19 @@ export default function GerenteDashboard() {
   }, [periodo]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#DDF1D4] to-verdeclaro p-5 lg:p-8">
+    <>
+
+    <div className="flex m-5 gap-2 items-center">
+        <SidebarTrigger />
+      </div>
+
+    <div className="min-h-screen p-5 lg:p-8">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
           <div>
             <h1 className="text-3xl lg:text-4xl font-bold text-[#76196c] mb-2">
-              <SidebarTrigger /> Dashboard - {nomeFilial}
+              Dashboard - {nomeFilial}
             </h1>
             <p className="text-lg text-[#8c3e82]">
               Bem-vindo, <span className="font-semibold">{nomeGerente}</span>!
@@ -429,5 +435,6 @@ export default function GerenteDashboard() {
         )}
       </div>
     </div>
+    </>
   );
 }

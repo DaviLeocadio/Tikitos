@@ -51,49 +51,55 @@ export default function GerenteVendedor() {
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#DDF1D4] to-verdeclaro p-5 lg:p-8">
-      <div className="max-w-7xl mx-auto space-y-6">
-        {/* Header */}
-        <div>
-          <h1 className="text-3xl lg:text-4xl font-bold text-[#76196c]">
-            <SidebarTrigger /> Gerenciar Vendedores
-          </h1>
-          <p className="text-lg text-[#8c3e82] mt-1">
-            {vendedoresFiltrados.length} vendedores encontrados
-          </p>
-        </div>
-        {/* Filtros */}
-        <VendedoresFilters
-          globalFilter={globalFilter}
-          setGlobalFilter={setGlobalFilter}
-          statusFiltro={statusFiltro}
-          setStatusFiltro={setStatusFiltro}
-          buscarVendedores={buscarVendedores}
-        />
-        {/* Tabela */}
-        <VendedoresTable
-          data={vendedoresFiltrados}
-          columns={columns}
-          loading={loading}
-          globalFilter={globalFilter}
-        />
-        {/* Modals */}
-        <ModalEditarVendedor
-          vendedor={modalVendedor.vendedor}
-          open={modalVendedor.open}
-          onClose={() => {
-            setModalVendedor({ open: false, vendedor: null });
-            buscarVendedores();
-          }}
-          onSalvar={handleSalvarVendedor}
-        />
-        <ModalDesativarVendedor
-          vendedor={modalDesativar.vendedor}
-          open={modalDesativar.open}
-          onClose={() => setModalDesativar({ open: false, vendedor: null })}
-          onSalvar={buscarVendedores}
-        />
+    <>
+      <div className="flex m-5 gap-2 items-center">
+        <SidebarTrigger />
       </div>
-    </div>
+
+      <div className="min-h-screen bg-gradient-to-br from-[#DDF1D4] to-verdeclaro p-5 lg:p-8">
+        <div className="max-w-7xl mx-auto space-y-6">
+          {/* Header */}
+          <div>
+            <h1 className="text-3xl lg:text-4xl font-bold text-[#76196c]">
+              Gerenciar Vendedores
+            </h1>
+            <p className="text-lg text-[#8c3e82] mt-1">
+              {vendedoresFiltrados.length} vendedores encontrados
+            </p>
+          </div>
+          {/* Filtros */}
+          <VendedoresFilters
+            globalFilter={globalFilter}
+            setGlobalFilter={setGlobalFilter}
+            statusFiltro={statusFiltro}
+            setStatusFiltro={setStatusFiltro}
+            buscarVendedores={buscarVendedores}
+          />
+          {/* Tabela */}
+          <VendedoresTable
+            data={vendedoresFiltrados}
+            columns={columns}
+            loading={loading}
+            globalFilter={globalFilter}
+          />
+          {/* Modals */}
+          <ModalEditarVendedor
+            vendedor={modalVendedor.vendedor}
+            open={modalVendedor.open}
+            onClose={() => {
+              setModalVendedor({ open: false, vendedor: null });
+              buscarVendedores();
+            }}
+            onSalvar={handleSalvarVendedor}
+          />
+          <ModalDesativarVendedor
+            vendedor={modalDesativar.vendedor}
+            open={modalDesativar.open}
+            onClose={() => setModalDesativar({ open: false, vendedor: null })}
+            onSalvar={buscarVendedores}
+          />
+        </div>
+      </div>
+    </>
   );
 }
