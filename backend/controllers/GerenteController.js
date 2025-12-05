@@ -9,7 +9,7 @@ import { obterEmpresaPorId } from "../models/Empresa.js";
 
 const listarGerentesController = async (req, res) => {
   try {
-    const gerentes = await listarUsuarios("perfil = 'gerente'");
+    const gerentes = await listarUsuarios("u.perfil = 'gerente'");
 
     res
       .status(200)
@@ -177,10 +177,34 @@ const desativarGerenteController = async (req, res) => {
   }
 };
 
+const ativarGerenteController = async (req, res) => {
+  try {
+    const { gerenteId } = req.params;
+
+    const gerenteDesativado = atualizarUsuario(gerenteId, {
+      status: "ativo",
+    });
+
+    if (!gerenteDesativado)
+      return res.status(404).json({ error: "Gerente não encontrado" });
+
+    return res
+      .status(201)
+      .json({ mensagem: "Gerente com status ativo!", gerenteDesativado });
+  } catch (err) {
+    console.log("Erro ao ativar gerente: ", err);
+    return res
+      .status(500)
+      .json({ err: "Não foi possível ativar o gerente" });
+  }
+};
+
+
 export {
   listarGerentesController,
   obterGerentePorIdController,
   criarGerenteController,
   atualizarGerenteController,
   desativarGerenteController,
+  ativarGerenteController
 };

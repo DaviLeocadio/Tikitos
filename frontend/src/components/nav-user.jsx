@@ -78,14 +78,25 @@ export function NavUser() {
     });
 
     if (response.ok) {
-      deleteCookie('nome')
-      deleteCookie('email')
-      deleteCookie('perfil')
-      deleteCookie('empresa')
+      deleteCookie("nome");
+      deleteCookie("email");
+      deleteCookie("perfil");
+      deleteCookie("empresa");
 
-      return window.location.href = '/'
+      return (window.location.href = "/");
     }
-  }
+  };
+
+  const fecharCaixa = async () => {
+    const response = await fetch("http://localhost:8080/vendedor/caixa/fechar", {
+      method: "PUT",
+      credentials: "include",
+    });
+
+    if (response.ok) {
+      deleteCookie("idCaixa");
+    }
+  };
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -143,7 +154,15 @@ export function NavUser() {
 
             <DropdownMenuItem className="text-[#75BA51] focus:text-[#75BA51] focus:bg-[#F1B8E8] active:bg-[#F1B8E8] active:text-[#75BA51]">
               <IconLogout className="text-[#75BA51]" />
-              <button type="button" onClick={sair}>Sair</button>
+              <button
+                type="button"
+                onClick={async () => {
+                  await fecharCaixa();
+                  await sair();
+                }}
+              >
+                Sair
+              </button>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

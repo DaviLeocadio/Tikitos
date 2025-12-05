@@ -23,7 +23,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
-import { OctagonAlert } from "lucide-react";
+import { OctagonAlert, CircleCheckBig } from "lucide-react";
 
 import React, { useEffect, useState } from "react";
 import {
@@ -43,6 +43,7 @@ const getId = (p) =>
 export default function CardProduto({ produto }) {
   const [cardSelecionado, setCardSelecionado] = useState(false);
   const [inativo, setInativo] = useState(false);
+  const [estoqueBaixo, setEstoqueBaixo] = useState(false);
   const [categoria, setCategoria] = useState();
 
   const isInteractiveElement = (el) => {
@@ -126,6 +127,30 @@ export default function CardProduto({ produto }) {
 
     buscarCategoria();
 
+    const verfificarEstoque = async () => {
+      const response = await fetch(
+        "http://localhost:8080/vendedor/estoque-baixo",
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+
+        const produtoEstoque = data.produtosComEstoqueBaixo.filter(
+          (p) => p.id_produto === produto.id_produto
+        );
+        console.log(produtoEstoque);
+
+        if (produtoEstoque.length > 0) {
+          setEstoqueBaixo(true)
+        }
+      }
+    };
+
+    verfificarEstoque();
     return () => {
       mounted = false;
       window.removeEventListener("storage", onStorage);
@@ -263,7 +288,11 @@ export default function CardProduto({ produto }) {
             <Tooltip>
               <TooltipTrigger asChild>
                 <AlertDialogTrigger asChild>
-                  <i className="bi bi-exclamation-circle-fill text-[16px] text-[#4f6940] hover:scale-95 transition cursor-pointer"></i>
+                  <i
+                    className={`bi bi-exclamation-circle-fill text-[16px] hover:scale-95 transition cursor-pointer ${
+                      estoqueBaixo ? " text-[#76196c]" : " text-[#4f6940]"
+                    }`}
+                  ></i>
                 </AlertDialogTrigger>
               </TooltipTrigger>
               <TooltipContent
@@ -279,7 +308,11 @@ export default function CardProduto({ produto }) {
               <AlertDialogHeader className="items-center">
                 <AlertDialogTitle>
                   <div className="mb-2 mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10">
-                    <OctagonAlert className="h-7 w-7 text-destructive" />
+                    {estoqueBaixo ? (
+                      <OctagonAlert className="h-7 w-7 text-destructive" />
+                    ) : (
+                      <CircleCheckBig className="h-7 w-7 text-[#4f6940]" />
+                    )}
                   </div>
                   Situação do Estoque
                 </AlertDialogTitle>
@@ -305,8 +338,8 @@ export default function CardProduto({ produto }) {
         </div>
       </CardHeader>
 
-      <div className="flex justify-center items-center">
-        <CardContent className="mt-1 text-[13px] text-muted-foreground px-4 max-w-90">
+      <div className="flex justify-center items-center h-full">
+        <CardContent className="mt-1 text-[13px] text-muted-foreground px-4 max-w-90 w-full h-full">
           <img
             className="p-0 flex align-end w-full h-full object-contain transform transition group-hover:scale-108 duration-400 ease-out"
             src={produto.imagem}

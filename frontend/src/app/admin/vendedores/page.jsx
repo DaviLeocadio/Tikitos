@@ -7,7 +7,9 @@ import {
   VendedoresTable,
   GetColumns,
 } from "@/components/admin/vendedores";
-import ModalEditarVendedor from "@/components/gerente/vendedores/ModalEditarVendedor";
+import ModalEditarVendedor from "@/components/admin/vendedores/ModalEditarVendedor";
+import ModalDesativarVendedor from "@/components/admin/vendedores/ModalDesativarVendedor";
+import ModalTransferirFuncionario from "@/components/admin/gerentes/ModalTransferirFuncionario";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 
 export default function AdminEquipes() {
@@ -20,11 +22,28 @@ export default function AdminEquipes() {
     vendedor: null,
   });
 
+  const [modalDesativar, setModalDesativar] = useState({
+    open: false,
+    vendedor: null,
+  });
+
+  const [modalTransfer, setModalTransfer] = useState({
+    open: false,
+    funcionario: null,
+  });
+
   // Hook customizado
-  const { vendedores, gerentes, loading, handleSalvarVendedor } = useVendedores();
+  const {
+    vendedores,
+    gerentes,
+    loading,
+    handleSalvarVendedor,
+    buscarVendedores,
+    buscarGerentes,
+  } = useVendedores();
 
   // Colunas da tabela
-  const columns = GetColumns({ setModalVendedor });
+  const columns = GetColumns({ setModalVendedor, setModalDesativar, setModalTransfer });
 
   const applyGlobalFilter = (value, fields) =>
     fields.some((field) => field?.toString().toLowerCase().includes(value));
@@ -43,7 +62,7 @@ export default function AdminEquipes() {
     return matchStatus && matchBusca;
   });
 
-    const gerentesFiltrados = gerentes.filter((v) => {
+  const gerentesFiltrados = gerentes.filter((v) => {
     const termo = (globalFilter ?? "").toLowerCase().trim();
 
     const matchStatus =
@@ -62,11 +81,18 @@ export default function AdminEquipes() {
         {/* Header */}
         <div>
           <h1 className="text-3xl lg:text-4xl font-bold text-[#76196c]">
-            <SidebarTrigger /> Gerenciar Vendedores
+            <SidebarTrigger /> Gerenciar Equipe
           </h1>
           <p className="text-lg text-[#8c3e82] mt-1">
-            {vendedoresFiltrados.length} vendedores encontrados
+            {vendedoresFiltrados.length} integrantes
+            encontrados
           </p>
+
+          <div className="mt-3 p-3 bg-yellow-50 border border-yellow-200 rounded">
+            <p className="text-sm text-yellow-800">
+              Observação: O controle de funcionários (criação/edição) é feito pelo gerente da empresa.
+            </p>
+          </div>
         </div>
 
         {/* Filtros */}
@@ -79,7 +105,7 @@ export default function AdminEquipes() {
 
         {/* Tabela */}
         <VendedoresTable
-          data={[...vendedoresFiltrados, ...gerentesFiltrados]}
+          data={[...vendedoresFiltrados]}
           columns={columns}
           loading={loading}
           globalFilter={globalFilter}
@@ -92,9 +118,28 @@ export default function AdminEquipes() {
         <ModalEditarVendedor
           vendedor={modalVendedor.vendedor}
           open={modalVendedor.open}
-          onClose={() => setModalVendedor({ open: false, produto: null })}
+          onClose={() => setModalVendedor({ open: false, vendedor: null })}
           onSalvar={handleSalvarVendedor}
         />
+
+        <ModalDesativarVendedor
+          vendedor={modalDesativar.vendedor}
+          open={modalDesativar.open}
+          onClose={() => setModalDesativar({ open: false, vendedor: null })}
+          onSalvar={async () => {
+  
+            await buscarGerentes();
+          }}
+        />
+        {modalTransfer.open && (
+          <ModalTransferirFuncionario
+            funcionario={modalTransfer.funcionario || {}}
+            onClose={async () => {
+              setModalTransfer({ open: false, funcionario: null });
+              await buscarVendedores();
+            }}
+          />
+        )}
       </div>
     </div>
   );

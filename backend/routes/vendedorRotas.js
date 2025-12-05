@@ -34,7 +34,7 @@ const router = express.Router();
 router.post("/caixa/", AbrirCaixaController);
 
 //Rota para fechar caixa
-router.post("/caixa/fechar", FecharCaixaController);
+router.put("/caixa/fechar", FecharCaixaController);
 
 //Rota para listar as vendas
 router.get("/vendas", listarVendasController);

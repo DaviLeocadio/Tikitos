@@ -11,144 +11,109 @@ import {
 import { Button } from "@/components/ui/button";
 import { CheckCircle, Trash } from "lucide-react";
 import InputDataMask from "@/components/inputMasks/InputDataMask";
-
-// Modal Adicionar Despesa
-function ModalAdicionarDespesa({ open, onClose, onSalvar }) {
-  const [descricao, setDescricao] = useState("");
-  const [preco, setPreco] = useState("");
-
-  const [dataPag, setDataPag] = useState("");
-  const [status, setStatus] = useState("pendente");
-  const [loading, setLoading] = useState(false);
-
-  const handleSalvar = async () => {
-    if (!descricao || !preco) {
-      alert("Preencha descrição e valor!");
-      return;
-    }
-
-    setLoading(true);
-    await onSalvar({
-      descricao,
-      preco: parseFloat(preco),
-      data_pag: dataPag,
-      status,
-    });
-    setLoading(false);
-    setDescricao("");
-    setPreco("");
-    setDataPag("");
-    setStatus("pendente");
-    onClose();
-  };
-
-  return (
-    <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md bg-[#e8c5f1] border-3 border-[#924187] border-dashed rounded-3xl">
-        <DialogHeader>
-          <DialogTitle className="text-[#76196c] font-extrabold text-xl">
-            Adicionar Despesa
-          </DialogTitle>
-        </DialogHeader>
-
-        <div className="space-y-4">
-          <div className="grid grid-cols-3 gap-3">
-            <div className="col-span-2">
-              <label className="text-sm  text-[#8c3e82] font-semibold block mb-2">
-                Descrição:
-              </label>
-              <input
-                type="text"
-                value={descricao}
-                onChange={(e) => setDescricao(e.target.value)}
-                placeholder="Ex: Conta de energia"
-                className="w-full p-3 rounded-lg border-2 border-[#b478ab] text-[#76196c] font-semibold focus:outline-none focus:border-[#76196c]"
-              />
-            </div>
-            <div>
-              <label className="text-sm  text-[#8c3e82] font-semibold block mb-2">
-                Valor (R$):
-              </label>
-              <input
-                type="number"
-                step="0.01"
-                value={preco}
-                onChange={(e) => setPreco(e.target.value)}
-                placeholder="0.00"
-                className="w-full p-3 rounded-lg border-2 border-[#b478ab] text-[#76196c] font-bold focus:outline-none focus:border-[#76196c]"
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="text-sm text-[#8c3e82] font-semibold block mb-2">
-                Data de Pagamento:
-              </label>
-              <InputDataMask
-                type="text"
-                placeholder="25/12/1969"
-                value={dataPag}
-                onChange={(e) => setDataPag(e.target.value)}
-                className="w-full p-3 rounded-lg border-2 border-[#b478ab] text-[#76196c] font-bold focus:outline-none focus:border-[#76196c]"
-              />
-            </div>
-
-            <div>
-              <label className="text-sm text-[#8c3e82] font-semibold block mb-2">
-                Status:
-              </label>
-              <select
-                value={status}
-                onChange={(e) => setStatus(e.target.value)}
-                className="w-full p-3 rounded-lg border-2 border-[#b478ab] text-[#76196c] font-semibold focus:outline-none focus:border-[#76196c] cursor-pointer"
-              >
-                <option value="pendente">Pendente</option>
-                <option value="pago">Pago</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        <DialogFooter className="mt-4">
-          <div className="flex gap-2 w-full">
-            <Button
-              variant="secondary"
-              className="flex-1 bg-[#9bf377] text-[#4f6940] hover:bg-[#75ba51] font-bold cursor-pointer"
-              onClick={onClose}
-              disabled={loading}
-            >
-              Cancelar
-            </Button>
-            <Button
-              className="flex-1 bg-[#76196c] text-white hover:bg-[#924187] font-bold cursor-pointer"
-              onClick={handleSalvar}
-              disabled={loading}
-            >
-              {loading ? "Salvando..." : "Salvar"}
-            </Button>
-          </div>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  );
-}
+import ModalAdicionarDespesa from "@/components/admin/financeiro/ModalAdicionarDespesa";
 
 export default function AdminFinanceiro() {
   const [loading, setLoading] = useState(true);
+  const [totalVendas, setTotalVendas] = useState(0);
   const [despesas, setDespesas] = useState([]);
   const [fluxoCaixa, setFluxoCaixa] = useState([]);
   const [resumo, setResumo] = useState(null);
   const [modalAberto, setModalAberto] = useState(false);
   const [filtroStatus, setFiltroStatus] = useState("todos");
   const [dialogExcluir, setDialogExcluir] = useState({ open: false, id: null });
+  const [despesasPendentes, setDespesasPendentes] = useState();
+  const [despesasPagas, setDespesasPagas] = useState();
   const [dialogMarcarPago, setDialogMarcarPago] = useState({
     open: false,
     despesa: null,
   });
 
   useEffect(() => {
-    buscarDados();
+
+    const totalVendasFetch = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:8080/admin/relatorios/vendas",
+          {
+            method: "GET",
+            credentials: "include",
+          }
+        );
+
+        if (!response.ok) {
+          console.log("Não foi possivel visualizar total de produtos");
+          return;
+        }
+
+        const data = await response.json();
+
+        setTotalVendas(data.relatorioVendas.vendas.length);
+        console.log(data);
+      } catch (error) {
+        console.error("Erro ao disponibilizar o total de vendas");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    const despesasPendentesFetch = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:8080/admin/despesas-pendentes",
+          {
+            method: "GET",
+            credentials: "include",
+          }
+        );
+
+        if (!response.ok) {
+          console.log(
+            "Não foi possivel visualizar total de despesas pendentes"
+          );
+          return;
+        }
+
+        const data = await response.json();
+
+        setDespesasPendentes(data.despesas.length);
+        console.log(data);
+      } catch (error) {
+        console.error("Erro ao disponibilizar o total de vendas");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    const despesasPagasFetch = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:8080/admin/despesas-pagas",
+          {
+            method: "GET",
+            credentials: "include",
+          }
+        );
+
+        if (!response.ok) {
+          console.log("Não foi possivel visualizar total de despesas pagas");
+          return;
+        }
+
+        const data = await response.json();
+
+        setDespesasPagas(data.despesas.length);
+        console.log(data);
+      } catch (error) {
+        console.error("Erro ao disponibilizar o total de vendas");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    despesasPagasFetch();
+    despesasPendentesFetch();
+    totalVendasFetch();
   }, []);
 
   useEffect(() => {
@@ -156,19 +121,20 @@ export default function AdminFinanceiro() {
   }, [despesas, fluxoCaixa]);
 
   const buscarDados = async () => {
-    setLoading(true);
+   
     try {
       // Buscar despesas
-      const resDespesas = await fetch("http://localhost:8080/gerente/gastos", {
+      const resDespesas = await fetch("http://localhost:8080/admin/gastos", {
         credentials: "include",
       });
       if (resDespesas.ok) {
         const data = await resDespesas.json();
+        console.log(data);
         setDespesas(data.gastos || []);
       }
 
       // Buscar fluxo de caixa
-      const resFluxo = await fetch("http://localhost:8080/gerente/caixa", {
+      const resFluxo = await fetch("http://localhost:8080/admin/caixa", {
         credentials: "include",
       });
       if (resFluxo.ok) {
@@ -183,30 +149,30 @@ export default function AdminFinanceiro() {
   };
 
   const calcularResumo = () => {
-    const totalDespesas = despesas
+    const totalDespesass = despesas
       .filter((d) => d.status === "pago")
       .reduce((acc, d) => acc + parseFloat(d.preco), 0);
 
-    const despesasPendentes = despesas
+    const despesasPendentess = despesas
       .filter((d) => d.status === "pendente")
       .reduce((acc, d) => acc + parseFloat(d.preco), 0);
 
-    const totalVendas = fluxoCaixa.reduce(
+    const totalVendass = fluxoCaixa.reduce(
       (acc, f) => acc + parseFloat(f.valor_total || 0),
       0
     );
 
     setResumo({
-      totalDespesas,
-      despesasPendentes,
-      totalVendas,
-      saldo: totalVendas - totalDespesas,
+      totalDespesass,
+      despesasPendentess,
+      totalVendass,
+      saldo: totalVendass - totalDespesass,
     });
   };
 
   const handleAdicionarDespesa = async (despesaData) => {
     try {
-      const response = await fetch("http://localhost:8080/gerente/gastos", {
+      const response = await fetch("http://localhost:8080/admin/gastos", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
@@ -225,7 +191,7 @@ export default function AdminFinanceiro() {
   const handleExcluirDespesa = async (idDespesa) => {
     try {
       const response = await fetch(
-        `http://localhost:8080/gerente/gastos/${idDespesa}`,
+        `http://localhost:8080/admin/gastos/${idDespesa}`,
         {
           method: "DELETE",
           credentials: "include",
@@ -245,7 +211,7 @@ export default function AdminFinanceiro() {
   const handleMarcarComoPago = async (despesa) => {
     try {
       const response = await fetch(
-        `http://localhost:8080/gerente/gastos/${despesa.id_despesa}`,
+        `http://localhost:8080/admin/gastos/${despesa.id_despesa}`,
         {
           method: "PUT",
           credentials: "include",
@@ -272,6 +238,9 @@ export default function AdminFinanceiro() {
     return d.status === filtroStatus;
   });
 
+  useEffect(() => {
+    buscarDados();
+  }, []);
   return (
     <div className="min-h-screen bg-gradient-to-br [#e8f5e8] p-5 lg:p-8">
       <div className="max-w-7xl mx-auto space-y-6">
@@ -302,10 +271,10 @@ export default function AdminFinanceiro() {
               <div className="flex justify-between items-start">
                 <div>
                   <p className="text-sm font-semibold text-gray-600 mb-1">
-                    Total Vendas
+                    Total de vendas
                   </p>
                   <p className="text-3xl font-bold text-[#569a33]">
-                    R$ {resumo.totalVendas.toFixed(2).replace(".", ",")}
+                    {totalVendas}
                   </p>
                 </div>
                 <i className="bi bi-arrow-up-circle text-3xl text-[#569a33]"></i>
@@ -316,10 +285,10 @@ export default function AdminFinanceiro() {
               <div className="flex justify-between items-start">
                 <div>
                   <p className="text-sm font-semibold text-gray-600 mb-1">
-                    Despesas Pagas
+                    Despesas pagas
                   </p>
                   <p className="text-3xl font-bold text-[#ff6b6b]">
-                    R$ {resumo.totalDespesas.toFixed(2).replace(".", ",")}
+                    R$ {despesasPagas}
                   </p>
                 </div>
                 <i className="bi bi-arrow-down-circle text-3xl text-[#ff6b6b]"></i>
@@ -333,7 +302,7 @@ export default function AdminFinanceiro() {
                     A Pagar
                   </p>
                   <p className="text-3xl font-bold text-[#ff9800]">
-                    R$ {resumo.despesasPendentes.toFixed(2).replace(".", ",")}
+                    R$ {despesasPendentes}
                   </p>
                 </div>
                 <i className="bi bi-clock-history text-3xl text-[#ff9800]"></i>

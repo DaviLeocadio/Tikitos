@@ -25,7 +25,7 @@ import {
   obterResumoCaixaController,
 } from "../controllers/CaixaController.js";
 import { listarVendasGerenteController } from "../controllers/VendaController.js";
-import { gerarRelatorioGerenteController } from "../controllers/RelatorioController.js";
+// import { gerarRelatorioGerenteController } from "../controllers/RelatorioController.js";
 import {
   adicionarGastoController,
   atualizarGastoController,
@@ -33,6 +33,7 @@ import {
   listarGastosController,
 } from "../controllers/GastoController.js";
 import { dashboardGerenteController } from "../controllers/DashboardGerenteController.js";
+import { gerarRelatorioGerenteController } from "../controllers/RelatorioController.js";
 
 const router = express.Router();
 

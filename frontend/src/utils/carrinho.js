@@ -100,7 +100,15 @@ export function limparCarrinho() {
 // Total
 export function calcularTotal() {
   const carrinho = obterCarrinho();
-  return carrinho.reduce((acc, item) => acc + item.preco * item.quantidade, 0);
+  console.log(carrinho)
+  return carrinho.reduce(
+    (acc, item) =>
+      acc +
+      (Number(item.desconto) === 0
+        ? item.preco * item.quantidade
+        : item.precoComDesconto * item.quantidade),
+    0
+  );
 }
 
 // Quantidade total

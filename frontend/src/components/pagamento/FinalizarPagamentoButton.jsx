@@ -29,6 +29,7 @@ export default function FinalizarPagamentoButton({
   const [buttonActive, setButtonActive] = useState(false);
   const [mensagemValidacao, setMensagemValidacao] = useState("");
   const [valorRecebido, setValorRecebido] = useState();
+  const [pdfBase64, setPdfBase64] = useState(null);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -137,6 +138,25 @@ export default function FinalizarPagamentoButton({
 
     console.log("Payload sendo enviado:", JSON.stringify(venda, null, 2));
 
+    function baixarPdf(base64) {
+      const byteCharacters = atob(base64);
+      const byteNumbers = new Array(byteCharacters.length);
+
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob = new Blob([byteArray], { type: "application/pdf" });
+
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "comprovante-venda.pdf";
+      a.click();
+
+      URL.revokeObjectURL(url);
+    }
     try {
       const response = await fetch("http://localhost:8080/vendedor/vendas", {
         method: "POST",
@@ -155,6 +175,8 @@ export default function FinalizarPagamentoButton({
       }
 
       console.log("Venda finalizada com sucesso:", data);
+      setPdfBase64(data.pdf);
+      baixarPdf(data.pdf);
       setStep("success");
 
       // Countdown para fechar

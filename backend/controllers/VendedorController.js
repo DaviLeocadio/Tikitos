@@ -16,11 +16,11 @@ dayjs.extend(customParseFormat);
 const listarVendedoresController = async (req, res) => {
   try {
     let vendedores = [];
-    let whereClause = `perfil = 'vendedor'`;
+    let whereClause = `u.perfil = 'vendedor'`;
 
     if (req.usuarioPerfil !== "admin") {
       const empresaId = req.usuarioEmpresa;
-      whereClause += ` AND id_empresa = ${empresaId}`;
+      whereClause += ` AND u.id_empresa = ${empresaId}`;
     }
     vendedores = await listarUsuarios(whereClause);
 

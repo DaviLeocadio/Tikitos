@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { SidebarTriggger } from "@/components/ui/sidebar";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 import {
   useFornecedores,
   FornecedoresFilters,

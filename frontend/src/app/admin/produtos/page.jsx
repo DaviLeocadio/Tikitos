@@ -106,10 +106,7 @@ export default function AdminProduto() {
       <ModalEditarProduto
         produto={modalProduto.produto}
         open={modalProduto.open}
-        onClose={() => {
-          setModalProduto({ open: false, produto: null });
-          produtos;
-        }}
+        onClose={() => setModalProduto({ open: false, produto: null })}
         onSalvar={handleEditarProduto}
       />
 

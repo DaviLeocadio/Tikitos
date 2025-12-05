@@ -186,14 +186,18 @@ export default function LojasContainer() {
             />
           </div>
           <div className="col-span-1 gap-3 grid grid-cols-2">
-            <Link
+            <button>
+              <Link
               href="/admin/lojas/cadastrar"
               className="lg:col-span-1 flex justify-center items-center p-3 rounded-full bg-roxo text-white border-3 border-dashed border-purple-300 gap-3 min-w-1/3 transition hover:bg-roxoescuro hover:border-purple-400"
             >
               <PlusCircle /> Nova Filial
             </Link>
+            </button>
+            
             <button
               className="lg:col-span-1 flex justify-center items-center p-3 rounded-full bg-verdefundo text-roxo border-3 border-dashed border-lime-500 gap-3 min-w-1/3 transition hover:bg-verdefolha hover:border-lime-600 hover:text-white"
+              onClick={() => fetchLojas()}
             >
               <IconReload /> Atualizar
             </button>

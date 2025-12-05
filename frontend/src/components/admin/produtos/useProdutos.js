@@ -33,12 +33,23 @@ export default function useProdutos() {
 
   const handleEditarProduto = async (idProduto, dataProduto) => {
     try {
-      const response = await fetch(`http://localhost:8080/admin/produtos/${idProduto}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(dataProduto),
-        credentials: 'include'
-      })
+      let response;
+
+      if (dataProduto instanceof FormData) {
+        // enviar multipart/form-data (contém arquivo)
+        response = await fetch(`http://localhost:8080/admin/produtos/${idProduto}`, {
+          method: 'PUT',
+          body: dataProduto,
+          credentials: 'include'
+        });
+      } else {
+        response = await fetch(`http://localhost:8080/admin/produtos/${idProduto}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(dataProduto),
+          credentials: 'include'
+        });
+      }
 
       if (response.ok) {
         await buscarProdutos();

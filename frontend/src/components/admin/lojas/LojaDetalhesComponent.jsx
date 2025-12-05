@@ -22,6 +22,7 @@ import {
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import EditarFilialDialog from "./EditarFilialDialog";
+import ModalDesativarFilial from "./ModalDesativarFilial";
 
 const TIKITOS_COLORS = {
   primary: "#76196c",
@@ -449,22 +450,27 @@ const LojaHeader = ({
           {status}
         </span>
       </div>
-      <div className="flex space-x-3">
+      <div className="flex flex-wrap gap-3">
         <button
           onClick={handleGoBack}
           className="flex items-center px-4 py-2 bg-gray-200 text-gray-700 font-medium rounded-lg shadow-sm hover:bg-gray-300 transition duration-150 text-sm"
         >
           <CornerUpLeft size={16} className="mr-2" /> Voltar
         </button>
-        {idGerente && (
-          <Link
-            href={`/admin/lojas/cadastrar?step=2&id_empresa=${lojaId}`}
-            className="flex items-center px-4 py-2 bg-roxo text-white font-medium rounded-lg shadow-sm hover:bg- transition duration-150 text-sm "
-          >
-            {" "}
-            <User2Icon /> Atribuir Gerente{" "}
-          </Link>
-        )}
+        <ModalDesativarFilial filial={loja} onSalvar={buscarDados} />
+
+        {(loja?.gerente && loja?.status == "ativo") && 
+          <>
+            <Link
+              href={`/admin/lojas/cadastrar?step=2&id_empresa=${lojaId}`}
+              className={`flex items-center px-4 py-2 bg-roxo text-white font-medium rounded-lg shadow-sm hover:bg- transition duration-150 text-sm `}
+            >
+              {" "}
+              <User2Icon /> Atribuir Gerente{" "}
+            </Link>
+            <EditarFilialDialog loja={loja} onUpdated={buscarDados} />
+          </>
+        }
         <button
           onClick={handleRefresh}
           disabled={loading}
@@ -477,7 +483,6 @@ const LojaHeader = ({
           />{" "}
           Atualizar Dados
         </button>
-        <EditarFilialDialog loja={loja} onUpdated={buscarDados} />
       </div>
     </header>
   );
@@ -571,7 +576,11 @@ export default function LojaDetalhesComponent() {
       );
 
     return (
-      <div className="flex flex-col gap-8">
+      <div
+        className={`flex flex-col gap-8 ${
+          loja.status === "inativo" ? "opacity-30 pointer-events-none" : ""
+        }`}
+      >
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-1 space-y-8 flex">
             <LojaInfoCard loja={loja} />

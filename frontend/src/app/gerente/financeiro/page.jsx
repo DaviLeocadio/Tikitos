@@ -59,7 +59,6 @@ export default function GerenteFinanceiro() {
       </h1>
 
       <div>
-        <h2 className="text-lg font-semibold mb-2">Filtros</h2>
         <FinanceiroFilters
           periodo={periodo}
           dataInicio={dataInicio || new Date()}
@@ -69,7 +68,6 @@ export default function GerenteFinanceiro() {
       </div>
 
       <div>
-        <h2 className="text-lg font-semibold mb-2 text-[]">Resumo</h2>
         <ResumoFinanceiro despesas={despesas} fluxoCaixa={fluxoCaixa} />
       </div>
 
@@ -102,27 +100,28 @@ export default function GerenteFinanceiro() {
       <Dialog
         open={dialogExcluir.open}
         onOpenChange={(open) => setDialogExcluir({ open, id: null })}
+        className="bg-[#c61f1f]"
       >
-        <DialogContent className="sm:max-w-md bg-white border-3 border-[#ff6b6b] border-dashed rounded-3xl">
+        <DialogContent className="sm:max-w-md bg-[#F1B8E8] border-2 border-[#c61f1f] rounded-3xl">
           <DialogHeader>
-            <DialogTitle className="text-[#ff6b6b] font-extrabold text-xl">
+            <DialogTitle className="text-[#c61f1f] font-extrabold text-xl">
               Confirmar Exclusão
             </DialogTitle>
           </DialogHeader>
-          <p className="text-[#4f6940] font-semibold py-4">
+          <p className="text-[#c61f1f] font-semibold py-4">
             Tem certeza que deseja excluir esta despesa? Esta ação não pode ser
             desfeita.
           </p>
           <DialogFooter className="flex gap-2">
             <Button
               variant="secondary"
-              className="flex-1 bg-gray-200 text-gray-700 hover:bg-gray-300 font-bold"
+              className="flex-1 bg-[#C5FFAD] text-gray-700 hover:bg-[#C5FFAD] font-bold"
               onClick={() => setDialogExcluir({ open: false, id: null })}
             >
               Cancelar
             </Button>
             <Button
-              className="flex-1 bg-[#ff6b6b] text-white hover:bg-[#ff5252] font-bold"
+              className="flex-1 bg-[#c61f1f] text-[#F1B8E8] hover:bg-[#ff5252] font-bold"
               onClick={() => {
                 handleExcluirDespesa(dialogExcluir.id);
                 setDialogExcluir({ open: false, id: null });

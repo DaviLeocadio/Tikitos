@@ -79,6 +79,7 @@ export default function useVendedores() {
     gerentes,
     loading,
     handleSalvarVendedor,
-    buscarVendedores
+    buscarVendedores,
+    buscarGerentes
   };
 }

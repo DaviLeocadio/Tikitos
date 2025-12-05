@@ -40,7 +40,7 @@ const ModalAdicionarDespesa = memo(function ModalAdicionarDespesa({ open, onClos
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md bg-[#e8c5f1] border-3 border-[#924187] border-dashed rounded-3xl">
+      <DialogContent className="sm:max-w-md bg-[#e8c5f1] border-2 border-[#924187] rounded-3xl">
         <DialogHeader>
           <DialogTitle className="text-[#76196c] font-extrabold text-xl">
             Adicionar Despesa

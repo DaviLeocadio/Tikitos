@@ -28,6 +28,7 @@ const AbrirCaixaController = async (req, res) => {
   try {
     const idEmpresa = req.usuarioEmpresa;
     const idVendedor = req.usuarioId;
+   
 
     //Verifica se a variavel está certo
     if (!idVendedor || !idEmpresa) {

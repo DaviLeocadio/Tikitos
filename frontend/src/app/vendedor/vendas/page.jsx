@@ -139,21 +139,21 @@ export default function VendasPage() {
 
           {/* Dashboard Cards */}
           <div className="grid grid-cols-1 items-center md:grid-cols-3 gap-4">
-            <div className="bg-[#E5B8F1] border-3 border-dashed border-[#75BA51] rounded-[50px] p-3">
+            <div className="bg-[#E5B8F1] border-3 rounded-[50px] p-3">
               <p className="text-sm text-center items-center font-semibold text-[#70B64C] ">Faturamento</p>
               <h2 className="text-4xl text-center font-black items-center text-[#559637] md:text4xl sm:text-[25px] sm:p-2">
                 R$ {totalVendas.toFixed(2).replace(".", ",")}
               </h2>
             </div>
 
-            <div className="bg-[#c5ffad] border-3 border-dashed border-[#8C3E82] rounded-[50px] p-3">
+            <div className="bg-[#C97FDA] border-3 rounded-[50px] p-3">
               <p className="text-sm text-center font-semibold text-[#8c3e82]">Vendas</p>
               <h2 className="text-4xl text-center font-black text-[#65745A]">
                 {quantidadeVendas}
               </h2>
             </div>
 
-            <div className="bg-[#92EF6C] border-3 border-dashed border-[#B478AB] rounded-[50px] p-3">
+            <div className="bg-[#92EF6C] border-3 rounded-[50px] p-3">
               <p className="text-sm text-center font-semibold text-[#8c3e82]">Ticket Médio</p>
               <h2 className="text-4xl text-center font-black text-[#924187] md:text4xl sm:text-[25px] sm:p-1.5">
                 R$ {ticketMedio.toFixed(2).replace(".", ",")}

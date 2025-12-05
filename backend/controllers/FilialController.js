@@ -3,6 +3,8 @@ import {
   obterEmpresaPorId,
   criarEmpresa,
   atualizarEmpresa,
+  listarTodasEmpresas,
+  listarEmpresasSemGerente,
 } from "../models/Empresa.js";
 import {
   getLojaById,
@@ -17,12 +19,18 @@ import {
 import { readRaw } from "../config/database.js";
 import { listarProdutos } from "../models/Produto.js";
 import { criarProdutoLoja, obterProdutoLoja } from "../models/ProdutoLoja.js";
-import { atualizarUsuario, obterGerentePorEmpresa, obterUsuarioPorId } from "../models/Usuario.js";
+import {
+  atualizarUsuario,
+  obterGerentePorEmpresa,
+  obterUsuarioPorId,
+} from "../models/Usuario.js";
 
 const listarEmpresasController = async (req, res) => {
   try {
     // Buscar filiais
-    const filiais = await listarEmpresas("tipo = 'filial'");
+    const filiais = await listarTodasEmpresas(
+      "tipo = 'filial' ORDER BY CASE status WHEN 'ativo' THEN 1 ELSE 2 END"
+    );
 
     if (!filiais || filiais.length === 0)
       return res.status(404).json({ error: "Nenhuma empresa encontrada" });
@@ -232,7 +240,7 @@ const atualizarEmpresaController = async (req, res) => {
     }
 
     const empresaData = {
-      nome: nome.trim()
+      nome: nome.trim(),
     };
 
     // Endereço opcional, mas se vier, precisa ser string válida
@@ -259,12 +267,11 @@ const atualizarEmpresaController = async (req, res) => {
   }
 };
 
-
 const desativarFilialController = async (req, res) => {
   try {
     const { empresaId } = req.params;
 
-    const empresaDesativada = await atualizarEmpresa(empresaId, {
+    const empresaDesativada = atualizarEmpresa(empresaId, {
       status: "inativo",
     });
 
@@ -282,12 +289,11 @@ const desativarFilialController = async (req, res) => {
   }
 };
 
-
 const reativarFilialController = async (req, res) => {
   try {
     const { empresaId } = req.params;
 
-    const empresaReativada = await atualizarEmpresa(empresaId, {
+    const empresaReativada = atualizarEmpresa(empresaId, {
       status: "ativo",
     });
 
@@ -304,7 +310,6 @@ const reativarFilialController = async (req, res) => {
     return res.status(500).json({ error: "Erro ao reativar filial" });
   }
 };
-
 
 const estoqueFilialController = async (req, res) => {
   try {
@@ -385,15 +390,16 @@ const transferirFuncionarioController = async (req, res) => {
 
     if (perfil && perfil !== "vendedor" && perfil !== "gerente")
       return res.status(400).json({ error: "Perfil inválido" });
-    
+
     const hasGerente = await obterGerentePorEmpresa(empresaId);
-    if(hasGerente && perfil === 'gerente') return res.status(409).json({error: 'A empresa já tem um gerente'})
-    
+    if (hasGerente && perfil === "gerente")
+      return res.status(409).json({ error: "A empresa já tem um gerente" });
+
     const usuarioData = {
       id_empresa: empresaId,
     };
     if (perfil) usuarioData.perfil = perfil;
-    
+
     const usuarioAtualizado = await atualizarUsuario(idUsuario, usuarioData);
 
     return res
@@ -402,6 +408,28 @@ const transferirFuncionarioController = async (req, res) => {
   } catch (error) {
     console.error("Erro ao transferir funcionario: ", error);
     res.status(500).json({ error: "Erro ao transferir funcionario" });
+  }
+};
+
+const metaFiliaisController = async (req, res) => {
+  try {
+    const { perfil } = req.query;
+    if (perfil == "gerente") {
+      const filiais = await listarEmpresasSemGerente();
+      return res
+        .status(200)
+        .json({ mensagem: "Filiais listadas com sucesso", filiais });
+    } else if (perfil == "vendedor") {
+      const filiais = await listarEmpresas("tipo = 'filial'");
+      return res
+        .status(200)
+        .json({ mensagem: "Filiais listadas com sucesso", filiais });
+    } else {
+      return res.status(400).json({ error: "Perfil inválido" });
+    }
+  } catch (error) {
+    console.error("Erro ao obter meta das filiais: ", error);
+    res.status(500).json({ error: "Erro ao obter meta das filiais" });
   }
 };
 
@@ -415,4 +443,5 @@ export {
   estoqueFilialController,
   estoqueTodasFiliaisController,
   transferirFuncionarioController,
+  metaFiliaisController,
 };

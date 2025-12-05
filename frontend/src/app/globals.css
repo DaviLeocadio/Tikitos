@@ -164,3 +164,14 @@ input:-webkit-autofill {
 input:-webkit-autofill {
     -webkit-text-fill-color: var(--color-roxoescuro) !important;
 }
+
+/* Hover botões geral*/
+button {
+    transform: scale(1);
+    transition: all 300ms ease-out;
+    cursor: pointer;
+}
+
+button:hover {
+    transform: scale(0.97);
+}

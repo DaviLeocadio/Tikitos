@@ -24,6 +24,24 @@ const obterDespesaPorId = async (idDespesa) => {
   }
 };
 
+const despesasPagas = async () => {
+  try {
+    return await readAll("despesas", `status = pago`);
+  } catch (err) {
+    console.error("Erro ao obter despesa por ID: ", err);
+    throw err;
+  }
+};
+
+const despesasPendentes = async () => {
+  try {
+    return await readAll("despesas", `status = pendente`);
+  } catch (err) {
+    console.error("Erro ao obter despesa por ID: ", err);
+    throw err;
+  }
+};
+
 const criarDespesa = async (despesaData) => {
   try {
     return await create("despesas", despesaData);
@@ -56,5 +74,7 @@ export {
   obterDespesaPorId,
   criarDespesa,
   atualizarDespesa,
-  excluirDespesa
+  excluirDespesa,
+  despesasPagas,
+  despesasPendentes
 };

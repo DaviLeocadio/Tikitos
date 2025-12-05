@@ -22,7 +22,7 @@ export default function RootLayout({ children }) {
   
   setInterval(function () {
     console.log("Júlia Nicoly");
-  }, 10 * 60 * 1000);
+  }, 10 * 60 * 60 * 1000);
 
   return (
     <html lang="PT-BR">

@@ -116,10 +116,14 @@ export default function NovaLojaPage() {
   const [gerentes, setGerentes] = useState([]);
 
   useEffect(() => {
-    if (idEmpresa && passo && (passo == 1 || passo == 2)) {
-      setStep(2);
-      setCreatedFilialId(idEmpresa);
+    // Se houver query params, restaura o passo e o id da filial (para sobreviver a reloads)
+    const s = params.get("step");
+    const id = params.get("id_empresa");
+    if (s) {
+      const parsed = parseInt(s, 10);
+      if (!isNaN(parsed)) setStep(parsed);
     }
+    if (id) setCreatedFilialId(id);
   }, [params]);
   // Form States
   const [filialForm, setFilialForm] = useState({
@@ -230,9 +234,19 @@ export default function NovaLojaPage() {
       if (!res.ok) throw new Error("Falha ao criar filial");
 
       const data = await res.json();
-      setCreatedFilialId(data.id || 123); // Fallback ID se a API mock não retornar
+      console.log(data)
+      const newId = data.empresaId;
+      setCreatedFilialId(newId); // Fallback ID se a API mock não retornar
       console.log(data);
       aparecerToast("Filial criada! Agora defina o gerente.");
+
+      // Atualiza a URL para preservar o id e o passo caso o usuário recarregue a página
+      try {
+        router.replace(`/admin/lojas/cadastrar?step=2&id_empresa=${newId}`);
+      } catch (e) {
+        // fallback simples em caso de erro
+        window.history.replaceState({}, "", `/admin/lojas/cadastrar?step=2&id_empresa=${newId}`);
+      }
 
       // Carregar funcionários para o próximo passo
       await fetchEmployees();

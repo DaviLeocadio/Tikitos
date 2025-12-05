@@ -37,6 +37,7 @@ export default function PDV() {
 
       if (response.ok) {
         const data = await response.json();
+        console.log(data)
         return setCookie("idCaixa", Number(data.novoCaixa));
       }
     };
@@ -68,23 +69,25 @@ export default function PDV() {
       }
     };
 
-    
     buscarProdutos();
   }, []);
 
   useEffect(() => {
-    setProdutos(listaProdutos.map((p) => ({ item: p, matches: [] })));
+    setProdutos(listaProdutos);
     const produtosAtivos = listaProdutos.filter((p) => p.status === "ativo");
-    const produtosInativos = listaProdutos.filter(
-      (p) => p.status === "inativo"
-    );
+    const produtosInativos = listaProdutos.filter((p) => p.status === "inativo");
+
     setProdutosInativos(produtosInativos);
     setProdutosAtivos(produtosAtivos);
   }, [listaProdutos]);
 
   useEffect(() => {
     if (!query || query.trim().length === 0) {
-      setProdutos(listaProdutos.map((p) => ({ item: p, matches: [] })));
+      setProdutos(listaProdutos);
+      const produtosAtivos = listaProdutos.filter((p) => p.status === "ativo");
+      const produtosInativos = listaProdutos.filter((p) => p.status === "inativo");
+      setProdutosInativos(produtosInativos);
+      setProdutosAtivos(produtosAtivos);
       return;
     }
     const fuse = new Fuse(listaProdutos, {
@@ -100,15 +103,11 @@ export default function PDV() {
     });
 
     const resultado = fuse.search(query);
-    setProdutos(
-      resultado.map((r) => ({
-        item: r.item,
-        matches: r.matches,
-      }))
-    );
+    const encontrados = resultado.map((r) => r.item);
+    setProdutos(encontrados);
 
-    const produtosAtivos = produtos.filter((p) => p.status === "ativo");
-    const produtosInativos = produtos.filter((p) => p.status === "inativo");
+    const produtosAtivos = encontrados.filter((p) => p.status === "ativo");
+    const produtosInativos = encontrados.filter((p) => p.status === "inativo");
     setProdutosInativos(produtosInativos);
     setProdutosAtivos(produtosAtivos);
   }, [query, listaProdutos]);

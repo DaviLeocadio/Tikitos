@@ -142,7 +142,7 @@ export default function GetColumns({ setModalProduto,setModalDesativar }) {
               className="px-3 py-1 bg-[#76196c] text-white rounded-lg text-sm font-semibold hover:bg-[#924187] transition cursor-pointer"
               title="Editar produto"
             >
-              <i class="bi bi-pencil"></i>
+              <i className="bi bi-pencil"></i>
             </button>
 
             <button
@@ -152,7 +152,7 @@ export default function GetColumns({ setModalProduto,setModalDesativar }) {
                   ? "bg-[#ff6b35] hover:bg-[#e55a2b]"
                   : "bg-[#c48dbb] hover:bg-[#8d6987]"
               }`}
-              title="Fazer pedido"
+              title="Ativar/Reativar Produto"
             >
               <i
                 className={`bi bi-power ${

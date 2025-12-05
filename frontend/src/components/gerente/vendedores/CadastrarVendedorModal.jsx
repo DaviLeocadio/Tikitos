@@ -268,9 +268,9 @@ export function CadastrarVendedorModal({ buscarVendedores: buscarVendedoresExter
             <PlusCircle /> Cadastrar Vendedor
           </Button>
         </DialogTrigger>
-        <DialogContent className="sm:max-w-[500px] border-3 border-dashed border-roxoescuro rounded-xl bg-[#DDF1D4] max-h-[90vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-[500px] border-3 border-dashed border-roxoescuro rounded-xl bg-[#E5B8F1] max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="text-roxoescuro flex items-center gap-2 text-xl">
+            <DialogTitle className="text-[#4EA912] flex items-center gap-2 text-xl">
               {passo === "Informações" ? (
                 <>
                   <User className="text-[#569a33]" />
@@ -283,7 +283,7 @@ export function CadastrarVendedorModal({ buscarVendedores: buscarVendedoresExter
                 </>
               )}
             </DialogTitle>
-            <DialogDescription>
+            <DialogDescription className="text-[#4F6940]">
               {passo === "Informações"
                 ? "Preencha as informações pessoais do vendedor"
                 : "Preencha o endereço do vendedor"}
@@ -305,7 +305,7 @@ export function CadastrarVendedorModal({ buscarVendedores: buscarVendedoresExter
                   id="nome"
                   name="nome"
                   placeholder="Ex: João Silva Santos"
-                  className="text-md font-semibold focus-visible:outline-none text-[#76196c] bg-white px-3 py-2 rounded-lg border-2 border-dashed border-roxoescuro focus:border-[#569a33] cursor-text"
+                  className="text-sm font-semibold focus-visible:outline-none text-[#76196c] bg-[#CAF4B7] px-3 py-2 rounded-lg border-1 border-roxoescuro focus:border-[#569a33] cursor-text"
                   value={vendedorInfo?.nome}
                   onChange={handleChangeInfo}
                 />
@@ -323,7 +323,7 @@ export function CadastrarVendedorModal({ buscarVendedores: buscarVendedoresExter
                   id="email"
                   name="email"
                   placeholder="vendedor@email.com"
-                  className="text-md font-semibold focus-visible:outline-none text-[#76196c] bg-white px-3 py-2 rounded-lg border-2 border-dashed border-roxoescuro focus:border-[#569a33] cursor-text"
+                  className="text-sm font-semibold focus-visible:outline-none text-[#76196c] bg-[#CAF4B7] px-3 py-2 rounded-lg border-1 border-roxoescuro focus:border-[#569a33] cursor-text"
                   value={vendedorInfo?.email}
                   onChange={handleChangeInfo}
                 />
@@ -341,7 +341,7 @@ export function CadastrarVendedorModal({ buscarVendedores: buscarVendedoresExter
                   id="telefone"
                   name="telefone"
                   placeholder="(11) 98765-4321"
-                  className="text-md font-semibold focus-visible:outline-none text-[#76196c] bg-white px-3 py-2 rounded-lg border-2 border-dashed border-roxoescuro focus:border-[#569a33] cursor-text"
+                  className="text-sm font-semibold focus-visible:outline-none text-[#76196c] bg-[#CAF4B7] px-3 py-2 rounded-lg border-1 border-roxoescuro focus:border-[#569a33] cursor-text"
                   value={vendedorInfo?.telefone}
                   onChange={handleChangeInfo}
                 />
@@ -359,7 +359,7 @@ export function CadastrarVendedorModal({ buscarVendedores: buscarVendedoresExter
                   id="cpf"
                   name="cpf"
                   placeholder="000.000.000-00"
-                  className="text-md font-semibold focus-visible:outline-none text-[#76196c] bg-white px-3 py-2 rounded-lg border-2 border-dashed border-roxoescuro focus:border-[#569a33] cursor-text"
+                  className="text-sm font-semibold focus-visible:outline-none text-[#76196c] bg-[#CAF4B7] px-3 py-2 rounded-lg border-1 border-roxoescuro focus:border-[#569a33] cursor-text"
                   value={vendedorInfo?.cpf}
                   onChange={handleChangeInfo}
                 />
@@ -377,13 +377,13 @@ export function CadastrarVendedorModal({ buscarVendedores: buscarVendedoresExter
                   id="data_nasc"
                   name="data_nasc"
                   placeholder="DD/MM/AAAA"
-                  className="text-md font-semibold focus-visible:outline-none text-[#76196c] bg-white px-3 py-2 rounded-lg border-2 border-dashed border-roxoescuro focus:border-[#569a33] cursor-text"
+                  className="text-sm font-semibold focus-visible:outline-none text-[#76196c] bg-[#CAF4B7] px-3 py-2 rounded-lg border-1 border-roxoescuro focus:border-[#569a33] cursor-text"
                   value={vendedorInfo?.data_nasc}
                   onChange={handleChangeInfo}
                 />
               </div>
 
-              <p className="text-xs text-gray-600 italic mt-2">
+              <p className="text-xs text-[#4F6940] italic mt-2">
                 * Campos obrigatórios
               </p>
             </div>
@@ -404,7 +404,7 @@ export function CadastrarVendedorModal({ buscarVendedores: buscarVendedoresExter
                   id="cep"
                   name="cep"
                   placeholder="00000-000"
-                  className="text-md font-semibold focus-visible:outline-none text-[#76196c] bg-white px-3 py-2 rounded-lg border-2 border-dashed border-roxoescuro focus:border-[#569a33] cursor-text"
+                  className="text-md font-semibold focus-visible:outline-none text-[#76196c] bg-[#CAF4B7] px-3 py-2 rounded-lg border-1 border-roxoescuro focus:border-[#569a33] cursor-text"
                   value={endereco?.cep}
                   onChange={handleChangeEndereco}
                 />
@@ -541,7 +541,7 @@ export function CadastrarVendedorModal({ buscarVendedores: buscarVendedoresExter
                 <DialogClose asChild>
                   <Button
                     variant="outline"
-                    className="flex-1 bg-[#9bf377] text-[#4f6940] hover:bg-[#75ba51] hover:text-lime-900 font-semibold cursor-pointer"
+                    className="flex-1 bg-[#9bf377] text-[#4f6940] hover:bg-[#75ba51] hover:text-[#76196C] font-semibold cursor-pointer"
                   >
                     Cancelar
                   </Button>
@@ -549,7 +549,7 @@ export function CadastrarVendedorModal({ buscarVendedores: buscarVendedoresExter
 
                 <Button
                   type="button"
-                  className="flex-1 bg-[#76196c] text-white hover:bg-[#924187] hover:text-white font-semibold cursor-pointer"
+                  className="flex-1 bg-[#76196c] text-white hover:bg-[#924187] hover:text-[#92EF6C] font-semibold cursor-pointer"
                   onClick={handleContinuar}
                 >
                   Continuar

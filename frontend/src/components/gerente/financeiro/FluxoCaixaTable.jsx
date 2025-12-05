@@ -3,13 +3,13 @@ import { memo } from "react";
 
 const FluxoCaixaTable = memo(function FluxoCaixaTable({ fluxoCaixa, loading }) {
   return (
-    <div className="bg-white rounded-xl border-3 border-dashed border-[#569a33] p-6">
-      <h2 className="text-xl font-bold text-[#569a33] mb-4">
+    <div className="bg-[#4F6940] rounded-xl border-2 border-[#4EA912] p-6">
+      <h2 className="text-xl font-bold text-[#C5FFAD] mb-4">
         Fluxo de Caixa Diário
       </h2>
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto rounded-md">
         <table className="w-full">
-          <thead className="bg-[#e8f5e8]">
+          <thead className="bg-[#CAF4B7]">
             <tr>
               <th className="p-3 text-left text-[#569a33] font-bold">
                 Data
@@ -43,12 +43,12 @@ const FluxoCaixaTable = memo(function FluxoCaixaTable({ fluxoCaixa, loading }) {
               </tr>
             ) : (
               fluxoCaixa.map((fluxo, index) => (
-                <tr key={index} className="border-b border-[#569a33]/20 hover:bg-[#e8f5e8]/30">
-                  <td className="p-3 font-semibold text-[#4f6940]">
+                <tr key={index} className="border-b border-[#C5FFAD] hover:bg-[#e8f5e8]/30">
+                  <td className="p-3 font-semibold text-[#C5FFAD]">
                     {new Date(fluxo.data).toLocaleDateString("pt-BR")}
                   </td>
-                  <td className="p-3 text-gray-600">{fluxo.caixas}</td>
-                  <td className="p-3 font-bold text-[#569a33]">
+                  <td className="p-3 text-[#C5FFAD]">{fluxo.caixas}</td>
+                  <td className="p-3 font-bold text-[#C5FFAD]">
                     R${" "}
                     {parseFloat(fluxo.valor_total)
                       .toFixed(2)

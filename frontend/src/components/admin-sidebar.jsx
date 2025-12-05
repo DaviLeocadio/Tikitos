@@ -38,8 +38,13 @@ const data = {
       icon: (props) => <i className="bi bi-truck" {...props} />,
     },
     {
-      title: "Equipe e Acessos",
-      href: "/admin/equipe", // Mudou de "Vendedores" para "Equipe" (Gerencia gerentes, vendedores, etc)
+      title: "Gerentes",
+      href: "/admin/gerentes", // (Gerencia gerentes)
+      icon: (props) => <i className="bi bi-people" {...props} />,
+    },
+    {
+      title: "Vendedores",
+      href: "/admin/vendedores", // (Gerencia vendedores)
       icon: (props) => <i className="bi bi-people" {...props} />,
     },
     {
