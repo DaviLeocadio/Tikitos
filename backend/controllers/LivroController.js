@@ -21,7 +21,7 @@ const listarLivrosController = async (req, res) => {
   }
 };
 
-const obterLivroPorIdController = async (req, res) => {
+const obterLivroPorIdController = async (req, res ) => {
   try {
     const livro = await obterLivroPorId(req.params.id);
     if (livro) {

@@ -1,0 +1,87 @@
+import express from "express";
+import dotenv from "dotenv";
+import {
+  AbrirCaixaController,
+  FecharCaixaController,
+  ResumoCaixaController
+} from "../controllers/CaixaController.js";
+
+import {
+  listarVendasController,
+  criarVendaController,
+  excluirVendaController
+} from "../controllers/VendaController.js";
+
+import {
+  listarProdutosController,
+  obterProdutoPorIdController,
+} from "../controllers/ProdutoController.js";
+
+import {
+  listarCategoriasController,
+  obterCategoriaPorProdutoController
+} from '../controllers/CategoriasController.js'
+
+import {
+  estoqueBaixoController
+} from '../controllers/ProdutoLojaController.js'
+
+dotenv.config();
+
+const router = express.Router();
+
+//Rota para abrir caixa
+router.post("/caixa/", AbrirCaixaController);
+
+//Rota para fechar caixa
+router.put("/caixa/fechar", FecharCaixaController);
+
+//Rota para listar as vendas
+router.get("/vendas", listarVendasController);
+
+//Rota para a criação de vendas
+router.post("/vendas", criarVendaController);
+
+// Cancelar uma venda 
+router.delete("/vendas/:idVenda", excluirVendaController);
+
+// Listar produtos
+router.get("/produtos", listarProdutosController);
+
+//Categoria do produto
+router.get("/categorias/:idProduto", obterCategoriaPorProdutoController);
+
+// Detalhes de uma unidade de produto
+router.get("/produtos/:idProduto", obterProdutoPorIdController);
+
+// Resumo do caixa (Total de vendas, pagamento, saldo)
+router.get("/caixa/:idCaixa/resumo", ResumoCaixaController);
+
+// Lista produtos com estoque abaixo do mínimo (alerta)
+router.get("/estoque-baixo", estoqueBaixoController);
+
+
+// Extra: Relatório de vendas, métricas, tarefas
+
+
+router.options("/caixa/:idVendedor", (req, res) => {
+  res.setHeader("Allow", "POST, OPTIONS");
+  res.status(204).send();
+});
+
+router.options("/caixa/:idVendedor", (req, res) => {
+  res.setHeader("Allow", "PUT, OPTIONS");
+  res.status(204).send();
+});
+
+router.options("/venda", (req, res) => {
+  res.setHeader("Allow", "GET, OPTIONS");
+  res.status(204).send();
+});
+
+router.options("/venda", (req, res) => {
+  res.setHeader("Allow", "GET, OPTIONS");
+  res.status(204).send();
+});
+
+export default router;
