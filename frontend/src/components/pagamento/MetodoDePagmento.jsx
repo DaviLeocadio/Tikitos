@@ -30,7 +30,7 @@ export default function MetodoDePagamento({ metodoPag, setMetodoPag }) {
     <RadioGroupPrimitive.Root
       value={metodoPag}
       onValueChange={(value) => setMetodoPag(value)}
-      className="w-full grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-5 py-3 sm:py-5 px-1"
+      className="w-full grid grid-cols-2 sm:grid-cols-4 gap-3 sm:py-2 px-1"
     >
       {paymentOptions.map((option) => (
         <RadioGroupPrimitive.Item
@@ -45,7 +45,7 @@ export default function MetodoDePagamento({ metodoPag, setMetodoPag }) {
             data-[state=checked]:bg-[#9bf377]/10
             hover:scale-[1.02] active:scale-[0.98]
             cursor-pointer
-            min-h-[100px] sm:min-h-[120px]
+            min-h-[100px] sm:min-h-[80px]
             flex flex-col justify-between
           "
         >

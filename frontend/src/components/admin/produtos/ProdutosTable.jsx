@@ -20,19 +20,13 @@ const ProdutosTable = memo(function ProdutosTable({
   sorting,
   setSorting
 }) {
-  // Função customizada para filtrar por múltiplos campos
+  // Filtro global em id_produto + nome + descricao
   const fuzzyFilter = (row, columnId, value) => {
     const searchText = value.toLowerCase();
-    
-    // Buscar em id_produto, nome e descricao
-    const id = String(row.original.id_produto || "").toLowerCase();
-    const nome = (row.original.nome || "").toLowerCase();
-    const descricao = (row.original.descricao || "").toLowerCase();
-    
     return (
-      id.includes(searchText) ||
-      nome.includes(searchText) ||
-      descricao.includes(searchText)
+      String(row.original.id_produto || "").toLowerCase().includes(searchText) ||
+      (row.original.nome || "").toLowerCase().includes(searchText) ||
+      (row.original.descricao || "").toLowerCase().includes(searchText)
     );
   };
 
@@ -57,12 +51,11 @@ const ProdutosTable = memo(function ProdutosTable({
     }
   });
 
-
   return (
     <div className="bg-white rounded-xl border-3 border-dashed border-[#b478ab] overflow-hidden">
       <div className="overflow-x-auto">
         <Table>
-          <TableHeader className="bg-[#e8c5f1]">
+          <TableHeader className="bg-[#9BF377]">
             {table.getHeaderGroups().map((hg) => (
               <TableRow key={hg.id}>
                 {hg.headers.map((h) => (
@@ -86,7 +79,13 @@ const ProdutosTable = memo(function ProdutosTable({
               </TableRow>
             ) : table.getRowModel().rows.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id} className="hover:bg-[#f0e5f5]/30">
+                <TableRow
+                  key={row.id}
+                  className={`
+                    ${row.index % 2 === 0 ? "bg-[#f1cbfc]" : "bg-[#dfb8ea]"}
+                    hover:!bg-[#b08abb]
+                  `}
+                >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -118,6 +117,7 @@ const ProdutosTable = memo(function ProdutosTable({
           )}{" "}
           de {table.getFilteredRowModel().rows.length} produtos
         </div>
+
         <div className="flex gap-2">
           <Button
             variant="outline"

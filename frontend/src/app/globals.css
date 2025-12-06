@@ -1,10 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
-
+ 
 @import "tailwindcss";
 @import "tw-animate-css";
-
+ 
 @custom-variant dark (&:is(.dark *));
-
+ 
 @theme {
   --color-lilasclaro: #e8c5f1;
   --color-lilasescuro: #d695e7;
@@ -16,13 +16,13 @@
   --color-verdefundo: #9bf377;
   --color-verdefolha: #75ba51;
   --color-verdeclaro: #caf4b7;  
-  
-
+ 
+ 
   --breakpoint-xs: 30rem;
-  --breakpoint-surface: 64rem; 
+  --breakpoint-surface: 64rem;
   --breakpoint-mac: 69.625rem;
 }
-
+ 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -62,7 +62,7 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
 }
-
+ 
 :root {
   --radius: 0.625rem;
   --background: oklch(1 0 0);
@@ -97,7 +97,7 @@
   --sidebar-border: oklch(0.923 0.003 48.717);
   --sidebar-ring: oklch(0.709 0.01 56.259);
 }
-
+ 
 .dark {
   --background: oklch(0.147 0.004 49.25);
   --foreground: oklch(0.985 0.001 106.423);
@@ -131,7 +131,7 @@
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.553 0.013 58.071);
 }
-
+ 
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -140,38 +140,38 @@
     @apply bg-background text-foreground font-sans;
   }
 }
-
+ 
 body {
   background-color: #ddf1d4;
 }
-
+ 
 /* muda a cor selecionado */
 ::selection{
   background-color: var(--color-verdinho);
   color: #924187;
 }
-
-button{ 
+ 
+button{
   cursor: pointer !important;
 }
-
+ 
 /* Cor de fundo do autocomplete */
 input:-webkit-autofill {
     -webkit-box-shadow: 0 0 0 30px rgba(241, 184, 232, 50%) inset;
 }
-
+ 
 /* Cor do texto do autocomplete */
 input:-webkit-autofill {
     -webkit-text-fill-color: var(--color-roxoescuro) !important;
 }
-
+ 
 /* Hover botões geral*/
 button {
     transform: scale(1);
     transition: all 300ms ease-out;
     cursor: pointer;
 }
-
+ 
 button:hover {
     transform: scale(0.97);
 }

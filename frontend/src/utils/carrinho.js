@@ -102,7 +102,6 @@ export function limparCarrinho() {
 // Total
 export function calcularTotal() {
   const carrinho = obterCarrinho();
-  console.log(carrinho)
   return carrinho.reduce(
     (acc, item) =>
       acc +

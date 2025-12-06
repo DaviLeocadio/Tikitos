@@ -44,16 +44,16 @@ export default function PagamentoContainer() {
   }
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col">
       {/* Header */}
       <div className="flex flex-col sm:flex-row w-full justify-between items-start sm:items-center gap-4">
-        <h1 className="text-2xl sm:text-3xl font-bold text-roxo flex flex-col leading-tight">
-          <span>página de</span>
+        <h1 className="text-2xl sm:text-3xl font-bold text-roxo flex flex-col leading-[0.9]">
+          <span>Página de</span>
           <span>pagamento</span>
         </h1>
 
-        <FinalizarPagamentoButton 
-          pagamento={metodoPag} 
+        <FinalizarPagamentoButton
+          pagamento={metodoPag}
           cpf={cpf}
           embalagem={embalagem}
         />
@@ -61,7 +61,7 @@ export default function PagamentoContainer() {
 
       {/* Método de pagamento e embalagem */}
       <div className="flex flex-col gap-3 overflow-x-hidden">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pt-2">
           <h3 className="text-lg sm:text-xl font-bold text-verdefolha">
             Método de pagamento:
           </h3>
@@ -77,9 +77,8 @@ export default function PagamentoContainer() {
               (R$1,50)
             </span>
             <i
-              className={`bi ${
-                embalagem ? "bi-gift-fill" : "bi-gift"
-              } text-[#b478ab] text-xl sm:text-2xl transition-all`}
+              className={`bi ${embalagem ? "bi-gift-fill" : "bi-gift"
+                } text-[#b478ab] text-xl sm:text-2xl transition-all`}
             />
           </button>
         </div>
@@ -87,50 +86,56 @@ export default function PagamentoContainer() {
         <MetodoDePagamento metodoPag={metodoPag} setMetodoPag={setMetodoPag} />
       </div>
 
-      {/* Container de pagamento e fidelidade */}
-      <div className="flex flex-col lg:flex-row gap-5">
-        {/* Área do método de pagamento selecionado */}
-        <div className="flex-1 min-h-[200px]">
-          {metodoPag === "débito" && <CartaoContainer />}
-          {metodoPag === "crédito" && <CartaoContainer />}
-          {metodoPag === "pix" && <PixContainer />}
-          {metodoPag === "dinheiro" && <DinheiroContainer />}
-        </div>
 
-        {/* Sidebar - Fidelidade e CPF */}
-        <div className="lg:w-1/3 flex flex-col gap-6">
-          {/* Programa Fidelidade */}
-          <div>
+      <div className="">
+        {/* Container de pagamento e fidelidade */}
+        <div className="flex flex-col lg:flex-row">
+          {/* Área do método de pagamento selecionado */}
+          <div className="flex-1 min-h-[200px]">
+            {metodoPag === "débito" && <CartaoContainer />}
+            {metodoPag === "crédito" && <CartaoContainer />}
+            {metodoPag === "pix" && <PixContainer />}
+            {metodoPag === "dinheiro" && <DinheiroContainer />}
+          </div>
+
+          {/* Sidebar - Fidelidade e CPF */}
+          <div className="lg:w-1/3 h-full flex flex-col items-center justify-center my-auto pb-5">
+            {/* Programa Fidelidade */}
             <h3 className="text-lg sm:text-xl font-bold text-verdefolha mb-3">
               Programa Fidelidade
             </h3>
-            <div className="grid grid-cols-5 gap-2 justify-items-center items-center">
+            <div className="grid grid-cols-5 gap-2 justify-center items-center">
               {renderFidelidade()}
             </div>
             <p className="text-center mt-3 text-verdefolha font-semibold">
               {fidelidade}/10 presentes
             </p>
           </div>
-
+        </div>
+        <div className="">
           {/* CPF para Nota Fiscal */}
-          <div>
-            <h3 className="text-lg sm:text-xl font-bold text-verdefolha mb-2">
+          <div className="grid grid-cols-3 items-center">
+            <div className="">
+              <h3 className="col-span-1 text-lg sm:text-xl font-bold text-verdefolha">
               Nota Fiscal (CPF)
             </h3>
-            <InputCPFMask
-              id="cpf"
-              type="text"
-              className="bg-rosinha text-base rounded-lg w-full p-3 text-white placeholder:text-white/60"
-              value={cpf}
-              onChange={(e) => setCpf(e.target.value)}
-              placeholder="000.000.000-00"
-            />
             {cpf && cpf.replace(/\D/g, '').length === 11 && (
-              <p className="text-verdao text-sm mt-2 flex items-center gap-1">
+              <p className="text-verdao text-sm flex items-center gap-1">
                 <i className="bi bi-check-circle-fill" />
                 CPF válido
               </p>
             )}
+            </div>
+            
+            
+            <InputCPFMask
+              id="cpf"
+              type="text"
+              className="bg-rosinha text-base rounded-lg w-full py-2 px-3 text-white placeholder:text-white/60 col-span-2"
+              value={cpf}
+              onChange={(e) => setCpf(e.target.value)}
+              placeholder="000.000.000-00"
+            />
           </div>
         </div>
       </div>

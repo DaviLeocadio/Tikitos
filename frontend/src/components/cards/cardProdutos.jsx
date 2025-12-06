@@ -75,7 +75,7 @@ export default function CardProduto({ produto }) {
         removerDoCarrinho(produto.id_produto);
         setCardSelecionado(false);
       } else {
-        if(inativo) {
+        if (inativo) {
           return aparecerToast("Produto Inativo")
         }
         // não selecionado -> adicionar
@@ -107,10 +107,34 @@ export default function CardProduto({ produto }) {
 
     // atualiza ao mudar localStorage (outras abas) e ao receber evento custom
     const onStorage = (ev) => {
-      if (!ev.key || ev.key === "carrinho") checkCarrinho();
+      try {
+        // Mantém compatibilidade com o evento/custom key já existente
+        if (!ev.key || ev.key === "carrinho") checkCarrinho();
+
+        // NOVO: também escuta a chave 'cart' e lê seu conteúdo diretamente
+        // sempre que o evento storage for disparado para 'cart'.
+        if (ev.key === "cart") {
+          const raw = localStorage.getItem("cart");
+          let parsed = [];
+          try {
+            parsed = JSON.parse(raw) || [];
+          } catch (err) {
+            parsed = [];
+          }
+
+          const ids = new Set(parsed.map((p) => getId(p)).filter(Boolean));
+          const existe = myId ? ids.has(myId) : false;
+          if (mounted) setCardSelecionado(Boolean(existe));
+        }
+      } catch (err) {
+        // noop
+      }
     };
 
     window.addEventListener("storage", onStorage);
+    // Também escuta o evento custom que o utilitário de carrinho dispara
+    // para atualizações na mesma aba (salvarCarrinho -> dispatchEvent)
+    window.addEventListener("carrinhoAtualizado", checkCarrinho);
 
     const buscarCategoria = async () => {
       const response = await fetch(
@@ -146,7 +170,6 @@ export default function CardProduto({ produto }) {
         const produtoEstoque = data.produtosComEstoqueBaixo.filter(
           (p) => p.id_produto === produto.id_produto
         );
-        console.log(produtoEstoque);
 
         if (produtoEstoque.length > 0) {
           setEstoqueBaixo(true)
@@ -158,6 +181,7 @@ export default function CardProduto({ produto }) {
     return () => {
       mounted = false;
       window.removeEventListener("storage", onStorage);
+      window.removeEventListener("carrinhoAtualizado", checkCarrinho);
     };
   }, [myId]);
 
@@ -206,10 +230,9 @@ export default function CardProduto({ produto }) {
     <Card
       // ALTERAÇÃO APLICADA AQUI: Estilização condicional para hover/seleção
       className={`group min-w-53 shadow-none gap-0 pt-0 pb-0 border-[3px] border-dashed border-[#75ba51] rounded-[50px] p-2 transition cursor-pointer
-        ${
-          cardSelecionado
-            ? "bg-[#C8FDB4] shadow-md hover:shadow-lg" // SELECIONADO: Fundo destacado + feedback de hover por sombra
-            : "bg-[#D8F1DC] hover:bg-[#C8FDB4]" // NÃO SELECIONADO: Fundo normal + feedback de hover por destaque de cor
+        ${cardSelecionado
+          ? "bg-[#C8FDB4] shadow-md hover:shadow-lg" // SELECIONADO: Fundo destacado + feedback de hover por sombra
+          : "bg-[#D8F1DC] hover:bg-[#C8FDB4]" // NÃO SELECIONADO: Fundo normal + feedback de hover por destaque de cor
         }
         ${inativo ? "grayscale-80 opacity-85" : ""}`}
       onClick={handleClickCard}
@@ -271,8 +294,9 @@ export default function CardProduto({ produto }) {
                   </div>
                 </AlertDialogTitle>
                 <AlertDialogDescription className="text-[15px] text-center">
-                  Aqui você pode mostrar dados adicionais sobre o produto, como
-                  composição, validade, descrição etc.
+                  {produto.descricao}
+                  {/* Aqui você pode mostrar dados adicionais sobre o produto, como
+                  composição, validade, descrição etc. */}
                 </AlertDialogDescription>
               </AlertDialogHeader>
 
@@ -293,9 +317,8 @@ export default function CardProduto({ produto }) {
               <TooltipTrigger asChild>
                 <AlertDialogTrigger asChild>
                   <i
-                    className={`bi bi-exclamation-circle-fill text-[16px] hover:scale-95 transition cursor-pointer ${
-                      estoqueBaixo ? " text-[#76196c]" : " text-[#4f6940]"
-                    }`}
+                    className={`bi bi-exclamation-circle-fill text-[16px] hover:scale-95 transition cursor-pointer ${estoqueBaixo ? " text-[#76196c]" : " text-[#4f6940]"
+                      }`}
                   ></i>
                 </AlertDialogTrigger>
               </TooltipTrigger>
@@ -319,6 +342,12 @@ export default function CardProduto({ produto }) {
                     )}
                   </div>
                   Situação do Estoque
+                  <p className="flex flex-col items-center  text-center">
+                    <span className="text-3xl text-roxoescuro">
+                      {produto.estoque}
+                    </span>
+                    <span className="text-sm text-roxo">Unidades disponíveis</span>
+                  </p>
                 </AlertDialogTitle>
                 <AlertDialogDescription className="text-[15px] text-center">
                   Aqui você pode informar a classificação do estoque, níveis

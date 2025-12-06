@@ -51,7 +51,7 @@ export default function DinheiroContainer() {
         <img
           src="/img/pagamento/dinheiro_pagamento.png"
           alt="dinheiro"
-          className="w-[77%] mt-4"
+          className=" w-[95%] mt-4"
         />
       </div>
     </>

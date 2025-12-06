@@ -24,7 +24,7 @@ const RadioCheckboxStyleDemo = () => {
   return (
     <RadioGroupPrimitive.Root
       defaultValue="colors"
-      className="w-full max-w-sm grid grid-cols-3 gap-3"
+      className="w-full max-w-sm grid grid-cols-3 gap-3 p-0-"
     >
       {options.map((option) => (
         <RadioGroupPrimitive.Item

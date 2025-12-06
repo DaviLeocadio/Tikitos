@@ -100,8 +100,6 @@ const FecharCaixaController = async (req, res) => {
         mensagem: "Nenhum caixa aberto encontrado para este vendedor",
       });
     }
-    const valorFinal =
-      caixaExistente.valor_final - caixaExistente.valor_inicial;
 
     const fechamento =
       new Date().getFullYear() +
@@ -119,7 +117,6 @@ const FecharCaixaController = async (req, res) => {
     //Dados do fechamento
     const caixaData = {
       fechamento: fechamento,
-      valor_final: valorFinal,
       status: "fechado",
     };
 
@@ -156,62 +153,54 @@ const ResumoCaixaController = async (req, res) => {
       [idUsuario, idEmpresa, dataHoje, idCaixa]
     );
 
-    if (vendas.length === 0) {
-      return res.status(200).json({
-        mensagem: "Nenhuma venda encontrada para hoje",
-        totalCaixa: 0,
-        totalProdutos: 0,
-        valorCaixa: 0,
-        totalVendas: 0,
-        categoriaMaisVendida: { numero: 0, nome: "N/A" },
-        horarioMaisVendas: "0h",
-        alertaEstoque: 0,
-        produtosPromocao: 0,
-        historicoCompras: [],
-        vendasSemana: [],
-      });
-    }
+      // Mesmo que não haja vendas para o dia, continuamos a montar
+      // os demais indicadores retornando zeros/defaults para evitar erros
+      // nas camadas que consomem essa API.
+      const noVendas = vendas.length === 0;
 
     const idsVenda = vendas.map((v) => v.id_venda);
 
-    // 2. BUSCAR ITENS DE TODAS AS VENDAS EM UMA SÓ QUERY
-    const itensVendaTotal = await readRaw(
-      `SELECT id_venda, id_produto, quantidade
+    // 2. BUSCAR ITENS DE TODAS AS VENDAS EM UMA SÓ QUERY (se houver vendas)
+    const itensVendaTotal = noVendas
+      ? []
+      : await readRaw(
+          `SELECT id_venda, id_produto, quantidade
        FROM venda_itens
        WHERE id_venda IN (${idsVenda.map(() => "?").join(",")})`,
-      idsVenda
-    );
+          idsVenda
+        );
 
     // TOTAL DE PRODUTOS
-    const totalProdutos = itensVendaTotal.reduce(
-      (acc, i) => acc + i.quantidade,
-      0
-    );
+    const totalProdutos = itensVendaTotal.reduce((acc, i) => acc + i.quantidade, 0);
 
     // TOTAL DE VENDAS
-    const totalVendas = vendas.length;
+    const totalVendas = vendas.length || 0;
 
     // TOTAL EM R$
-    const totalCaixa = vendas.reduce((acc, v) => acc + parseFloat(v.total), 0);
+    const totalCaixa = vendas.length ? vendas.reduce((acc, v) => acc + parseFloat(v.total), 0) : 0;
 
     // 3. CATEGORIA MAIS VENDIDA (OTIMIZADO)
     const produtosIds = [...new Set(itensVendaTotal.map((i) => i.id_produto))];
 
-    const produtos = await readRaw(
-      `SELECT id_produto, id_categoria 
+    const produtos = produtosIds.length
+      ? await readRaw(
+          `SELECT id_produto, id_categoria 
        FROM produtos 
        WHERE id_produto IN (${produtosIds.map(() => "?").join(",")})`,
-      produtosIds
-    );
+          produtosIds
+        )
+      : [];
 
     const categoriasIds = [...new Set(produtos.map((p) => p.id_categoria))];
 
-    const categorias = await readRaw(
-      `SELECT id_categoria, nome 
+    const categorias = categoriasIds.length
+      ? await readRaw(
+          `SELECT id_categoria, nome 
        FROM categorias 
        WHERE id_categoria IN (${categoriasIds.map(() => "?").join(",")})`,
-      categoriasIds
-    );
+          categoriasIds
+        )
+      : [];
 
     const catMap = {};
     categorias.forEach((c) => {
@@ -228,7 +217,7 @@ const ResumoCaixaController = async (req, res) => {
       if (!contadorCategorias[catId]) {
         contadorCategorias[catId] = {
           id: catId,
-          nome: catMap[catId],
+          nome: catMap[catId] || "N/A",
           quantidade: 0,
         };
       }
@@ -240,24 +229,26 @@ const ResumoCaixaController = async (req, res) => {
     )[0] || { id: 0, nome: "N/A" };
 
     // 4. HORÁRIO COM MAIS VENDAS
+    let horarioMaisVendas = "0h";
     const vendasPorHora = {};
+    if (vendas.length) {
+      vendas.forEach((v) => {
+        const hora = new Date(v.data_venda).getHours();
+        vendasPorHora[hora] = (vendasPorHora[hora] || 0) + 1;
+      });
 
-    vendas.forEach((v) => {
-      const hora = new Date(v.data_venda).getHours();
-      vendasPorHora[hora] = (vendasPorHora[hora] || 0) + 1;
-    });
-
-    const horaMaisVendas = Object.keys(vendasPorHora).reduce((a, b) =>
-      vendasPorHora[a] > vendasPorHora[b] ? a : b
-    );
-    const horarioMaisVendas = `${horaMaisVendas}h`;
+      const horaMaisVendas = Object.keys(vendasPorHora).reduce((a, b) =>
+        vendasPorHora[a] > vendasPorHora[b] ? a : b
+      );
+      horarioMaisVendas = `${horaMaisVendas}h`;
+    }
 
     // 5. ALERTA DE ESTOQUE (READRAW)
     const alertaEstoque = (
       await readRaw(
         `SELECT COUNT(*) AS total 
        FROM produto_loja 
-       WHERE id_empresa = ? AND estoque <= ${process.env.ESTOQUE_MINIMO}`,
+       WHERE id_empresa = ? AND estoque < ${process.env.ESTOQUE_MINIMO}`,
         [idEmpresa]
       )
     )[0].total;
@@ -273,17 +264,19 @@ const ResumoCaixaController = async (req, res) => {
     )[0].total;
 
     // 7. HISTÓRICO DE COMPRAS
-    const historicoCompras = vendas.map((v) => {
-      const itensDaVenda = itensVendaTotal.filter(
-        (i) => i.id_venda === v.id_venda
-      );
-      return {
-        produtos: itensDaVenda.reduce((acc, i) => acc + i.quantidade, 0),
-        valor: parseFloat(v.total),
-      };
-    });
+    const historicoCompras = noVendas
+      ? [{ produtos: 0, valor: 0 }]
+      : vendas.map((v) => {
+          const itensDaVenda = itensVendaTotal.filter(
+            (i) => i.id_venda === v.id_venda
+          );
+          return {
+            produtos: itensDaVenda.reduce((acc, i) => acc + i.quantidade, 0),
+            valor: parseFloat(v.total),
+          };
+        });
 
-    // 8. VENDAS DA SEMANA + SEMANA PASSADA - TUDO EM SQL
+    // nomes dos dias para o gráfico de 14 dias
     const diasSemanaPt = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
 
     const linhas = await readRaw(`
