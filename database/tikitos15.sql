@@ -86,7 +86,7 @@ DROP TABLE IF EXISTS `despesas`;
 CREATE TABLE `despesas` (
   `id_despesa` int(11) NOT NULL AUTO_INCREMENT,
   `id_empresa` int(11) NOT NULL,
-  `data_adicionado` date DEFAULT curdate(),
+  `data_adicionado` date DEFAULT (curdate()),
   `data_pag` date DEFAULT NULL,
   `descricao` varchar(255) NOT NULL,
   `id_fornecedor` int(11) DEFAULT NULL,
@@ -154,7 +154,7 @@ CREATE TABLE `fornecedores` (
   `endereco` varchar(255) DEFAULT NULL,
   `cidade` varchar(120) DEFAULT NULL,
   `estado` char(2) DEFAULT NULL,
-  `data_criado` date DEFAULT curdate(),
+  `data_criado` date DEFAULT (curdate()),
   `status` enum('ativo','inativo') DEFAULT 'ativo',
   PRIMARY KEY (`id_fornecedor`)
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
