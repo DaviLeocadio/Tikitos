@@ -11,9 +11,11 @@ import {
   CreditCard,
   Search,
   Filter,
+  QrCode,
 } from "lucide-react";
 
 import { SidebarTrigger } from "@/components/ui/sidebar";
+import { BiMoney } from "react-icons/bi";
 
 const TIKI = {
   roxoEscuro: "#76196c",
@@ -94,13 +96,13 @@ const GerenteVendasPage = () => {
   const getTipoPagamentoIcon = (tipo) => {
     switch (tipo.toLowerCase()) {
       case "pix":
-        return "📱";
+        return <QrCode size={20} />;
       case "dinheiro":
-        return "💵";
+        return <BiMoney size={20} />;
       case "cartão":
-        return "💳";
+        return <CreditCard size={20} /> ;
       default:
-        return "💰";
+        return <BiMoney size={20} />;
     }
   };
 
@@ -132,7 +134,7 @@ const GerenteVendasPage = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-[#DDF1D4] to-[#9bf377] flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div
             className="animate-spin rounded-full h-16 w-16 border-b-4 mx-auto"
@@ -314,7 +316,7 @@ const GerenteVendasPage = () => {
               vendasFiltradas().map((venda) => (
                 <div
                   key={venda.id_venda}
-                  className="bg-[#D695E7] rounded-[30px] border-1 border-[#8C3E82] shadow-lg overflow-hidden transition-all hover:!bg-[#EBC7F5]"
+                  className="bg-[#F1B8E8] rounded-[30px] border-1 border-[#8C3E82] shadow-lg overflow-hidden transition-all hover:!bg-[#EBC7F5]"
                 >
                   <div
                     onClick={() => toggleVenda(venda.id_venda)}
@@ -339,12 +341,12 @@ const GerenteVendasPage = () => {
                             </span>
 
                             <span
-                              className="px-3 py-1 rounded-full text-sm font-semibold bg-[#B478AB]"
+                              className="px-3 py-1 rounded-full text-sm font-semibold bg-[#B478AB] flex gap-2 items-center"
                               style={{
                                 color: TIKI.roxoEscuro,
                               }}
                             >
-                              {venda.tipo_pagamento.toUpperCase()}
+                              {venda.tipo_pagamento.toUpperCase()} {getTipoPagamentoIcon(venda.tipo_pagamento)}
                             </span>
                           </div>
                           <div className="flex items-center gap-6 text-sm text-[#76196C] font-medium">

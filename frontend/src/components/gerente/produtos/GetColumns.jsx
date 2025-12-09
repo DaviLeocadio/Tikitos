@@ -122,7 +122,7 @@ export default function GetColumns({ setModalDesconto, setModalPedido }) {
         </button>
       ),
       cell: ({ row }) => {
-        const estoque = row.getValue("estoque");
+        const estoque = row.getValue("estoque") ?? 0;
         console.log(row)
         return (
           <span

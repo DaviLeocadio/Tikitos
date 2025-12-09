@@ -9,6 +9,7 @@ import {
   atualizarProdutoLoja,
   deletarProdutoLoja,
   verificarEstoque,
+  obterProdutosEstoqueCritico,
 } from "../models/ProdutoLoja.js";
 import { formatarProdutos } from "../utils/formatarProdutos.js";
 import { mascaraDinheiro } from "../utils/formatadorNumero.js";
@@ -75,39 +76,10 @@ const atualizarProdutoLojaController = async (req, res) => {
 const estoqueBaixoController = async (req, res) => {
   try {
     const idEmpresa = req.usuarioEmpresa;
-    const produtoLojaArray = await listarProdutosLoja(
-      `id_empresa = ${idEmpresa}`
-    );
+    
 
-    if (!produtoLojaArray || produtoLojaArray.length == 0) {
-      return res
-        .status(404)
-        .json({ error: "Nenhuma relação produto-loja encontrada na empresa" });
-    }
-
-    const estoqueMin = process.env.ESTOQUE_MINIMO;
-
-    const estoqueBaixo = produtoLojaArray.filter((p) => p.estoque < estoqueMin);
-    if (estoqueBaixo.length == 0)
-      return res.status(200).json({
-        mensagem: `Nenhum produto com estoque abaixo de ${estoqueMin} unidades`,
-        code: "ESTOQUE",
-      });
-
-    let produtosComEstoqueBaixo = [];
-
-    await Promise.all(
-      estoqueBaixo.map(async (e) => {
-        const produto = await obterProdutoPorId(e.id_produto);
-        produtosComEstoqueBaixo.push(produto);
-      })
-    );
-
-    const usuarioEmpresa = req.usuarioEmpresa;
-
-    produtosComEstoqueBaixo = await formatarProdutos(
-      produtosComEstoqueBaixo,
-      usuarioEmpresa
+    const produtosComEstoqueBaixo = await obterProdutosEstoqueCritico(
+      idEmpresa
     );
 
     return res.status(200).json({

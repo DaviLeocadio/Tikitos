@@ -23,9 +23,12 @@ const listarGastosController = async (req, res) => {
     let where = `id_empresa = ${idEmpresa}`;
     
     if (dataInicio && dataFim) {
-      // ✅ CORREÇÃO: Usar >= e < ao invés de BETWEEN
-      // Isso garante que pegue todo o intervalo corretamente
-      where += ` AND DATE(data_adicionado) >= '${dataInicio}' AND DATE(data_adicionado) < '${dataFim}'`;
+      // Comparar usando intervalo de timestamp (início inclusive, fim exclusivo).
+      // Recebemos `dataInicio` e `dataFim` como 'YYYY-MM-DD' (frontend envia fim como o dia seguinte),
+      // então comparamos a coluna datetime diretamente para evitar problemas de timezone ao usar DATE().
+      const inicioTimestamp = `${dataInicio} 00:00:00`;
+      const fimTimestamp = `${dataFim} 00:00:00`;
+      where += ` AND data_adicionado >= '${inicioTimestamp}' AND data_adicionado < '${fimTimestamp}'`;
     }
     
     // ✅ NOVO: Suporte a filtro de status

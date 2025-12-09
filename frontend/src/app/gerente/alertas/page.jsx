@@ -39,7 +39,7 @@ export default function AlertasEstoque() {
     carregarProdutos();
   }, []);
 
-  const getNivelCriticidade = (estoque) => {
+  const getNivelCriticidade = (estoque = 0) => {
     if (estoque <= 5)
       return {
         cor: "bg-red-100 ",
@@ -251,7 +251,7 @@ export default function AlertasEstoque() {
                                   ESTOQUE
                                 </p>
                                 <p className="text-3xl font-black">
-                                  {produto.estoque}
+                                  {produto.estoque ?? 0}
                                 </p>
                               </div>
                             </div>
@@ -264,7 +264,10 @@ export default function AlertasEstoque() {
                                 Preço
                               </p>
                               <p className="text-lg font-black text-[#4EA912]">
-                                {produto.precoFormatado}
+                                  R${" "}
+                                {parseFloat(produto.preco)
+                                  .toFixed(2)
+                                  .replace(".", ",")}
                               </p>
                             </div>
                             <div>
