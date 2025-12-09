@@ -83,6 +83,7 @@ export function NavUser() {
       deleteCookie("nome");
       deleteCookie("perfil");
       deleteCookie("token");
+      
 
       return (window.location.href = "/");
     }

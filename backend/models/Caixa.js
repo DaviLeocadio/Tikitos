@@ -42,6 +42,47 @@ const AtualizarCaixa = async (idCaixa, caixaData) => {
   }
 };
 
+// Transactional variants
+const LerCaixaPorVendedorTrans = async (connection, idVendedor) => {
+  try {
+    const [rows] = await connection.execute(
+      `SELECT * FROM caixa WHERE id_usuario = ? ORDER BY abertura ASC LIMIT 1`,
+      [idVendedor]
+    );
+    return rows[0] || null;
+  } catch (err) {
+    console.error('Erro ao ler caixa por vendedor (trans): ', err);
+    throw err;
+  }
+};
+
+const CaixaAbertoVendedorTrans = async (connection, idVendedor) => {
+  try {
+    const [rows] = await connection.execute(
+      `SELECT * FROM caixa WHERE id_usuario = ? AND status = 'aberto' LIMIT 1`,
+      [idVendedor]
+    );
+    return rows[0] || null;
+  } catch (err) {
+    console.error('Erro ao ler caixa aberto por vendedor (trans): ', err);
+    throw err;
+  }
+};
+
+const AtualizarCaixaTrans = async (connection, idCaixa, caixaData) => {
+  try {
+    const columns = Object.keys(caixaData);
+    const values = Object.values(caixaData);
+    const set = columns.map((c) => `${c} = ?`).join(', ');
+    const sql = `UPDATE caixa SET ${set} WHERE id_caixa = ?`;
+    const [result] = await connection.execute(sql, [...values, idCaixa]);
+    return result.affectedRows;
+  } catch (err) {
+    console.error('Erro ao atualizar caixa (trans): ', err);
+    throw err;
+  }
+};
+
 const FecharCaixa = async (caixaData, idCaixa) => {
   try {
     return await update("caixa", caixaData, `id_caixa = ${idCaixa}`);
@@ -153,4 +194,5 @@ export {
   resumoVendasCaixa,
   CaixaAbertoVendedor,
   listarCaixa
+ , LerCaixaPorVendedorTrans, AtualizarCaixaTrans, CaixaAbertoVendedorTrans
 }

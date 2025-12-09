@@ -16,7 +16,7 @@ export default function VendasPage() {
   const [vendas, setVendas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filtroData, setFiltroData] = useState("todos");
+  const [filtroData, setFiltroData] = useState("hoje");
 
   // Modais
   const [vendaDetalhes, setVendaDetalhes] = useState(null);
@@ -61,15 +61,33 @@ export default function VendasPage() {
         {
           method: "DELETE",
           credentials: "include",
+          headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+          },
         }
       );
 
       if (response.ok) {
-        setVendas(vendas.filter((v) => v.id !== vendaParaEstornar.id));
+        setVendas((prev) => prev.filter((v) => v.id !== vendaParaEstornar.id));
         setVendaParaEstornar(null);
+      } else {
+        // Tentar ler o body com mais detalhes para depuração
+        let body = null;
+        try {
+          body = await response.json();
+        } catch (e) {
+          body = await response.text();
+        }
+        console.error("Falha ao estornar venda:", response.status, body);
+        // Mostrar feedback simples ao usuário
+        alert(
+          `Não foi possível estornar a venda (status: ${response.status}). Verifique o console para mais detalhes.`
+        );
       }
     } catch (error) {
       console.error("Erro ao estornar venda:", error);
+      alert("Erro ao estornar venda: " + (error.message || error));
     }
   };
 
@@ -171,7 +189,7 @@ export default function VendasPage() {
             <div className="flex flex-col md:flex-row gap-4 mt-4">
               <input
                 type="text"
-                placeholder="Buscar por ID da venda ou vendedor..."
+                placeholder="Buscar por ID da venda..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full px-4 py-3 bg-[#EBC7F5] border-[2px] border-[#C97FDA] rounded-[25px] text-[#9D4E92]"

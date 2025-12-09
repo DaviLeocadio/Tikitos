@@ -32,7 +32,7 @@ export const AdminDashboardModel = {
     e.nome AS nome_loja,
     COUNT(v.id_venda) AS total_vendas,
     COALESCE(SUM(v.total), 0) AS valor_total
-FROM empresas e
+  FROM empresas e
 LEFT JOIN vendas v 
     ON v.id_empresa = e.id_empresa
     AND v.data_venda BETWEEN ? AND ?

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { setCookie, getCookie } from "cookies-next/client";
 import { aparecerToast } from "@/utils/toast";
+import { deleteCookie } from "cookies-next";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -46,6 +47,9 @@ export default function Login() {
         setCookie("empresa", data.usuario.id_empresa);
         setCookie("empresa_nome", data.usuario.empresa_nome);
         setCookie("perfil", data.usuario.perfil);
+
+        const idCaixa = getCookie("idCaixa");
+        if(idCaixa) deleteCookie("idCaixa");
 
         if (data.expiresAt) {
           setCookie("expiresAt", data.expiresAt);

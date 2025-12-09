@@ -52,6 +52,34 @@ const atualizarProdutoLoja = async (idProdutoLoja, produtoLojaData) => {
   }
 };
 
+// Transactional variants
+const obterProdutoLojaTrans = async (connection, idProduto, idEmpresa) => {
+  try {
+    const [rows] = await connection.execute(
+      `SELECT * FROM produto_loja WHERE id_produto = ? AND id_empresa = ?`,
+      [idProduto, idEmpresa]
+    );
+    return rows[0] || null;
+  } catch (err) {
+    console.error("Erro ao obter produto por ID (trans): ", err);
+    throw err;
+  }
+};
+
+const atualizarProdutoLojaTrans = async (connection, idProdutoLoja, produtoLojaData) => {
+  try {
+    const columns = Object.keys(produtoLojaData);
+    const values = Object.values(produtoLojaData);
+    const set = columns.map((c) => `${c} = ?`).join(', ');
+    const sql = `UPDATE produto_loja SET ${set} WHERE id_produto_loja = ?`;
+    const [result] = await connection.execute(sql, [...values, idProdutoLoja]);
+    return result.affectedRows;
+  } catch (err) {
+    console.error("Erro ao atualizar produto (trans): ", err);
+    throw err;
+  }
+};
+
 const deletarProdutoLoja = async (idProdutoLoja) => {
   try {
     return await deleteRecord(
@@ -109,4 +137,5 @@ export {
   verificarEstoque,
   obterProdutosEstoqueCritico,
   contarProdutosEmPromocao
+ , obterProdutoLojaTrans, atualizarProdutoLojaTrans
 };

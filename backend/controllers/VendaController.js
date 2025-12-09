@@ -7,12 +7,16 @@ import {
   excluirVenda,
   listarVendasPorCaixa,
   listarVendasPorVendedor,
+  obterVendaPorIdTrans,
+  excluirVendaTrans,
 } from "../models/Venda.js";
 
 import {
   criarItensVenda,
   excluirItensVenda,
   listarItensVenda,
+  listarItensVendaTrans,
+  excluirItensVendaTrans,
 } from "../models/ItensVenda.js";
 
 import { obterProdutoPorId } from "../models/Produto.js";
@@ -20,14 +24,21 @@ import {
   AtualizarCaixa,
   CaixaAbertoVendedor,
   LerCaixaPorVendedor,
+  LerCaixaPorVendedorTrans,
+  CaixaAbertoVendedorTrans,
+  AtualizarCaixaTrans,
 } from "../models/Caixa.js";
 
 import {
   obterProdutoLoja,
   atualizarProdutoLoja,
+  obterProdutoLojaTrans,
+  atualizarProdutoLojaTrans,
 } from "../models/ProdutoLoja.js";
-import { registrarMovimento } from "../models/MovimentoEstoque.js";
+import { registrarMovimento, registrarMovimentoTrans } from "../models/MovimentoEstoque.js";
 import { formatarNome, primeiroNome } from "../utils/formatadorNome.js";
+
+import { beginTransaction, commitTransaction, rollbackTransaction } from "../config/database.js";
 
 const listarVendasController = async (req, res) => {
   try {
@@ -265,64 +276,97 @@ const criarVendaController = async (req, res) => {
 };
 
 const excluirVendaController = async (req, res) => {
+  let connection;
   try {
     const { idVenda } = req.params;
     const usuarioId = req.usuarioId;
     const idEmpresa = req.usuarioEmpresa;
 
-    const vendaExistente = await obterVendaPorId(idVenda);
-    if (!vendaExistente)
-      return res.status(404).json({ error: "Venda não encontrada." });
+    if (!idVenda) return res.status(400).json({ error: "ID da venda é obrigatório" });
 
-    if (vendaExistente.id_usuario != usuarioId) {
-      return res.status(403).json({
-        error: "A venda não foi feita pelo usuário que fez a requisição",
-      });
+    // Inicia transação
+    connection = await beginTransaction();
+
+    // Buscar venda dentro da transação
+    const venda = await obterVendaPorIdTrans(connection, idVenda);
+    if (!venda) {
+      await rollbackTransaction(connection);
+      return res.status(404).json({ error: "Venda não encontrada." });
     }
 
-    const itensVenda = await listarItensVenda(idVenda);
+    // Validações de autorização e empresa
+    if (venda.id_usuario != usuarioId) {
+      await rollbackTransaction(connection);
+      return res.status(403).json({ error: "A venda não foi feita pelo usuário que fez a requisição" });
+    }
+    if (venda.id_empresa != idEmpresa) {
+      await rollbackTransaction(connection);
+      return res.status(403).json({ error: "A venda não pertence à empresa do usuário" });
+    }
 
-    const caixa = await LerCaixaPorVendedor(usuarioId);
-    const novoValor = caixa.valor_final - vendaExistente.total;
+    // Verifica caixa aberto do vendedor
+    const caixa = await CaixaAbertoVendedorTrans(connection, usuarioId);
+    if (!caixa) {
+      await rollbackTransaction(connection);
+      return res.status(400).json({ error: "Nenhum caixa aberto para este vendedor" });
+    }
 
-    // Repor estoque
-    let estoqueReposto = [];
+    // Buscar itens da venda (dentro da transação)
+    const itens = await listarItensVendaTrans(connection, idVenda);
 
-    for (const item of itensVenda) {
-      const produtoLoja = await obterProdutoLoja(item.id_produto, idEmpresa);
-      const novoEstoque = produtoLoja.estoque + item.quantidade;
-      const resposta = await atualizarProdutoLoja(produtoLoja.id_produto_loja, {
-        estoque: novoEstoque,
-      });
+    // Repor estoque em paralelo: buscar todos os registros de produto_loja e atualizar
+    const produtosLoja = await Promise.all(
+      itens.map((it) => obterProdutoLojaTrans(connection, it.id_produto, idEmpresa))
+    );
 
-      estoqueReposto.push(resposta);
+    // Valida existência e calcula novos estoques
+    const updates = produtosLoja.map((pl, idx) => {
+      if (!pl) {
+        throw new Error(`Produto loja não encontrado para id_produto=${itens[idx].id_produto}`);
+      }
+      const novoEstoque = Number(pl.estoque) + Number(itens[idx].quantidade);
+      return atualizarProdutoLojaTrans(connection, pl.id_produto_loja, { estoque: novoEstoque });
+    });
 
-      const nomeVendedor = await primeiroNome(req.usuarioNome);
+    await Promise.all(updates);
 
+    // Registrar movimentos em paralelo
+    const nomeVendedor = await primeiroNome(req.usuarioNome);
+    const movimentos = itens.map((item) => {
       const movimentoEstoqueData = {
         id_produto: item.id_produto,
         id_empresa: idEmpresa,
         tipo: "entrada",
         quantidade: item.quantidade,
-        origem: `Estorno #${vendaExistente.id_venda} - Caixa ${caixa.id_caixa} (${nomeVendedor})`,
+        origem: `Estorno #${venda.id_venda} - Caixa ${caixa.id_caixa} (${nomeVendedor})`,
       };
-
-      const movimentoEstoqueRegistrado = await registrarMovimento(
-        movimentoEstoqueData
-      );
-    }
-
-    const caixaAtualizado = await AtualizarCaixa(caixa.id_caixa, {
-      valor_final: novoValor,
+      return registrarMovimentoTrans(connection, movimentoEstoqueData);
     });
 
-    const itensVendaExcluidos = await excluirItensVenda(idVenda);
-    const vendaExcluida = await excluirVenda(idVenda);
+    await Promise.all(movimentos);
 
-    res.status(200).json({ mensagem: "Venda excluída com sucesso" });
+    // Atualizar valor do caixa
+    const novoValor = Number(caixa.valor_final) - Number(venda.total);
+    await AtualizarCaixaTrans(connection, caixa.id_caixa, { valor_final: novoValor });
+
+    // Excluir itens e a venda
+    await excluirItensVendaTrans(connection, idVenda);
+    await excluirVendaTrans(connection, idVenda);
+
+    // Commit
+    await commitTransaction(connection);
+
+    return res.status(200).json({ mensagem: "Venda excluída com sucesso" });
   } catch (error) {
     console.error("Erro ao excluir venda: ", error);
-    res.status(500).json({ error: "Erro ao excluir venda desejada" });
+    if (connection) {
+      try {
+        await rollbackTransaction(connection);
+      } catch (e) {
+        console.error('Erro ao dar rollback: ', e);
+      }
+    }
+    return res.status(500).json({ error: "Erro ao excluir venda desejada", detalhe: error.message });
   }
 };
 

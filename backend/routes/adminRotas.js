@@ -102,6 +102,7 @@ import{
 import multer from "multer";
 import path from "path";
 import { fileURLToPath } from "url";
+import { resetarSenhaController } from "../controllers/AuthController.js";
 
 const router = express.Router();
 
@@ -210,5 +211,8 @@ router.get("/relatorios/produtos", relatorioProdutos);
 /* ===================== META ADMIN ===================== */
 
 router.get("/meta", metaAdminController);
+
+
+router.put("/usuarios/:usuarioId/resetar-senha", resetarSenhaController);
 
 export default router;

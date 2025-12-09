@@ -38,6 +38,7 @@ const listarVendasPorVendedor = async (idVendedor) => {
   }
 };
 
+
 const listarVendasPorCaixa = async (caixaId) => {
   try {
     return await readAll("vendas", `id_caixa = ${caixaId}`);
@@ -128,6 +129,33 @@ const excluirVenda = async (vendaId) => {
   }
 };
 
+// Transactional versions (use a provided connection)
+const obterVendaPorIdTrans = async (connection, vendaId) => {
+  try {
+    const [rows] = await connection.execute(
+      `SELECT * FROM vendas WHERE id_venda = ?`,
+      [vendaId]
+    );
+    return rows[0] || null;
+  } catch (err) {
+    console.error("Erro ao obter venda por ID (trans): ", err);
+    throw err;
+  }
+};
+
+const excluirVendaTrans = async (connection, vendaId) => {
+  try {
+    const [result] = await connection.execute(
+      `DELETE FROM vendas WHERE id_venda = ?`,
+      [vendaId]
+    );
+    return result.affectedRows;
+  } catch (err) {
+    console.error("Erro ao excluir venda (trans): ", err);
+    throw err;
+  }
+};
+
 export {
   listarVendas,
   listarVendasPorCaixa,
@@ -136,6 +164,8 @@ export {
   criarVenda,
   atualizarVenda,
   excluirVenda,
+  obterVendaPorIdTrans,
+  excluirVendaTrans,
   obterVendasIntervaloUsuario,
   obterVendaPorDataUsuario,
   listarVendasPorVendedor,

@@ -33,6 +33,21 @@ const registrarMovimento = async (movimentoData) => {
   }
 };
 
+// Transactional variant
+const registrarMovimentoTrans = async (connection, movimentoData) => {
+  try {
+    const columns = Object.keys(movimentoData).join(', ');
+    const placeholders = Object.keys(movimentoData).map(() => '?').join(', ');
+    const values = Object.values(movimentoData);
+    const sql = `INSERT INTO movimento_estoque (${columns}) VALUES (${placeholders})`;
+    const [result] = await connection.execute(sql, values);
+    return result.insertId;
+  } catch (err) {
+    console.error('Erro ao registrar movimento de estoque (trans): ', err);
+    throw err;
+  }
+};
+
 const atualizarMovimento = async (idMovimento, movimentoData) => {
   try {
     return await update("movimento_estoque", movimentoData, `id_movimento = ${idMovimento}`);
@@ -46,5 +61,6 @@ export {
   listarMovimento,
   obterMovimentoPorId,
   registrarMovimento,
+  registrarMovimentoTrans,
   atualizarMovimento,
 };
