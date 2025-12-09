@@ -80,7 +80,7 @@ export default function AdminProduto() {
             </h1>
             <Link
               href="/admin/produtos/cadastrar"
-              className="flex gap-2 px-3 py-2 rounded-lg bg-roxo hover:bg-roxoescuro text-white transition hover:scale-97">
+              className="flex gap-2 px-3 py-2 rounded-lg bg-roxo hover:bg-roxoescuro text-[#92EF6C] transition hover:scale-97">
               <PlusCircle /> Cadastrar Produto</Link>
 
           </div>

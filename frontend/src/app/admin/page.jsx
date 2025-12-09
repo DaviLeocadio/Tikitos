@@ -6,31 +6,29 @@ import Link from "next/link";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 
 // Componente de Card de Métrica
-function MetricCard({ title, value, icon, color, trend, subValue }) {
+function MetricCard({ title, value, icon, color, trend, subValue, bg, text, text2 }) {
   return (
     <div
-      className={`bg-white rounded-xl border-3 border-dashed border-${color} p-6 shadow-sm hover:shadow-md transition-shadow`}
+      className={`bg-${bg} rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow`}
     >
       <div className="flex items-start justify-between">
         <div className="flex-1">
-          <p className="text-sm font-semibold text-gray-600 mb-1">{title}</p>
+          <p className={`text-sm font-semibold text-${text} mb-1`}>{title}</p>
           <p className={`text-3xl font-bold text-${color} mb-2`}>{value}</p>
-          
+
           {subValue && (
-            <p className="text-xs text-gray-500 font-medium mt-1">{subValue}</p>
+            <p className={`text-xs text-${text2} font-medium mt-1`}>{subValue}</p>
           )}
 
           {trend && (
             <div className="flex items-center gap-1 text-sm mt-1">
               <i
-                className={`bi bi-arrow-${trend.direction} text-${
-                  trend.direction === "up" ? "green" : "red"
-                }-600`}
+                className={`bi bi-arrow-${trend.direction} text-${trend.direction === "up" ? "green" : "red"
+                  }-600`}
               ></i>
               <span
-                className={`font-semibold text-${
-                  trend.direction === "up" ? "green" : "red"
-                }-600`}
+                className={`font-semibold text-${trend.direction === "up" ? "green" : "red"
+                  }-600`}
               >
                 {trend.percentage}%
               </span>
@@ -75,7 +73,7 @@ function QuickActionCard({ title, description, icon, href, color }) {
   return (
     <Link
       href={href}
-      className={`bg-white rounded-xl border-3 border-dashed border-${color} p-5 hover:scale-[1.02] transition-all duration-200 cursor-pointer group`}
+      className={` rounded-xl border-1 border-${color} p-5 hover:scale-[1.02] transition-all duration-200 cursor-pointer group`}
     >
       <div className="flex items-center gap-4">
         <div
@@ -85,9 +83,9 @@ function QuickActionCard({ title, description, icon, href, color }) {
         </div>
         <div className="flex-1">
           <h3 className={`font-bold text-lg text-${color} mb-1`}>{title}</h3>
-          <p className="text-sm text-gray-600">{description}</p>
+          <p className="text-sm text-[#4F6940]">{description}</p>
         </div>
-        <i className="bi bi-chevron-right text-xl text-gray-400 group-hover:text-gray-600"></i>
+        <i className="bi bi-chevron-right text-xl text-[#4F6940] group-hover:text-gray-600"></i>
       </div>
     </Link>
   );
@@ -159,18 +157,22 @@ export default function AdminDashboard() {
           </div>
 
           {/* Filtro de período */}
-          <div className="flex gap-2 bg-white rounded-xl p-1 border-3 border-[#b478ab] border-dashed shadow-sm">
-            {["hoje", "semana", "mes", "ano"].map((p) => (
+          <div className="flex gap-2 bg-[#C97FDA] rounded-xl p-1 shadow-sm">
+            {[
+              { key: "hoje", label: "Hoje" },
+              { key: "semana", label: "Semana" },
+              { key: "mes", label: "Mês" },  
+              { key: "ano", label: "Ano" },
+            ].map((item) => (
               <button
-                key={p}
-                onClick={() => setPeriodo(p)}
-                className={`px-4 py-2 rounded-lg font-semibold text-sm transition-all ${
-                  periodo === p
-                    ? "bg-[#76196c] text-white shadow-md"
-                    : "text-[#76196c] hover:bg-[#f0e5f5]"
-                }`}
+                key={item.key}
+                onClick={() => setPeriodo(item.key)}
+                className={`px-4 py-2 rounded-lg font-semibold text-sm transition-all ${periodo === item.key
+                    ? "bg-[#76196c] text-[#9BF377] shadow-md"
+                    : "text-[#76196c] hover:bg-[#EBC7F5]"
+                  }`}
               >
-                {p.charAt(0).toUpperCase() + p.slice(1)}
+                {item.label}
               </button>
             ))}
           </div>
@@ -199,36 +201,46 @@ export default function AdminDashboard() {
                 value={dashboardData.vendas.total}
                 subValue={`${dashboardData.vendas.totalTransacoes} transações`}
                 icon="graph-up-arrow"
-                color="[#569a33]"
+                color="[#4EA912]"
+                bg="[#92EF6C]"
+                text="[#4EA912]"
+                text2="[#4EA912]"
                 trend={dashboardData.vendas.trend}
               />
               <MetricCard
                 title="Contas a Pagar (Total)"
                 // Usando o dado exclusivo do controller Admin
-                value={dashboardData.fluxoCaixa.contasPendentes || "R$ 0,00"} 
+                value={dashboardData.fluxoCaixa.contasPendentes || "R$ 0,00"}
                 icon="wallet2"
-                color="[#ff6b6b]"
+                color="[#9D4E92]"
+                bg="[#F1B8E8]"
+                text="[#9D4E92]"
               />
               <MetricCard
                 title="Produtos Vendidos"
                 value={dashboardData.produtos.vendidos}
                 icon="box-seam"
-                color="[#76196c]"
+                color="[#76196C]"
+                bg="[#C97FDA]"
+                text="[#76196C]"
               />
-               <MetricCard
+              <MetricCard
                 title="Equipe Ativa"
                 value={dashboardData.vendedores.ativos}
                 subValue="Vendedores na rede"
                 icon="people-fill"
-                color="[#4f6940]"
+                color="[#4F6940]"
+                bg="[#70B64C]"
+                text="[#4F6940]"
+                text2="[#4F6940]"
               />
             </div>
 
             {/* Seção Exclusiva Admin: Ranking de Lojas */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              
+
               {/* Ranking das Lojas */}
-              <div className="lg:col-span-2 bg-white rounded-xl border-3 border-dashed border-[#76196c] p-6 shadow-sm">
+              <div className="lg:col-span-2 bg-[#C5FFAD] rounded-xl p-6 shadow-sm">
                 <div className="flex items-center justify-between mb-6">
                   <h3 className="text-xl font-bold text-[#76196c] flex items-center gap-2">
                     <i className="bi bi-shop text-2xl"></i> Desempenho por Filial
@@ -241,24 +253,24 @@ export default function AdminDashboard() {
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead>
-                      <tr className="border-b border-gray-100 text-left">
-                        <th className="pb-3 text-sm font-semibold text-gray-500">Filial</th>
-                        <th className="pb-3 text-sm font-semibold text-gray-500 text-right">Vendas</th>
-                        <th className="pb-3 text-sm font-semibold text-gray-500 text-right">Faturamento</th>
-                        <th className="pb-3 text-sm font-semibold text-gray-500 text-center">Status</th>
+                      <tr className="border-b border-[#75BA51] text-left">
+                        <th className="pb-3 text-sm font-semibold text-[#4F6940]">Filial</th>
+                        <th className="pb-3 text-sm font-semibold text-[#4F6940] text-right">Vendas</th>
+                        <th className="pb-3 text-sm font-semibold text-[#4F6940] text-right">Faturamento</th>
+                        <th className="pb-3 text-sm font-semibold text-[#4F6940] text-center">Status</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-50">
+                    <tbody className="divide-y divide-[#75BA51]">
                       {dashboardData.rankingLojas && dashboardData.rankingLojas.length > 0 ? (
                         dashboardData.rankingLojas.map((loja, index) => (
                           <tr key={index} className="hover:bg-purple-50/50 transition-colors">
-                            <td className="py-3 font-medium text-gray-800 flex items-center gap-2">
-                              <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs text-white ${index === 0 ? 'bg-yellow-400' : index === 1 ? 'bg-gray-400' : index === 2 ? 'bg-orange-400' : 'bg-gray-200 text-gray-600'}`}>
+                            <td className="py-3 font-medium text-[#76196C] flex items-center gap-2">
+                              <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs text-[#CAF4B7] ${index === 0 ? 'bg-yellow-400' : index === 1 ? 'bg-gray-400' : index === 2 ? 'bg-orange-400' : 'bg-gray-200 text-[#76196C]'}`}>
                                 {index + 1}
                               </span>
                               {loja.nome}
                             </td>
-                            <td className="py-3 text-right text-gray-600">{loja.totalVendas}</td>
+                            <td className="py-3 text-right text-[#76196C]">{loja.totalVendas}</td>
                             <td className="py-3 text-right font-bold text-[#569a33]">{loja.valorTotal}</td>
                             <td className="py-3 text-center">
                               <span className="inline-block w-2 h-2 rounded-full bg-green-500"></span>
@@ -281,36 +293,36 @@ export default function AdminDashboard() {
               <div className="space-y-5">
                 {/* Melhor Vendedor da Rede */}
                 <div className="bg-gradient-to-br from-[#76196c] to-[#5a1252] rounded-xl p-6 text-white shadow-lg">
-                    <div className="flex items-start justify-between">
-                        <div>
-                            <p className="text-purple-200 text-sm font-medium mb-1">⭐ Destaque Global</p>
-                            <h4 className="text-2xl font-bold">{dashboardData.vendedores.melhorVendedor}</h4>
-                            <p className="text-sm opacity-90 mt-1">
-                              Responsável por <span className="font-bold">{dashboardData.vendedores.vendasMelhorVendedor} vendas</span>
-                            </p>
-                        </div>
-                        <i className="bi bi-trophy-fill text-3xl text-yellow-400"></i>
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <p className="text-purple-200 text-sm font-medium mb-1">⭐ Destaque Global</p>
+                      <h4 className="text-2xl font-bold text-[#C5FFAD]">{dashboardData.vendedores.melhorVendedor}</h4>
+                      <p className="text-sm opacity-90 mt-1">
+                        Responsável por <span className="font-bold">{dashboardData.vendedores.vendasMelhorVendedor} vendas</span>
+                      </p>
                     </div>
-                    <div className="mt-4 pt-4 border-t border-white/20 flex justify-between items-center">
-                        <span className="text-sm">Total gerado:</span>
-                        <span className="font-bold text-lg">R$ {dashboardData.vendedores.valorMelhorVendedor.toFixed(2).replace('.', ',')}</span>
-                    </div>
+                    <i className="bi bi-trophy-fill text-3xl text-yellow-400"></i>
+                  </div>
+                  <div className="mt-4 pt-4 border-t border-white/20 flex justify-between items-center">
+                    <span className="text-sm text-[#C5FFAD]">Total gerado:</span>
+                    <span className="font-bold text-lg text-[#4EA912]">R$ {dashboardData.vendedores.valorMelhorVendedor.toFixed(2).replace('.', ',')}</span>
+                  </div>
                 </div>
 
                 {/* Alerta de Estoque */}
                 <div className={`rounded-xl border-2 p-5 ${dashboardData.produtos.baixoEstoque > 0 ? 'bg-orange-50 border-orange-200' : 'bg-green-50 border-green-200'}`}>
-                    <div className="flex items-center gap-3 mb-2">
-                        <i className={`bi ${dashboardData.produtos.baixoEstoque > 0 ? 'bi-exclamation-triangle-fill text-orange-500' : 'bi-check-circle-fill text-green-500'} text-xl`}></i>
-                        <h4 className={`font-bold ${dashboardData.produtos.baixoEstoque > 0 ? 'text-orange-800' : 'text-green-800'}`}>
-                           Controle de Estoque
-                        </h4>
-                    </div>
-                    <p className="text-sm text-gray-600 mb-3">
-                        {dashboardData.produtos.baixoEstoque > 0 
-                            ? `Existem ${dashboardData.produtos.baixoEstoque} produtos críticos na rede.` 
-                            : 'Todos os níveis de estoque estão saudáveis.'}
-                    </p>
-                    {/* {dashboardData.produtos.baixoEstoque > 0 && (
+                  <div className="flex items-center gap-3 mb-2">
+                    <i className={`bi ${dashboardData.produtos.baixoEstoque > 0 ? 'bi-exclamation-triangle-fill text-orange-500' : 'bi-check-circle-fill text-green-500'} text-xl`}></i>
+                    <h4 className={`font-bold ${dashboardData.produtos.baixoEstoque > 0 ? 'text-orange-800' : 'text-green-800'}`}>
+                      Controle de Estoque
+                    </h4>
+                  </div>
+                  <p className="text-sm text-[#4F6940] mb-3">
+                    {dashboardData.produtos.baixoEstoque > 0
+                      ? `Existem ${dashboardData.produtos.baixoEstoque} produtos críticos na rede.`
+                      : 'Todos os níveis de estoque estão saudáveis.'}
+                  </p>
+                  {/* {dashboardData.produtos.baixoEstoque > 0 && (
                         <Link href="/admin/alertas" className="text-sm font-semibold text-orange-700 hover:text-orange-900 underline">
                             Resolver agora
                         </Link>
@@ -331,55 +343,55 @@ export default function AdminDashboard() {
                   description="Cadastrar filial"
                   icon="shop"
                   href="/admin/lojas/cadastrar"
-                  color="[#76196c]"
+                  color="[#4F6940]"
                 />
                 <QuickActionCard
                   title="Produtos"
                   description="Catálogo global"
                   icon="box-seam"
                   href="/admin/produtos"
-                  color="[#569a33]"
+                  color="[#4F6940]"
                 />
                 <QuickActionCard
                   title="Financeiro"
                   description="Contas e Fluxo"
                   icon="cash-coin"
                   href="/admin/financeiro"
-                  color="[#4f6940]"
+                  color="[#4F6940]"
                 />
                 <QuickActionCard
                   title="Relatórios"
                   description="Análise completa"
                   icon="file-text"
                   href="/admin/relatorios"
-                  color="[#ff6b6b]"
+                  color="[#4F6940]"
                 />
               </div>
             </div>
 
             {/* Fluxo de Caixa Consolidado */}
-            <div className="bg-white rounded-xl border-3 border-dashed border-[#569a33] p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-xl font-bold text-[#569a33] flex items-center gap-2">
-                     <i className="bi bi-bank text-2xl"></i> Fluxo de Caixa Consolidado
-                  </h3>
-                  <span className="text-sm bg-green-100 text-green-700 px-3 py-1 rounded-full font-medium">Rede Inteira</span>
+            <div className="bg-[#E5B8F1] rounded-xl border-3 border-dashed border-[#8F3D84] p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-xl font-bold text-[#8F3D84] flex items-center gap-2">
+                  <i className="bi bi-bank text-2xl text-[#8F3D84]"></i> Fluxo de Caixa Consolidado
+                </h3>
+                <span className="text-sm bg-green-100 text-green-700 px-3 py-1 rounded-full font-medium">Rede Inteira</span>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="flex flex-col p-4 bg-[#75BA51] rounded-xl">
+                  <span className="text-sm font-semibold text-[#C5FFAD] mb-1">Entradas (Vendas)</span>
+                  <span className="text-2xl font-bold text-[#C5FFAD]">{dashboardData.fluxoCaixa.entradas}</span>
                 </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="flex flex-col p-4 bg-green-50 rounded-xl border border-green-100">
-                    <span className="text-sm font-semibold text-gray-600 mb-1">Entradas (Vendas)</span>
-                    <span className="text-2xl font-bold text-green-600">{dashboardData.fluxoCaixa.entradas}</span>
-                  </div>
-                  <div className="flex flex-col p-4 bg-red-50 rounded-xl border border-red-100">
-                    <span className="text-sm font-semibold text-gray-600 mb-1">Saídas (Despesas)</span>
-                    <span className="text-2xl font-bold text-red-600">{dashboardData.fluxoCaixa.saidas}</span>
-                  </div>
-                  <div className="flex flex-col p-4 bg-[#f0fdf4] rounded-xl border-2 border-[#569a33]">
-                    <span className="text-sm font-bold text-gray-700 mb-1">Saldo Líquido</span>
-                    <span className="text-2xl font-black text-[#569a33]">{dashboardData.fluxoCaixa.saldo}</span>
-                  </div>
+                <div className="flex flex-col p-4 bg-red-300 rounded-xl">
+                  <span className="text-sm font-semibold text-[#B21212] mb-1">Saídas (Despesas)</span>
+                  <span className="text-2xl font-bold text-[#B21212]">{dashboardData.fluxoCaixa.saidas}</span>
                 </div>
+                <div className="flex flex-col p-4 bg-[#92EF6C] rounded-xl">
+                  <span className="text-sm font-bold text-[#4F6940] mb-1">Saldo Líquido</span>
+                  <span className="text-2xl font-black text-[#4F6940]">{dashboardData.fluxoCaixa.saldo}</span>
+                </div>
+              </div>
             </div>
 
           </>
