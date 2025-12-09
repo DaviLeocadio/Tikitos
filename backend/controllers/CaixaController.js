@@ -426,8 +426,25 @@ const obterResumoCaixaController = async (req, res) => {
 
 const listarCaixaController = async (req, res) => {
   try {
+    const { dataInicio, dataFim } = req.query;
+
+    if (dataInicio && dataFim) {
+      // Agrupar valor_total por data no intervalo informado (todas as empresas)
+      const sql = `
+        SELECT DATE(abertura) as data, SUM(valor_final - valor_inicial) as valor_total, COUNT(*) as caixas
+        FROM caixa
+        WHERE abertura BETWEEN ? AND ?
+        GROUP BY DATE(abertura)
+        ORDER BY data DESC
+      `;
+      const start = `${dataInicio} 00:00:00`;
+      const end = `${dataFim} 23:59:59`;
+      const caixaListado = await readRaw(sql, [start, end]);
+      return res.status(200).json({ mensagem: "listar caixa", caixaListado });
+    }
+
     const caixaListado = await listarCaixa();
-    res.status(200).json({ mensagem: "listar caixa", caixaListado })
+    res.status(200).json({ mensagem: "listar caixa", caixaListado });
   } catch (error) {
     console.error("Erro ao obter listagem de um caixa", error);
     res.status(500).json({ error: "Erro ao obter listagem de um caixa" });

@@ -152,7 +152,7 @@ export default function LojaCard({ loja }) {
 
         <button
           onClick={handleDetailsClick}
-          className="w-full sm:w-auto px-5 py-2 bg-[#7d3676] text-[#c8a0c4] font-semibold rounded-xl shadow-md hover:bg-[#924187] transition text-sm"
+          className={`w-full sm:w-auto px-5 py-2 bg-[#7d3676]  font-semibold rounded-xl shadow-md hover:bg-[#924187] transition text-sm ${loja.status === "inativo" ? "text-[#c8a0c4]" : "opacity-100 text-white "}`}
         >
           Ver detalhes
         </button>

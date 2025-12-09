@@ -13,17 +13,21 @@ dayjs.extend(customParseFormat);
 
 const despesasPagasController = async (req, res) => {
   try {
-    const despesas = await despesasPagas();
+    const { dataInicio, dataFim } = req.query;
 
+    // construir cláusula WHERE para despesas pagas
+    let where = `d.status = 'pago'`;
+    if (dataInicio && dataFim) {
+      where += ` AND DATE(d.data_pag) BETWEEN '${dataInicio}' AND '${dataFim}'`;
+    }
+
+    const despesas = await listarDespesas(where);
     const valorDespesas = despesas.reduce(
       (total, despesa) => total + Number(despesa.preco || 0),
       0
     );
 
-    return res.status(200).json({
-      mensagem: "Despesas pagas encontradas",
-      valorDespesas,
-    });
+    return res.status(200).json({ mensagem: "Despesas pagas encontradas", valorDespesas });
   } catch (err) {
     return res.status(500).json({ erro: "Erro ao buscar despesas pagas" });
   }
@@ -31,17 +35,22 @@ const despesasPagasController = async (req, res) => {
 
 const despesasPendentesController = async (req, res) => {
   try {
-    const despesas = await despesasPendentes();
+    const { dataInicio, dataFim } = req.query;
 
+    // construir cláusula WHERE para despesas pendentes
+    let where = `d.status = 'pendente'`;
+    if (dataInicio && dataFim) {
+      // para pendentes, filtrar por data_adicionado (quando foi criada)
+      where += ` AND DATE(d.data_adicionado) BETWEEN '${dataInicio}' AND '${dataFim}'`;
+    }
+
+    const despesas = await listarDespesas(where);
     const valorDespesas = despesas.reduce(
       (total, despesa) => total + Number(despesa.preco || 0),
       0
     );
 
-    return res.status(200).json({
-      mensagem: "Despesas pendentes encontradas",
-      valorDespesas,
-    });
+    return res.status(200).json({ mensagem: "Despesas pendentes encontradas", valorDespesas });
   } catch (err) {
     return res.status(500).json({ erro: "Erro ao buscar despesas pendentes" });
   }
@@ -91,7 +100,15 @@ const criarDespesaController = async (req, res) => {
 
 const listarDespesasController = async (req, res) => {
   try {
-    const despesasListadas = await listarDespesas();
+    const { dataInicio, dataFim } = req.query;
+
+    let where = null;
+    if (dataInicio && dataFim) {
+      // filtrar pela data de adição da despesa
+      where = `DATE(d.data_adicionado) BETWEEN '${dataInicio}' AND '${dataFim}' ORDER BY data_adicionado DESC`;
+    }
+
+    const despesasListadas = await listarDespesas(where);
     res.status(200).json({ mensagem: "Despesa listada", despesasListadas });
   } catch (err) {
     return res.status(500).json({ err: "Erro ao listar despesa" });

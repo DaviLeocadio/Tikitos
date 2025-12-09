@@ -44,6 +44,12 @@ export default function ModalAdicionarDespesa({ open, onClose }) {
     };
 
     buscarFornecedores();
+    // definir data padrão como hoje no formato DD/MM/YYYY
+    const hoje = new Date();
+    const dd = String(hoje.getDate()).padStart(2, "0");
+    const mm = String(hoje.getMonth() + 1).padStart(2, "0");
+    const yyyy = hoje.getFullYear();
+    setDataPag(`${dd}/${mm}/${yyyy}`);
   }, [open]);
 
   const handleSalvar = async () => {

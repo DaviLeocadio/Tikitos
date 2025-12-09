@@ -29,7 +29,7 @@ const AdminDashboardController = async (req, res) => {
     // Montar resposta no formato esperado pelo front
     const dashboard = {
       vendas: {
-        total: formatarMoeda(parseFloat(vendas.total_faturamento)),
+        total: parseFloat(vendas.total_faturamento),
         totalTransacoes: vendas.total_transacoes,
         trend: null, // Você pode calcular a tendência comparando com período anterior
       },

@@ -14,6 +14,25 @@ import { CheckCircle, ChevronLeft, ChevronRight, Trash } from "lucide-react";
 import InputDataMask from "@/components/inputMasks/InputDataMask";
 import ModalAdicionarDespesa from "@/components/admin/financeiro/ModalAdicionarDespesa";
 
+// Formata números para moeda BRL: R$ XXX.XXX,XX
+function formatCurrency(value) {
+  if (value === null || value === undefined || value === "") return "R$ 0,00";
+
+  if (typeof value === "string" && value.includes("R$")) return value;
+
+  let num = value;
+  if (typeof value === "string") {
+    const cleaned = value.replace(/\./g, "").replace(/,/g, ".").replace(/[^0-9.\-]/g, "");
+    num = parseFloat(cleaned);
+  } else {
+    num = parseFloat(value);
+  }
+
+  if (isNaN(num)) return "R$ 0,00";
+
+  return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(num);
+}
+
 // Componente de Paginação Reutilizável
 const Paginacao = ({ paginaAtual, totalPaginas, onMudarPagina, variant = "roxo" }) => {
   const gerarPaginas = () => {
@@ -84,6 +103,8 @@ export default function AdminFinanceiro() {
   const [fluxoCaixa, setFluxoCaixa] = useState([]);
   const [resumo, setResumo] = useState(null);
   const [modalAberto, setModalAberto] = useState(false);
+  const [filterStartDate, setFilterStartDate] = useState("");
+  const [filterEndDate, setFilterEndDate] = useState("");
   const [filtroStatus, setFiltroStatus] = useState("todos");
   const [caixa, setCaixa] = useState([]);
   const [despesasPendentes, setDespesasPendentes] = useState();
@@ -98,16 +119,28 @@ export default function AdminFinanceiro() {
   const [paginaCaixa, setPaginaCaixa] = useState(1);
   const itensPorPagina = 10;
 
+  const buildUrlWithFilters = (baseUrl) => {
+    const p = new URLSearchParams();
+    if (filterStartDate) p.append("dataInicio", filterStartDate);
+    if (filterEndDate) p.append("dataFim", filterEndDate);
+    return p.toString() ? `${baseUrl}?${p.toString()}` : baseUrl;
+  };
+
   useEffect(() => {
+    // helper to append date filters
+    const params = (baseUrl) => {
+      const p = new URLSearchParams();
+      if (filterStartDate) p.append("dataInicio", filterStartDate);
+      if (filterEndDate) p.append("dataFim", filterEndDate);
+      return p.toString() ? `${baseUrl}?${p.toString()}` : baseUrl;
+    };
+
     const totalVendasFetch = async () => {
       try {
-        const response = await fetch(
-          "http://localhost:8080/admin/vendasTotais",
-          {
-            method: "GET",
-            credentials: "include",
-          }
-        );
+        const response = await fetch(buildUrlWithFilters("http://localhost:8080/admin/vendasTotais"), {
+          method: "GET",
+          credentials: "include",
+        });
 
         if (!response.ok) {
           console.log("Não foi possivel visualizar total de produtos");
@@ -116,7 +149,7 @@ export default function AdminFinanceiro() {
 
         const data = await response.json();
 
-        setTotalVendas(data.valorTotal.toFixed(2));
+        setTotalVendas(data.valorTotal);
         console.log(data);
       } catch (error) {
         console.error("Erro ao disponibilizar o total de vendas");
@@ -127,13 +160,7 @@ export default function AdminFinanceiro() {
 
     const despesasPendentesFetch = async () => {
       try {
-        const response = await fetch(
-          "http://localhost:8080/admin/despesas-pendentes",
-          {
-            method: "GET",
-            credentials: "include",
-          }
-        );
+        const response = await fetch(buildUrlWithFilters("http://localhost:8080/admin/despesas-pendentes"), { method: "GET", credentials: "include" });
 
         if (!response.ok) {
           console.log(
@@ -155,13 +182,7 @@ export default function AdminFinanceiro() {
 
     const despesasPagasFetch = async () => {
       try {
-        const response = await fetch(
-          "http://localhost:8080/admin/despesas-pagas",
-          {
-            method: "GET",
-            credentials: "include",
-          }
-        );
+        const response = await fetch(buildUrlWithFilters("http://localhost:8080/admin/despesas-pagas"), { method: "GET", credentials: "include" });
 
         if (!response.ok) {
           console.log("Não foi possivel visualizar total de despesas pagas");
@@ -170,7 +191,7 @@ export default function AdminFinanceiro() {
 
         const data = await response.json();
 
-        setDespesasPagas(data.valorDespesas.toFixed(2));
+        setDespesasPagas(data.valorDespesas);
         console.log(data);
       } catch (error) {
         console.error("Erro ao disponibilizar o total de vendas");
@@ -181,10 +202,7 @@ export default function AdminFinanceiro() {
 
     const listagemDespesasFetch = async () => {
       try {
-        const response = await fetch("http://localhost:8080/admin/despesas", {
-          method: "GET",
-          credentials: "include",
-        });
+        const response = await fetch(buildUrlWithFilters("http://localhost:8080/admin/despesas"), { method: "GET", credentials: "include" });
 
         if (!response.ok) {
           console.log("Não foi possivel visualizar total de despesas");
@@ -204,10 +222,7 @@ export default function AdminFinanceiro() {
 
     const listagemCaixaFetch = async () => {
       try {
-        const response = await fetch("http://localhost:8080/admin/caixa", {
-          method: "GET",
-          credentials: "include",
-        });
+        const response = await fetch(buildUrlWithFilters("http://localhost:8080/admin/caixa"), { method: "GET", credentials: "include" });
 
         if (!response.ok) {
           console.log("Não foi possivel visualizar total de caixa");
@@ -230,6 +245,17 @@ export default function AdminFinanceiro() {
     despesasPagasFetch();
     despesasPendentesFetch();
     totalVendasFetch();
+  }, [filterStartDate, filterEndDate]);
+
+  // inicializar filtros de data com últimos 30 dias
+  useEffect(() => {
+    const hoje = new Date();
+    const end = hoje.toISOString().split("T")[0];
+    const startDate = new Date(hoje);
+    startDate.setDate(startDate.getDate() - 30);
+    const start = startDate.toISOString().split("T")[0];
+    setFilterStartDate(start);
+    setFilterEndDate(end);
   }, []);
 
   useEffect(() => {
@@ -249,7 +275,7 @@ export default function AdminFinanceiro() {
       if (!response.ok) return;
 
       // Recarregar despesas após pagamento
-      const responseList = await fetch("http://localhost:8080/admin/despesas", {
+      const responseList = await fetch(buildUrlWithFilters("http://localhost:8080/admin/despesas"), {
         method: "GET",
         credentials: "include",
       });
@@ -278,7 +304,7 @@ export default function AdminFinanceiro() {
       }
 
       // Recarregar lista de despesas
-      const responseList = await fetch("http://localhost:8080/admin/despesas", {
+      const responseList = await fetch(buildUrlWithFilters("http://localhost:8080/admin/despesas"), {
         method: "GET",
         credentials: "include",
       });
@@ -341,6 +367,7 @@ export default function AdminFinanceiro() {
   return (
     <div className="min-h-screen bg-gradient-to-br to-[#f0e5f5] p-5 lg:p-8">
       <div className="max-w-7xl mx-auto space-y-6">
+
         {/* Header */}
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
           <div>
@@ -352,13 +379,33 @@ export default function AdminFinanceiro() {
             </p>
           </div>
 
-          <button
-            onClick={() => setModalAberto(true)}
-            className="bg-[#569a33] text-white px-6 py-3 rounded-xl font-bold hover:bg-[#4f6940] transition flex items-center gap-2 cursor-pointer"
-          >
-            <i className="bi bi-plus-circle text-xl"></i>
-            Nova Despesa
-          </button>
+          <div className="flex gap-5 flex-wrap ">
+            {/* Filtros de período (início/fim) */}
+            <div className="flex items-center gap-3 justify-end">
+              <label className="text-sm text-[#76196c] font-semibold">De</label>
+              <input
+                type="date"
+                value={filterStartDate}
+                onChange={(e) => setFilterStartDate(e.target.value)}
+                className="p-2 rounded-lg border-2 border-[#b478ab]"
+              />
+              <label className="text-sm text-[#76196c] font-semibold">Até</label>
+              <input
+                type="date"
+                value={filterEndDate}
+                onChange={(e) => setFilterEndDate(e.target.value)}
+                className="p-2 rounded-lg border-2 border-[#b478ab]"
+              />
+            </div>
+
+            <button
+              onClick={() => setModalAberto(true)}
+              className="bg-[#569a33] text-white px-6 py-3 rounded-xl font-bold hover:bg-[#4f6940] transition flex items-center gap-2 cursor-pointer"
+            >
+              <i className="bi bi-plus-circle text-xl"></i>
+              Nova Despesa
+            </button>
+          </div>
         </div>
 
         {/* Cards de Resumo */}
@@ -371,7 +418,7 @@ export default function AdminFinanceiro() {
                     Total de vendas
                   </p>
                   <p className="text-3xl font-bold text-[#569a33]">
-                    R$ {Number(totalVendas).toFixed(2).replace(".", ",")}
+                    {formatCurrency(totalVendas)}
                   </p>
                 </div>
                 <i className="bi bi-arrow-up-circle text-3xl text-[#569a33]"></i>
@@ -385,7 +432,7 @@ export default function AdminFinanceiro() {
                     Despesas pagas
                   </p>
                   <p className="text-3xl font-bold text-[#ff6b6b]">
-                    R$ {Number(despesasPagas).toFixed(2).replace(".", ",")}
+                    {formatCurrency(despesasPagas)}
                   </p>
                 </div>
                 <i className="bi bi-arrow-down-circle text-3xl text-[#ff6b6b]"></i>
@@ -399,7 +446,7 @@ export default function AdminFinanceiro() {
                     A Pagar
                   </p>
                   <p className="text-3xl font-bold text-[#ff9800]">
-                    R$ {Number(despesasPendentes).toFixed(2).replace(".", ",")}
+                    {formatCurrency(despesasPendentes)}
                   </p>
                 </div>
                 <i className="bi bi-clock-history text-3xl text-[#ff9800]"></i>
@@ -416,7 +463,7 @@ export default function AdminFinanceiro() {
                     className={`text-3xl font-bold ${resumo.saldo >= 0 ? "text-[#569a33]" : "text-[#ff6b6b]"
                       }`}
                   >
-                    R$ {Number(totalVendas - despesasPagas).toFixed(2).replace(".", ",")}
+                    {formatCurrency((Number(totalVendas) || 0) - (Number(despesasPagas) || 0))}
 
                   </p>
                 </div>
@@ -508,8 +555,7 @@ export default function AdminFinanceiro() {
                         {despesa.fornecedor || "--"}
                       </td>
                       <td className="p-4 font-bold text-[#ff6b6b]">
-                        R${" "}
-                        {parseFloat(despesa.preco).toFixed(2).replace(".", ",")}
+                        {formatCurrency((parseFloat(despesa.preco)))}
                       </td>
                       <td className="p-4 text-gray-600">
                         {new Date(despesa.data_adicionado).toLocaleDateString(
@@ -595,16 +641,13 @@ export default function AdminFinanceiro() {
               <thead className="bg-[#e8f5e8]">
                 <tr>
                   <th className="p-3 text-left text-[#569a33] font-bold">
-                    Abertura
-                  </th>
-                  <th className="p-3 text-left text-[#569a33] font-bold">
-                    Fechamento
+                    Data
                   </th>
                   <th className="p-3 text-left text-[#569a33] font-bold">
                     Valor Final
                   </th>
                   <th className="p-3 text-left text-[#569a33] font-bold">
-                    Status
+                    Quantidade de Caixas
                   </th>
                 </tr>
               </thead>
@@ -622,29 +665,33 @@ export default function AdminFinanceiro() {
                   caixaPaginado.map((fluxo, index) => (
                     <tr key={index} className="border-b border-[#569a33]/20 hover:bg-[#e8f5e8]/30">
                       <td className="p-3 font-semibold text-[#4f6940]">
-                        {new Date(fluxo.abertura).toLocaleDateString("pt-BR")}
-                      </td>
-                      <td className="p-3 font-semibold text-[#4f6940]">
-                        {fluxo.fechamento
-                          ? new Date(fluxo.fechamento).toLocaleDateString("pt-BR")
+                        {fluxo.data
+                          ? new Date(fluxo.data).toLocaleDateString("pt-BR")
+                          : fluxo.abertura
+                          ? new Date(fluxo.abertura).toLocaleDateString("pt-BR")
                           : "--"}
                       </td>
                       <td className="p-3 font-bold text-[#569a33]">
-                        R${" "}
-                        {fluxo.fechamento
-                        ? parseFloat(fluxo.valor_final - fluxo.valor_inicial)
-                          .toFixed(2)
-                          .replace(".", ",")
-                        : "--"}
+                          {formatCurrency(parseFloat(fluxo.valor_total) || parseFloat(fluxo.valor_final) || 0)}
                       </td>
+                      
                       <td className="p-3">
-                        <span className={`px-3 py-1 rounded-full text-xs font-semibold ${fluxo.status.toLowerCase() === 'fechado'
-                          ? 'bg-red-100 text-red-700'
-                          : 'bg-green-100 text-green-700'
-                          }`}>
-                          {fluxo.status}
-                        </span>
+                        {(() => {
+                          const statusLower = (fluxo.status || "").toString().toLowerCase();
+                          const statusClass =
+                            statusLower === "fechado"
+                              ? "bg-red-100 text-red-700"
+                              : statusLower === "aberto"
+                              ? "bg-green-100 text-green-700"
+                              : "bg-slate-100 text-slate-700";
+                          return (
+                            <span className={`px-3 py-1 rounded-full text-xs font-semibold ${statusClass}`}>
+                              {fluxo.status || (fluxo.caixas ? `${fluxo.caixas} caixas` : "--")}
+                            </span>
+                          );
+                        })()}
                       </td>
+                      
                     </tr>
                   ))
                 )}

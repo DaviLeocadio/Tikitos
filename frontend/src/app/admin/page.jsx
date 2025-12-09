@@ -5,6 +5,29 @@ import { getCookie } from "cookies-next/client";
 import Link from "next/link";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 
+// Formata números para moeda BRL: R$ XXX.XXX,XX
+function formatCurrency(value) {
+  if (value === null || value === undefined || value === "") return "R$ 0,00";
+
+  // If it's already a formatted string containing R$, return it
+  if (typeof value === "string" && value.includes("R$")) {
+    return value;
+  }
+
+  // Try to coerce to number if string like "1234.56" or "1234,56"
+  let num = value;
+  if (typeof value === "string") {
+    const cleaned = value.replace(/\./g, "").replace(/,/g, ".").replace(/[^0-9.\-]/g, "");
+    num = Number(cleaned);
+  } else {
+    num = Number(value);
+  }
+
+  if (isNaN(num)) return "R$ 0,00";
+
+  return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(num);
+}
+
 // Componente de Card de Métrica
 function MetricCard({ title, value, icon, color, trend, subValue, bg, text, text2 }) {
   return (
@@ -198,7 +221,7 @@ export default function AdminDashboard() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
               <MetricCard
                 title="Faturamento da Rede"
-                value={dashboardData.vendas.total}
+                value={formatCurrency(dashboardData.vendas.total)}
                 subValue={`${dashboardData.vendas.totalTransacoes} transações`}
                 icon="graph-up-arrow"
                 color="[#4EA912]"
@@ -210,7 +233,7 @@ export default function AdminDashboard() {
               <MetricCard
                 title="Contas a Pagar (Total)"
                 // Usando o dado exclusivo do controller Admin
-                value={dashboardData.fluxoCaixa.contasPendentes || "R$ 0,00"}
+                value={formatCurrency(dashboardData.fluxoCaixa.contasPendentes)}
                 icon="wallet2"
                 color="[#9D4E92]"
                 bg="[#F1B8E8]"
@@ -255,8 +278,8 @@ export default function AdminDashboard() {
                     <thead>
                       <tr className="border-b border-[#75BA51] text-left">
                         <th className="pb-3 text-sm font-semibold text-[#4F6940]">Filial</th>
-                        <th className="pb-3 text-sm font-semibold text-[#4F6940] text-right">Vendas</th>
-                        <th className="pb-3 text-sm font-semibold text-[#4F6940] text-right">Faturamento</th>
+                        <th className="pb-3 text-sm font-semibold text-[#4F6940] text-center">Vendas</th>
+                        <th className="pb-3 text-sm font-semibold text-[#4F6940] text-center">Faturamento</th>
                         <th className="pb-3 text-sm font-semibold text-[#4F6940] text-center">Status</th>
                       </tr>
                     </thead>
@@ -270,8 +293,8 @@ export default function AdminDashboard() {
                               </span>
                               {loja.nome}
                             </td>
-                            <td className="py-3 text-right text-[#76196C]">{loja.totalVendas}</td>
-                            <td className="py-3 text-right font-bold text-[#569a33]">{loja.valorTotal}</td>
+                            <td className="py-3 text-center text-[#76196C]">{loja.totalVendas}</td>
+                            <td className="py-3 text-center font-bold text-[#569a33]">{formatCurrency(loja.valorTotal)}</td>
                             <td className="py-3 text-center">
                               <span className="inline-block w-2 h-2 rounded-full bg-green-500"></span>
                             </td>
@@ -305,7 +328,7 @@ export default function AdminDashboard() {
                   </div>
                   <div className="mt-4 pt-4 border-t border-white/20 flex justify-between items-center">
                     <span className="text-sm text-[#C5FFAD]">Total gerado:</span>
-                    <span className="font-bold text-lg text-[#4EA912]">R$ {dashboardData.vendedores.valorMelhorVendedor.toFixed(2).replace('.', ',')}</span>
+                    <span className="font-bold text-lg text-[#4EA912]">{formatCurrency(dashboardData.vendedores.valorMelhorVendedor)}</span>
                   </div>
                 </div>
 
@@ -381,15 +404,15 @@ export default function AdminDashboard() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="flex flex-col p-4 bg-[#75BA51] rounded-xl">
                   <span className="text-sm font-semibold text-[#C5FFAD] mb-1">Entradas (Vendas)</span>
-                  <span className="text-2xl font-bold text-[#C5FFAD]">{dashboardData.fluxoCaixa.entradas}</span>
+                  <span className="text-2xl font-bold text-[#C5FFAD]">{formatCurrency(dashboardData.fluxoCaixa.entradas)}</span>
                 </div>
                 <div className="flex flex-col p-4 bg-red-300 rounded-xl">
                   <span className="text-sm font-semibold text-[#B21212] mb-1">Saídas (Despesas)</span>
-                  <span className="text-2xl font-bold text-[#B21212]">{dashboardData.fluxoCaixa.saidas}</span>
+                  <span className="text-2xl font-bold text-[#B21212]">{formatCurrency(dashboardData.fluxoCaixa.saidas)}</span>
                 </div>
                 <div className="flex flex-col p-4 bg-[#92EF6C] rounded-xl">
                   <span className="text-sm font-bold text-[#4F6940] mb-1">Saldo Líquido</span>
-                  <span className="text-2xl font-black text-[#4F6940]">{dashboardData.fluxoCaixa.saldo}</span>
+                  <span className="text-2xl font-black text-[#4F6940]">{formatCurrency(dashboardData.fluxoCaixa.saldo)}</span>
                 </div>
               </div>
             </div>
