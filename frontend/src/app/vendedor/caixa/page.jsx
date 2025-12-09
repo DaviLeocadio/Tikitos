@@ -368,7 +368,7 @@ export default function DashboardResumo() {
                       />
                     </div>
 
-                    <div className="w-full bg-[#92ef6c] h-[24%] rounded-lg">
+                    <div className="w-full h-[24%] rounded-lg">
                       <div className="space-y-2 max-h-[12vh] overflow-y-scroll p-1">
                         {resumo.historicoCompras?.map((h, i) => (
                           <div

@@ -20,9 +20,14 @@ export default function Carrinho({ isPagamento = false }) {
   const [desconto, setDesconto] = useState("");
   const [quantidade, setQuantidade] = useState(0);
   const [scroll, setScroll] = useState(false);
+  const [embalagem, setEmbalagem] = useState(false);
 
   useEffect(() => {
     setLoading(true);
+
+    const embalagemStorage = JSON.parse(localStorage.getItem("embalagem"));
+    setEmbalagem(!!embalagemStorage); // garante boolean
+
     const checkCarrinho = () => {
       const carrinho = obterCarrinho();
       setCarrinho(carrinho);
@@ -108,9 +113,8 @@ export default function Carrinho({ isPagamento = false }) {
   return (
     <>
       <div
-        className={`hidden lg:grid grid-cols-7 ${
-          isPagamento ? "h-full" : scroll ? "md:h-[100%]" : "md:h-[100%]"
-        }`}
+        className={`hidden lg:grid grid-cols-7 ${isPagamento ? "h-full" : scroll ? "md:h-[100%]" : "md:h-[100%]"
+          }`}
       >
         <div className="flex col-span-5 bg-[#E5B8F1] border-[3px] border-dashed border-[#B478AB] rounded-[50px] text-[#8c3e82] text-sm font-semibold p-5 min-h-[100%]  ">
           <div className="flex w-full h-full flex-col justify-between gap-3">
@@ -125,9 +129,8 @@ export default function Carrinho({ isPagamento = false }) {
                     size={20}
                     id="brushElement"
                     onClick={handleResetarCarrinho}
-                    className={`text-[25px] cursor-pointer ${
-                      styles.brush_animate
-                    }
+                    className={`text-[25px] cursor-pointer ${styles.brush_animate
+                      }
                     ${carrinho.length == 0 ? "pointer-events-none" : ""}`}
                   />
                 </div>
@@ -163,9 +166,8 @@ ${isPagamento ? "h-[420px] lg:h-[470px] 2xl:h-[500px]" : "h-7/12 2xl:h-10/15"}
               </div>
 
               <div
-                className={`px-1 flex flex-col justify-between gap-1 ${
-                  isPagamento ? "h-3/12 2xl:h-3/15" : " h-4/12 2xl:h-4/15"
-                }`}
+                className={`px-1 flex flex-col justify-between gap-1 ${isPagamento ? "h-3/12 2xl:h-3/15" : " h-4/12 2xl:h-4/15"
+                  }`}
               >
                 <CardDemo
                   quantidade={quantidade}
@@ -176,9 +178,13 @@ ${isPagamento ? "h-[420px] lg:h-[470px] 2xl:h-[500px]" : "h-7/12 2xl:h-10/15"}
                 <div className="bg-[#c5ffad] border-[3px] border-dashed border-[#75ba51] rounded-[50px] py-2 px-5 text-[#8c3e82] text-sm font-semibold">
                   <h3>
                     Total: R${" "}
-                    {Number(total * (1 - desconto / 100))
-                      .toFixed(2)
-                      .replace(".", ",")}
+                    {embalagem ?
+                      Number(total * (1 - desconto / 100) + 1.5)
+                        .toFixed(2)
+                        .replace(".", ",") :
+                      Number(total * (1 - desconto / 100))
+                        .toFixed(2)
+                        .replace(".", ",")}
                   </h3>
                 </div>
                 {isPagamento ? (

@@ -60,7 +60,7 @@ const VendedoresTable = memo(function VendedoresTable({
   });
 
   return (
-    <div className="bg-white rounded-xl border-3 border-dashed border-[#b478ab] overflow-hidden">
+    <div className="bg-[#f0e5f5] rounded-xl border-3 border-dashed border-[#b478ab] overflow-hidden">
       <div className="overflow-x-auto">
         <Table>
           <TableHeader className="bg-[#e8c5f1]">

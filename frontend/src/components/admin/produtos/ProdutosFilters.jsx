@@ -23,7 +23,7 @@ const ProdutosFilters = memo(function ProdutosFilters({
               type="text"
               value={globalFilter}
               onChange={(e) => setGlobalFilter(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-[#C5FFAD] rounded-lg border-2 border-[#b478ab] focus:outline-none focus:border-[#76196c]"
+              className="w-full pl-10 pr-4 py-2 text-[#559637] bg-[#C5FFAD] rounded-lg border-2 border-[#b478ab] focus:outline-none focus:border-[#76196c]"
               placeholder="Nome, código ou descrição..."
             />
           </div>

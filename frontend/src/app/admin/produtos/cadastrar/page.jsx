@@ -350,9 +350,9 @@ export default function CriarProdutoPage() {
 
   return (
     <div className="min-h-screen p-4 sm:p-8 flex items-center justify-center">
-      <div className="bg-white w-full max-w-2xl rounded-3xl shadow-2xl border-dashed border-4 border-[#d695e7] p-6 sm:p-8">
+      <div className="bg-[#C5FFAD] w-full max-w-2xl rounded-3xl shadow-2xl border-dashed border-4 border-[#d695e7] p-6 sm:p-8">
         {/* Cabeçalho */}
-        <div className="flex items-center justify-center gap-3 bg-gradient-to-r from-[#76196c] to-[#9b2b91] text-white px-6 py-4 rounded-2xl shadow-lg mb-6">
+        <div className="flex items-center justify-center gap-3 bg-gradient-to-r from-[#76196c] to-[#9b2b91] text-[#CAF4B7] px-6 py-4 rounded-2xl shadow-lg mb-6">
           <Package size={24} />
           <h1 className="text-xl sm:text-2xl font-bold tracking-wide">
             Cadastro de Produto
@@ -371,10 +371,10 @@ export default function CriarProdutoPage() {
               value={form.nome}
               onChange={handleChange}
               onBlur={handleBlur}
-              className={`w-full p-3 rounded-xl border-dashed border-2 transition-all ${
+              className={`w-full bg-[#9BF377] text-[#4F6940] p-3 rounded-xl border-1 transition-all ${
                 touched.nome && errors.nome
-                  ? "border-dashed border-red-400 focus:ring-2 focus:ring-red-300"
-                  : "border-dashed border-[#d695e7] focus:ring-2 focus:ring-[#76196c]"
+                  ? " border-red-400 focus:ring-2 focus:ring-red-300"
+                  : " border-[#d695e7] focus:ring-2 focus:ring-[#76196c]"
               }`}
               placeholder="Ex: Boneco Tikito Premium"
             />
@@ -397,10 +397,10 @@ export default function CriarProdutoPage() {
                 value={form.idCategoria}
                 onChange={handleChange}
                 onBlur={handleBlur}
-                className={`w-full p-3 rounded-xl border-dashed border-2 transition-all ${
+                className={`w-full p-3 bg-[#9BF377] text-[#4F6940] rounded-xl border-1 transition-all ${
                   touched.idCategoria && errors.idCategoria
-                    ? "border-dashed border-red-400 focus:ring-2 focus:ring-red-300"
-                    : "border-dashed border-[#d695e7] focus:ring-2 focus:ring-[#76196c]"
+                    ? "border-red-400 focus:ring-2 focus:ring-red-300"
+                    : "border-[#d695e7] focus:ring-2 focus:ring-[#76196c]"
                 }`}
               >
                 <option value="">Selecione...</option>
@@ -427,10 +427,10 @@ export default function CriarProdutoPage() {
                 value={form.idFornecedor}
                 onChange={handleChange}
                 onBlur={handleBlur}
-                className={`w-full p-3 rounded-xl border-dashed border-2 transition-all ${
+                className={`w-full p-3 bg-[#9BF377] text-[#4F6940] rounded-xl border-1 transition-all ${
                   touched.idFornecedor && errors.idFornecedor
-                    ? "border-dashed border-red-400 focus:ring-2 focus:ring-red-300"
-                    : "border-dashed border-[#d695e7] focus:ring-2 focus:ring-[#76196c]"
+                    ? "border-red-400 focus:ring-2 focus:ring-red-300"
+                    : "border-[#d695e7] focus:ring-2 focus:ring-[#76196c]"
                 }`}
               >
                 <option value="">Selecione...</option>
@@ -458,18 +458,18 @@ export default function CriarProdutoPage() {
               name="descricao"
               value={form.descricao}
               onChange={handleChange}
-              className="w-full p-3 rounded-xl border-dashed border-2 border-[#d695e7] focus:ring-2 focus:ring-[#76196c] transition-all resize-none"
+              className="w-full p-3 bg-[#9BF377] text-[#4F6940] rounded-xl border-1 border-[#d695e7] focus:ring-2 focus:ring-[#76196c] transition-all resize-none"
               rows={3}
               placeholder="Descreva as características do produto..."
               maxLength={500}
             ></textarea>
-            <div className="text-right text-xs text-gray-500 mt-1">
+            <div className="text-right text-xs text-[#4F6940] mt-1">
               {form.descricao.length}/500 caracteres
             </div>
           </div>
 
           {/* Valores Financeiros */}
-          <div className="bg-gradient-to-r from-[#f8f0fc] to-[#fef5ff] p-4 rounded-2xl border-dashed border-2 border-[#e8c5f1]">
+          <div className="bg-[#EBC7F5] p-4 rounded-2xl">
             <h3 className="text-[#76196c] font-bold mb-3 flex items-center gap-2">
               <DollarSign size={18} />
               Informações Financeiras
@@ -481,7 +481,7 @@ export default function CriarProdutoPage() {
                   Custo <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
-                  <span className="absolute left-3 top-3 text-gray-500">
+                  <span className="absolute left-3 top-3 text-[#76226D]">
                     R$
                   </span>
                   <input
@@ -492,10 +492,10 @@ export default function CriarProdutoPage() {
                     onBlur={handleBlur}
                     step="0.01"
                     min="0"
-                    className={`w-full pl-10 pr-3 py-3 rounded-xl border-dashed border-2 transition-all ${
+                    className={`w-full bg-[#D695E7] text-[#76226D] pl-10 pr-3 py-3 rounded-xl border-1 transition-all ${
                       touched.custo && errors.custo
-                        ? "border-dashed border-red-400 focus:ring-2 focus:ring-red-300"
-                        : "border-dashed border-[#d695e7] focus:ring-2 focus:ring-[#76196c]"
+                        ? " border-red-400 focus:ring-2 focus:ring-red-300"
+                        : " border-[#d695e7] focus:ring-2 focus:ring-[#76196c]"
                     }`}
                     placeholder="0.00"
                   />
@@ -521,10 +521,10 @@ export default function CriarProdutoPage() {
                     onBlur={handleBlur}
                     step="0.01"
                     min="0"
-                    className={`w-full pr-8 pl-3 py-3 rounded-xl border-dashed border-2 transition-all ${
+                    className={`w-full bg-[#D695E7] text-[#76226D] pr-8 pl-3 py-3 rounded-xl border-1 transition-all ${
                       touched.lucro && errors.lucro
-                        ? "border-dashed border-red-400 focus:ring-2 focus:ring-red-300"
-                        : "border-dashed border-[#d695e7] focus:ring-2 focus:ring-[#76196c]"
+                        ? " border-red-400 focus:ring-2 focus:ring-red-300"
+                        : " border-[#d695e7] focus:ring-2 focus:ring-[#76196c]"
                     }`}
                     placeholder="0.00"
                   />
@@ -546,7 +546,7 @@ export default function CriarProdutoPage() {
                   Preço Final <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
-                  <span className="absolute left-3 top-3 text-gray-500">
+                  <span className="absolute left-3 top-3 text-[#76226D]">
                     R$
                   </span>
                   <input
@@ -557,10 +557,10 @@ export default function CriarProdutoPage() {
                     onBlur={handleBlur}
                     step="0.01"
                     min="0"
-                    className={`w-full pl-10 pr-3 py-3 rounded-xl border-dashed border-2 transition-all font-semibold ${
+                    className={`w-full bg-[#D695E7] text-[#76226D] pl-10 pr-3 py-3 rounded-xl border-1 transition-all font-semibold ${
                       touched.preco && errors.preco
-                        ? "border-dashed border-red-400 focus:ring-2 focus:ring-red-300"
-                        : "border-dashed border-[#d695e7] focus:ring-2 focus:ring-[#76196c]"
+                        ? " border-red-400 focus:ring-2 focus:ring-red-300"
+                        : " border-[#d695e7] focus:ring-2 focus:ring-[#76196c]"
                     }`}
                     placeholder="0.00"
                   />
@@ -582,13 +582,13 @@ export default function CriarProdutoPage() {
             </label>
 
             {!preview ? (
-              <label className="flex flex-col items-center justify-center w-full h-40 border-dashed border-2 border-[#d695e7] rounded-2xl cursor-pointer hover:bg-[#fef5ff] transition-all">
+              <label className="flex flex-col items-center justify-center w-full h-40 border-2 border-[#d695e7] rounded-2xl cursor-pointer hover:bg-[#E5B8F1] transition-all">
                 <div className="flex flex-col items-center justify-center pt-5 pb-6">
                   <Upload className="w-10 h-10 mb-3 text-[#76196c]" />
                   <p className="mb-2 text-sm text-[#76196c] font-medium">
                     Clique para fazer upload
                   </p>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-[#4F6940]">
                     PNG (máx. 5MB)
                   </p>
                 </div>
@@ -623,7 +623,7 @@ export default function CriarProdutoPage() {
             disabled={submitting || !isFormValid()}
             className={`w-full flex items-center justify-center gap-2 font-bold py-4 rounded-2xl shadow-xl transition-all transform ${
               submitting || !isFormValid()
-                ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                ? "bg-[#75BA51] text-[#76196C] cursor-not-allowed"
                 : "bg-gradient-to-r from-[#75ba51] to-[#5a9940] hover:from-[#5a9940] hover:to-[#4f6940] text-white hover:scale-[1.02] active:scale-[0.98]"
             }`}
           >
@@ -641,7 +641,7 @@ export default function CriarProdutoPage() {
           </button>
 
           {/* Indicador de campos obrigatórios */}
-          <p className="text-center text-sm text-gray-500 mt-4">
+          <p className="text-center text-sm text-[#4F6940] mt-4">
             <span className="text-red-500">*</span> Campos obrigatórios
           </p>
         </div>

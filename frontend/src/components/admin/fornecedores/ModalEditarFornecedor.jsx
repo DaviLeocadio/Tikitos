@@ -172,7 +172,7 @@ export default function ModalEditarFornecedor({
               id="nome"
               name="nome"
               placeholder="Novo Fornecedor"
-              className="text-md font-semibold focus-visible:outline-none text-[#76196c] bg-verdeclaro px-2 py-1 rounded-lg border-1 border-dashed border-roxoescuro"
+              className="text-md font-semibold focus-visible:outline-none text-[#76196c] bg-verdeclaro px-2 py-1 rounded-lg border-1 border-roxoescuro"
               value={fornecedorInfo.nome}
               onChange={handleChange}
               required
@@ -189,7 +189,7 @@ export default function ModalEditarFornecedor({
             <select
               id="tipo"
               name="tipo"
-              className="text-md font-semibold focus-visible:outline-none text-[#76196c] bg-verdeclaro px-2 py-1 rounded-lg border-1 border-dashed border-roxoescuro"
+              className="text-md font-semibold focus-visible:outline-none text-[#76196c] bg-verdeclaro px-2 py-1 rounded-lg border-1 border-roxoescuro"
               value={fornecedorInfo.tipo}
               onChange={handleChange}
               required
@@ -215,7 +215,7 @@ export default function ModalEditarFornecedor({
               id="cnpj"
               name="cnpj"
               placeholder="00.000.000/0000-00"
-              className="text-md font-semibold focus-visible:outline-none text-[#76196c] bg-verdeclaro px-2 py-1 rounded-lg border-1 border-dashed border-roxoescuro"
+              className="text-md font-semibold focus-visible:outline-none text-[#76196c] bg-verdeclaro px-2 py-1 rounded-lg border-1 border-roxoescuro"
               value={fornecedorInfo.cnpj}
               onChange={handleChange}
               required
@@ -236,7 +236,7 @@ export default function ModalEditarFornecedor({
                 id="email"
                 name="email"
                 placeholder="fornecedor@email.com"
-                className="text-md font-semibold focus-visible:outline-none text-[#76196c] bg-verdeclaro px-2 py-1 rounded-lg border-1 border-dashed border-roxoescuro"
+                className="text-md font-semibold focus-visible:outline-none text-[#76196c] bg-verdeclaro px-2 py-1 rounded-lg border-1 border-roxoescuro"
                 value={fornecedorInfo.email}
                 onChange={handleChange}
                 required
@@ -258,7 +258,7 @@ export default function ModalEditarFornecedor({
                     id="telefone"
                     name="telefone"
                     placeholder="(99) 99999-9999"
-                    className="text-md font-semibold focus-visible:outline-none text-[#76196c] bg-verdeclaro px-2 py-1 rounded-lg border-1 border-dashed border-roxoescuro"
+                    className="text-md font-semibold focus-visible:outline-none text-[#76196c] bg-verdeclaro px-2 py-1 rounded-lg border-1 border-roxoescuro"
                     value={fornecedorInfo.telefone}
                     onChange={handleChange}
                     required
@@ -269,7 +269,7 @@ export default function ModalEditarFornecedor({
                     id="telefone"
                     name="telefone"
                     placeholder="(99) 9999-9999"
-                    className="text-md font-semibold focus-visible:outline-none text-[#76196c] bg-verdeclaro px-2 py-1 rounded-lg border-1 border-dashed border-roxoescuro"
+                    className="text-md font-semibold focus-visible:outline-none text-[#76196c] bg-verdeclaro px-2 py-1 rounded-lg border-1 border-roxoescuro"
                     value={fornecedorInfo.telefone}
                     onChange={handleChange}
                     required
@@ -294,7 +294,7 @@ export default function ModalEditarFornecedor({
               id="endereco"
               name="endereco"
               placeholder="Rua das Flores, 123"
-              className="text-md font-semibold focus-visible:outline-none text-[#76196c] bg-verdeclaro px-2 py-1 rounded-lg border-1 border-dashed border-roxoescuro"
+              className="text-md font-semibold focus-visible:outline-none text-[#76196c] bg-verdeclaro px-2 py-1 rounded-lg border-1 border-roxoescuro"
               value={fornecedorInfo.endereco}
               onChange={handleChange}
               required
@@ -315,7 +315,7 @@ export default function ModalEditarFornecedor({
                 id="cidade"
                 name="cidade"
                 placeholder="São Paulo"
-                className="text-md font-semibold focus-visible:outline-none text-[#76196c] bg-verdeclaro px-2 py-1 rounded-lg border-1 border-dashed border-roxoescuro"
+                className="text-md font-semibold focus-visible:outline-none text-[#76196c] bg-verdeclaro px-2 py-1 rounded-lg border-1 border-roxoescuro"
                 value={fornecedorInfo.cidade}
                 onChange={handleChange}
                 required
@@ -334,7 +334,7 @@ export default function ModalEditarFornecedor({
                 name="estado"
                 placeholder="SP"
                 maxLength={2}
-                className="text-md font-semibold uppercase focus-visible:outline-none text-[#76196c] bg-verdeclaro px-2 py-1 rounded-lg border-1 border-dashed border-roxoescuro"
+                className="text-md font-semibold uppercase focus-visible:outline-none text-[#76196c] bg-verdeclaro px-2 py-1 rounded-lg border-1 border-roxoescuro"
                 value={fornecedorInfo.estado}
                 onChange={handleChange}
                 required
@@ -354,7 +354,7 @@ export default function ModalEditarFornecedor({
               <select
                 id="status"
                 name="status"
-                className="text-md font-semibold focus-visible:outline-none text-[#76196c] bg-verdeclaro px-2 py-1 rounded-lg border-1 border-dashed border-roxoescuro"
+                className="text-md font-semibold focus-visible:outline-none text-[#76196c] bg-verdeclaro px-2 py-1 rounded-lg border-1 border-roxoescuro"
                 value={fornecedorInfo.status}
                 onChange={handleChange}
               >
@@ -376,7 +376,7 @@ export default function ModalEditarFornecedor({
               Cancelar
             </Button>
             <Button
-              className="flex-1 bg-[#76196c] text-white hover:bg-[#924187] font-semibold cursor-pointer"
+              className="flex-1 bg-[#76196c] text-[#CAF4B7] hover:bg-[#924187] font-semibold cursor-pointer"
               onClick={handleSalvar}
               disabled={loading}
             >

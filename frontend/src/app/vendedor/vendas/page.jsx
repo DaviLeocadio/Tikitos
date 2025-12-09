@@ -130,19 +130,19 @@ export default function VendasPage() {
     <>
       <div className="relative w-full p-[6%] pb-[0] pt-[2%]">
         {/* BOTÃO SIDEBAR */}
-        <div className="absolute top-12 left-25 z-20">
+        <div className="absolute top-7 left-20 z-20">
           <SidebarTrigger />
         </div>
 
         {/* BANNER */}
         <img
-          src="/img/vendas/banner_vendas2.png"
+          src="/img/vendas/banner_vendas3.png"
           className="w-full rounded-3xl"
         />
       </div>
 
       <div className="min-h-screen bg-[#DDF1D4] p-6">
-        <div className="max-w-6xl mx-auto space-y-6">
+        <div className="px-[4%] space-y-6">
           {/* Header */}
           {/* <div className="flex items-center justify-between">
           <h1 className="text-4xl font-black text-[#8c3e82] md:p-1 tracking-tight">
@@ -152,20 +152,20 @@ export default function VendasPage() {
 
           {/* Dashboard Cards */}
           <div className="grid grid-cols-1 items-center md:grid-cols-3 gap-4">
-            <div className="bg-[#E5B8F1] border-3 rounded-[50px] p-3">
+            <div className="bg-[#EBC7F5] border-3 rounded-[50px] p-3">
               <p className="text-sm text-center items-center font-semibold text-[#70B64C] ">
                 Faturamento
               </p>
-              <h2 className="text-4xl text-center font-black items-center text-[#559637] md:text4xl sm:text-[25px] sm:p-2">
+              <h2 className="text-4xl text-center font-black items-center text-[#559637] md:text4xl sm:text-[25px] p-0">
                 R$ {totalVendas.toFixed(2).replace(".", ",")}
               </h2>
             </div>
 
-            <div className="bg-[#C97FDA] border-3 rounded-[50px] p-3">
-              <p className="text-sm text-center font-semibold text-[#8c3e82]">
+            <div className="bg-[#F1B8E8] border-3 rounded-[50px] p-3">
+              <p className="text-sm text-center font-semibold text-[#65745A]">
                 Vendas
               </p>
-              <h2 className="text-4xl text-center font-black text-[#65745A]">
+              <h2 className="text-4xl text-center font-black text-[#65745A] p-0 md:text4xl sm:text-[25px]">
                 {quantidadeVendas}
               </h2>
             </div>
@@ -174,17 +174,24 @@ export default function VendasPage() {
               <p className="text-sm text-center font-semibold text-[#8c3e82]">
                 Ticket Médio
               </p>
-              <h2 className="text-4xl text-center font-black text-[#924187] md:text4xl sm:text-[25px] sm:p-1.5">
+              <h2 className="text-4xl text-center font-black text-[#924187] md:text4xl sm:text-[25px] p-0">
                 R$ {ticketMedio.toFixed(2).replace(".", ",")}
               </h2>
             </div>
           </div>
 
           {/* Filtros */}
-          <div className="bg-[#4F6940] border-[3px] border-dashed border-[#92EF6C] rounded-[50px] p-6">
-            <h3 className="text-lg font-bold text-[#92EF6C]">
+          <div className="rounded-[50px]">
+            <div className="flex gap-2 items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4EA912" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sliders-horizontal-icon lucide-sliders-horizontal"><path d="M10 5H3"/><path d="M12 19H3"/><path d="M14 3v4"/><path d="M16 17v4"/><path d="M21 12h-9"/><path d="M21 19h-5"/><path d="M21 5h-7"/><path d="M8 10v4"/><path d="M8 12H3"/></svg>
+              <h3 className="text-lg font-bold text-[#8C4B88]">
               Filtros de Busca
             </h3>
+            <p className="text-xs text-[#4EA912] font-medium pt-1">
+              (Mostrando {vendasFiltradas.length} de {vendas.length} vendas)
+            </p>
+            </div>
+            
 
             <div className="flex flex-col md:flex-row gap-4 mt-4">
               <input
@@ -208,10 +215,6 @@ export default function VendasPage() {
                 <option value="mes">Último mês</option>
               </select>
             </div>
-
-            <p className="text-xs text-[#92EF6C] mt-3 font-medium">
-              Mostrando {vendasFiltradas.length} de {vendas.length} vendas
-            </p>
           </div>
 
           {/* Lista de Vendas */}

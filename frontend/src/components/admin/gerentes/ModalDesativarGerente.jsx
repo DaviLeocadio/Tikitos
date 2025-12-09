@@ -95,10 +95,10 @@ export default function ModalDesativarGerente({
         </AlertDialogHeader>
 
         <div className="space-y-3">
-          <div className="bg-white rounded-lg p-4 border-2 border-dashed border-gray-300">
-            <p className="text-sm text-gray-600 font-semibold mb-2">Gerente:</p>
+          <div className=" rounded-lg p-4">
+            <p className="text-sm text-[#8F3D84] font-semibold mb-2">Gerente:</p>
             <p className="text-lg font-bold text-[#76196c]">{gerente?.nome}</p>
-            <p className="text-xs text-gray-500 mt-1">{gerente?.email}</p>
+            <p className="text-xs text-[#9D4E92] mt-1">{gerente?.email}</p>
           </div>
 
           <div
@@ -113,7 +113,7 @@ export default function ModalDesativarGerente({
                 size={20}
                 className={isInativo ? "text-[#569a33]" : "text-[#ff6b35]"}
               />
-              <p className="text-sm font-semibold text-gray-700">
+              <p className="text-sm font-semibold text-[#4F6940]">
                 {isInativo
                   ? "O gerente poderá fazer login e acessar suas vendas novamente."
                   : "O gerente não poderá fazer login. Suas informações serão mantidas."}
@@ -126,9 +126,9 @@ export default function ModalDesativarGerente({
           <AlertDialogCancel
             className={`${
               isInativo
-                ? "bg-white text-[#4f6940] hover:bg-gray-100 border-[#569a33]"
-                : "bg-white text-[#ff6b35] hover:bg-gray-100 border-[#ff6b35]"
-            } border-2 font-bold cursor-pointer`}
+                ? "text-[#4f6940] hover:bg-gray-100 border-[#569a33]"
+                : "text-[#ff6b35] hover:bg-gray-100 border-[#ff6b35]"
+            } border-2 font-bold cursor-pointer bg-[#EAFAE3]`}
             disabled={loading}
           >
             Cancelar

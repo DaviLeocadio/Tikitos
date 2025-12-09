@@ -224,10 +224,10 @@ export default function AdminDashboard() {
                 value={formatCurrency(dashboardData.vendas.total)}
                 subValue={`${dashboardData.vendas.totalTransacoes} transações`}
                 icon="graph-up-arrow"
-                color="[#4EA912]"
+                color="[#9D4E92]"
                 bg="[#92EF6C]"
-                text="[#4EA912]"
-                text2="[#4EA912]"
+                text="[#9D4E92]"
+                text2="[#9D4E92]"
                 trend={dashboardData.vendas.trend}
               />
               <MetricCard

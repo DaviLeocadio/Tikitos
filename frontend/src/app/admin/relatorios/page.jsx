@@ -51,11 +51,11 @@ export default function RelatoriosIndex() {
             <a
               key={c.href}
               href={c.href}
-              className="group bg-white dark:bg-neutral-900 shadow-lg rounded-2xl p-6 border border-neutral-200 dark:border-neutral-800 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+              className="group  bg-verdinho dark:bg-neutral-900 shadow-lg rounded-2xl p-6 border border-neutral-200 dark:border-neutral-800 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
             >
               <div className="flex items-center gap-3 mb-4">
                 <Icon className="w-8 h-8 text-roxo group-hover:scale-110 transition" />
-                <h2 className="text-xl font-bold group-hover:text-roxo transition">
+                <h2 className="text-xl text-roxoescuro font-bold group-hover:text-roxo transition">
                   {c.title}
                 </h2>
               </div>

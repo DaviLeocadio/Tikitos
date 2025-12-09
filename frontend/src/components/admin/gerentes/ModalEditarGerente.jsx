@@ -82,7 +82,7 @@ export default function ModalEditarGerente({
               type="text"
               id="nome"
               name="nome"
-              className="text-md font-semibold focus-visible:outline-none text-[#76196c] bg-verdeclaro px-2 py-1 rounded-lg border-1 border-dashed border-roxoescuro"
+              className="text-md font-semibold focus-visible:outline-none text-[#76196c] bg-verdeclaro px-2 py-1 rounded-lg border-1 border-roxoescuro"
               value={gerenteInfo.nome}
               onChange={handleChange}
             />
@@ -99,7 +99,7 @@ export default function ModalEditarGerente({
               type="text"
               id="email"
               name="email"
-              className="text-md font-semibold focus-visible:outline-none text-[#76196c] bg-verdeclaro px-2 py-1 rounded-lg border-1 border-dashed border-roxoescuro"
+              className="text-md font-semibold focus-visible:outline-none text-[#76196c] bg-verdeclaro px-2 py-1 rounded-lg border-1 border-roxoescuro"
               value={gerenteInfo.email}
               onChange={handleChange}
             />
@@ -115,7 +115,7 @@ export default function ModalEditarGerente({
               type="text"
               id="telefone"
               name="telefone"
-              className="text-md font-semibold focus-visible:outline-none text-[#76196c] bg-verdeclaro px-2 py-1 rounded-lg border-1 border-dashed border-roxoescuro"
+              className="text-md font-semibold focus-visible:outline-none text-[#76196c] bg-verdeclaro px-2 py-1 rounded-lg border-1 border-roxoescuro"
               value={gerenteInfo.telefone}
               onChange={handleChange}
             />
@@ -131,7 +131,7 @@ export default function ModalEditarGerente({
               type="text"
               id="cpf"
               name="cpf"
-              className="text-md font-semibold focus-visible:outline-none text-[#76196c] bg-verdeclaro px-2 py-1 rounded-lg border-1 border-dashed border-roxoescuro"
+              className="text-md font-semibold focus-visible:outline-none text-[#76196c] bg-verdeclaro px-2 py-1 rounded-lg border-1 border-roxoescuro"
               value={gerenteInfo.cpf}
               onChange={handleChange}
             />
@@ -147,7 +147,7 @@ export default function ModalEditarGerente({
               type="data"
               id="data_nasc"
               name="data_nasc"
-              className="text-md font-semibold focus-visible:outline-none text-[#76196c] bg-verdeclaro px-2 py-1 rounded-lg border-1 border-dashed border-roxoescuro"
+              className="text-md font-semibold focus-visible:outline-none text-[#76196c] bg-verdeclaro px-2 py-1 rounded-lg border-1 border-roxoescuro"
               value={gerenteInfo.data_nasc}
               onChange={handleChange}
             />
@@ -163,7 +163,7 @@ export default function ModalEditarGerente({
               type="text"
               id="endereco"
               name="endereco"
-              className="text-md font-semibold focus-visible:outline-none text-[#76196c] bg-verdeclaro px-2 py-1 rounded-lg border-1 border-dashed border-roxoescuro"
+              className="text-md font-semibold focus-visible:outline-none text-[#76196c] bg-verdeclaro px-2 py-1 rounded-lg border-1 border-roxoescuro"
               value={gerenteInfo.endereco}
               onChange={handleChange}
             />
@@ -181,7 +181,7 @@ export default function ModalEditarGerente({
               Cancelar
             </Button>
             <Button
-              className="flex-1 bg-[#76196c] text-white hover:bg-[#924187] font-semibold cursor-pointer"
+              className="flex-1 bg-[#76196c] text-[#C5FFAD] hover:bg-[#924187] font-semibold cursor-pointer"
               onClick={handleSalvar}
               disabled={loading}
             >

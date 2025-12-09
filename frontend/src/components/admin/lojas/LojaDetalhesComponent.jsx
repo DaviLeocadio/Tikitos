@@ -103,9 +103,8 @@ const FinanceMetric = ({
 }) => (
   <div className="flex items-center space-x-3 p-3 rounded-lg shadow-sm border border-gray-100">
     <div
-      className={`p-2 rounded-full flex-shrink-0 ${
-        isLarge ? "bg-opacity-20" : "bg-opacity-10"
-      }`}
+      className={`p-2 rounded-full flex-shrink-0 ${isLarge ? "bg-opacity-20" : "bg-opacity-10"
+        }`}
       style={{ backgroundColor: color + "30", color: color }}
     >
       <Icon size={isLarge ? 24 : 20} />
@@ -459,17 +458,17 @@ const LojaHeader = ({
         </button>
         <ModalDesativarFilial filial={loja} onSalvar={buscarDados} />
 
-        {(loja?.gerente && loja?.status == "ativo") && 
-          <>
-            <Link
-              href={`/admin/lojas/cadastrar?step=2&id_empresa=${lojaId}`}
-              className={`flex items-center px-4 py-2 bg-roxo text-white font-medium rounded-lg shadow-sm hover:bg- transition duration-150 text-sm `}
-            >
-              {" "}
-              <User2Icon /> Atribuir Gerente{" "}
-            </Link>
-            <EditarFilialDialog loja={loja} onUpdated={buscarDados} />
-          </>
+        {!loja?.gerente &&
+          <Link
+            href={`/admin/lojas/cadastrar?step=2&id_empresa=${lojaId}`}
+            className={`flex items-center px-4 py-2 bg-roxo text-white font-medium rounded-lg shadow-sm hover:bg- transition duration-150 text-sm `}
+          >
+            {" "}
+            <User2Icon /> Atribuir Gerente{" "}
+          </Link>
+        }
+        {loja?.status == "ativo" &&
+          <EditarFilialDialog loja={loja} onUpdated={buscarDados} />
         }
         <button
           onClick={handleRefresh}
@@ -577,9 +576,8 @@ export default function LojaDetalhesComponent() {
 
     return (
       <div
-        className={`flex flex-col gap-8 ${
-          loja.status === "inativo" ? "opacity-30 pointer-events-none" : ""
-        }`}
+        className={`flex flex-col gap-8 ${loja.status === "inativo" ? "opacity-30 pointer-events-none" : ""
+          }`}
       >
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-1 space-y-8 flex">

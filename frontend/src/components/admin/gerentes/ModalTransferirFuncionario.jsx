@@ -114,10 +114,10 @@ export default function ModalTransferirFuncionario({ funcionario, onClose }) {
     <div className="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm z-50 p-4">
 
       {/* CONTAINER DO MODAL */}
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 border-4 border-[#e8c5f1] relative">
+      <div className="bg-[#CAF4B7] rounded-2xl shadow-2xl w-full max-w-md p-6 border-4 border-[#e8c5f1] relative">
 
         {/* CABEÇALHO */}
-        <div className="bg-[#76196c] text-white px-5 py-3 rounded-xl -mt-10 mb-4 shadow-md text-center">
+        <div className="bg-[#76196c] text-[#CAF4B7] px-5 py-3 rounded-xl -mt-10 mb-4 shadow-md text-center">
           <h2 className="text-xl font-bold tracking-wide">
             Transferir {funcionario.perfil === "gerente" ? "Gerente" : "Funcionário"}
           </h2>
@@ -127,7 +127,7 @@ export default function ModalTransferirFuncionario({ funcionario, onClose }) {
         <p className="text-gray-700 mb-4 leading-relaxed">
           Funcionário:{" "}
           <strong className="text-[#76196c]">{funcionario.nome}</strong>
-          <br />
+          <p></p>
           Perfil atual:{" "}
           <strong className="text-[#924187]">{funcionario.perfil}</strong>
         </p>

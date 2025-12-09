@@ -19,6 +19,10 @@ export default function PagamentoContainer() {
     setFidelidade(pontosAleatorios);
   }, []);
 
+  useEffect(() => {
+     localStorage.setItem("embalagem", JSON.stringify(embalagem));
+  }, [embalagem])
+
   function renderFidelidade() {
     const itens = [];
 
@@ -117,17 +121,17 @@ export default function PagamentoContainer() {
           <div className="grid grid-cols-3 items-center">
             <div className="">
               <h3 className="col-span-1 text-lg sm:text-xl font-bold text-verdefolha">
-              Nota Fiscal (CPF)
-            </h3>
-            {cpf && cpf.replace(/\D/g, '').length === 11 && (
-              <p className="text-verdao text-sm flex items-center gap-1">
-                <i className="bi bi-check-circle-fill" />
-                CPF válido
-              </p>
-            )}
+                Nota Fiscal (CPF)
+              </h3>
+              {cpf && cpf.replace(/\D/g, '').length === 11 && (
+                <p className="text-verdao text-sm flex items-center gap-1">
+                  <i className="bi bi-check-circle-fill" />
+                  CPF válido
+                </p>
+              )}
             </div>
-            
-            
+
+
             <InputCPFMask
               id="cpf"
               type="text"

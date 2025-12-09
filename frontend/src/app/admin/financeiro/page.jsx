@@ -411,63 +411,63 @@ export default function AdminFinanceiro() {
         {/* Cards de Resumo */}
         {resumo && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-            <div className="bg-white rounded-xl border-3 border-dashed border-[#569a33] p-6">
+            <div className="bg-verdefundo rounded-xl border-3 border-dashed border-[#569a33] p-6">
               <div className="flex justify-between items-start">
                 <div>
-                  <p className="text-sm font-semibold text-gray-600 mb-1">
+                  <p className="text-sm font-semibold text-roxo mb-1">
                     Total de vendas
                   </p>
-                  <p className="text-3xl font-bold text-[#569a33]">
+                  <p className="text-3xl font-bold text-roxo">
                     {formatCurrency(totalVendas)}
                   </p>
                 </div>
-                <i className="bi bi-arrow-up-circle text-3xl text-[#569a33]"></i>
+                <i className="bi bi-arrow-up-circle text-3xl text-roxo"></i>
               </div>
             </div>
 
-            <div className="bg-white rounded-xl border-3 border-dashed border-[#ff6b6b] p-6">
+            <div className="bg-roxo rounded-xl border-3 border-dashed border-text-roxoescuro p-6">
               <div className="flex justify-between items-start">
                 <div>
-                  <p className="text-sm font-semibold text-gray-600 mb-1">
+                  <p className="text-sm font-semibold text-lilasclaro mb-1">
                     Despesas pagas
                   </p>
-                  <p className="text-3xl font-bold text-[#ff6b6b]">
+                  <p className="text-3xl font-bold text-lilasclaro">
                     {formatCurrency(despesasPagas)}
                   </p>
                 </div>
-                <i className="bi bi-arrow-down-circle text-3xl text-[#ff6b6b]"></i>
+                <i className="bi bi-arrow-down-circle text-3xl text-lilasclaro"></i>
               </div>
             </div>
 
-            <div className="bg-white rounded-xl border-3 border-dashed border-[#ff9800] p-6">
+            <div className="bg-verdefundo rounded-xl border-3 border-dashed border-[#569a33] p-6">
               <div className="flex justify-between items-start">
                 <div>
-                  <p className="text-sm font-semibold text-gray-600 mb-1">
+                  <p className="text-sm font-semibold text-roxo mb-1">
                     A Pagar
                   </p>
-                  <p className="text-3xl font-bold text-[#ff9800]">
+                  <p className="text-3xl font-bold text-roxo">
                     {formatCurrency(despesasPendentes)}
                   </p>
                 </div>
-                <i className="bi bi-clock-history text-3xl text-[#ff9800]"></i>
+                <i className="bi bi-clock-history text-3xl text-roxo"></i>
               </div>
             </div>
 
-            <div className="bg-white rounded-xl border-3 border-dashed border-[#76196c] p-6">
+            <div className="bg-roxo rounded-xl border-3 border-dashed border-text-roxoescuro p-6">
               <div className="flex justify-between items-start">
                 <div>
-                  <p className="text-sm font-semibold text-gray-600 mb-1">
+                  <p className="text-sm font-semibold text-lilasclaro mb-1">
                     Saldo
                   </p>
                   <p
-                    className={`text-3xl font-bold ${resumo.saldo >= 0 ? "text-[#569a33]" : "text-[#ff6b6b]"
+                    className={`text-3xl font-bold ${resumo.saldo >= 0 ? "text-lilasclaro" : "text-lilasclaro"
                       }`}
                   >
                     {formatCurrency((Number(totalVendas) || 0) - (Number(despesasPagas) || 0))}
 
                   </p>
                 </div>
-                <i className="bi bi-wallet2 text-3xl text-[#76196c]"></i>
+                <i className="bi bi-wallet2 text-3xl text-lilasclaro"></i>
               </div>
             </div>
           </div>
@@ -546,7 +546,7 @@ export default function AdminFinanceiro() {
                   despesasPaginadas.map((despesa) => (
                     <tr
                       key={despesa.id_despesa}
-                      className="border-b border-[#b478ab]/30 hover:bg-[#f0e5f5]/30"
+                      className="border-b bg-[#f0e5f5]  border-[#b478ab]/30 hover:bg-[#f0e5f5]/30"
                     >
                       <td className="p-4 font-semibold text-[#4f6940]">
                         {despesa.descricao}

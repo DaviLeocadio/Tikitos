@@ -10,7 +10,7 @@ const IntegrantesFilters = memo(function IntegrantesFilters({
   buscarGerentes
 }) {
   return (
-    <div className="bg-white rounded-xl border-3 border-dashed border-[#b478ab] p-5 space-y-4">
+    <div className="bg-[#f0e5f5] rounded-xl border-3 border-dashed border-[#b478ab] p-5 space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         {/* Busca */}
         <div className="md:col-span-2">
