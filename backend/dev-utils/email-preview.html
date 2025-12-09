@@ -1,0 +1,194 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt-BR">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tikitos - Verificação</title>
+  <style type="text/css">
+    /* Reset & Client-Specific Styles */
+    body { margin: 0; padding: 0; width: 100% !important; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; background-color: #e8c5f1; }
+    table, td { border-collapse: collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
+    img { border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; display: block; }
+    a { text-decoration: none; }
+    
+    /* Fonts */
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap');
+    
+    /* Bubble and digit defaults (improves stacking and readability) */
+    .digit-box { display: inline-block; }
+
+    /* Mobile Responsive */
+    @media only screen and (max-width: 600px) {
+      .container { width: 100% !important; padding: 20px 10px !important; }
+      .gift-img { width: 100% !important; max-width: 480px !important; }
+      /* smaller negative margin so bubble doesn't cover image content on mobile */
+      .bubble-container { margin-top: -90px !important; width: 90% !important; padding: 10px 8px 14px 8px !important; }
+      .digit-box { width: 40px !important; height: 48px !important; font-size: 20px !important; line-height: 48px !important; }
+    }
+
+    /* Desktop tweaks */
+    @media only screen and (min-width: 601px) {
+      .gift-img { max-width: 560px; }
+      .bubble-container { margin-top: -110px; padding: 14px 12px 20px 12px; }
+      .digit-box { width: 42px; height: 52px; font-size: 24px; line-height: 52px; }
+    }
+  </style>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^19.2.1"
+  }
+}
+</script>
+</head>
+<body style="margin: 0; padding: 0; background-color: #e8c5f1; font-family: 'Poppins', Arial, sans-serif;">
+
+  <!-- Main Wrapper -->
+  <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #e8c5f1;">
+    <tr>
+      <td align="center" style="padding: 40px 10px;" class="container">
+        
+        <!-- Content Container (Max 600px) -->
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+          
+          <!-- Logo -->
+          <tr>
+            <td align="center" style="padding-bottom: 20px;">
+             <img src="img/logo.png" alt="Tikitos" width="220" style="display:block;border:0;max-width:100%;width:220px;"/>
+            </td>
+          </tr>
+
+          <!-- Title -->
+          <tr>
+            <td align="center" style="padding-bottom: 10px;">
+              <h2 style="margin: 0; color: #924187; font-family: 'Poppins', Arial, sans-serif; font-size: 26px; font-weight: 800; letter-spacing: -0.5px;">
+                Código de verificação:
+              </h2>
+            </td>
+          </tr>
+
+          <!-- Intro Text -->
+          <tr>
+            <td align="center" style="padding-bottom: 30px; padding-left: 10px; padding-right: 10px;">
+              <p style="margin: 0; color: #666666; font-family: 'Poppins', Arial, sans-serif; font-size: 16px; line-height: 1.5;">
+                Use o código abaixo para confirmar seu acesso à Tikitos e continuar espalhando alegria com a gente :)
+              </p>
+            </td>
+          </tr>
+
+          <!-- Visual + Code Area -->
+          <tr>
+            <td align="center" style="position: relative; padding-bottom: 20px;">
+              
+              <!-- Wrapper for overlapping effect -->
+              <!-- 
+                 We use a max-width container. 
+                 The Image is placed first.
+                 The Code Bubble is placed second with a negative top margin to pull it up over the image.
+              -->
+              <div style="width: 100%; max-width: 600px; margin: 0 auto; text-align: center;">
+                
+                <!-- Gift Image -->
+                <img src="img/gift-box.png" alt="Gift Box" width="560" class="gift-img" style="width: 100%; max-width: 560px; display: block; border: 0;" />
+                <!-- Green Code Bubble -->
+                <!-- margin-top negative value pulls this div UP over the image.
+                     z-index ensures it sits on top.
+                -->
+                <div class="bubble-container" style="position: relative; z-index: 10; width: 100%; margin: 0 auto; margin-top: -255px; border-radius: 30px; padding: 12px 10px 18px 10px; background-color: rgba(79,105,64,0.00); max-width: 480px; text-align: center;">
+                  
+                  <p style="margin: 0 0 12px 0; color: #4f6940; font-family: 'Poppins', Arial, sans-serif; font-size: 15px; font-weight: 700;">
+                    Seu código de verificação é:
+                  </p>
+
+                  <!-- Digits Table -->
+                  <table border="0" cellpadding="0" cellspacing="0" align="center" style="margin: 8px auto 0 auto;">
+                    <tr>
+                      
+      <td style="padding: 0 3px;">
+        <div class="digit-box" style="width: 42px; height: 52px; border: 3px dashed #76196c; border-radius: 16px; line-height: 52px; text-align: center; color: #4F6940; background-color: #DABCE1; font-size: 24px; font-weight: 800; font-family: 'Poppins', Arial, sans-serif;">2</div>
+      </td>
+
+      <td style="padding: 0 3px;">
+        <div class="digit-box" style="width: 42px; height: 52px; border: 3px dashed #76196c; border-radius: 16px; line-height: 52px; text-align: center; color: #4F6940; background-color: #DABCE1; font-size: 24px; font-weight: 800; font-family: 'Poppins', Arial, sans-serif;">7</div>
+      </td>
+
+      <td style="padding: 0 3px;">
+        <div class="digit-box" style="width: 42px; height: 52px; border: 3px dashed #76196c; border-radius: 16px; line-height: 52px; text-align: center; color: #4F6940; background-color: #DABCE1; font-size: 24px; font-weight: 800; font-family: 'Poppins', Arial, sans-serif;">7</div>
+      </td>
+
+      <td style="padding: 0 3px;">
+        <div class="digit-box" style="width: 42px; height: 52px; border: 3px dashed #76196c; border-radius: 16px; line-height: 52px; text-align: center; color: #4F6940; background-color: #DABCE1; font-size: 24px; font-weight: 800; font-family: 'Poppins', Arial, sans-serif;">9</div>
+      </td>
+
+      <td style="padding: 0 3px;">
+        <div class="digit-box" style="width: 42px; height: 52px; border: 3px dashed #76196c; border-radius: 16px; line-height: 52px; text-align: center; color: #4F6940; background-color: #DABCE1; font-size: 24px; font-weight: 800; font-family: 'Poppins', Arial, sans-serif;">7</div>
+      </td>
+
+      <td style="padding: 0 3px;">
+        <div class="digit-box" style="width: 42px; height: 52px; border: 3px dashed #76196c; border-radius: 16px; line-height: 52px; text-align: center; color: #4F6940; background-color: #DABCE1; font-size: 24px; font-weight: 800; font-family: 'Poppins', Arial, sans-serif;">6</div>
+      </td>
+                    </tr>
+                  </table>
+                  
+                </div>
+
+                <!-- Spacer div to push footer down if overlap hides bottom of image visually (though negative margin pulls up, so element height is reduced).
+                     We add some margin bottom to the bubble wrapper or here to ensure spacing from footer.
+                -->
+                <div style="height: 30px;"></div>
+
+              </div>
+            </td>
+          </tr>
+
+          <!-- Reminder Section -->
+          <tr>
+            <td align="center" style="padding-top: 20px;">
+              <h3 style="margin: 75px 0 5px 0; color: #924187; font-family: 'Poppins', Arial, sans-serif; font-size: 20px; font-weight: 800;">
+                Lembrete importante!
+              </h3>
+              <p style="margin: 0; color: #666666; font-family: 'Poppins', Arial, sans-serif; font-size: 15px; line-height: 1.4;">
+                O código é válido por <strong style="color: #666666;">tempo limitado</strong>,<br/>
+                então use rapidinho!
+              </p>
+            </td>
+          </tr>
+
+          <!-- Contact Section -->
+          <tr>
+            <td align="center" style="padding-top: 35px;">
+              <p style="margin: 0 0 10px 0; color: #4f6940; font-family: 'Poppins', Arial, sans-serif; font-size: 15px; font-weight: 700;">
+                Para dúvidas ou ajuda, entre em contato com a gente:
+              </p>
+              <!-- Button -->
+              <table border="0" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td align="center" style="background-color: rgba(255,255,255,0.5); border-radius: 16px;">
+                    <a href="mailto:contato@tikitos.com.br" style="display: block; padding: 10px 20px; color: #4F6940; background-color: #DABCE1; font-family: 'Poppins', Arial, sans-serif; font-size: 14px; font-weight: 600; text-decoration: none; border: 1px solid #d695e7; border-radius: 16px;">
+                      <span style="font-size: 16px; vertical-align: middle; margin-right: 5px;">✉️</span>
+                      contato@tikitos.com.br
+                    </a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Signature -->
+          <tr>
+            <td align="center" style="padding-top: 40px; padding-bottom: 20px;">
+              <p style="margin: 0; color: #924187; font-family: 'Poppins', Arial, sans-serif; font-size: 16px; font-weight: 800; line-height: 1.4;">
+                Com carinho,<br/>
+                Equipe Tikitos!
+              </p>
+            </td>
+          </tr>
+
+        </table>
+
+      </td>
+    </tr>
+  </table>
+
+</body>
+</html>

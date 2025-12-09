@@ -65,6 +65,9 @@ export default function Login() {
         if (data.usuario.perfil == "admin") {
           return (window.location.href = "/admin");
         }
+      } else {
+        console.log(data)
+        return aparecerToast(data.error)
       }
 
       return;

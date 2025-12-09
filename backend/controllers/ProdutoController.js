@@ -190,7 +190,7 @@ const criarProdutoController = async (req, res) => {
       if (empresas && empresas.length > 0) {
         await Promise.all(
           empresas.map((e) =>
-            criarProdutoLoja({ id_produto: produto, id_empresa: e.id_empresa })
+            criarProdutoLoja({ id_produto: produto, id_empresa: e.id_empresa, estoque: 25 })
           )
         );
       }

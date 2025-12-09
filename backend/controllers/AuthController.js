@@ -33,7 +33,7 @@ const generateCode = async (usuarioId, email) => {
   await sendMail(
     email,
     "Código de Acesso - Tikitos",
-    `Seu código de acesso é: ${token}. Use-o para definir sua senha.`
+    token
   );
 };
 
