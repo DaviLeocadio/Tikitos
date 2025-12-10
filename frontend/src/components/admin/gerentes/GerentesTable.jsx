@@ -81,7 +81,7 @@ const VendedoresTable = memo(function VendedoresTable({
                 <TableCell colSpan={columns.length} className="h-24 text-center">
                   <div className="flex items-center justify-center gap-2">
                     <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#76196c]"></div>
-                    <span className="text-[#8c3e82]">Carregando vendedores...</span>
+                    <span className="text-[#8c3e82]">Carregando gerentes...</span>
                   </div>
                 </TableCell>
               </TableRow>

@@ -13,10 +13,11 @@ export default function GerenteLayout({ children }) {
     <>
       <SidebarProvider>
         <GerenteSidebar />
-        <main className="w-full">
-          {children}</main>
+        <div className="flex flex-col">
+          <main>{children}</main>
+          <Footer />
+        </div>
       </SidebarProvider> 
-      <Footer/>
     </>
   );
 }

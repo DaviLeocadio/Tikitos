@@ -97,14 +97,14 @@ console.log(vendedor)
         </AlertDialogHeader>
 
         <div className="space-y-3">
-          <div className="bg-white rounded-lg p-4 border-2 border-dashed border-gray-300">
-            <p className="text-sm text-gray-600 font-semibold mb-2">
+          <div className="rounded-lg p-4">
+            <p className="text-sm text-[#8C3E82] font-semibold mb-2">
               Integrante:
             </p>
             <p className="text-lg font-bold text-[#76196c]">
               {vendedor?.nome}
             </p>
-            <p className="text-xs text-gray-500 mt-1">{vendedor?.email}</p>
+            <p className="text-xs text-[#9D4E92] mt-1">{vendedor?.email}</p>
           </div>
 
           <div
@@ -119,7 +119,7 @@ console.log(vendedor)
                 size={20}
                 className={isInativo ? "text-[#569a33]" : "text-[#ff6b35]"}
               />
-              <p className="text-sm font-semibold text-gray-700">
+              <p className="text-sm font-semibold text-[#FF6B35]">
                 {isInativo
                   ? "O integrante poderá fazer login e acessar suas vendas novamente."
                   : "O integrante não poderá fazer login. Suas informações serão mantidas."}

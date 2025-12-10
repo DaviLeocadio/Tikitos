@@ -244,7 +244,28 @@ export default function CardProduto({ produto }) {
               </TooltipContent>
             </Tooltip>
 
-            <AlertDialogContent className="bg-[#edd5f4]">
+            <AlertDialogContent className="bg-[#edd5f4] flex items-center">
+              <AlertDialogCancel
+                className="
+    p-1
+    w-10 h-10
+    bg-transparent
+    border-none
+    outline-none
+    shadow-none
+    ring-0
+    absolute
+    top-2 right-2
+    flex items-center justify-center
+    cursor-pointer
+    transition
+    hover:bg-[#EBC7F5]
+    text-[#73806A]
+    hover:text-[#73806A]
+  "
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="84" height="84" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x-icon lucide-x"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
+              </AlertDialogCancel>
               <AlertDialogHeader className="items-center">
                 <AlertDialogTitle className="flex flex-col justify-center items-center">
                   <img className="h-25" src={`${categorias[categoria]}`} alt="categoria" />
@@ -258,12 +279,12 @@ export default function CardProduto({ produto }) {
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter className="sm:justify-center">
-                <AlertDialogCancel className="bg-[#65745A] rounded-[50px] mt-2 py-2 px-5 text-[#caf4b7] text-sm font-semibold hover:bg-[#65745A] hover:text-[#caf4b7] border-none outline-none ring-0 focus:border-none focus:outline-none focus:ring-0">
-                    Fechar
-                  </AlertDialogCancel>
-                <button className="bg-[#65745A] rounded-[50px] mt-2 py-2 px-5 text-[#caf4b7] text-sm font-semibold">
+                {/* <AlertDialogCancel className="bg-[#65745A] rounded-[50px] mt-2 py-2 px-5 text-[#caf4b7] text-sm font-semibold hover:bg-[#65745A] hover:text-[#caf4b7] border-none outline-none ring-0 focus:border-none focus:outline-none focus:ring-0">
+                  Fechar
+                </AlertDialogCancel> */}
+                {/* <button className="bg-[#65745A] rounded-[50px] mt-2 py-2 px-5 text-[#caf4b7] text-sm font-semibold">
                   Relatar erro
-                </button>
+                </button> */}
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
@@ -285,7 +306,30 @@ export default function CardProduto({ produto }) {
               </TooltipContent>
             </Tooltip>
 
-            <AlertDialogContent className="bg-[#edd5f4]">
+            <AlertDialogContent className="bg-[#edd5f4] flex justify-center items-center">
+              <AlertDialogCancel
+                className="
+    p-1
+    w-10 h-10
+    bg-transparent
+    border-none
+    outline-none
+    shadow-none
+    ring-0
+    absolute
+    top-2 right-2
+    flex items-center justify-center
+    cursor-pointer
+    transition
+    hover:bg-[#EBC7F5]
+    text-[#73806A]
+    hover:text-[#73806A]
+  "
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="84" height="84" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x-icon lucide-x"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
+              </AlertDialogCancel>
+
+
               <AlertDialogHeader className="items-center">
                 <AlertDialogTitle>
                   <div
@@ -318,12 +362,17 @@ export default function CardProduto({ produto }) {
                 </AlertDialogTitle>
 
                 <AlertDialogFooter className="sm:justify-center">
-                  <AlertDialogCancel className="bg-[#65745A] rounded-[50px] mt-2 py-2 px-5 text-[#caf4b7] text-sm font-semibold hover:bg-[#65745A] hover:text-[#caf4b7] border-none outline-none ring-0">
+                  {/* <AlertDialogCancel className="bg-[#65745A] rounded-[50px] mt-2 py-2 px-5 text-[#caf4b7] text-sm font-semibold hover:bg-[#65745A] hover:text-[#caf4b7] border-none outline-none ring-0">
                     Fechar
-                  </AlertDialogCancel>
-                  <button className="bg-[#65745A] rounded-[50px] mt-2 py-2 px-5 text-[#caf4b7] text-sm font-semibold">
+                  </AlertDialogCancel> */}
+
+
+
+
+
+                  {/* <button className="bg-[#65745A] rounded-[50px] mt-2 py-2 px-5 text-[#caf4b7] text-sm font-semibold">
                     Relatar defeito
-                  </button>
+                  </button> */}
                 </AlertDialogFooter>
               </AlertDialogHeader>
             </AlertDialogContent>

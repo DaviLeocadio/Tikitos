@@ -214,7 +214,7 @@ const DespesasTable = memo(function DespesasTable({
                         onKeyDown={(e) => {
                           if (e.key === 'Enter' || e.key === ' ') handleSort(col.accessorKey);
                         }}
-                        className="flex items-center gap-2 font-bold hover:text-[#924187] cursor-pointer"
+                        className="flex items-center gap-2 font-bold cursor-pointer"
                       >
                         {renderHeader(col)}
                         <i className={`bi bi-arrow-${sortKey === col.accessorKey && sortDir === 'asc' ? 'up' : 'down'}-short text-lg`} />

@@ -113,7 +113,7 @@ export default function ModalDesativarGerente({
                 size={20}
                 className={isInativo ? "text-[#569a33]" : "text-[#ff6b35]"}
               />
-              <p className="text-sm font-semibold text-[#4F6940]">
+              <p className="text-sm font-semibold text-[#FF6B35]">
                 {isInativo
                   ? "O gerente poderá fazer login e acessar suas vendas novamente."
                   : "O gerente não poderá fazer login. Suas informações serão mantidas."}

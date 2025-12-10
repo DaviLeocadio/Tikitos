@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { SidebarTrigger } from "@/components/ui/sidebar";
+
 
 import {
   Dialog,
@@ -365,434 +367,442 @@ export default function AdminFinanceiro() {
   }, [filtroStatus]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br to-[#f0e5f5] p-5 lg:p-8">
-      <div className="max-w-7xl mx-auto space-y-6">
+    <>
+      <div className="min-h-screen p-5 lg:p-8">
+        <div className="max-w-7xl mx-auto space-y-6">
 
-        {/* Header */}
-        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
-          <div>
-            <h1 className="text-3xl lg:text-4xl font-bold text-[#76196c]">
-              Financeiro
-            </h1>
-            <p className="text-lg text-[#8c3e82] mt-1">
-              Gestão de despesas e fluxo de caixa
-            </p>
-          </div>
-
-          <div className="flex gap-5 flex-wrap ">
-            {/* Filtros de período (início/fim) */}
-            <div className="flex items-center gap-3 justify-end">
-              <label className="text-sm text-[#76196c] font-semibold">De</label>
-              <input
-                type="date"
-                value={filterStartDate}
-                onChange={(e) => setFilterStartDate(e.target.value)}
-                className="p-2 rounded-lg border-2 border-[#b478ab]"
-              />
-              <label className="text-sm text-[#76196c] font-semibold">Até</label>
-              <input
-                type="date"
-                value={filterEndDate}
-                onChange={(e) => setFilterEndDate(e.target.value)}
-                className="p-2 rounded-lg border-2 border-[#b478ab]"
-              />
+          {/* Header */}
+          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+            <div>
+              <h1 className="text-3xl lg:text-4xl font-bold text-[#76196c]">
+                <SidebarTrigger /> Financeiro
+              </h1>
+              <p className="text-lg text-[#8c3e82] mt-1">
+                Gestão de despesas e fluxo de caixa
+              </p>
             </div>
 
-            <button
-              onClick={() => setModalAberto(true)}
-              className="bg-[#569a33] text-white px-6 py-3 rounded-xl font-bold hover:bg-[#4f6940] transition flex items-center gap-2 cursor-pointer"
-            >
-              <i className="bi bi-plus-circle text-xl"></i>
-              Nova Despesa
-            </button>
-          </div>
-        </div>
-
-        {/* Cards de Resumo */}
-        {resumo && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-            <div className="bg-verdefundo rounded-xl border-3 border-dashed border-[#569a33] p-6">
-              <div className="flex justify-between items-start">
-                <div>
-                  <p className="text-sm font-semibold text-roxo mb-1">
-                    Total de vendas
-                  </p>
-                  <p className="text-3xl font-bold text-roxo">
-                    {formatCurrency(totalVendas)}
-                  </p>
-                </div>
-                <i className="bi bi-arrow-up-circle text-3xl text-roxo"></i>
+            <div className="flex gap-5 flex-wrap ">
+              {/* Filtros de período (início/fim) */}
+              <div className="flex items-center gap-3 justify-end">
+                <label className="text-sm text-[#76196c] font-semibold">De</label>
+                <input
+                  type="date"
+                  value={filterStartDate}
+                  onChange={(e) => setFilterStartDate(e.target.value)}
+                  className="p-2 rounded-lg border-2 border-[#b478ab]"
+                />
+                <label className="text-sm text-[#76196c] font-semibold">Até</label>
+                <input
+                  type="date"
+                  value={filterEndDate}
+                  onChange={(e) => setFilterEndDate(e.target.value)}
+                  className="p-2 rounded-lg border-2 border-[#b478ab]"
+                />
               </div>
-            </div>
 
-            <div className="bg-roxo rounded-xl border-3 border-dashed border-text-roxoescuro p-6">
-              <div className="flex justify-between items-start">
-                <div>
-                  <p className="text-sm font-semibold text-lilasclaro mb-1">
-                    Despesas pagas
-                  </p>
-                  <p className="text-3xl font-bold text-lilasclaro">
-                    {formatCurrency(despesasPagas)}
-                  </p>
-                </div>
-                <i className="bi bi-arrow-down-circle text-3xl text-lilasclaro"></i>
-              </div>
-            </div>
-
-            <div className="bg-verdefundo rounded-xl border-3 border-dashed border-[#569a33] p-6">
-              <div className="flex justify-between items-start">
-                <div>
-                  <p className="text-sm font-semibold text-roxo mb-1">
-                    A Pagar
-                  </p>
-                  <p className="text-3xl font-bold text-roxo">
-                    {formatCurrency(despesasPendentes)}
-                  </p>
-                </div>
-                <i className="bi bi-clock-history text-3xl text-roxo"></i>
-              </div>
-            </div>
-
-            <div className="bg-roxo rounded-xl border-3 border-dashed border-text-roxoescuro p-6">
-              <div className="flex justify-between items-start">
-                <div>
-                  <p className="text-sm font-semibold text-lilasclaro mb-1">
-                    Saldo
-                  </p>
-                  <p
-                    className={`text-3xl font-bold ${resumo.saldo >= 0 ? "text-lilasclaro" : "text-lilasclaro"
-                      }`}
-                  >
-                    {formatCurrency((Number(totalVendas) || 0) - (Number(despesasPagas) || 0))}
-
-                  </p>
-                </div>
-                <i className="bi bi-wallet2 text-3xl text-lilasclaro"></i>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Tabela de Despesas */}
-        <div className="bg-white rounded-xl border-3 border-dashed border-[#b478ab] overflow-hidden">
-          <div className="p-5 bg-[#e8c5f1] border-b-2 border-[#b478ab]">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-              <h2 className="text-xl font-bold text-[#76196c]">Despesas</h2>
-
-              <div className="flex gap-2">
-                {["todos", "pago", "pendente"].map((status) => (
-                  <button
-                    key={status}
-                    onClick={() => setFiltroStatus(status)}
-                    className={`px-4 py-2 rounded-lg font-semibold text-sm transition cursor-pointer ${filtroStatus === status
-                      ? "bg-[#76196c] text-white"
-                      : "bg-white text-[#76196c] hover:bg-[#f0e5f5]"
-                      }`}
-                  >
-                    {status.charAt(0).toUpperCase() + status.slice(1)}
-                  </button>
-                ))}
-              </div>
+              <button
+                onClick={() => setModalAberto(true)}
+                className="bg-[#569a33] text-[#CAF4B7] px-6 py-3 rounded-xl font-bold hover:bg-[#4f6940] transition flex items-center gap-2 cursor-pointer"
+              >
+                <i className="bi bi-plus-circle text-xl"></i>
+                Nova Despesa
+              </button>
             </div>
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-[#f0e5f5]">
-                <tr>
-                  <th className="p-4 text-left text-[#76196c] font-bold">
-                    Descrição
-                  </th>
-                  <th className="p-4 text-left text-[#76196c] font-bold">
-                    Fornecedor
-                  </th>
-                  <th className="p-4 text-left text-[#76196c] font-bold">
-                    Valor
-                  </th>
-                  <th className="p-4 text-left text-[#76196c] font-bold">
-                    Data Adicionado
-                  </th>
-                  <th className="p-4 text-left text-[#76196c] font-bold">
-                    Data Pagamento
-                  </th>
-                  <th className="p-4 text-left text-[#76196c] font-bold">
-                    Status
-                  </th>
-                  <th className="p-4 text-left text-[#76196c] font-bold">
-                    Ações
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {loading ? (
-                  <tr>
-                    <td colSpan="6" className="p-8 text-center">
-                      <div className="flex items-center justify-center gap-2">
-                        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#76196c]"></div>
-                        <span className="text-[#8c3e82]">Carregando...</span>
-                      </div>
-                    </td>
-                  </tr>
-                ) : despesasFiltradas.length === 0 ? (
-                  <tr>
-                    <td colSpan="6" className="p-8 text-center">
-                      <i className="bi bi-inbox text-4xl text-[#b478ab] opacity-50"></i>
-                      <p className="text-lg font-semibold text-[#8c3e82] mt-2">
-                        Nenhuma despesa encontrada
-                      </p>
-                    </td>
-                  </tr>
-                ) : (
-                  despesasPaginadas.map((despesa) => (
-                    <tr
-                      key={despesa.id_despesa}
-                      className="border-b bg-[#f0e5f5]  border-[#b478ab]/30 hover:bg-[#f0e5f5]/30"
+          {/* Cards de Resumo */}
+          {resumo && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+              <div className="bg-verdefundo rounded-xl p-6">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <p className="text-sm font-semibold text-[#4F6940] mb-1">
+                      Total de vendas
+                    </p>
+                    <p className="text-3xl font-bold text-[#4F6940] ">
+                      {formatCurrency(totalVendas)}
+                    </p>
+                  </div>
+                  <i className="bi bi-arrow-up-circle text-3xl text-[#4F6940] "></i>
+                </div>
+              </div>
+
+              <div className="bg-roxo rounded-xl p-6">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <p className="text-sm font-semibold text-lilasclaro mb-1">
+                      Despesas pagas
+                    </p>
+                    <p className="text-3xl font-bold text-lilasclaro">
+                      {formatCurrency(despesasPagas)}
+                    </p>
+                  </div>
+                  <i className="bi bi-arrow-down-circle text-3xl text-lilasclaro"></i>
+                </div>
+              </div>
+
+              <div className="bg-[#559637] rounded-xl p-6">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <p className="text-sm font-semibold text-[#C5FFAD] mb-1">
+                      A Pagar
+                    </p>
+                    <p className="text-3xl font-bold text-[#C5FFAD]">
+                      {formatCurrency(despesasPendentes)}
+                    </p>
+                  </div>
+                  <i className="bi bi-clock-history text-3xl text-[#C5FFAD]"></i>
+                </div>
+              </div>
+
+              <div className="bg-[#C97FDA] rounded-xl p-6">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <p className="text-sm font-semibold text-[#76196C] mb-1">
+                      Saldo
+                    </p>
+                    <p
+                      className={`text-3xl font-bold ${resumo.saldo >= 0 ? "text-[#76196C]" : "text-[#76196C]"
+                        }`}
                     >
-                      <td className="p-4 font-semibold text-[#4f6940]">
-                        {despesa.descricao}
-                      </td>
-                      <td className="p-4 text-gray-600">
-                        {despesa.fornecedor || "--"}
-                      </td>
-                      <td className="p-4 font-bold text-[#ff6b6b]">
-                        {formatCurrency((parseFloat(despesa.preco)))}
-                      </td>
-                      <td className="p-4 text-gray-600">
-                        {new Date(despesa.data_adicionado).toLocaleDateString(
-                          "pt-BR"
-                        )}
-                      </td>
-                      <td className="p-4 text-gray-600">
-                        {despesa.data_pag
-                          ? new Date(despesa.data_pag).toLocaleDateString(
-                            "pt-BR"
-                          )
-                          : "-"}
-                      </td>
-                      <td className="p-4">
-                        <span
-                          className={`px-3 py-1 rounded-full text-xs font-semibold ${despesa.status === "pago"
-                            ? "bg-green-100 text-green-700"
-                            : "bg-orange-100 text-orange-700"
-                            }`}
-                        >
-                          {despesa.status === "pago" ? "Pago" : "Pendente"}
-                        </span>
-                      </td>
-                      <td className="p-4">
-                        <div className="flex gap-2">
-                          {despesa.status === "pendente" && (
-                            <button
-                              onClick={() =>
-                                setDialogMarcarPago({ open: true, despesa })
-                              }
-                              className="px-3 py-1 bg-[#569a33] text-white rounded-lg text-sm font-semibold hover:bg-[#4f6940] transition cursor-pointer"
-                              title="Marcar como pago"
-                            >
-                              <CheckCircle size={16} />
-                            </button>
-                          )}
+                      {formatCurrency((Number(totalVendas) || 0) - (Number(despesasPagas) || 0))}
 
-                          <button
-                            onClick={() => setDialogExcluir({ open: true, id: despesa.id_despesa })}
-                            className="px-3 py-1 bg-[#ff6b6b] text-white rounded-lg text-sm font-semibold hover:bg-[#ff5252] transition cursor-pointer"
-                            title="Excluir"
-                          >
-                            <Trash size={16} />
-                          </button>
+                    </p>
+                  </div>
+                  <i className="bi bi-wallet2 text-3xl text-[#76196C]"></i>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Tabela de Despesas */}
+          <div className="rounded-xl border-3 border-dashed border-[#b478ab] overflow-hidden">
+            <div className="p-5 bg-[#e8c5f1] border-b-2 border-[#b478ab]">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <h2 className="text-xl font-bold text-[#76196c]">Despesas</h2>
+
+                <div className="flex gap-2">
+                  {["todos", "pago", "pendente"].map((status) => (
+                    <button
+                      key={status}
+                      onClick={() => setFiltroStatus(status)}
+                      className={`px-4 py-2 rounded-lg font-semibold text-sm transition cursor-pointer ${filtroStatus === status
+                        ? "bg-[#76196c] text-[#CAF4B7]"
+                        : "bg-[#D695E7] text-[#76196c] hover:bg-[#D695E7]/50"
+                        }`}
+                    >
+                      {status.charAt(0).toUpperCase() + status.slice(1)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-[#f0e5f5]">
+                  <tr>
+                    <th className="p-4 text-left text-[#76196c] font-bold">
+                      Descrição
+                    </th>
+                    <th className="p-4 text-left text-[#76196c] font-bold">
+                      Fornecedor
+                    </th>
+                    <th className="p-4 text-left text-[#76196c] font-bold">
+                      Valor
+                    </th>
+                    <th className="p-4 text-left text-[#76196c] font-bold">
+                      Data Adicionado
+                    </th>
+                    <th className="p-4 text-left text-[#76196c] font-bold">
+                      Data Pagamento
+                    </th>
+                    <th className="p-4 text-left text-[#76196c] font-bold">
+                      Status
+                    </th>
+                    <th className="p-4 text-left text-[#76196c] font-bold">
+                      Ações
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {loading ? (
+                    <tr>
+                      <td colSpan="6" className="p-8 text-center">
+                        <div className="flex items-center justify-center gap-2">
+                          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#76196c]"></div>
+                          <span className="text-[#8c3e82]">Carregando...</span>
                         </div>
                       </td>
                     </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Paginação Despesas */}
-          {despesasFiltradas.length > 0 && (
-            <div className="p-4 bg-[#f0e5f5]/30 border-t border-[#b478ab]/30">
-              <div className="flex justify-between items-center">
-                <p className="text-sm text-[#76196c] font-semibold">
-                  Mostrando {indiceInicialDespesas + 1} a{" "}
-                  {Math.min(indiceFinalDespesas, despesasFiltradas.length)} de{" "}
-                  {despesasFiltradas.length} despesas
-                </p>
-                <Paginacao
-                  paginaAtual={paginaDespesas}
-                  totalPaginas={totalPaginasDespesas}
-                  onMudarPagina={setPaginaDespesas}
-                />
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Fluxo de Caixa Diário */}
-        <div className="bg-white rounded-xl border-3 border-dashed border-[#569a33] overflow-hidden">
-          <div className="p-5 bg-[#e8f5e8] border-b-2 border-[#569a33]">
-            <h2 className="text-xl font-bold text-[#569a33]">
-              Fluxo de Caixa Diário
-            </h2>
-          </div>
-
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-[#e8f5e8]">
-                <tr>
-                  <th className="p-3 text-left text-[#569a33] font-bold">
-                    Data
-                  </th>
-                  <th className="p-3 text-left text-[#569a33] font-bold">
-                    Valor Final
-                  </th>
-                  <th className="p-3 text-left text-[#569a33] font-bold">
-                    Quantidade de Caixas
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {caixaPaginado.length === 0 ? (
-                  <tr>
-                    <td colSpan="4" className="p-8 text-center">
-                      <i className="bi bi-inbox text-4xl text-[#569a33] opacity-50"></i>
-                      <p className="text-lg font-semibold text-[#4f6940] mt-2">
-                        Nenhum registro de caixa encontrado
-                      </p>
-                    </td>
-                  </tr>
-                ) : (
-                  caixaPaginado.map((fluxo, index) => (
-                    <tr key={index} className="border-b border-[#569a33]/20 hover:bg-[#e8f5e8]/30">
-                      <td className="p-3 font-semibold text-[#4f6940]">
-                        {fluxo.data
-                          ? new Date(fluxo.data).toLocaleDateString("pt-BR")
-                          : fluxo.abertura
-                          ? new Date(fluxo.abertura).toLocaleDateString("pt-BR")
-                          : "--"}
+                  ) : despesasFiltradas.length === 0 ? (
+                    <tr>
+                      <td colSpan="6" className="p-8 text-center">
+                        <i className="bi bi-inbox text-4xl text-[#b478ab] opacity-50"></i>
+                        <p className="text-lg font-semibold text-[#8c3e82] mt-2">
+                          Nenhuma despesa encontrada
+                        </p>
                       </td>
-                      <td className="p-3 font-bold text-[#569a33]">
-                          {formatCurrency(parseFloat(fluxo.valor_total) || parseFloat(fluxo.valor_final) || 0)}
-                      </td>
-                      
-                      <td className="p-3">
-                        {(() => {
-                          const statusLower = (fluxo.status || "").toString().toLowerCase();
-                          const statusClass =
-                            statusLower === "fechado"
-                              ? "bg-red-100 text-red-700"
-                              : statusLower === "aberto"
-                              ? "bg-green-100 text-green-700"
-                              : "bg-slate-100 text-slate-700";
-                          return (
-                            <span className={`px-3 py-1 rounded-full text-xs font-semibold ${statusClass}`}>
-                              {fluxo.status || (fluxo.caixas ? `${fluxo.caixas} caixas` : "--")}
-                            </span>
-                          );
-                        })()}
-                      </td>
-                      
                     </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+                  ) : (
+                    despesasPaginadas.map((despesa, index) => (
+                      <tr
+                        key={despesa.id_despesa}
+                        className={`border-b border-[#b478ab]/30 transition
+                        ${index % 2 === 0 ? "bg-[#C5FFAD]" : "bg-[#CAF4B7]"}
+                        hover:bg-[#75BA51]/60`}
+                      >
+
+                        <td className="p-4 font-semibold text-[#4f6940]">
+                          {despesa.descricao}
+                        </td>
+                        <td className="p-4 text-[#4F6940]">
+                          {despesa.fornecedor || "--"}
+                        </td>
+                        <td className="p-4 font-bold text-[#4EA912]">
+                          {formatCurrency((parseFloat(despesa.preco)))}
+                        </td>
+                        <td className="p-4 text-[#4F6940]">
+                          {new Date(despesa.data_adicionado).toLocaleDateString(
+                            "pt-BR"
+                          )}
+                        </td>
+                        <td className="p-4 text-[#4F6940]">
+                          {despesa.data_pag
+                            ? new Date(despesa.data_pag).toLocaleDateString(
+                              "pt-BR"
+                            )
+                            : "-"}
+                        </td>
+                        <td className="p-4">
+                          <span
+                            className={`px-3 py-1 rounded-full text-xs font-semibold ${despesa.status === "pago"
+                              ? "bg-green-100 text-green-700"
+                              : "bg-orange-100 text-orange-700"
+                              }`}
+                          >
+                            {despesa.status === "pago" ? "Pago" : "Pendente"}
+                          </span>
+                        </td>
+                        <td className="p-4">
+                          <div className="flex gap-2">
+                            {despesa.status === "pendente" && (
+                              <button
+                                onClick={() =>
+                                  setDialogMarcarPago({ open: true, despesa })
+                                }
+                                className="px-3 py-1 bg-[#569a33] text-white rounded-lg text-sm font-semibold hover:bg-[#4f6940] transition cursor-pointer"
+                                title="Marcar como pago"
+                              >
+                                <CheckCircle size={16} />
+                              </button>
+                            )}
+
+                            <button
+                              onClick={() => setDialogExcluir({ open: true, id: despesa.id_despesa })}
+                              className="px-3 py-1 bg-[#ff6b6b] text-white rounded-lg text-sm font-semibold hover:bg-[#ff5252] transition cursor-pointer"
+                              title="Excluir"
+                            >
+                              <Trash size={16} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Paginação Despesas */}
+            {despesasFiltradas.length > 0 && (
+              <div className="p-4 bg-[#EBC7F5]/50 border-t border-[#b478ab]/30">
+                <div className="flex justify-between items-center">
+                  <p className="text-sm text-[#76196c] font-semibold">
+                    Mostrando {indiceInicialDespesas + 1} a{" "}
+                    {Math.min(indiceFinalDespesas, despesasFiltradas.length)} de{" "}
+                    {despesasFiltradas.length} despesas
+                  </p>
+                  <Paginacao
+                    paginaAtual={paginaDespesas}
+                    totalPaginas={totalPaginasDespesas}
+                    onMudarPagina={setPaginaDespesas}
+                  />
+                </div>
+              </div>
+            )}
           </div>
 
-          {/* Paginação Caixa */}
-          {caixa.length > 0 && (
-            <div className="p-4 bg-[#e8f5e8]/30 border-t border-[#569a33]/30">
-              <div className="flex justify-between items-center">
-                <p className="text-sm text-[#569a33] font-semibold">
-                  Mostrando {indiceInicialCaixa + 1} a{" "}
-                  {Math.min(indiceFinalCaixa, caixa.length)} de{" "}
-                  {caixa.length} registros
-                </p>
-                <Paginacao
-                  paginaAtual={paginaCaixa}
-                  totalPaginas={totalPaginasCaixa}
-                  onMudarPagina={setPaginaCaixa}
-                  variant="verde"
-                />
-              </div>
+          {/* Fluxo de Caixa Diário */}
+          <div className="rounded-xl border-3 border-dashed border-[#569a33] overflow-hidden">
+            <div className="p-5 bg-[#9BF377] border-b-2 border-[#569a33]">
+              <h2 className="text-xl font-bold text-[#569a33]">
+                Fluxo de Caixa Diário
+              </h2>
             </div>
-          )}
+
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-[#e8f5e8]">
+                  <tr>
+                    <th className="p-3 text-left text-[#569a33] font-bold">
+                      Data
+                    </th>
+                    <th className="p-3 text-left text-[#569a33] font-bold">
+                      Valor Final
+                    </th>
+                    <th className="p-3 text-left text-[#569a33] font-bold">
+                      Quantidade de Caixas
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {caixaPaginado.length === 0 ? (
+                    <tr>
+                      <td colSpan="4" className="p-8 text-center">
+                        <i className="bi bi-inbox text-4xl text-[#569a33] opacity-50"></i>
+                        <p className="text-lg font-semibold text-[#4f6940] mt-2">
+                          Nenhum registro de caixa encontrado
+                        </p>
+                      </td>
+                    </tr>
+                  ) : (
+                    caixaPaginado.map((fluxo, index) => (
+                      <tr
+                        key={index}
+                        className={`border-b border-[#569a33]/20 transition ${index % 2 === 0 ? "bg-[#EBC7F5]" : "bg-[#E5B8F1]"} hover:bg-[#D594E6]/70`}
+                      >
+                        <td className="p-3 font-semibold text-[#4f6940]">
+                          {fluxo.data
+                            ? new Date(fluxo.data).toLocaleDateString("pt-BR")
+                            : fluxo.abertura
+                              ? new Date(fluxo.abertura).toLocaleDateString("pt-BR")
+                              : "--"}
+                        </td>
+                        <td className="p-3 font-bold text-[#569a33]">
+                          {formatCurrency(parseFloat(fluxo.valor_total) || parseFloat(fluxo.valor_final) || 0)}
+                        </td>
+
+                        <td className="p-3">
+                          {(() => {
+                            const statusLower = (fluxo.status || "").toString().toLowerCase();
+                            const statusClass =
+                              statusLower === "fechado"
+                                ? "bg-red-100 text-red-700"
+                                : statusLower === "aberto"
+                                  ? "bg-green-100 text-green-700"
+                                  : "bg-slate-100 text-slate-700";
+                            return (
+                              <span className={`px-3 py-1 rounded-full text-xs font-semibold ${statusClass}`}>
+                                {fluxo.status || (fluxo.caixas ? `${fluxo.caixas} caixas` : "--")}
+                              </span>
+                            );
+                          })()}
+                        </td>
+
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Paginação Caixa */}
+            {caixa.length > 0 && (
+              <div className="p-4 bg-[#9BF377]/30 border-t border-[#569a33]/30">
+                <div className="flex justify-between items-center">
+                  <p className="text-sm text-[#569a33] font-semibold">
+                    Mostrando {indiceInicialCaixa + 1} a{" "}
+                    {Math.min(indiceFinalCaixa, caixa.length)} de{" "}
+                    {caixa.length} registros
+                  </p>
+                  <Paginacao
+                    paginaAtual={paginaCaixa}
+                    totalPaginas={totalPaginasCaixa}
+                    onMudarPagina={setPaginaCaixa}
+                    variant="verde"
+                  />
+                </div>
+              </div>
+            )}
+          </div>
         </div>
+
+        {/* Modal */}
+        <ModalAdicionarDespesa
+          open={modalAberto}
+          onClose={() => setModalAberto(false)}
+        />
+
+        {/* Dialog Marcar como Pago */}
+        <Dialog
+          open={dialogMarcarPago.open}
+          onOpenChange={(open) => setDialogMarcarPago({ open, despesa: null })}
+        >
+          <DialogContent className="sm:max-w-md bg-white border-3 border-[#569a33] border-dashed rounded-3xl">
+            <DialogHeader>
+              <DialogTitle className="text-[#569a33] font-extrabold text-xl">
+                Marcar como Pago
+              </DialogTitle>
+            </DialogHeader>
+            <p className="text-[#4f6940] font-semibold py-4">
+              Deseja marcar esta despesa como paga? A data de pagamento será
+              definida como hoje.
+            </p>
+            <DialogFooter className="flex gap-2">
+              <Button
+                variant="secondary"
+                className="flex-1 bg-gray-200 text-gray-700 hover:bg-gray-300 font-bold cursor-pointer"
+                onClick={() =>
+                  setDialogMarcarPago({ open: false, despesa: null })
+                }
+              >
+                Cancelar
+              </Button>
+              <Button
+                className="flex-1 bg-[#569a33] text-white hover:bg-[#4f6940] font-bold cursor-pointer"
+                onClick={() => pagarDespesa(dialogMarcarPago.despesa.id_despesa)}
+              >
+                Confirmar
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Dialog Excluir */}
+        <Dialog
+          open={dialogExcluir.open}
+          onOpenChange={(open) => setDialogExcluir({ open, id: null })}
+        >
+          <DialogContent className="sm:max-w-md bg-[#F1B8E8] border-2 border-[#c61f1f] rounded-3xl">
+            <DialogHeader>
+              <DialogTitle className="text-[#c61f1f] font-extrabold text-xl">
+                Confirmar Exclusão
+              </DialogTitle>
+            </DialogHeader>
+            <p className="text-[#c61f1f] font-semibold py-4">
+              Tem certeza que deseja excluir esta despesa? Esta ação não pode ser
+              desfeita.
+            </p>
+            <DialogFooter className="flex gap-2">
+              <Button
+                variant="secondary"
+                className="flex-1 bg-[#C5FFAD] text-gray-700 hover:bg-[#C5FFAD] font-bold"
+                onClick={() => setDialogExcluir({ open: false, id: null })}
+              >
+                Cancelar
+              </Button>
+              <Button
+                className="flex-1 bg-[#c61f1f] text-[#F1B8E8] hover:bg-[#ff5252] font-bold"
+                onClick={confirmarExcluir}
+              >
+                Excluir
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
-
-      {/* Modal */}
-      <ModalAdicionarDespesa
-        open={modalAberto}
-        onClose={() => setModalAberto(false)}
-      />
-
-      {/* Dialog Marcar como Pago */}
-      <Dialog
-        open={dialogMarcarPago.open}
-        onOpenChange={(open) => setDialogMarcarPago({ open, despesa: null })}
-      >
-        <DialogContent className="sm:max-w-md bg-white border-3 border-[#569a33] border-dashed rounded-3xl">
-          <DialogHeader>
-            <DialogTitle className="text-[#569a33] font-extrabold text-xl">
-              Marcar como Pago
-            </DialogTitle>
-          </DialogHeader>
-          <p className="text-[#4f6940] font-semibold py-4">
-            Deseja marcar esta despesa como paga? A data de pagamento será
-            definida como hoje.
-          </p>
-          <DialogFooter className="flex gap-2">
-            <Button
-              variant="secondary"
-              className="flex-1 bg-gray-200 text-gray-700 hover:bg-gray-300 font-bold cursor-pointer"
-              onClick={() =>
-                setDialogMarcarPago({ open: false, despesa: null })
-              }
-            >
-              Cancelar
-            </Button>
-            <Button
-              className="flex-1 bg-[#569a33] text-white hover:bg-[#4f6940] font-bold cursor-pointer"
-              onClick={() => pagarDespesa(dialogMarcarPago.despesa.id_despesa)}
-            >
-              Confirmar
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Dialog Excluir */}
-      <Dialog
-        open={dialogExcluir.open}
-        onOpenChange={(open) => setDialogExcluir({ open, id: null })}
-      >
-        <DialogContent className="sm:max-w-md bg-[#F1B8E8] border-2 border-[#c61f1f] rounded-3xl">
-          <DialogHeader>
-            <DialogTitle className="text-[#c61f1f] font-extrabold text-xl">
-              Confirmar Exclusão
-            </DialogTitle>
-          </DialogHeader>
-          <p className="text-[#c61f1f] font-semibold py-4">
-            Tem certeza que deseja excluir esta despesa? Esta ação não pode ser
-            desfeita.
-          </p>
-          <DialogFooter className="flex gap-2">
-            <Button
-              variant="secondary"
-              className="flex-1 bg-[#C5FFAD] text-gray-700 hover:bg-[#C5FFAD] font-bold"
-              onClick={() => setDialogExcluir({ open: false, id: null })}
-            >
-              Cancelar
-            </Button>
-            <Button
-              className="flex-1 bg-[#c61f1f] text-[#F1B8E8] hover:bg-[#ff5252] font-bold"
-              onClick={confirmarExcluir}
-            >
-              Excluir
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </div>
+    </>
   );
 }

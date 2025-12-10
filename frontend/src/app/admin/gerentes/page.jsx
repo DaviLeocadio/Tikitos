@@ -11,6 +11,7 @@ import ModalEditarGerente from "@/components/admin/gerentes/ModalEditarGerente";
 import ModalDesativarGerente from "@/components/admin/gerentes/ModalDesativarGerente";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import ModalTransferirFuncionario from "@/components/admin/gerentes/ModalTransferirFuncionario";
+import ModalResetarSenhaUsuario from "@/components/admin/ModalResetarSenhaUsuario";
 
 export default function AdminEquipes() {
   const [sorting, setSorting] = useState([]);
@@ -32,12 +33,17 @@ export default function AdminEquipes() {
     funcionario: null,
   });
 
+  const [modalSenha, setModalSenha] = useState({
+    open: false,
+    funcionario: null,
+  });
+
   // Hook customizado
   const { gerentes, loading, handleSalvarGerente, buscarGerentes } =
     useGerentes();
 
   // Colunas da tabela
-  const columns = GetColumns({ setModalGerente, setModalDesativar, setModalTransfer });
+  const columns = GetColumns({ setModalGerente, setModalDesativar, setModalTransfer, setModalSenha });
 
   const applyGlobalFilter = (value, fields) =>
     fields.some((field) => field?.toString().toLowerCase().includes(value));
@@ -64,7 +70,7 @@ export default function AdminEquipes() {
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#DDF1D4] to-verdeclaro p-5 lg:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-[#DDF1D4] to-verdeclaro p-6">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div>
@@ -107,6 +113,14 @@ export default function AdminEquipes() {
           gerente={modalDesativar.gerente}
           open={modalDesativar.open}
           onClose={() => setModalDesativar({ open: false, gerente: null })}
+          onSalvar={async () => {
+            await buscarGerentes();
+          }}
+        />
+        <ModalResetarSenhaUsuario
+          funcionario={modalSenha.funcionario}
+          open={modalSenha.open}
+          onClose={() => setModalSenha({ open: false, funcionario: null })}
           onSalvar={async () => {
             await buscarGerentes();
           }}

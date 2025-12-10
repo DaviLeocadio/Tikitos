@@ -20,13 +20,17 @@ const ProdutosTable = memo(function ProdutosTable({
   sorting,
   setSorting
 }) {
-  // Filtro global em id_produto + nome + descricao
   const fuzzyFilter = (row, columnId, value) => {
     const searchText = value.toLowerCase();
+
+    const id = String(row.original.id_produto || "").toLowerCase();
+    const nome = (row.original.nome || "").toLowerCase();
+    const descricao = (row.original.descricao || "").toLowerCase();
+
     return (
-      String(row.original.id_produto || "").toLowerCase().includes(searchText) ||
-      (row.original.nome || "").toLowerCase().includes(searchText) ||
-      (row.original.descricao || "").toLowerCase().includes(searchText)
+      id.includes(searchText) ||
+      nome.includes(searchText) ||
+      descricao.includes(searchText)
     );
   };
 
@@ -52,14 +56,14 @@ const ProdutosTable = memo(function ProdutosTable({
   });
 
   return (
-    <div className=" rounded-xl border-3 border-dashed border-[#b478ab] overflow-hidden">
+    <div className="bg-[#EBC7F5] rounded-xl border-3 border-dashed border-[#b478ab] overflow-hidden">
       <div className="overflow-x-auto">
         <Table>
-          <TableHeader className="bg-[#9BF377]">
+          <TableHeader className="bg-[#76196C]">
             {table.getHeaderGroups().map((hg) => (
-              <TableRow key={hg.id}>
+              <TableRow key={hg.id} className="hover:bg-transparent">
                 {hg.headers.map((h) => (
-                  <TableHead key={h.id} className="text-[#76196c]">
+                  <TableHead key={h.id} className="text-[#92EF6C]">
                     {flexRender(h.column.columnDef.header, h.getContext())}
                   </TableHead>
                 ))}
@@ -70,8 +74,8 @@ const ProdutosTable = memo(function ProdutosTable({
           <TableBody>
             {loading ? (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center bg-[#C97FDA]">
-                  <div className="flex items-center  justify-center gap-2">
+                <TableCell colSpan={columns.length} className="h-24 text-center">
+                  <div className="flex items-center justify-center gap-2">
                     <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#76196c]"></div>
                     <span className="text-[#8c3e82]">Carregando produtos...</span>
                   </div>
@@ -79,13 +83,7 @@ const ProdutosTable = memo(function ProdutosTable({
               </TableRow>
             ) : table.getRowModel().rows.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  className={`
-                    ${row.index % 2 === 0 ? "bg-[#f1cbfc]" : "bg-[#dfb8ea]"}
-                    hover:!bg-[#b08abb]
-                  `}
-                >
+                <TableRow key={row.id} className={`border-b-2 border-[#9D4E92] ${row.index % 2 === 0 ? "bg-[#EBC7F5]" : "bg-[#EFDEF4]"} hover:!bg-[#92EF6C] transition-all duration-300 ease-out`}>
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -107,8 +105,7 @@ const ProdutosTable = memo(function ProdutosTable({
         </Table>
       </div>
 
-      {/* Paginação */}
-      <div className="flex bg-[#C5FFAD] items-center justify-between p-4 border-t border-[#b478ab]/30">
+      <div className="flex items-center justify-between p-4 border-t border-[#b478ab]">
         <div className="text-sm text-[#8c3e82]">
           Mostrando {table.getRowModel().rows.length > 0 ? table.getState().pagination.pageIndex * table.getState().pagination.pageSize + 1 : 0} a{" "}
           {Math.min(
@@ -117,14 +114,13 @@ const ProdutosTable = memo(function ProdutosTable({
           )}{" "}
           de {table.getFilteredRowModel().rows.length} produtos
         </div>
-
         <div className="flex gap-2">
           <Button
             variant="outline"
             size="sm"
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
-            className="border-[#b478ab] bg-[#E5B8F1] text-[#76196c] hover:bg-[#e8c5f1] cursor-pointer"
+            className="border-[#b478ab] text-[#76196c] hover:bg-[#e8c5f1] cursor-pointer"
           >
             Anterior
           </Button>
@@ -133,7 +129,7 @@ const ProdutosTable = memo(function ProdutosTable({
             size="sm"
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
-            className="border-[#b478ab] bg-[#E5B8F1] text-[#76196c] hover:bg-[#e8c5f1] cursor-pointer"
+            className="border-[#b478ab] text-[#76196c] hover:bg-[#e8c5f1] cursor-pointer"
           >
             Próxima
           </Button>

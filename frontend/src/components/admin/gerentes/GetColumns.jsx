@@ -1,13 +1,13 @@
 "use client";
 
-export default function GetColumns({ setModalGerente, setModalDesativar, setModalTransfer }) {
+export default function GetColumns({ setModalGerente, setModalDesativar, setModalTransfer, setModalSenha }) {
   return [
     {
       accessorKey: "id_usuario",
       enableGlobalFilter: true,
       header: ({ column }) => (
         <button
-          className="flex items-center gap-2 font-bold hover:text-[#924187]"
+          className=""
           onClick={() =>
             column.toggleSorting(column.getIsSorted() === "asc")
           }
@@ -140,6 +140,13 @@ export default function GetColumns({ setModalGerente, setModalDesativar, setModa
               title={gerente.status === "ativo" ? "Desativar gerente" : "Reativar gerente"}
             >
               <i className={`bi bi-power ${gerente.status === "ativo" ? "" : ""}`}></i>
+            </button>
+            <button
+              onClick={() => setModalSenha({ open: true, funcionario:gerente})}
+              className={`px-3 py-1 text-white rounded-lg text-sm font-semibold transition cursor-pointer bg-red-600 hover:bg-red-700`}
+              title={gerente.status === "ativo" ? "Desativar gerente" : "Reativar gerente"}
+            >
+              <i className={`bi bi-unindent ${gerente.status === "ativo" ? "" : ""}`}></i>
             </button>
           </div>
         );

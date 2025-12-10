@@ -7,64 +7,90 @@ export default function RelatoriosIndex() {
       href: "/admin/relatorios/geral",
       desc: "Visão consolidada do negócio",
       icon: "TrendingUp",
+      bg: "#B0FF8F",
+      text: "#4E8A3D",
     },
     {
       title: "Relatório de Vendas",
       href: "/admin/relatorios/vendas",
       desc: "Vendas por período e filial",
       icon: "BarChart3",
-    },
-    {
-      title: "Relatório da Filial",
-      href: "/admin/relatorios/filial",
-      desc: "Detalhes completos de uma filial",
-      icon: "Store",
+      bg: "#DA93E3",
+      text: "#76196c",
     },
     {
       title: "Relatório de Produtos",
       href: "/admin/relatorios/produtos",
       desc: "Desempenho, vendas e estoque",
       icon: "Package",
+      bg: "#70B64C",
+      text: "#C5FFAD",
+    },
+    {
+      title: "Relatório da Filial",
+      href: "/admin/relatorios/filial",
+      desc: "Detalhes completos de uma filial",
+      icon: "Store",
+      bg: "#F1B8E8",
+      text: "#8E4187",
     },
   ];
 
   return (
-    <div className="p-10 animate-fadeIn">
-      {/* Título principal */}
+    <div className="bg-gradient-to-br from-[#DDF0D4] p-5 lg:p-8 animate-fadeIn">
+      <div className="max-w-7xl mx-auto space-y-6">
 
-      <div>
+        {/* Título */}
         <div>
-          <h1 className="text-3xl lg:text-4xl font-bold text-[#76196c] flex items-center gap-2">
+          <h1 className="text-3xl lg:text-4xl font-bold flex items-center gap-2 text-[#76196c]">
             <SidebarTrigger /> Relatórios Administrativos
           </h1>
+          <p className="text-[#4F6940] mt-1 font-medium">
+            Escolha um relatório para visualizar informações detalhadas
+          </p>
         </div>
-        <p className="text-gray-700 mt-1 font-medium">
-          Escolha um relatório para visualizar informações detalhadas
-        </p>
-      </div>
 
-      {/* Grid de Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mt-6">
-        {cards.map((c) => {
-          const Icon = require("lucide-react")[c.icon];
-          return (
-            <a
-              key={c.href}
-              href={c.href}
-              className="group  bg-verdinho dark:bg-neutral-900 shadow-lg rounded-2xl p-6 border border-neutral-200 dark:border-neutral-800 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
-            >
-              <div className="flex items-center gap-3 mb-4">
-                <Icon className="w-8 h-8 text-roxo group-hover:scale-110 transition" />
-                <h2 className="text-xl text-roxoescuro font-bold group-hover:text-roxo transition">
-                  {c.title}
-                </h2>
-              </div>
-              <p className="text-neutral-600 dark:text-neutral-300 text-sm">
-                {c.desc}
-              </p>
-            </a>
-          );
-        })}
+        {/* Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mt-6">
+          {cards.map((c) => {
+            const Icon = require("lucide-react")[c.icon];
+
+            return (
+              <a
+                key={c.href}
+                href={c.href}
+                style={{ backgroundColor: c.bg }}
+                className="
+                  group shadow-lg rounded-2xl p-6
+                  transition-all duration-300 ease-out cursor-pointer
+                  hover:scale-[0.97] hover:shadow-xl
+                "
+              >
+                <div className="flex items-center gap-3 mb-4">
+                  <Icon
+                    style={{ color: c.text }}
+                    className="w-8 h-8 transition-transform group-hover:scale-110"
+                  />
+
+                  <h2
+                    style={{ color: c.text }}
+                    className="text-xl font-bold transition-opacity group-hover:opacity-80"
+                  >
+                    {c.title}
+                  </h2>
+                </div>
+
+                <p
+                  style={{ color: c.text }}
+                  className="text-sm opacity-90"
+                >
+                  {c.desc}
+                </p>
+              </a>
+            );
+          })}
+        </div>
+
       </div>
     </div>
   );

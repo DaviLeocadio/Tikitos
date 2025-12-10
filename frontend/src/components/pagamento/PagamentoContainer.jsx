@@ -48,7 +48,7 @@ export default function PagamentoContainer() {
   }
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col h-screen">
       {/* Header */}
       <div className="flex flex-col sm:flex-row w-full justify-between items-start sm:items-center gap-4">
         <h1 className="text-2xl sm:text-3xl font-bold text-roxo flex flex-col leading-[0.9]">

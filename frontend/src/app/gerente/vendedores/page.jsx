@@ -52,7 +52,7 @@ export default function GerenteVendedor() {
 
   return (
     <>
-      <div className="min-h-screen bg-gradient-to-br from-[#DDF1D4] to-verdeclaro p-5 lg:p-8">
+      <div className="min-h-screen bg-gradient-to-br from-[#DDF1D4] p-5 lg:p-8">
         <div className="max-w-7xl mx-auto space-y-6">
           {/* Header */}
           <div>

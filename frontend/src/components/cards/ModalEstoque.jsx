@@ -57,9 +57,9 @@ export default function ModalEstoque({ produto }) {
           <button className="bg-[#65745A] rounded-[50px] py-2 px-5 text-[#caf4b7] text-sm font-semibold">
             Relatar defeito
           </button>
-          <button className="bg-[#65745A] rounded-[50px] py-2 px-5 text-[#caf4b7] text-sm font-semibold">
+          {/* <button className="bg-[#65745A] rounded-[50px] py-2 px-5 text-[#caf4b7] text-sm font-semibold">
             Lista de espera
-          </button>
+          </button> */}
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

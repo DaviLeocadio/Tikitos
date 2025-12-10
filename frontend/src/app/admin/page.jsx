@@ -96,7 +96,7 @@ function QuickActionCard({ title, description, icon, href, color }) {
   return (
     <Link
       href={href}
-      className={` rounded-xl border-1 border-${color} p-5 hover:scale-[1.02] transition-all duration-200 cursor-pointer group`}
+      className={`bg-[#DDF1D4] rounded-xl border-1 border-${color} p-5 cursor-pointer group transition-all duration-300 ease-out hover:scale-[0.97] hover:bg-[#c4eab2]`}
     >
       <div className="flex items-center gap-4">
         <div
@@ -166,7 +166,7 @@ export default function AdminDashboard() {
   }, [periodo]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#DDF1D4] to-verdeclaro p-5 lg:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-[#DDF0D4] p-5 lg:p-8">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
@@ -180,24 +180,25 @@ export default function AdminDashboard() {
           </div>
 
           {/* Filtro de período */}
-          <div className="flex gap-2 bg-[#C97FDA] rounded-xl p-1 shadow-sm">
+          <div className="flex gap-2 bg-[#EBC7F5] rounded-xl p-1 border-3">
             {[
               { key: "hoje", label: "Hoje" },
               { key: "semana", label: "Semana" },
-              { key: "mes", label: "Mês" },  
+              { key: "mes", label: "Mês" },
               { key: "ano", label: "Ano" },
             ].map((item) => (
               <button
                 key={item.key}
                 onClick={() => setPeriodo(item.key)}
                 className={`px-4 py-2 rounded-lg font-semibold text-sm transition-all ${periodo === item.key
-                    ? "bg-[#76196c] text-[#9BF377] shadow-md"
-                    : "text-[#76196c] hover:bg-[#EBC7F5]"
+                  ? "bg-[#76196c]/70 text-[#C5FFAD]"
+                  : "text-[#76196c] hover:bg-[#C97FDA]/50"
                   }`}
               >
                 {item.label}
               </button>
             ))}
+
           </div>
         </div>
 
@@ -225,10 +226,18 @@ export default function AdminDashboard() {
                 subValue={`${dashboardData.vendas.totalTransacoes} transações`}
                 icon="graph-up-arrow"
                 color="[#9D4E92]"
-                bg="[#92EF6C]"
+                bg="[#e8c5f1]"
                 text="[#9D4E92]"
-                text2="[#9D4E92]"
+                text2="[#4F6940]"
                 trend={dashboardData.vendas.trend}
+              />
+              <MetricCard
+                title="Produtos Vendidos"
+                value={dashboardData.produtos.vendidos}
+                icon="box-seam"
+                color="[#4f6940]"
+                bg="[#9bf377]"
+                text="[#4f6940]"
               />
               <MetricCard
                 title="Contas a Pagar (Total)"
@@ -240,20 +249,12 @@ export default function AdminDashboard() {
                 text="[#9D4E92]"
               />
               <MetricCard
-                title="Produtos Vendidos"
-                value={dashboardData.produtos.vendidos}
-                icon="box-seam"
-                color="[#76196C]"
-                bg="[#C97FDA]"
-                text="[#76196C]"
-              />
-              <MetricCard
                 title="Equipe Ativa"
                 value={dashboardData.vendedores.ativos}
                 subValue="Vendedores na rede"
                 icon="people-fill"
                 color="[#4F6940]"
-                bg="[#70B64C]"
+                bg="[#c5ffad]"
                 text="[#4F6940]"
                 text2="[#4F6940]"
               />
@@ -265,11 +266,12 @@ export default function AdminDashboard() {
               {/* Ranking das Lojas */}
               <div className="lg:col-span-2 bg-[#C5FFAD] rounded-xl p-6 shadow-sm">
                 <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-xl font-bold text-[#76196c] flex items-center gap-2">
+                  <h3 className="text-xl font-bold text-[#76196c] flex items-center gap-3">
                     <i className="bi bi-shop text-2xl"></i> Desempenho por Filial
                   </h3>
-                  <Link href="/admin/relatorios" className="text-sm text-[#76196c] hover:underline font-medium">
-                    Ver relatório completo →
+                  <Link href="/admin/relatorios" className="text-sm text-[#76196c] hover:underline font-medium flex gap-2">
+                    Ver relatório completo
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right-icon lucide-arrow-right"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
                   </Link>
                 </div>
 
@@ -357,9 +359,12 @@ export default function AdminDashboard() {
 
             {/* Ações Rápidas - Links ajustados para Admin */}
             <div>
-              <h2 className="text-2xl font-bold text-[#76196c] mb-4 mt-2">
-                Gestão Rápida
-              </h2>
+              <div className="flex gap-2 items-center mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-[#569A33] lucide lucide-settings-icon lucide-settings"><path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915" /><circle cx="12" cy="12" r="3" /></svg>
+                <h2 className="text-2xl font-bold text-[#76196c]">
+                  Gestão Rápida
+                </h2>
+              </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <QuickActionCard
                   title="Nova Loja"
@@ -393,26 +398,26 @@ export default function AdminDashboard() {
             </div>
 
             {/* Fluxo de Caixa Consolidado */}
-            <div className="bg-[#E5B8F1] rounded-xl border-3 border-dashed border-[#8F3D84] p-6">
+            <div className="bg-[#edd5f2] rounded-xl border-3 border-dashed border-[#8F3D84] p-6">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-xl font-bold text-[#8F3D84] flex items-center gap-2">
-                  <i className="bi bi-bank text-2xl text-[#8F3D84]"></i> Fluxo de Caixa Consolidado
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-landmark-icon lucide-landmark"><path d="M10 18v-7" /><path d="M11.12 2.198a2 2 0 0 1 1.76.006l7.866 3.847c.476.233.31.949-.22.949H3.474c-.53 0-.695-.716-.22-.949z" /><path d="M14 18v-7" /><path d="M18 18v-7" /><path d="M3 22h18" /><path d="M6 18v-7" /></svg> Fluxo de Caixa Consolidado
                 </h3>
-                <span className="text-sm bg-green-100 text-green-700 px-3 py-1 rounded-full font-medium">Rede Inteira</span>
+                <span className="text-sm bg-[#C5FFAD] text-[#8F3D84] px-3 py-1 rounded-full font-medium">Rede Inteira</span>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="flex flex-col p-4 bg-[#75BA51] rounded-xl">
-                  <span className="text-sm font-semibold text-[#C5FFAD] mb-1">Entradas (Vendas)</span>
-                  <span className="text-2xl font-bold text-[#C5FFAD]">{formatCurrency(dashboardData.fluxoCaixa.entradas)}</span>
+                <div className="flex flex-col p-4 bg-[#98d378] rounded-xl">
+                  <span className="text-sm font-semibold text-[#4F6940] mb-1">Entradas (Vendas)</span>
+                  <span className="text-2xl font-bold text-[#4F6940]">{formatCurrency(dashboardData.fluxoCaixa.entradas)}</span>
                 </div>
-                <div className="flex flex-col p-4 bg-red-300 rounded-xl">
+                <div className="flex flex-col p-4 bg-[#F1B8E8] rounded-xl">
                   <span className="text-sm font-semibold text-[#B21212] mb-1">Saídas (Despesas)</span>
                   <span className="text-2xl font-bold text-[#B21212]">{formatCurrency(dashboardData.fluxoCaixa.saidas)}</span>
                 </div>
-                <div className="flex flex-col p-4 bg-[#92EF6C] rounded-xl">
-                  <span className="text-sm font-bold text-[#4F6940] mb-1">Saldo Líquido</span>
-                  <span className="text-2xl font-black text-[#4F6940]">{formatCurrency(dashboardData.fluxoCaixa.saldo)}</span>
+                <div className="flex flex-col p-4 bg-[#D1A7CD] rounded-xl">
+                  <span className="text-sm font-semibold text-[#76196C] mb-1">Saldo Líquido</span>
+                  <span className="text-2xl font-bold text-[#76196C]">{formatCurrency(dashboardData.fluxoCaixa.saldo)}</span>
                 </div>
               </div>
             </div>

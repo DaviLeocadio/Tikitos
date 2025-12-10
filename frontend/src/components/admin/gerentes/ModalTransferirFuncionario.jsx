@@ -146,7 +146,7 @@ export default function ModalTransferirFuncionario({ funcionario, onClose }) {
             <select
               value={destino}
               onChange={(e) => setDestino(e.target.value)}
-              className="w-full p-3 rounded-xl border border-[#d695e7] focus:ring-2 focus:ring-[#76196c] transition"
+              className="w-full p-3 bg-[#E5B8F1] text-[#76196C] rounded-xl border border-[#d695e7] focus:ring-2 focus:ring-[#76196c] transition"
             >
               <option value="">Escolha uma filial</option>
               {filiais.map((f) => (
@@ -167,7 +167,7 @@ export default function ModalTransferirFuncionario({ funcionario, onClose }) {
           <select
             value={perfil}
             onChange={(e) => setPerfil(e.target.value)}
-            className="w-full p-3 rounded-xl border border-[#d695e7] focus:ring-2 focus:ring-[#76196c] transition"
+            className="w-full p-3 bg-[#E5B8F1] rounded-xl text-[#76196C] border border-[#d695e7] focus:ring-2 focus:ring-[#76196c] transition"
           >
             <option value="vendedor">Vendedor</option>
             <option value="gerente">Gerente</option>

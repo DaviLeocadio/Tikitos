@@ -63,7 +63,7 @@ export function GerenteSidebar({
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton asChild className="data-[slot=sidebar-menu-button]:!p-1.5">
+            <SidebarMenuButton asChild className="data-[slot=sidebar-menu-button]:!p-1.5  hover:bg-[#ffffff00] transition-all duration-300 ease-out cursor-pointer hover:scale-[0.97]">
               <Link href="/gerente/">
                 <img src="/img/logos/logo_ioio.png" alt="" className="max-h-full"/>
                 <span className="text-base font-semibold text-[#76216D] hover:bg-[#ffffff00]">Tikitos</span>

@@ -11,7 +11,7 @@ const IntegrantesFilters = memo(function IntegrantesFilters({
 }) {
   return (
     <div className="bg-[#E5B8F1] rounded-xl border-3 border-dashed border-[#76196C] p-5 space-y-4">
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 relative gap-4">
         {/* Busca */}
         <div className="md:col-span-2">
           <label className="text-sm font-semibold text-[#76196C] block mb-2">
@@ -44,7 +44,12 @@ const IntegrantesFilters = memo(function IntegrantesFilters({
             <option value="inativo">Inativos</option>
           </select>
         </div>
-       
+
+        <img
+    src="/img/adm_gerentes/criancas_gerentes.png"
+    className="hidden lg:block w-70 sm:w-48 md:w-75 bottom-[-33px] absolute bottom-0 right-0 pointer-events-none"
+  />
+
       </div>
     </div>
   );

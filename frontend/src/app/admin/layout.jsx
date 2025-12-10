@@ -5,6 +5,8 @@ import { getCookie } from "cookies-next/client";
 import { useRouter } from "next/navigation";
 import { AdminSidebar } from "@/components/admin-sidebar"; // Sidebar específica do Admin
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import Footer from "@/components/footer/footer";
+
 
 // Import da página de acesso negado
 import ForbiddenPage from "../forbidden/page"; 
@@ -32,8 +34,11 @@ export default function AdminLayout({ children }) {
   return (
     <SidebarProvider>
         <AdminSidebar />
-        <main className="w-full">{children}</main>
-        {/* <Footer /> */}
+        <div className="flex flex-col">
+          <main>{children}</main>
+          <Footer />
+        </div>
+        
       </SidebarProvider>
   );
 }

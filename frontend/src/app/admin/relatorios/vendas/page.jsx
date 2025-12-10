@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { TrendingUp, Calendar, Store, Package, ShoppingCart, Filter, RefreshCw, Download, BarChart3 } from "lucide-react";
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
+import { SidebarTrigger } from "@/components/ui/sidebar";
+
 
 export default function RelatorioVendas() {
   const [data, setData] = useState(null);
@@ -148,11 +150,16 @@ export default function RelatorioVendas() {
   }
 
   return (
+    <>
+    <div className="p-6">
+        <SidebarTrigger />
+      </div>
+
     <div className="min-h-screen  p-4 sm:p-8 animate-fadeIn">
       <div className="max-w-7xl mx-auto space-y-8">
         
         {/* Cabeçalho */}
-        <div className="bg-white rounded-3xl shadow-xl border-4 border-[#d695e7] p-6">
+        <div className="bg-[#EBC7F5] rounded-3xl p-6">
           <div className="text-center mb-6">
             <h1 className="text-3xl sm:text-4xl font-extrabold text-[#76196c] mb-2 flex items-center justify-center gap-3">
               <BarChart3 size={36} />
@@ -164,7 +171,7 @@ export default function RelatorioVendas() {
           </div>
 
           {/* Filtros */}
-          <div className="bg-gradient-to-r from-[#f8f0fc] to-[#fef5ff] p-5 rounded-2xl border-2 border-[#e8c5f1]">
+          <div className="bg-[#C5FFAD] p-5 rounded-2xl border-2 border-[#e8c5f1]">
             <div className="flex items-center gap-2 mb-4">
               <Filter className="text-[#76196c]" size={20} />
               <h3 className="text-[#76196c] font-bold">Filtros</h3>
@@ -174,25 +181,25 @@ export default function RelatorioVendas() {
             <div className="flex flex-wrap gap-2 mb-4">
               <button
                 onClick={() => setPeriodoRapido(7)}
-                className="px-4 py-2 bg-[#76196c] hover:bg-[#9b2b91] text-white text-sm rounded-xl transition-all"
+                className="px-4 py-2 bg-[#76196c] hover:bg-[#9b2b91] text-[#C5FFAD] text-sm rounded-xl transition-all"
               >
                 Últimos 7 dias
               </button>
               <button
                 onClick={() => setPeriodoRapido(15)}
-                className="px-4 py-2 bg-[#76196c] hover:bg-[#9b2b91] text-white text-sm rounded-xl transition-all"
+                className="px-4 py-2 bg-[#76196c] hover:bg-[#9b2b91] text-[#C5FFAD] text-sm rounded-xl transition-all"
               >
                 Últimos 15 dias
               </button>
               <button
                 onClick={() => setPeriodoRapido(30)}
-                className="px-4 py-2 bg-[#76196c] hover:bg-[#9b2b91] text-white text-sm rounded-xl transition-all"
+                className="px-4 py-2 bg-[#76196c] hover:bg-[#9b2b91] text-[#C5FFAD] text-sm rounded-xl transition-all"
               >
                 Últimos 30 dias
               </button>
               <button
                 onClick={() => setPeriodoRapido(90)}
-                className="px-4 py-2 bg-[#76196c] hover:bg-[#9b2b91] text-white text-sm rounded-xl transition-all"
+                className="px-4 py-2 bg-[#76196c] hover:bg-[#9b2b91] text-[#C5FFAD] text-sm rounded-xl transition-all"
               >
                 Últimos 90 dias
               </button>
@@ -206,7 +213,7 @@ export default function RelatorioVendas() {
                   name="dataInicio"
                   value={filtros.dataInicio}
                   onChange={handleFiltroChange}
-                  className="w-full p-3 rounded-xl border-2 border-[#d695e7] focus:ring-2 focus:ring-[#76196c] transition-all"
+                  className="w-full bg-[#C5FFAD] p-3 rounded-xl border-2 border-[#d695e7] focus:ring-2 focus:ring-[#76196c] transition-all"
                 />
               </div>
 
@@ -217,7 +224,7 @@ export default function RelatorioVendas() {
                   name="dataFim"
                   value={filtros.dataFim}
                   onChange={handleFiltroChange}
-                  className="w-full p-3 rounded-xl border-2 border-[#d695e7] focus:ring-2 focus:ring-[#76196c] transition-all"
+                  className="w-full bg-[#C5FFAD]  p-3 rounded-xl border-2 border-[#d695e7] focus:ring-2 focus:ring-[#76196c] transition-all"
                 />
               </div>
 
@@ -227,7 +234,7 @@ export default function RelatorioVendas() {
                   name="filialId"
                   value={filtros.filialId}
                   onChange={handleFiltroChange}
-                  className="w-full p-3 rounded-xl border-2 border-[#d695e7] focus:ring-2 focus:ring-[#76196c] transition-all"
+                  className="w-full p-3 rounded-xl bg-[#C5FFAD] border-2 border-[#d695e7] focus:ring-2 focus:ring-[#76196c] transition-all"
                 >
                   <option value="">Todas as Filiais</option>
                   {filiais.map((f) => (
@@ -242,14 +249,14 @@ export default function RelatorioVendas() {
                 <button
                   onClick={aplicarFiltros}
                   disabled={loading}
-                  className="flex-1 flex items-center justify-center gap-2 bg-[#75ba51] hover:bg-[#5a9940] text-white font-bold py-3 rounded-xl transition-all disabled:opacity-50"
+                  className="flex-1 flex items-center justify-center gap-2 bg-[#75ba51] hover:bg-[#5a9940]/60 text-[#76196C] font-bold py-3 rounded-xl transition-all disabled:opacity-50"
                 >
                   {loading ? <RefreshCw className="animate-spin" size={18} /> : <Filter size={18} />}
                   Aplicar
                 </button>
                 <button
                   onClick={limparFiltros}
-                  className="px-4 py-3 bg-neutral-200 hover:bg-neutral-300 text-neutral-700 font-bold rounded-xl transition-all"
+                  className="px-4 py-3 bg-[#75ba51] hover:bg-[#5a9940]/60 text-[#76196C] font-bold rounded-xl transition-all"
                 >
                   Limpar
                 </button>
@@ -260,7 +267,7 @@ export default function RelatorioVendas() {
 
         {/* KPIs */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <Card className="shadow-lg border-2 border-[#d695e7] bg-white">
+          <Card className="shadow-lg border-2 border-[#d695e7] bg-[#EBC7F5]">
             <CardContent className="p-6">
               <div className="flex items-center gap-4">
                 <div className="p-3 bg-purple-100 rounded-2xl">
@@ -274,7 +281,7 @@ export default function RelatorioVendas() {
             </CardContent>
           </Card>
 
-          <Card className="shadow-lg border-2 border-[#d695e7] bg-white">
+          <Card className="shadow-lg border-2 border-[#d695e7] bg-[#C5FFAD]">
             <CardContent className="p-6">
               <div className="flex items-center gap-4">
                 <div className="p-3 bg-green-100 rounded-2xl">
@@ -290,7 +297,7 @@ export default function RelatorioVendas() {
             </CardContent>
           </Card>
 
-          <Card className="shadow-lg border-2 border-[#d695e7] bg-white">
+          <Card className="shadow-lg border-2 border-[#d695e7] bg-[#EBC7F5]">
             <CardContent className="p-6">
               <div className="flex items-center gap-4">
                 <div className="p-3 bg-blue-100 rounded-2xl">
@@ -306,7 +313,7 @@ export default function RelatorioVendas() {
             </CardContent>
           </Card>
 
-          <Card className="shadow-lg border-2 border-[#d695e7] bg-white">
+          <Card className="shadow-lg border-2 border-[#d695e7] bg-[#C5FFAD]">
             <CardContent className="p-6">
               <div className="flex items-center gap-4">
                 <div className="p-3 bg-orange-100 rounded-2xl">
@@ -402,7 +409,7 @@ export default function RelatorioVendas() {
 
           {/* Gráfico de Faturamento por Filial */}
           {data?.porFilial && data.porFilial.length > 0 && (
-            <div className="bg-white p-6 rounded-2xl shadow-xl border-2 border-[#d695e7] lg:col-span-2">
+            <div className="bg-[#C5FFAD] p-6 rounded-2xl lg:col-span-2">
               <h3 className="text-xl font-bold text-[#76196c] mb-4 flex items-center gap-2">
                 <Store size={20} />
                 Faturamento por Filial
@@ -432,7 +439,7 @@ export default function RelatorioVendas() {
         
         {/* Ranking por Filial */}
         {data?.porFilial && data.porFilial.length > 0 && (
-          <div className="bg-white p-6 rounded-2xl shadow-xl border-2 border-[#d695e7]">
+          <div className="bg-[#EBC7F5] p-6 rounded-2xl">
             <h2 className="text-2xl font-bold text-[#76196c] mb-4 flex items-center gap-2">
               <Store className="w-6 h-6" /> Ranking por Filial
             </h2>
@@ -440,7 +447,7 @@ export default function RelatorioVendas() {
             <div className="overflow-x-auto">
               <table className="w-full border-collapse">
                 <thead>
-                  <tr className="bg-gradient-to-r from-[#f8f0fc] to-[#fef5ff] border-b-2 border-[#d695e7]">
+                  <tr className="bg-[#D594E6]/60 border-b-2 border-[#d695e7]">
                     <th className="p-4 text-left text-[#76196c] font-bold">#</th>
                     <th className="p-4 text-left text-[#76196c] font-bold">Filial</th>
                     <th className="p-4 text-left text-[#76196c] font-bold">Total de Vendas</th>
@@ -449,7 +456,7 @@ export default function RelatorioVendas() {
                 </thead>
                 <tbody>
                   {data.porFilial.map((f, idx) => (
-                    <tr key={f.id_empresa} className="border-b hover:bg-[#fef5ff] transition-colors">
+                    <tr key={f.id_empresa} className="border-b border-[#D594E6] hover:bg-[#D594E6] transition-colors">
                       <td className="p-4">
                         <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full font-bold ${
                           idx === 0 ? 'bg-yellow-400 text-yellow-900' :
@@ -461,8 +468,8 @@ export default function RelatorioVendas() {
                         </span>
                       </td>
                       <td className="p-4 font-semibold text-[#76196c]">{f.nome_filial}</td>
-                      <td className="p-4 font-medium">{f.total_vendas}</td>
-                      <td className="p-4 text-green-600 font-bold">
+                      <td className="p-4 font-medium text-[#76196C]">{f.total_vendas}</td>
+                      <td className="p-4 text-[#4EA912] font-bold">
                         R$ {parseFloat(f.faturamento).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                       </td>
                     </tr>
@@ -475,7 +482,7 @@ export default function RelatorioVendas() {
 
         {/* Top Produtos */}
         {data?.topProdutos && data.topProdutos.length > 0 && (
-          <div className="bg-white p-6 rounded-2xl shadow-xl border-2 border-[#d695e7]">
+          <div className="bg-[#C5FFAD] p-6 rounded-2xl">
             <h2 className="text-2xl font-bold text-[#76196c] mb-4 flex items-center gap-2">
               <Package className="w-6 h-6" /> Top Produtos Mais Vendidos
             </h2>
@@ -483,7 +490,7 @@ export default function RelatorioVendas() {
             <div className="overflow-x-auto">
               <table className="w-full border-collapse">
                 <thead>
-                  <tr className="bg-gradient-to-r from-[#f8f0fc] to-[#fef5ff] border-b-2 border-[#d695e7]">
+                  <tr className="bg-[#75BA51]/60 border-b-2 border-[#d695e7]">
                     <th className="p-4 text-left text-[#76196c] font-bold">#</th>
                     <th className="p-4 text-left text-[#76196c] font-bold">Produto</th>
                     <th className="p-4 text-left text-[#76196c] font-bold">Quantidade</th>
@@ -492,7 +499,7 @@ export default function RelatorioVendas() {
                 </thead>
                 <tbody>
                   {data.topProdutos.map((p, idx) => (
-                    <tr key={p.id_produto} className="border-b hover:bg-[#fef5ff] transition-colors">
+                    <tr key={p.id_produto} className="border-b border-[#75BA51] hover:bg-[#75BA51]/40 transition-colors">
                       <td className="p-4">
                         <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full font-bold ${
                           idx === 0 ? 'bg-yellow-400 text-yellow-900' :
@@ -503,9 +510,9 @@ export default function RelatorioVendas() {
                           {idx + 1}
                         </span>
                       </td>
-                      <td className="p-4 font-semibold">{p.nome}</td>
-                      <td className="p-4 font-medium">{p.quantidade_vendida} un.</td>
-                      <td className="p-4 text-green-600 font-bold">
+                      <td className="p-4 font-semibold text-[#4F6940] ">{p.nome}</td>
+                      <td className="p-4 font-medium text-[#4F6940]">{p.quantidade_vendida} un.</td>
+                      <td className="p-4 text-[#4EA912] font-bold">
                         R$ {parseFloat(p.faturamento_produto).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                       </td>
                     </tr>
@@ -518,7 +525,7 @@ export default function RelatorioVendas() {
 
         {/* Últimas Vendas */}
         {data?.ultimasVendas && data.ultimasVendas.length > 0 && (
-          <div className="bg-white p-6 rounded-2xl shadow-xl border-2 border-[#d695e7]">
+          <div className="bg-[#EBC7F5] p-6 rounded-2xl">
             <h2 className="text-2xl font-bold text-[#76196c] mb-4 flex items-center gap-2">
               <Calendar className="w-6 h-6" /> Últimas Vendas
             </h2>
@@ -541,7 +548,7 @@ export default function RelatorioVendas() {
                           #{v.id_venda}
                         </span>
                       </td>
-                      <td className="p-4 font-bold text-green-600">
+                      <td className="p-4 font-bold text-[#4EA912]">
                         R$ {parseFloat(v.total).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                       </td>
                       <td className="p-4">
@@ -549,7 +556,7 @@ export default function RelatorioVendas() {
                           {v.tipo_pagamento}
                         </span>
                       </td>
-                      <td className="p-4 text-neutral-600">
+                      <td className="p-4 text-[#76196C]">
                         {new Date(v.data_venda).toLocaleString('pt-BR')}
                       </td>
                     </tr>
@@ -561,5 +568,6 @@ export default function RelatorioVendas() {
         )}
       </div>
     </div>
+    </>
   );
 }

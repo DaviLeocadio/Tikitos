@@ -1,15 +1,29 @@
 import nodemailer from "nodemailer";
-import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
+import dotenv from "dotenv"
+dotenv.config()
 
-dotenv.config();
+/* ------------------ CONFIG SMTP AQUI ------------------ */
+
+const SMTP_CONFIG = {
+  host: "smtp.gmail.com",
+  port: 587,
+  secure: false, // Gmail usa TLS STARTTLS
+  user: process.env.MAIL_USER || "tikitos.br@gmail.com",
+  pass: process.env.MAIL_PASS, 
+};
+
+// Use TRUE para testar no SENAI ou sem internet
+const FAKE_EMAIL = false;
+
+/* ------------------------------------------------------- */
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 /* -------------------------------------------------------
-   FUNÇÃO PARA GERAR HTML DO EMAIL COM O TOKEN
+   GERA HTML DOS DIGITOS
 ------------------------------------------------------- */
 const generateDigitsHTML = (token) => {
   return String(token)
@@ -32,6 +46,9 @@ const generateDigitsHTML = (token) => {
     .join("");
 };
 
+/* -------------------------------------------------------
+   GERA HTML COMPLETO DO EMAIL
+------------------------------------------------------- */
 const generateEmailHTML = (token) => {
   const digitsHTML = generateDigitsHTML(token);
 
@@ -48,11 +65,11 @@ const generateEmailHTML = (token) => {
       style="width:200px;max-width:100%;display:block;margin:0 auto 20px auto;"
     />
 
-    <h2 style="margin:0;color:#924187;font-size:26px;font-weight:800;letter-spacing:-0.5px;">
+    <h2 style="margin:0;color:#924187;font-size:26px;font-weight:800;">
       Código de verificação:
     </h2>
 
-    <p style="margin:15px 0 30px 0;color:#666;font-size:16px;line-height:1.6;">
+    <p style="margin:15px 0 30px 0;color:#666;font-size:16px;">
       Use o código abaixo para confirmar seu acesso à Tikitos e continuar espalhando alegria com a gente :)
     </p>
 
@@ -73,45 +90,39 @@ const generateEmailHTML = (token) => {
         ${digitsHTML}
       </div>
 
-      <!-- versão em texto do código (para clientes que removem estilos) -->
-      <p style="display:none; margin:12px 0 0 0;color:#4f6940;font-size:18px;font-weight:800;letter-spacing:4px;">
-        ${String(token).split("").join(" ")}
-      </p>
-
-      
       <h3 style="margin:50px 0 5px 0;color:#924187;font-size:20px;font-weight:800;">
-      Lembrete importante!
+        Lembrete importante!
       </h3>
       
-      <p style="margin:0 0 30px 0;color:#666;font-size:15px;line-height:1.4;">
-      O código é válido por <strong>tempo limitado</strong>,<br/> então use rapidinho!
+      <p style="margin:0 0 30px 0;color:#666;font-size:15px;">
+        O código é válido por <strong>tempo limitado</strong>,<br/> então use rapidinho!
       </p>
       
-    <p style="margin:0 0 12px 0;color:#4f6940;font-size:15px;font-weight:700;">
-      Para dúvidas ou ajuda, entre em contato:
-    </p>
+      <p style="margin:0 0 12px 0;color:#4f6940;font-size:15px;font-weight:700;">
+        Para dúvidas ou ajuda, entre em contato:
+      </p>
     
-    <a 
-    href="mailto:contato@tikitos.com.br"
-    style="
-    display:inline-block;
-    padding:10px 22px;
-    background:#DABCE1;
-    color:#4F6940;
-    font-size:14px;
-    font-weight:600;
-    border:1px solid #d695e7;
-    border-radius:14px;
-    text-decoration:none;
-    "
-    >
-    ✉️ contato@tikitos.com.br
-    </a>
-    
-    <p style="margin-top:40px;color:#924187;font-size:16px;font-weight:800;line-height:1.4;">
-    Com carinho,<br/>
-    Equipe Tikitos!
-    </p>
+      <a 
+        href="mailto:contato@tikitos.com.br"
+        style="
+        display:inline-block;
+        padding:10px 22px;
+        background:#DABCE1;
+        color:#4F6940;
+        font-size:14px;
+        font-weight:600;
+        border:1px solid #d695e7;
+        border-radius:14px;
+        text-decoration:none;
+        "
+      >
+        ✉️ contato@tikitos.com.br
+      </a>
+      
+      <p style="margin-top:40px;color:#924187;font-size:16px;font-weight:800;">
+        Com carinho,<br/>
+        Equipe Tikitos!
+      </p>
     
     </div>
   </div>
@@ -122,14 +133,14 @@ const generateEmailHTML = (token) => {
 };
 
 /* -------------------------------------------------------
-   SISTEMA DE FAKE EMAIL (MANTIDO 100%)
+   SISTEMA DE EMAIL FAKE
 ------------------------------------------------------- */
 const makeFakeInfo = (email) => {
   const fakeId = `fake-${Date.now()}`;
   return {
     messageId: fakeId,
     envelope: {
-      from: process.env.MAIL_USER || "no-reply@tikitos.test",
+      from: SMTP_CONFIG.user,
       to: [email],
     },
     accepted: [email],
@@ -139,6 +150,9 @@ const makeFakeInfo = (email) => {
   };
 };
 
+/* -------------------------------------------------------
+   FUNÇÃO PARA DETECTAR ERROS DE REDE
+------------------------------------------------------- */
 const isNetworkError = (err) => {
   if (!err) return false;
 
@@ -159,22 +173,23 @@ const isNetworkError = (err) => {
 };
 
 /* -------------------------------------------------------
-   CRIA O TRANSPORTER SMTP
+   CRIA TRANSPORTER SMTP
 ------------------------------------------------------- */
 const createTransporter = async () => {
-  if (process.env.FAKE_EMAIL === "true") return null;
+  if (FAKE_EMAIL) return null;
 
   return nodemailer.createTransport({
-    host: process.env.MAIL_HOST || "smtp.gmail.com",
-    port: Number(process.env.MAIL_PORT) || 587,
-    secure: process.env.MAIL_SECURE === "true",
+    host: SMTP_CONFIG.host,
+    port: SMTP_CONFIG.port,
+    secure: SMTP_CONFIG.secure,
     auth: {
-      user: process.env.MAIL_USER,
-      pass: process.env.MAIL_PASS,
+      user: SMTP_CONFIG.user,
+      pass: SMTP_CONFIG.pass,
     },
-    connectionTimeout: Number(process.env.MAIL_CONN_TIMEOUT) || 10_000,
-    greetingTimeout: Number(process.env.MAIL_GREET_TIMEOUT) || 10_000,
-    socketTimeout: Number(process.env.MAIL_SOCKET_TIMEOUT) || 10_000,
+
+    tls: {
+      rejectUnauthorized: false, // resolve self-signed certificate
+    }
   });
 };
 
@@ -182,25 +197,23 @@ const createTransporter = async () => {
    FUNÇÃO PRINCIPAL PARA ENVIAR EMAIL
 ------------------------------------------------------- */
 const sendMail = async (email, subject, token) => {
-  if (process.env.FAKE_EMAIL === "true") {
-    console.log("⚠️ FAKE EMAIL MODE ativo — não enviando email real.", email);
+  if (FAKE_EMAIL) {
+    console.log("⚠️ FAKE_EMAIL ativo — e-mail não será enviado.");
     return makeFakeInfo(email);
   }
 
   const transporter = await createTransporter();
 
   try {
-    console.log("📨 Tentando enviar e-mail para:", email);
+    console.log("📨 Enviando email para:", email);
 
     await transporter.verify();
 
-    const htmlContent = generateEmailHTML(token);
-
     const info = await transporter.sendMail({
-      from: `"Tikitos Brinquedos" <${process.env.MAIL_USER}>`,
+      from: `"Tikitos Brinquedos" <${SMTP_CONFIG.user}>`,
       to: email,
       subject,
-      html: htmlContent,
+      html: generateEmailHTML(token),
       attachments: [
         {
           filename: "logo.png",
@@ -212,14 +225,12 @@ const sendMail = async (email, subject, token) => {
 
     console.log("✅ E-mail enviado com sucesso:", info.messageId);
     return info;
+
   } catch (err) {
-    console.error(
-      "⚠️ Erro ao enviar e-mail:",
-      err.code || err.responseCode || err
-    );
+    console.error("❌ Erro ao enviar email:", err);
 
     if (isNetworkError(err)) {
-      console.warn("⚠️ Erro de rede detectado — retornando email fake.");
+      console.warn("⚠️ Erro de rede — retornando email fake.");
       return makeFakeInfo(email);
     }
 

@@ -53,7 +53,7 @@ export default function GetColumns({ setModalDesconto, setModalPedido }) {
       accessorKey: "categoria.nome",
       header: "Categoria",
       cell: ({ row }) => (
-        <span className="px-2 py-1 bg-[#e8c5f1] text-[#76196c] rounded-full text-xs font-semibold">
+        <span className="px-2 py-1  text-[#76196c] rounded-full text-xs font-semibold">
           {row.original.categoria.nome}
         </span>
       ),

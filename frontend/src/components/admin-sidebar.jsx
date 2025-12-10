@@ -77,7 +77,7 @@ export function AdminSidebar({ ...props }) {
     hover:bg-transparent 
     focus:bg-transparent 
     active:bg-transparent 
-    data-[active=true]:bg-transparent"
+    data-[active=true]:bg-transparent hover:bg-[#ffffff00] transition-all duration-300 ease-out cursor-pointer hover:scale-[0.97]"
     
             >
               {/* O Admin deve ser direcionado para o Dashboard Admin ao clicar no Logo, não para o PDV */}
@@ -87,11 +87,11 @@ export function AdminSidebar({ ...props }) {
                   alt="Tikitos Logo"
                   className="max-h-full"
                 />
-                <span className="text-base font-semibold text-[#76216D] hover:bg-[#ffffff00]">
+                <span className="text-base font-semibold text-[#76216D] hover:bg-[#ffffff00] flex items-center gap-1">
                   Tikitos{" "}
-                  <small className="text-xs text-gray-500 block font-normal">
-                    Matriz
-                  </small>
+                  <p className="text-xs text-gray-500 block font-normal m-0 pt-[1.5]">
+                    (Matriz)
+                  </p>
                 </span>
               </Link>
             </SidebarMenuButton>

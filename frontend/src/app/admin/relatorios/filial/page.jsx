@@ -10,6 +10,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+import { SidebarTrigger } from "@/components/ui/sidebar";
+
 import {
   Loader2,
   Store,
@@ -163,10 +165,15 @@ export default function RelatorioFilial() {
   };
 
   return (
+    <>
+    <div className="p-6">
+        <SidebarTrigger />
+      </div>
+    
     <div className="min-h-screen  p-4 sm:p-8 animate-fadeIn">
       <div className="max-w-7xl mx-auto space-y-8">
         {/* Cabeçalho */}
-        <div className="bg-white rounded-3xl shadow-xl border-4 border-[#d695e7] p-6">
+        <div className="bg-[#CAF4B7] rounded-3xl p-6">
           <div className="text-center mb-6">
             <h1 className="text-3xl sm:text-4xl font-extrabold text-[#76196c] mb-2 flex items-center justify-center gap-3">
               <Store size={36} />
@@ -203,7 +210,7 @@ export default function RelatorioFilial() {
                     onValueChange={(v) => setFilialId(v)}
                     value={filialId || ""}
                   >
-                    <SelectTrigger className="w-full p-3 rounded-xl border-2 border-[#d695e7] focus:ring-2 focus:ring-[#76196c] bg-white">
+                    <SelectTrigger className="w-full p-3 bg-[#EBC7F5] rounded-xl border-2 border-[#d695e7] focus:ring-2 focus:ring-[#76196c] ">
                       <SelectValue placeholder="Escolha uma filial..." />
                     </SelectTrigger>
 
@@ -233,7 +240,7 @@ export default function RelatorioFilial() {
                       <button
                         key={d}
                         onClick={() => setPeriodoRapido(d)}
-                        className="px-4 py-2 bg-[#76196c] hover:bg-[#9b2b91] text-white text-sm rounded-xl transition-all"
+                        className="px-4 py-2 bg-[#76196c] text-[#CAF4B7] hover:bg-[#9b2b91] text-sm rounded-xl transition-all"
                       >
                         Últimos {d} dias
                       </button>
@@ -271,7 +278,7 @@ export default function RelatorioFilial() {
                     <button
                       onClick={carregarRelatorio}
                       disabled={!filialId || loadingRelatorio}
-                      className="flex-1 flex items-center justify-center gap-2 bg-[#75ba51] hover:bg-[#5a9940] text-white font-bold py-3 rounded-xl transition-all disabled:opacity-50"
+                      className="flex-1 flex items-center justify-center gap-2 bg-[#75ba51] hover:bg-[#5a9940] text-[#76196C] font-bold py-3 rounded-xl transition-all disabled:opacity-50"
                     >
                       {loadingRelatorio ? (
                         <RefreshCw className="animate-spin" size={18} />
@@ -283,7 +290,7 @@ export default function RelatorioFilial() {
 
                     <button
                       onClick={limparFiltros}
-                      className="px-4 py-3 bg-neutral-200 hover:bg-neutral-300 text-neutral-700 font-bold rounded-xl"
+                      className="px-4 py-3 bg-[#75ba51] hover:bg-[#5a9940] text-[#76196C] font-bold rounded-xl"
                     >
                       Limpar
                     </button>
@@ -296,7 +303,7 @@ export default function RelatorioFilial() {
 
         {/* Nenhuma filial */}
         {!filialId && !loadingFiliais && (
-          <div className="bg-white rounded-2xl shadow-lg border-2 border-[#d695e7] p-12 text-center">
+          <div className="bg-[#EBC7F5] rounded-2xl shadow-lg border-2 border-[#d695e7] p-12 text-center">
             <Store className="w-24 h-24 text-[#d695e7] mx-auto mb-4" />
 
             <h3 className="text-2xl font-bold text-[#76196c] mb-2">
@@ -323,7 +330,7 @@ export default function RelatorioFilial() {
         {dados && !loadingRelatorio && filialId && (
           <>
             {/* FILIAL */}
-            <div className="bg-white rounded-2xl shadow-xl border-2 border-[#d695e7] p-6">
+            <div className="bg-[#EBC7F5] rounded-2xl shadow-xl p-6">
               <div className="flex items-center gap-4 mb-4">
                 <div className="p-4 bg-gradient-to-br from-[#76196c] to-[#9b2b91] rounded-2xl">
                   <Store className="w-8 h-8 text-white" />
@@ -347,7 +354,7 @@ export default function RelatorioFilial() {
             {/* KPIs */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {/* Faturamento */}
-              <Card className="shadow-lg border-2 border-[#d695e7] bg-white">
+              <Card className="shadow-lg border-2 border-[#d695e7] bg-[#CAF4B7]">
                 <CardContent className="p-6">
                   <div className="flex items-center gap-4">
                     <div className="p-3 bg-green-100 rounded-2xl">
@@ -373,7 +380,7 @@ export default function RelatorioFilial() {
               </Card>
 
               {/* Total Vendas */}
-              <Card className="shadow-lg border-2 border-[#d695e7] bg-white">
+              <Card className="shadow-lg border-2 border-[#d695e7] bg-[#EBC7F5]">
                 <CardContent className="p-6">
                   <div className="flex items-center gap-4">
                     <div className="p-3 bg-blue-100 rounded-2xl">
@@ -393,7 +400,7 @@ export default function RelatorioFilial() {
               </Card>
 
               {/* Ticket médio */}
-              <Card className="shadow-lg border-2 border-[#d695e7] bg-white">
+              <Card className="shadow-lg border-2 border-[#d695e7] bg-[#CAF4B7]">
                 <CardContent className="p-6">
                   <div className="flex items-center gap-4">
                     <div className="p-3 bg-purple-100 rounded-2xl">
@@ -420,7 +427,7 @@ export default function RelatorioFilial() {
               </Card>
 
               {/* Produtos vendidos */}
-              <Card className="shadow-lg border-2 border-[#d695e7] bg-white">
+              <Card className="shadow-lg border-2 border-[#d695e7] bg-[#EBC7F5]">
                 <CardContent className="p-6">
                   <div className="flex items-center gap-4">
                     <div className="p-3 bg-orange-100 rounded-2xl">
@@ -519,7 +526,7 @@ export default function RelatorioFilial() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Linha */}
               {dados.vendasPorDia?.length > 0 && (
-                <div className="bg-white p-6 rounded-2xl shadow-xl border-2 border-[#d695e7]">
+                <div className=" p-6 rounded-2xl">
                   <h3 className="text-xl font-bold text-[#76196c] mb-4 flex items-center gap-2">
                     <TrendingUp size={20} />
                     Evolução de Vendas
@@ -609,7 +616,7 @@ export default function RelatorioFilial() {
 
               {/* Pizza */}
               {dados.financeiro?.pagamentos && (
-                <div className="bg-white p-6 rounded-2xl shadow-xl border-2 border-[#d695e7]">
+                <div className=" p-6 rounded-2xl">
                   <h3 className="text-xl font-bold text-[#76196c] mb-4 flex items-center gap-2">
                     <CreditCard size={20} />
                     Vendas por Tipo de Pagamento
@@ -642,7 +649,7 @@ export default function RelatorioFilial() {
 
               {/* Top produtos */}
               {dados.produtosVendidos?.length > 0 && (
-                <div className="bg-white p-6 rounded-2xl shadow-xl border-2 border-[#d695e7] lg:col-span-2">
+                <div className=" p-6 rounded-2xl lg:col-span-2">
                   <h3 className="text-xl font-bold text-[#76196c] mb-4 flex items-center gap-2">
                     <Package size={20} />
                     Top Produtos Mais Vendidos
@@ -693,7 +700,7 @@ export default function RelatorioFilial() {
 
             {/* TABELA - Últimas vendas */}
             {dados.ultimasVendas?.length > 0 && (
-              <div className="bg-white p-6 rounded-2xl shadow-xl border-2 border-[#d695e7]">
+              <div className="bg-[#CAF4B7] p-6 rounded-2xl shadow-xl border-2 border-[#d695e7]">
                 <h2 className="text-2xl font-bold text-[#76196c] mb-4 flex items-center gap-2">
                   <Calendar className="w-6 h-6" /> Últimas Vendas
                 </h2>
@@ -701,7 +708,7 @@ export default function RelatorioFilial() {
                 <div className="overflow-x-auto">
                   <table className="w-full border-collapse">
                     <thead>
-                      <tr className="border-b-2 border-[#d695e7]">
+                      <tr className="border-b-2 bg-[#9BF377] border-[#d695e7]">
                         <th className="p-4 text-left text-[#76196c] font-bold">
                           ID
                         </th>
@@ -721,7 +728,7 @@ export default function RelatorioFilial() {
                       {dados.ultimasVendas.map((v) => (
                         <tr
                           key={v.id_venda}
-                          className="border-b hover:bg-[#fef5ff] transition-colors"
+                          className="border-b border-[#9BF377] hover:bg-[#9BF377]/50 transition-colors"
                         >
                           <td className="p-4">
                             <span className="font-mono text-sm bg-[#e8c5f1] text-[#76196c] px-3 py-1 rounded-lg">
@@ -729,7 +736,7 @@ export default function RelatorioFilial() {
                             </span>
                           </td>
 
-                          <td className="p-4 font-bold text-green-600">
+                          <td className="p-4 font-bold text-[#4EA912]">
                             R${" "}
                             {parseFloat(v.total).toLocaleString("pt-BR", {
                               minimumFractionDigits: 2,
@@ -742,7 +749,7 @@ export default function RelatorioFilial() {
                             </span>
                           </td>
 
-                          <td className="p-4 text-neutral-600">
+                          <td className="p-4 text-[#4F6940]">
                             {new Date(v.data_venda).toLocaleString("pt-BR")}
                           </td>
                         </tr>
@@ -755,7 +762,7 @@ export default function RelatorioFilial() {
 
             {/* TABELA - Top produtos */}
             {dados.produtosVendidos?.length > 0 && (
-              <div className="bg-white p-6 rounded-2xl shadow-xl border-2 border-[#d695e7]">
+              <div className="bg-[#EBC7F5] p-6 rounded-2xl shadow-xl border-2 border-[#d695e7]">
                 <h2 className="text-2xl font-bold text-[#76196c] mb-4 flex items-center gap-2">
                   <Package className="w-6 h-6" /> Produtos Mais Vendidos
                 </h2>
@@ -763,7 +770,7 @@ export default function RelatorioFilial() {
                 <div className="overflow-x-auto">
                   <table className="w-full border-collapse">
                     <thead>
-                      <tr className="border-b-2 border-[#d695e7]">
+                      <tr className="border-b-2 bg-[#F1B8E8] border-[#d695e7]">
                         <th className="p-4 text-left text-[#76196c] font-bold">
                           #
                         </th>
@@ -783,21 +790,21 @@ export default function RelatorioFilial() {
                       {dados.produtosVendidos.map((p, index) => (
                         <tr
                           key={index}
-                          className="border-b hover:bg-[#fef5ff] transition-colors"
+                          className="border-b border-[#F1B8E8] hover:bg-[#F1B8E8]/60 transition-colors"
                         >
                           <td className="p-4 font-semibold text-[#76196c]">
                             {index + 1}
                           </td>
 
-                          <td className="p-4 font-medium text-neutral-700">
+                          <td className="p-4 font-medium text-[#76196C]">
                             {p.nome}
                           </td>
 
-                          <td className="p-4 font-bold text-blue-600">
+                          <td className="p-4 font-bold text-[#76196C]">
                             {p.quantidade_vendida}
                           </td>
 
-                          <td className="p-4 font-bold text-green-600">
+                          <td className="p-4 font-bold text-[#4EA912]">
                             R${" "}
                             {parseFloat(p.faturamento_produto).toLocaleString(
                               "pt-BR",
@@ -867,5 +874,6 @@ export default function RelatorioFilial() {
         )}
       </div>
     </div>
+    </>
   );
 }

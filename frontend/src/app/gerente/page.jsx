@@ -27,14 +27,12 @@ function MetricCard({ title, value, icon, color, trend, bg, text }) {
           {trend && (
             <div className="flex flex-wrap  items-center gap-1 text-sm">
               <i
-                className={`bi bi-arrow-${trend.direction} text-${
-                  trend.direction === "up" ? "green" : "red"
-                }-600`}
+                className={`bi bi-arrow-${trend.direction} text-${trend.direction === "up" ? "green" : "red"
+                  }-600`}
               ></i>
               <span
-                className={`font-semibold text-${
-                  trend.direction === "up" ? "green" : "red"
-                }-600`}
+                className={`font-semibold text-${trend.direction === "up" ? "green" : "red"
+                  }-600`}
               >
                 {trend.percentage}%
               </span>
@@ -79,7 +77,7 @@ function QuickActionCard({ title, description, icon, href, color }) {
   return (
     <Link
       href={href}
-      className={`bg-[#DDF1D4] rounded-xl border-1 border-${color} p-5 hover:scale-[1.02] transition-all duration-200 cursor-pointer group`}
+      className={`bg-[#DDF1D4] rounded-xl border-1 border-${color} p-5 cursor-pointer group transition-all duration-300 ease-out hover:scale-[0.97] hover:bg-[#c4eab2]`}
     >
       <div className="flex items-center gap-4">
         <div
@@ -91,7 +89,7 @@ function QuickActionCard({ title, description, icon, href, color }) {
           <h3 className={`font-bold text-lg text-${color} mb-1`}>{title}</h3>
           <p className="text-sm text-[#4F6940]">{description}</p>
         </div>
-        <i className="bi bi-chevron-right text-xl text-[#4F6940] group-hover:text-[#E5B8F1]"></i>
+        <i className="bi bi-chevron-right text-xl text-[#4F6940] group-hover:text-[#569A33]"></i>
       </div>
     </Link>
   );
@@ -169,22 +167,21 @@ export default function GerenteDashboard() {
                   <SidebarTrigger /> Dashboard - {nomeFilial}
                 </h1>
               </div>
-              <p className="text-gray-700 mt-1 font-medium">
+              <p className="text-lg text-[#8c3e82]">
                 Bem-vindo, <span className="font-semibold">{nomeGerente}</span>!
               </p>
             </div>
 
             {/* Filtro de período */}
-            <div className="flex gap-2 bg-[#C97FDA] rounded-xl p-1 border-3">
+            <div className="flex gap-2 bg-[#EBC7F5] rounded-xl p-1 border-3">
               {periodos.map((p) => (
                 <button
                   key={p.value}
                   onClick={() => setPeriodo(p.value)}
-                  className={`px-4 py-2 rounded-lg font-semibold text-sm transition-all ${
-                    periodo === p.value
-                      ? "bg-[#76196c] text-[#9BF377]"
-                      : "text-[#76196c] hover:bg-[#EBC7F5]"
-                  }`}
+                  className={`px-4 py-2 rounded-lg font-semibold text-sm transition-all ${periodo === p.value
+                    ? "bg-[#76196c]/70 text-[#C5FFAD]"
+                    : "text-[#76196c] hover:bg-[#C97FDA]/50"
+                    }`}
                 >
                   {p.label}
                 </button>
@@ -214,43 +211,46 @@ export default function GerenteDashboard() {
                   title="Vendas do Período"
                   value={dashboardData.vendas.total}
                   icon="graph-up-arrow"
-                  color="[#569a33]"
-                  bg="[#C5FFAD]"
-                  text="[#569a33]"
+                  color="[#9D4E92]"
+                  bg="[#e8c5f1]"
+                  text="[#9D4E92]"
                   trend={dashboardData.vendas.trend}
                 />
                 <MetricCard
                   title="Produtos Vendidos"
                   value={dashboardData.produtos.vendidos}
                   icon="box-seam"
-                  color="[#76196c]"
-                  bg="[#E5B8F1]"
-                  text="[#76196c]"
+                  color="[#4f6940]"
+                  bg="[#9bf377]"
+                  text="[#4f6940]"
                 />
                 <MetricCard
                   title="Estoque Baixo"
                   value={dashboardData.produtos.baixoEstoque}
                   icon="exclamation-triangle"
-                  color="[#ff6b6b]"
+                  color="[#9D4E92]"
                   bg="[#F1B8E8]"
-                  text="[#ff6b6b]"
+                  text="[#9D4E92]"
                 />
                 <MetricCard
                   title="Vendedores Ativos"
                   value={dashboardData.vendedores.ativos}
                   icon="people"
                   color="[#4f6940]"
-                  bg="[#92EF6C]"
+                  bg="[#c5ffad]"
                   text="[#4f6940]"
                 />
               </div>
 
               {/* Ações Rápidas */}
               <div>
-                <h2 className="text-2xl font-bold text-[#76196c] mb-4">
-                  Ações Rápidas
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="flex gap-2 items-center mb-4">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-[#569A33] lucide lucide-blocks-icon lucide-blocks"><path d="M10 22V7a1 1 0 0 0-1-1H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5a1 1 0 0 0-1-1H2" /><rect x="14" y="2" width="8" height="8" rx="1" /></svg>
+                  <h2 className="text-2xl font-bold text-[#76196c]">
+                    Ações Rápidas
+                  </h2>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 ">
                   <QuickActionCard
                     title="Produtos"
                     description="Gerenciar catálogo e descontos"
@@ -299,22 +299,22 @@ export default function GerenteDashboard() {
               {/* Fluxo de Caixa e Alertas */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
                 {/* Fluxo de Caixa */}
-                <div className="bg-[#EBC7F5]/80 rounded-xl pt-6 px-6 pb-20 flex flex-col relative overflow-visible">
+                <div className="bg-[#EDD5F2]/80 rounded-xl pt-6 px-6 pb-20 flex flex-col relative overflow-visible rounded-xl border-3 border-dashed border-[#8F3D84]">
                   {/* Título */}
                   <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-xl font-bold text-[#569a33]">
+                    <h3 className="text-xl font-bold text-[#8F3D84] flex items-center gap-2">
                       Fluxo de Caixa
                     </h3>
-                    <i className="bi bi-cash-stack text-2xl text-[#569a33]"></i>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-[#8F3D84] lucide lucide-hand-coins-icon lucide-hand-coins"><path d="M11 15h2a2 2 0 1 0 0-4h-3c-.6 0-1.1.2-1.4.6L3 17" /><path d="m7 21 1.6-1.4c.3-.4.8-.6 1.4-.6h4c1.1 0 2.1-.4 2.8-1.2l4.6-4.4a2 2 0 0 0-2.75-2.91l-4.2 3.9" /><path d="m2 16 6 6" /><circle cx="16" cy="9" r="2.9" /><circle cx="6" cy="5" r="3" /></svg>
                   </div>
 
                   {/* Conteúdo */}
                   <div className="space-y-4">
-                    <div className="flex justify-between items-center p-3 bg-[#C5FFAD] rounded-lg">
-                      <span className="font-semibold text-[#4EA912]">
+                    <div className="flex justify-between items-center p-3 bg-[#98d378] rounded-lg">
+                      <span className="font-semibold text-[#4F6940]">
                         Entradas
                       </span>
-                      <span className="text-lg font-bold text-[#4EA912]">
+                      <span className="text-lg font-bold text-[#4F6940]">
                         {dashboardData.fluxoCaixa.entradas}
                       </span>
                     </div>
@@ -328,7 +328,7 @@ export default function GerenteDashboard() {
                       </span>
                     </div>
 
-                    <div className="flex justify-between items-center p-3 bg-[#934788]/50 rounded-lg">
+                    <div className="flex justify-between items-center p-3 bg-[#D1A7CD] rounded-lg">
                       <span className="font-bold text-[#76196C]">Saldo</span>
                       <span className="text-xl font-bold text-[#76196C]">
                         {dashboardData.fluxoCaixa.saldo}
@@ -344,22 +344,22 @@ export default function GerenteDashboard() {
                 </div>
 
                 {/* Melhor Vendedor e Destaques */}
-                <div className="bg-[#CAF4B7] rounded-xl p-6">
+                <div className="bg-[#CAF4B7] rounded-xl p-6 bg-[#EDD5F2]/80 rounded-xl border-3 border-dashed border-[#8F3D84]">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-xl font-bold text-[#76196c]">
                       Destaques
                     </h3>
-                    <i className="bi bi-trophy text-2xl text-[#76196c]"></i>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-[#8F3D84] lucide lucide-trophy-icon lucide-trophy"><path d="M10 14.66v1.626a2 2 0 0 1-.976 1.696A5 5 0 0 0 7 21.978" /><path d="M14 14.66v1.626a2 2 0 0 0 .976 1.696A5 5 0 0 1 17 21.978" /><path d="M18 9h1.5a1 1 0 0 0 0-5H18" /><path d="M4 22h16" /><path d="M6 9a6 6 0 0 0 12 0V3a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1z" /><path d="M6 9H4.5a1 1 0 0 1 0-5H6" /></svg>
                   </div>
                   <div className="space-y-4">
-                    <div className="p-4 bg-[#e8c5f1] rounded-lg">
+                    <div className="p-4 bg-[#98D378] rounded-lg">
                       <p className="text-sm text-[#8c3e82] mb-1 flex items-center gap-1">
-                        <Trophy color="#FF9800" /> Melhor Vendedor do Período
+                        <Trophy color="#76196c" /> Melhor Vendedor do Período
                       </p>
-                      <p className="text-xl font-bold text-[#76196c]">
+                      <p className="text-xl font-bold text-[#4F6A50]">
                         {dashboardData.vendedores.melhorVendedor}
                       </p>
-                      <p className="text-sm text-[#8c3e82] mt-1">
+                      <p className="text-sm text-[#4F6A50] mt-1">
                         {dashboardData.vendedores.vendasMelhorVendedor} vendas •
                         R${" "}
                         {dashboardData.vendedores.valorMelhorVendedor
@@ -368,29 +368,29 @@ export default function GerenteDashboard() {
                       </p>
                     </div>
 
-                    <div className="p-4 bg-[#92EF6C] rounded-lg">
-                      <p className="text-sm text-[#4F6940] mb-1 flex items-center gap-1">
-                        <BarChart3Icon color="#4F6940" /> Total de Transações
+                    <div className="p-4 bg-[#D1A7CD] rounded-lg">
+                      <p className="text-sm text-[#76196C] mb-1 flex items-center gap-1">
+                        <BarChart3Icon color="#76196C" /> Total de Transações
                       </p>
-                      <p className="text-xl font-bold text-[#4EA912]">
+                      <p className="text-xl font-bold text-[#a10f92ff]">
                         {dashboardData.vendas.totalTransacoes} vendas
                       </p>
-                      <p className="text-sm text-[#4F6940] mt-1">
+                      <p className="text-sm text-[#76196C] mt-1">
                         {dashboardData.produtos.vendidos} produtos vendidos
                       </p>
                     </div>
                     {dashboardData.produtos.baixoEstoque > 0 && (
-                      <div className="p-4 bg-orange-100 rounded-lg">
-                        <p className="text-sm text-[#F74A00] mb-1 flex items-center gap-1">
-                          <AlertTriangle color="#FF9800" /> Atenção
+                      <div className="p-4 bg-[#F1B8E8] rounded-lg">
+                        <p className="text-sm text-[#B21212] mb-1 flex items-center gap-1">
+                          <AlertTriangle color="#B21212" /> Atenção
                         </p>
-                        <p className="text-base font-semibold text-orange-700">
+                        <p className="text-base font-semibold text-[#B21212]">
                           {dashboardData.produtos.baixoEstoque} produtos com
                           estoque baixo
                         </p>
                         <Link
                           href="/gerente/alertas"
-                          className="text-sm text-orange-600 hover:text-orange-800 mt-1 inline-block"
+                          className="text-sm text-[#B21212] hover:text-orange-800 mt-1 inline-block transition-all duration-300 ease-out cursor-pointer hover:scale-[0.97]"
                         >
                           Ver detalhes →
                         </Link>
@@ -401,12 +401,18 @@ export default function GerenteDashboard() {
               </div>
 
               {/* Estatísticas Adicionais */}
-              <div className="bg-[#D8A9DF] rounded-xl border-3 border-dashed border-[#b478ab] p-6">
-                <h3 className="text-xl font-bold text-[#76196c] mb-4">
-                  Pagamentos do Período
-                </h3>
+              <div className="bg-[#C4EAB2] rounded-xl border-3 border-dashed border-[#75BA51] p-6">
+                <div className="flex justify-between">
+                  <h3 className="text-xl font-bold text-[#4F6A50] mb-4">
+                    Pagamentos do Período
+                  </h3>
+
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class=" text-[#4F6A50] lucide lucide-piggy-bank-icon lucide-piggy-bank"><path d="M11 17h3v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-3a3.16 3.16 0 0 0 2-2h1a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1h-1a5 5 0 0 0-2-4V3a4 4 0 0 0-3.2 1.6l-.3.4H11a6 6 0 0 0-6 6v1a5 5 0 0 0 2 4v3a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1z" /><path d="M16 10h.01" /><path d="M2 8v1a2 2 0 0 0 2 2h1" /></svg>
+
+                </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="p-4 bg-[#84B470] rounded-lg">
+                  <div className="p-4 bg-gradient-to-r from-[#89BA75] to-[#6B935A] rounded-lg">
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-sm text-[#C5FFAD] mb-1">PIX</p>
@@ -420,34 +426,36 @@ export default function GerenteDashboard() {
                       <i className="bi bi-qr-code text-3xl text-[#C5FFAD]"></i>
                     </div>
                   </div>
-                  <div className="p-4 bg-[#FFEDD4] rounded-lg">
+
+                  <div className="p-4 bg-[#6b935a] rounded-lg">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm text-[#ff9800] mb-1">Dinheiro</p>
-                        <p className="text-2xl font-bold text-[#ff9800]">
+                        <p className="text-sm text-[#C5FFAD] mb-1">Dinheiro</p>
+                        <p className="text-2xl font-bold text-[#C5FFAD]">
                           R${" "}
                           {dashboardData.vendas.porTipoPagamento.dinheiro
                             .toFixed(2)
                             .replace(".", ",")}
                         </p>
                       </div>
-                      <i className="bi bi-cash-coin text-3xl text-[#ff9800]"></i>
+                      <i className="bi bi-cash-coin text-3xl text-[#C5FFAD]"></i>
                     </div>
                   </div>
-                  <div className="p-4 bg-[#E8C5F1] rounded-lg">
+                  <div className="p-4 bg-gradient-to-r from-[#6B935A] to-[#5c7c4d] rounded-lg">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm text-[#76196c] mb-1">Cartão</p>
-                        <p className="text-2xl font-bold text-[#76196c]">
+                        <p className="text-sm text-[#C5FFAD] mb-1">Cartão</p>
+                        <p className="text-2xl font-bold text-[#C5FFAD]">
                           R${" "}
                           {dashboardData.vendas.porTipoPagamento.cartao
                             .toFixed(2)
                             .replace(".", ",")}
                         </p>
                       </div>
-                      <i className="bi bi-credit-card text-3xl text-[#76196c]"></i>
+                      <i className="bi bi-credit-card text-3xl text-[#C5FFAD]"></i>
                     </div>
                   </div>
+
                 </div>
               </div>
             </>

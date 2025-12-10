@@ -1,5 +1,7 @@
 "use client";
 
+import { SidebarTrigger } from "@/components/ui/sidebar";
+
 import { useEffect, useState } from "react";
 import {
   Loader2,
@@ -145,11 +147,16 @@ export default function RelatorioProdutos() {
   };
 
   return (
+    <>
+    <div className="p-6">
+        <SidebarTrigger />
+      </div>
+
     <div className="min-h-screen p-6">
       <div className="max-w-7xl mx-auto space-y-10">
 
         {/* Cabeçalho */}
-        <div className="bg-white rounded-3xl shadow-xl border-4 border-[#d695e7] p-6">
+        <div className="bg-[#CAF4B7] rounded-3xl p-6">
           <h1 className="text-3xl font-extrabold text-[#76196c] flex items-center gap-3 mb-2">
             <Package size={34} />
             Relatório de Produtos
@@ -158,7 +165,7 @@ export default function RelatorioProdutos() {
         </div>
 
         {/* Seleção + filtros */}
-        <div className="bg-white rounded-3xl shadow-xl border-4 border-[#e8c5f1] p-6">
+        <div className="bg-[#EBC7F5] rounded-3xl p-6">
 
           {/* Produto */}
           <label className="block text-[#76196c] font-semibold mb-2">Produto:</label>
@@ -169,8 +176,8 @@ export default function RelatorioProdutos() {
             </div>
           ) : (
             <Select onValueChange={(v) => setProdutoId(v)} value={produtoId || ""}>
-              <SelectTrigger className="w-full border-2 border-[#d695e7] p-3 rounded-xl bg-white text-lg">
-                <SelectValue placeholder="Selecione um produto..." />
+              <SelectTrigger className="w-full border-2 border-[#d695e7] p-3 rounded-xl bg-[#CAF4B7] text-lg">
+                <SelectValue className="bg-[#CAF4B7]" placeholder="Selecione um produto..." />
               </SelectTrigger>
 
               <SelectContent>
@@ -210,7 +217,7 @@ export default function RelatorioProdutos() {
               <button
                 onClick={carregarRelatorio}
                 disabled={!produtoId}
-                className="flex-1 bg-[#75ba51] hover:bg-[#5a9940] text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2"
+                className="flex-1 bg-[#75ba51] hover:bg-[#5a9940] text-[#76196C] font-bold py-3 rounded-xl flex items-center justify-center gap-2"
               >
                 {loadingRelatorio ? <RefreshCw className="animate-spin" /> : <Filter />}
                 Buscar
@@ -218,7 +225,7 @@ export default function RelatorioProdutos() {
 
               <button
                 onClick={limparFiltros}
-                className="px-4 py-3 bg-neutral-200 hover:bg-neutral-300 rounded-xl font-bold"
+                className="px-4 py-3 bg-[#75ba51] hover:bg-[#5a9940]  text-[#76196C] rounded-xl font-bold"
               >
                 Limpar
               </button>
@@ -231,7 +238,7 @@ export default function RelatorioProdutos() {
               <button
                 key={d}
                 onClick={() => setPeriodoRapido(d)}
-                className="px-4 py-2 rounded-xl bg-[#76196c] hover:bg-[#9b2b91] text-white"
+                className="px-4 py-2 rounded-xl bg-[#76196c] hover:bg-[#9b2b91] text-[#CAF4B7]"
               >
                 Últimos {d} dias
               </button>
@@ -241,7 +248,7 @@ export default function RelatorioProdutos() {
 
         {/* Sem produto */}
         {!produtoId && (
-          <div className="bg-white rounded-2xl shadow-lg p-12 border-2 border-[#d695e7] text-center">
+          <div className="bg-[#CAF4B7] rounded-2xl shadow-lg p-12 border-2 border-[#d695e7] text-center">
             <Package className="w-20 h-20 text-[#d695e7] mx-auto mb-4" />
             <h2 className="text-2xl font-bold text-[#76196c]">Selecione um produto</h2>
             <p className="text-neutral-600">Escolha um produto para visualizar o relatório completo</p>
@@ -262,7 +269,7 @@ export default function RelatorioProdutos() {
             {/* KPIs */}
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
 
-              <Card className="border-2 border-[#d695e7]">
+              <Card className="border-2 bg-[#C5FFAD] border-[#d695e7]">
                 <CardContent className="p-6 flex items-center gap-3">
                   <div className="p-3 bg-green-100 rounded-xl">
                     <TrendingUp className="text-green-600" size={26} />
@@ -276,7 +283,7 @@ export default function RelatorioProdutos() {
                 </CardContent>
               </Card>
 
-              <Card className="border-2 border-[#d695e7]">
+              <Card className="border-2 bg-[#F1B8E8] border-[#d695e7]">
                 <CardContent className="p-6 flex items-center gap-3">
                   <div className="p-3 bg-blue-100 rounded-xl">
                     <Boxes className="text-blue-600" size={26} />
@@ -288,7 +295,7 @@ export default function RelatorioProdutos() {
                 </CardContent>
               </Card>
 
-              <Card className="border-2 border-[#d695e7]">
+              <Card className="border-2 bg-[#C5FFAD] border-[#d695e7]">
                 <CardContent className="p-6 flex items-center gap-3">
                   <div className="p-3 bg-purple-100 rounded-xl">
                     <DollarSign className="text-[#76196c]" size={26} />
@@ -302,7 +309,7 @@ export default function RelatorioProdutos() {
                 </CardContent>
               </Card>
 
-              <Card className="border-2 border-[#d695e7]">
+              <Card className="border-2 bg-[#F1B8E8] border-[#d695e7]">
                 <CardContent className="p-6 flex items-center gap-3">
                   <div className="p-3 bg-orange-100 rounded-xl">
                     <Store className="text-orange-600" size={26} />
@@ -321,7 +328,7 @@ export default function RelatorioProdutos() {
             <div className="grid lg:grid-cols-2 gap-6">
 
               {/* Vendas por dia */}
-              <div className="bg-white rounded-2xl p-6 border-2 border-[#d695e7]">
+              <div className=" rounded-2xl p-6">
                 <h2 className="text-xl font-bold text-[#76196c] mb-3 flex items-center gap-2">
                   <Calendar size={20} /> Evolução de vendas
                 </h2>
@@ -345,7 +352,7 @@ export default function RelatorioProdutos() {
               </div>
 
               {/* Filiais */}
-              <div className="bg-white rounded-2xl p-6 border-2 border-[#d695e7]">
+              <div className=" rounded-2xl p-6 ">
                 <h2 className="text-xl font-bold text-[#76196c] mb-3 flex items-center gap-2">
                   <Store size={20} /> Filiais com mais vendas
                 </h2>
@@ -367,7 +374,7 @@ export default function RelatorioProdutos() {
 
             {/* Tabela de vendas */}
             {dados.vendasDetalhadas?.length > 0 && (
-              <div className="bg-white p-6 rounded-2xl shadow-xl border-2 border-[#d695e7]">
+              <div className="bg-[#CAF4B7] p-6 rounded-2xl shadow-xl border-2 border-[#d695e7]">
                 <h2 className="text-2xl font-bold text-[#76196c] mb-4 flex items-center gap-2">
                   <BarChart3 size={24}/> Vendas do produto
                 </h2>
@@ -375,7 +382,7 @@ export default function RelatorioProdutos() {
                 <div className="overflow-x-auto">
                   <table className="w-full border-collapse">
                     <thead>
-                      <tr className="bg-gradient-to-r from-[#f8f0fc] to-[#fef5ff] border-b-2 border-[#d695e7]">
+                      <tr className="bg-[#92EF6C] border-b-2 border-[#d695e7]">
                         <th className="p-4 text-left text-[#76196c] font-bold">Venda</th>
                         <th className="p-4 text-left text-[#76196c] font-bold">Quantidade</th>
                         <th className="p-4 text-left text-[#76196c] font-bold">Valor</th>
@@ -386,16 +393,16 @@ export default function RelatorioProdutos() {
 
                     <tbody>
                       {dados.vendasDetalhadas.map((v) => (
-                        <tr key={v.id_venda} className="border-b hover:bg-[#fef5ff]">
-                          <td className="p-4 font-mono bg-[#e8c5f1] text-[#76196c] rounded-lg">
+                        <tr key={v.id_venda} className="border-b border-[#92EF6C] hover:bg-[#92EF6C]/60">
+                          <td className="p-4 font-mono text-[#76196c] rounded-lg">
                             #{v.id_venda}
                           </td>
-                          <td className="p-4 font-bold text-blue-600">{v.quantidade}</td>
-                          <td className="p-4 font-bold text-green-600">
+                          <td className="p-4 font-bold text-[#76196C]">{v.quantidade}</td>
+                          <td className="p-4 font-bold text-[#4EA912]">
                             R$ {parseFloat(v.valor).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
                           </td>
-                          <td className="p-4">{v.nome_filial}</td>
-                          <td className="p-4">
+                          <td className="p-4 text-[#76196C]">{v.nome_filial}</td>
+                          <td className="p-4 text-[#76196C]">
                             {new Date(v.data_venda).toLocaleString("pt-BR")}
                           </td>
                         </tr>
@@ -411,5 +418,6 @@ export default function RelatorioProdutos() {
         )}
       </div>
     </div>
+    </>
   );
 }
