@@ -124,13 +124,16 @@ export default function ModalTransferirFuncionario({ funcionario, onClose }) {
         </div>
 
         {/* DESCRIÇÃO */}
-        <p className="text-gray-700 mb-4 leading-relaxed">
-          Funcionário:{" "}
-          <strong className="text-[#76196c]">{funcionario.nome}</strong>
-          <p></p>
-          Perfil atual:{" "}
-          <strong className="text-[#924187]">{funcionario.perfil}</strong>
-        </p>
+        <div className="text-gray-700 mb-4 leading-relaxed">
+          <div>
+            <span className="font-medium">Funcionário:</span>{" "}
+            <strong className="text-[#76196c]">{funcionario.nome}</strong>
+          </div>
+          <div className="mt-2">
+            <span className="font-medium">Perfil atual:</span>{" "}
+            <strong className="text-[#924187]">{funcionario.perfil}</strong>
+          </div>
+        </div>
 
         {/* SELECT DE FILIAIS */}
         {loading ? (
@@ -143,18 +146,27 @@ export default function ModalTransferirFuncionario({ funcionario, onClose }) {
             <label className="block mb-1 font-medium text-[#76196c]">
               Selecionar Filial Destino
             </label>
-            <select
-              value={destino}
-              onChange={(e) => setDestino(e.target.value)}
-              className="w-full p-3 bg-[#E5B8F1] text-[#76196C] rounded-xl border border-[#d695e7] focus:ring-2 focus:ring-[#76196c] transition"
-            >
-              <option value="">Escolha uma filial</option>
-              {filiais.map((f) => (
-                <option key={f.id_empresa} value={f.id_empresa}>
-                  {f.nome} — #{f.id_empresa}
-                </option>
-              ))}
-            </select>
+
+            {filiais && filiais.length > 0 ? (
+              <select
+                value={destino}
+                onChange={(e) => setDestino(e.target.value)}
+                className="w-full p-3 bg-[#E5B8F1] text-[#76196C] rounded-xl border border-[#d695e7] focus:ring-2 focus:ring-[#76196c] transition"
+              >
+                <option value="">Escolha uma filial</option>
+                {filiais.map((f) => (
+                  <option key={f.id_empresa} value={f.id_empresa}>
+                    {f.nome} — #{f.id_empresa}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              <div className="p-3 bg-[#F3E8F6] text-[#6b4a6a] rounded-xl border border-dashed border-[#e3c7ea]">
+                Nenhuma filial disponível para transferência no momento. Se você
+                acredita que deveria haver filiais, verifique as permissões ou
+                contate o administrador para cadastrar/autorizar filiais.
+              </div>
+            )}
           </div>
         )}
 

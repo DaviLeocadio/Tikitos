@@ -209,7 +209,7 @@ export default function AlertasEstoque() {
                         <div className="flex-shrink-0">
                           <div className="w-24 h-24  rounded-xl overflow-hidden drop-shadow-md">
                             <img
-                              src={produto.imagem}
+                             src={`http://localhost:8080${produto.imagem}`}
                               alt={produto.nome}
                               className="w-full h-full object-cover"
                               onError={(e) => {

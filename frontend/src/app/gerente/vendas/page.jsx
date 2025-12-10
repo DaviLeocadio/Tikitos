@@ -427,7 +427,7 @@ const GerenteVendasPage = () => {
                               <div className="flex items-center gap-4">
                                 {produto.imagem && (
                                   <img
-                                    src={produto.imagem}
+                                    src={`http://localhost:8080${produto.imagem}`}
                                     alt={produto.nome}
                                     className="w-16 h-16 object-cover rounded-xl border-1"
                                     style={{ borderColor: TIKI.roxoClaro }}

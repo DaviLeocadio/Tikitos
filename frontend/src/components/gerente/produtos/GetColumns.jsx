@@ -1,5 +1,7 @@
 "use client";
 
+import { aparecerToast } from "@/utils/toast";
+
 export default function GetColumns({ setModalDesconto, setModalPedido }) {
   return [
     {
@@ -12,9 +14,8 @@ export default function GetColumns({ setModalDesconto, setModalPedido }) {
         >
           ID
           <i
-            className={`bi bi-arrow-${
-              column.getIsSorted() === "asc" ? "up" : "down"
-            }-short text-lg`}
+            className={`bi bi-arrow-${column.getIsSorted() === "asc" ? "up" : "down"
+              }-short text-lg`}
           />
         </button>
       ),
@@ -35,9 +36,8 @@ export default function GetColumns({ setModalDesconto, setModalPedido }) {
         >
           Produto
           <i
-            className={`bi bi-arrow-${
-              column.getIsSorted() === "asc" ? "up" : "down"
-            }-short text-lg`}
+            className={`bi bi-arrow-${column.getIsSorted() === "asc" ? "up" : "down"
+              }-short text-lg`}
           />
         </button>
       ),
@@ -68,9 +68,8 @@ export default function GetColumns({ setModalDesconto, setModalPedido }) {
         >
           Preço
           <i
-            className={`bi bi-arrow-${
-              column.getIsSorted() === "asc" ? "up" : "down"
-            }-short text-lg`}
+            className={`bi bi-arrow-${column.getIsSorted() === "asc" ? "up" : "down"
+              }-short text-lg`}
           />
         </button>
       ),
@@ -115,9 +114,8 @@ export default function GetColumns({ setModalDesconto, setModalPedido }) {
         >
           Estoque
           <i
-            className={`bi bi-arrow-${
-              column.getIsSorted() === "asc" ? "up" : "down"
-            }-short text-lg`}
+            className={`bi bi-arrow-${column.getIsSorted() === "asc" ? "up" : "down"
+              }-short text-lg`}
           />
         </button>
       ),
@@ -126,15 +124,14 @@ export default function GetColumns({ setModalDesconto, setModalPedido }) {
         console.log(row)
         return (
           <span
-            className={`font-bold ${
-              estoque <= 5
-                ? "text-red-600"
-                : estoque <= 10
+            className={`font-bold ${estoque <= 5
+              ? "text-red-600"
+              : estoque <= 10
                 ? "text-orange-600"
                 : estoque < 20
-                ? "text-yellow-600"
-                :"text-[#569a33]"
-            }`}
+                  ? "text-yellow-600"
+                  : "text-[#569a33]"
+              }`}
           >
             {estoque}
             {estoque < 20 && " ⚠️"}
@@ -148,20 +145,29 @@ export default function GetColumns({ setModalDesconto, setModalPedido }) {
       header: "Ações",
       cell: ({ row }) => {
         const produto = row.original;
+        const disabled = produto.status === "inativo";
 
         return (
           <div className="flex gap-2">
             <button
-              onClick={() => setModalDesconto({ open: true, produto })}
-              className="px-3 py-1 bg-[#76196c] text-white rounded-lg text-sm font-semibold hover:bg-[#924187] transition cursor-pointer"
+              onClick={() => {
+                if (disabled) return aparecerToast("Produto inativo não pode receber desconto.");
+                setModalDesconto({ open: true, produto })
+              }
+
+              }
+              className={`px-3 py-1 bg-[#76196c] text-white rounded-lg text-sm font-semibold hover:bg-[#924187] transition cursor-pointer ${disabled ? "opacity-50 cursor-not-allowed" : ""}`}
               title="Editar desconto"
             >
               <i className="bi bi-percent"></i>
             </button>
 
             <button
-              onClick={() => setModalPedido({ open: true, produto })}
-              className="px-3 py-1 bg-[#569a33] text-white rounded-lg text-sm font-semibold hover:bg-[#4f6940] transition cursor-pointer"
+              onClick={() => {
+                if (disabled) return aparecerToast("Produto inativo não pode fazer pedidos.");
+                setModalPedido({ open: true, produto })
+              }}
+              className={`px-3 py-1 bg-[#569a33] text-white rounded-lg text-sm font-semibold hover:bg-[#4f6940] transition cursor-pointer ${disabled ? "opacity-50 cursor-not-allowed" : ""} `}
               title="Fazer pedido"
             >
               <i className="bi bi-box-seam"></i>

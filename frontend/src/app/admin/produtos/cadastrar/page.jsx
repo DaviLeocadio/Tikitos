@@ -312,6 +312,7 @@ export default function CriarProdutoPage() {
         setPreview("");
         setErrors({});
         setTouched({});
+        return window.location.href = "/admin/produtos";
       } else {
         aparecerToast(data.error || "Erro ao criar o produto.");
       }

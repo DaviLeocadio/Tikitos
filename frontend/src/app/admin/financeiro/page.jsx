@@ -128,125 +128,67 @@ export default function AdminFinanceiro() {
     return p.toString() ? `${baseUrl}?${p.toString()}` : baseUrl;
   };
 
-  useEffect(() => {
-    // helper to append date filters
-    const params = (baseUrl) => {
-      const p = new URLSearchParams();
-      if (filterStartDate) p.append("dataInicio", filterStartDate);
-      if (filterEndDate) p.append("dataFim", filterEndDate);
-      return p.toString() ? `${baseUrl}?${p.toString()}` : baseUrl;
-    };
+  // Recarrega todos os dados do painel financeiro (despesas, caixa e totais)
+  const refreshAll = async () => {
+    setLoading(true);
+    try {
+      const urls = {
+        vendasTotais: buildUrlWithFilters("http://localhost:8080/admin/vendasTotais"),
+        despesasPendentes: buildUrlWithFilters("http://localhost:8080/admin/despesas-pendentes"),
+        despesasPagas: buildUrlWithFilters("http://localhost:8080/admin/despesas-pagas"),
+        despesasList: buildUrlWithFilters("http://localhost:8080/admin/despesas"),
+        caixaList: buildUrlWithFilters("http://localhost:8080/admin/caixa"),
+      };
 
-    const totalVendasFetch = async () => {
-      try {
-        const response = await fetch(buildUrlWithFilters("http://localhost:8080/admin/vendasTotais"), {
-          method: "GET",
-          credentials: "include",
-        });
+      const [resV, resPend, resPag, resDes, resCaixa] = await Promise.all([
+        fetch(urls.vendasTotais, { method: "GET", credentials: "include" }),
+        fetch(urls.despesasPendentes, { method: "GET", credentials: "include" }),
+        fetch(urls.despesasPagas, { method: "GET", credentials: "include" }),
+        fetch(urls.despesasList, { method: "GET", credentials: "include" }),
+        fetch(urls.caixaList, { method: "GET", credentials: "include" }),
+      ]);
 
-        if (!response.ok) {
-          console.log("Não foi possivel visualizar total de produtos");
-          return;
-        }
-
-        const data = await response.json();
-
+      if (resV.ok) {
+        const data = await resV.json();
         setTotalVendas(data.valorTotal);
-        console.log(data);
-      } catch (error) {
-        console.error("Erro ao disponibilizar o total de vendas");
-      } finally {
-        setLoading(false);
       }
-    };
 
-    const despesasPendentesFetch = async () => {
-      try {
-        const response = await fetch(buildUrlWithFilters("http://localhost:8080/admin/despesas-pendentes"), { method: "GET", credentials: "include" });
-
-        if (!response.ok) {
-          console.log(
-            "Não foi possivel visualizar total de despesas pendentes"
-          );
-          return;
-        }
-
-        const data = await response.json();
-
+      if (resPend.ok) {
+        const data = await resPend.json();
         setDespesasPendentes(data.valorDespesas);
-        console.log(data);
-      } catch (error) {
-        console.error("Erro ao disponibilizar o total de vendas");
-      } finally {
-        setLoading(false);
+      } else {
+        setDespesasPendentes(undefined);
       }
-    };
 
-    const despesasPagasFetch = async () => {
-      try {
-        const response = await fetch(buildUrlWithFilters("http://localhost:8080/admin/despesas-pagas"), { method: "GET", credentials: "include" });
-
-        if (!response.ok) {
-          console.log("Não foi possivel visualizar total de despesas pagas");
-          return;
-        }
-
-        const data = await response.json();
-
+      if (resPag.ok) {
+        const data = await resPag.json();
         setDespesasPagas(data.valorDespesas);
-        console.log(data);
-      } catch (error) {
-        console.error("Erro ao disponibilizar o total de vendas");
-      } finally {
-        setLoading(false);
+      } else {
+        setDespesasPagas(undefined);
       }
-    };
 
-    const listagemDespesasFetch = async () => {
-      try {
-        const response = await fetch(buildUrlWithFilters("http://localhost:8080/admin/despesas"), { method: "GET", credentials: "include" });
-
-        if (!response.ok) {
-          console.log("Não foi possivel visualizar total de despesas");
-          return;
-        }
-
-        const data = await response.json();
-
-        setDespesas(data.despesasListadas);
-        console.log(data);
-      } catch (error) {
-        console.error("Erro ao disponibilizar o total de vendas");
-      } finally {
-        setLoading(false);
+      if (resDes.ok) {
+        const data = await resDes.json();
+        setDespesas(data.despesasListadas || []);
+      } else {
+        setDespesas([]);
       }
-    };
 
-    const listagemCaixaFetch = async () => {
-      try {
-        const response = await fetch(buildUrlWithFilters("http://localhost:8080/admin/caixa"), { method: "GET", credentials: "include" });
-
-        if (!response.ok) {
-          console.log("Não foi possivel visualizar total de caixa");
-          return;
-        }
-
-        const data = await response.json();
-
-        setCaixa(data.caixaListado);
-        console.log(data);
-      } catch (error) {
-        console.error("Erro ao disponibilizar o total de vendas");
-      } finally {
-        setLoading(false);
+      if (resCaixa.ok) {
+        const data = await resCaixa.json();
+        setCaixa(data.caixaListado || []);
+      } else {
+        setCaixa([]);
       }
-    };
+    } catch (err) {
+      console.error("Erro ao recarregar dados financeiros:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    listagemCaixaFetch();
-    listagemDespesasFetch();
-    despesasPagasFetch();
-    despesasPendentesFetch();
-    totalVendasFetch();
+  useEffect(() => {
+    refreshAll();
   }, [filterStartDate, filterEndDate]);
 
   // inicializar filtros de data com últimos 30 dias
@@ -276,16 +218,8 @@ export default function AdminFinanceiro() {
 
       if (!response.ok) return;
 
-      // Recarregar despesas após pagamento
-      const responseList = await fetch(buildUrlWithFilters("http://localhost:8080/admin/despesas"), {
-        method: "GET",
-        credentials: "include",
-      });
-
-      if (responseList.ok) {
-        const data = await responseList.json();
-        setDespesas(data.despesasListadas);
-      }
+      // Recarregar todos os dados do financeiro após pagamento
+      await refreshAll();
     } catch (err) {
       console.error("Erro ao pagar despesa", err);
     } finally {
@@ -305,16 +239,8 @@ export default function AdminFinanceiro() {
         return;
       }
 
-      // Recarregar lista de despesas
-      const responseList = await fetch(buildUrlWithFilters("http://localhost:8080/admin/despesas"), {
-        method: "GET",
-        credentials: "include",
-      });
-
-      if (responseList.ok) {
-        const data = await responseList.json();
-        setDespesas(data.despesasListadas);
-      }
+      // Recarregar todos os dados do financeiro após exclusão
+      await refreshAll();
     } catch (err) {
       console.error("Erro ao excluir despesa", err);
     } finally {

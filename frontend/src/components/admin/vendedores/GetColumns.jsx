@@ -1,6 +1,6 @@
 "use client";
 
-export default function GetColumns({ setModalVendedor, setModalDesativar, setModalTransfer }) {
+export default function GetColumns({ setModalVendedor, setModalDesativar, setModalTransfer, setModalSenha }) {
   return [
     {
       accessorKey: "id_usuario",
@@ -141,6 +141,13 @@ export default function GetColumns({ setModalVendedor, setModalDesativar, setMod
               title={vendedor.status === "ativo" ? "Desativar vendedor" : "Reativar vendedor"}
             >
               <i className={`bi bi-power ${vendedor.status === "ativo" ? "" : ""}`}></i>
+            </button>
+            <button
+              onClick={() => setModalSenha({ open: true, funcionario:vendedor})}
+              className={`px-3 py-1 text-white rounded-lg text-sm font-semibold transition cursor-pointer bg-red-600 hover:bg-red-700`}
+              title={"Resetar senha"}
+            >
+              <i className={`bi bi-unindent`}></i>
             </button>
           </div>
         );

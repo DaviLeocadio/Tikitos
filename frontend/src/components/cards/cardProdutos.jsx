@@ -385,7 +385,7 @@ export default function CardProduto({ produto }) {
         <CardContent className="mt-1 text-[13px] text-muted-foreground px-4 max-w-90 w-full h-full">
           <img
             className="p-0 flex align-end w-full h-full object-contain transform transition group-hover:scale-108 duration-400 ease-out"
-            src={produto.imagem}
+            src={`http://localhost:8080${produto.imagem}`}
           />
         </CardContent>
       </div>

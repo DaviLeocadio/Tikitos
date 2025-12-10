@@ -11,6 +11,7 @@ import ModalEditarVendedor from "@/components/admin/vendedores/ModalEditarVended
 import ModalDesativarVendedor from "@/components/admin/vendedores/ModalDesativarVendedor";
 import ModalTransferirFuncionario from "@/components/admin/gerentes/ModalTransferirFuncionario";
 import { SidebarTrigger } from "@/components/ui/sidebar";
+import ModalResetarSenhaUsuario from "@/components/admin/ModalResetarSenhaUsuario";
 
 export default function AdminVendedores() {
   const [sorting, setSorting] = useState([]);
@@ -32,6 +33,12 @@ export default function AdminVendedores() {
     funcionario: null,
   });
 
+  const [modalSenha, setModalSenha] = useState({
+    open: false,
+    funcionario: null,
+  });
+
+
   // Hook customizado
   const {
     vendedores,
@@ -43,7 +50,7 @@ export default function AdminVendedores() {
   } = useVendedores();
 
   // Colunas da tabela
-  const columns = GetColumns({ setModalVendedor, setModalDesativar, setModalTransfer });
+  const columns = GetColumns({ setModalVendedor, setModalDesativar, setModalTransfer, setModalSenha });
 
   const applyGlobalFilter = (value, fields) =>
     fields.some((field) => field?.toString().toLowerCase().includes(value));
@@ -122,7 +129,15 @@ export default function AdminVendedores() {
           open={modalDesativar.open}
           onClose={() => setModalDesativar({ open: false, vendedor: null })}
           onSalvar={async () => {
-  
+
+            await buscarGerentes();
+          }}
+        />
+        <ModalResetarSenhaUsuario
+          funcionario={modalSenha.funcionario}
+          open={modalSenha.open}
+          onClose={() => setModalSenha({ open: false, funcionario: null })}
+          onSalvar={async () => {
             await buscarGerentes();
           }}
         />

@@ -115,7 +115,7 @@ export default forwardRef(function CarrinhoCard(props, ref) {
       <div className="flex justify-center items-center w-1/4 min-w-20 h-20">
         <img
           className="m-0 max-h-20 object-contain transition-transform group-hover:scale-110"
-          src={produto.imagem}
+          src={`http://localhost:8080${produto.imagem}`}
           alt="Produto"
         />
       </div>

@@ -40,13 +40,13 @@ const atualizarProdutoLojaController = async (req, res) => {
 
     let produtoLojaData = {};
 
-    if (desconto) {
-      if (desconto < 0 || desconto > 100) {
+    if (desconto || desconto === 0) {
+      if (Number(desconto) < 0 || Number(desconto) > 100) {
         return res
           .status(400)
           .json({ error: "O desconto deve estar entre 0 e 100." });
       }
-      produtoLojaData.desconto = desconto;
+      produtoLojaData.desconto = Number(desconto);
     }
 
     if (estoque) {
@@ -150,6 +150,7 @@ const pedidoProdutoController = async (req, res) => {
     )} × ${quantidade} : ${mascaraDinheiro(valor)}`;
     const despesaData = {
       id_empresa: empresaId,
+      id_fornecedor: produto.id_fornecedor,
       data_pag: dataPagSQL,
       descricao,
       preco: valor,

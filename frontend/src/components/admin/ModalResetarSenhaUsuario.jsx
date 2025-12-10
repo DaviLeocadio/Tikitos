@@ -91,7 +91,7 @@ export default function ModalResetarSenhaUsuario({ funcionario, open, onClose, o
                     <AlertDialogCancel
                         className={`border-2 font-bold cursor-pointer
                                  bg-[#EAFAE3] text-orange-600 border-[#ff6b35]
-                                 hover:bg-[#EAFAE3] hover:text-orange-600 border-[#ff6b35]
+                                 hover:bg-[#EAFAE3] hover:text-orange-600
                                  `}
                         disabled={loading}
                     >

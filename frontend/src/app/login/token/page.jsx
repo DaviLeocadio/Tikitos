@@ -5,11 +5,13 @@ import styles from "./token.module.css";
 import { useEffect, useRef, useState } from "react";
 import { toast, ToastContainer, Bounce } from "react-toastify";
 
-export default function Home() {
+export default function Token() {
   const [email, setEmail] = useState("");
   const [emailIncorreto, setEmailIncorreto] = useState(false);
   const [emailCorreto, setEmailCorreto] = useState(false);
   const [caracterExcedido, setCaracterExcedido] = useState(false);
+  const [loadingEmail, setLoadingEmail] = useState(false);
+
   const inputsRef = useRef([]);
 
   function aparecerToast(msg) {
@@ -56,11 +58,11 @@ export default function Home() {
       inputsRef.current[index - 1].focus();
     }
   };
-
   useEffect(() => {
     if (!email) return;
 
-    //Verificar Email
+    setLoadingEmail(true); // começa o loading
+
     const temporizador = setTimeout(async () => {
       try {
         const response = await fetch(
@@ -72,6 +74,15 @@ export default function Home() {
           }
         );
 
+        const data = await response.json();
+
+        if (!response.ok) {
+          console.log(data)
+          if (data.error) return aparecerToast(data.error);
+        } else {
+          console.log(data)
+          if (data.type == 'success' && data.step == 'verificar_token') return aparecerToast("Um código de verificação foi enviado para o seu e-mail!");
+        }
         // TRATAMENTO DE ERROS
         //Caso tente enviar um email vazio
         if (response.status == 401) {
@@ -95,14 +106,18 @@ export default function Home() {
         if (response.status == 200) {
           setEmailCorreto(true);
         }
+
       } catch (error) {
-        return console.log("Erro ao verificar email: ", error);
+        console.log("Erro ao verificar email: ", error);
+      } finally {
+        setLoadingEmail(false); // termina o loading
       }
     }, 2000);
 
-    //Tirando as mensagens de erro
-    setCaracterExcedido(false);
-    return () => clearTimeout(temporizador);
+    return () => {
+      clearTimeout(temporizador);
+      setLoadingEmail(false); // limpa se mudar rápido
+    };
   }, [email]);
 
   //Verificar token
@@ -147,6 +162,7 @@ export default function Home() {
 
       if (response.ok) {
         setCookie("email", email);
+        aparecerToast("Token verificado com sucesso! Crie uma senha");
         return window.location.href = "/login/senha";
       }
 
@@ -254,6 +270,12 @@ export default function Home() {
                           setEmailIncorreto(false);
                         }}
                       />
+                      {loadingEmail && (
+                        <div className="absolute right-3 lg:right-1.5 top-1/2 -translate-y-1/2">
+                          <div className="h-5 w-5 border-2 border-[#7C3A82] border-t-transparent rounded-full animate-spin"></div>
+                        </div>
+                      )}
+
                       {emailIncorreto ? (
                         <img
                           src="/img/token/token_email_error.png"

@@ -5,6 +5,7 @@ import { GerenteSidebar } from "@/components/gerente-sidebar";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import Forbidden from "../forbidden/page";
 import { getCookie } from "cookies-next";
+import FooterGerente from "@/components/footer/footer-gerente";
 
 export default function GerenteLayout({ children }) {
   const perfil = getCookie("perfil");
@@ -15,7 +16,7 @@ export default function GerenteLayout({ children }) {
         <GerenteSidebar />
         <div className="flex flex-col">
           <main>{children}</main>
-          <Footer />
+          <FooterGerente />
         </div>
       </SidebarProvider> 
     </>

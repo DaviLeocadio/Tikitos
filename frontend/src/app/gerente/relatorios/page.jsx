@@ -153,8 +153,6 @@ export default function AdminRelatorios() {
     console.log(dados);
   }, [dados]);
 
-  const cardStyle = "bg-white border-2 border-dashed rounded-2xl p-6 shadow-sm";
-
   return (
     <>
       <div className="min-h-screen p-6">
@@ -377,14 +375,14 @@ export default function AdminRelatorios() {
 
               {/* VENDAS DETALHADAS (aparece quando 'detalhado' está marcado) */}
               {filtros.detalhado && dados.vendas && dados.vendas.length > 0 && (
-                <div className={cardStyle}>
+                <div className={`bg-[#C5FFAD] text-roxoescuro border-2 border-dashed rounded-2xl p-6 shadow-sm`}>
                   <h3 className="text-lg font-semibold mb-4">
                     Vendas Detalhadas
                   </h3>
                   <div className="overflow-auto">
                     <table className="w-full">
                       <thead>
-                        <tr className="text-left border-b">
+                        <tr className="text-left border-b hover:bg-[#9BF377] transition">
                           <th className="p-3">ID</th>
                           <th className="p-3">Data</th>
                           <th className="p-3">Usuário</th>
@@ -394,7 +392,7 @@ export default function AdminRelatorios() {
                       </thead>
                       <tbody>
                         {dados.vendas.map((v) => (
-                          <tr key={v.id_venda} className="border-b">
+                          <tr key={v.id_venda} className="border-b hover:bg-[#9BF377] transition">
                             <td className="p-3">{v.id_venda}</td>
                             <td className="p-3">
                               {new Date(v.data_venda).toLocaleString("pt-BR")}

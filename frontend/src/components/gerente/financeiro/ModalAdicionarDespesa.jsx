@@ -15,7 +15,7 @@ const ModalAdicionarDespesa = memo(function ModalAdicionarDespesa({ open, onClos
   const [preco, setPreco] = useState("");
   const [fornecedores, setFornecedores] = useState([]);
   const [fornecedorEscolhido, setFornecedorEscolhido] = useState(null);
-  const [dataPag, setDataPag] = useState("");
+  const [dataPag, setDataPag] = useState(new Date().toLocaleDateString("pt-BR"));
   const [status, setStatus] = useState("pendente");
   const [loading, setLoading] = useState(false);
 

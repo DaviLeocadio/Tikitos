@@ -10,6 +10,7 @@ import Footer from "@/components/footer/footer";
 
 // Import da página de acesso negado
 import ForbiddenPage from "../forbidden/page"; 
+import FooterAdmin from "@/components/footer/footer-admin";
 
 export default function AdminLayout({ children }) {
   const [isAuthorized, setIsAuthorized] = useState(null); // null = verificando
@@ -36,7 +37,7 @@ export default function AdminLayout({ children }) {
         <AdminSidebar />
         <div className="flex flex-col">
           <main>{children}</main>
-          <Footer />
+          <FooterAdmin />
         </div>
         
       </SidebarProvider>

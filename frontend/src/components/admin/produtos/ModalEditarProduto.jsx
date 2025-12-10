@@ -47,7 +47,8 @@ export default function ModalEditarProduto({
         return "/" + p.replace(/^\/+/, ""); // fallback
       };
 
-      const imgFull = resolveImage(produto.imagem);
+      const imgFull = resolveImage(`http://localhost:8080${produto.imagem}`);
+
 
       setProdutoInfo({
         idCategoria: produto.categoria?.id_categoria || null,

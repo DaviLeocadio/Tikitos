@@ -144,9 +144,9 @@ export default function GetColumns({ setModalGerente, setModalDesativar, setModa
             <button
               onClick={() => setModalSenha({ open: true, funcionario:gerente})}
               className={`px-3 py-1 text-white rounded-lg text-sm font-semibold transition cursor-pointer bg-red-600 hover:bg-red-700`}
-              title={gerente.status === "ativo" ? "Desativar gerente" : "Reativar gerente"}
+              title={"Resetar senha"}
             >
-              <i className={`bi bi-unindent ${gerente.status === "ativo" ? "" : ""}`}></i>
+              <i className={`bi bi-unindent`}></i>
             </button>
           </div>
         );

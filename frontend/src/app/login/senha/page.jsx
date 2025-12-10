@@ -3,10 +3,14 @@ import { useEffect, useState } from "react";
 import styles from "./senha.module.css";
 import { getCookie } from "cookies-next/client";
 import { toast, ToastContainer, Bounce } from "react-toastify";
+import { Eye, EyeClosed } from "lucide-react";
 
 export default function Home() {
   const [senha, setSenha] = useState("");
   const [confirmarSenha, setConfirmarSenha] = useState("");
+  const [mostrarSenha, setMostrarSenha] = useState(false);
+  const [mostrarConfirmar, setMostrarConfirmar] = useState(false);
+
 
   function aparecerToast(msg) {
     toast(msg, {
@@ -41,18 +45,19 @@ export default function Home() {
 
       // Tratamento de erros
       if (response.status == 400) {
-        if (data.code == "FALTA_DADOS")  return aparecerToast("Preencha todos os campos!");
+        if (data.code == "FALTA_DADOS") return aparecerToast("Preencha todos os campos!");
 
         if (data.code == "CARACTER_EXCEDIDO") return aparecerToast("Número de caracteres excedido!");
 
         if (data.code == "CARACTER_MINIMO") return aparecerToast("O número mínimo de caracteres é de 6!");
 
-        if (data.code == "SENHA_DIFERENTE") return aparecerToast("Confirmar a senha tem que ser igual ao campo de senha!");
-        
+        if (data.code == "SENHA_DIFERENTE") return aparecerToast("As senhas não coincidem!");
+
       }
 
       if (response.ok) {
-        window.location.href = "/";
+        aparecerToast("Senha definida com sucesso!");
+        return window.location.href = "/";
       }
     } catch (error) {
       console.log("Erro ao criar nova senha: ", error);
@@ -124,16 +129,26 @@ export default function Home() {
                   >
                     3°: Digite uma nova senha:
                   </label>
-                  <input
-                    type="text"
-                    id="email"
-                    name="email"
-                    placeholder="E-mail"
-                    value={senha}
-                    onChange={(e) => setSenha(e.target.value)}
-                    required=""
-                    className={`bg-[#DABCE1] focus:border-color[#9CD089]`}
-                  />
+                  <div className="relative">
+
+                    <input
+                      type={mostrarSenha ? "password" : "text"}
+                      id="senha"
+                      placeholder="Senha"
+                      value={senha}
+                      onChange={(e) => setSenha(e.target.value)}
+                      className="bg-[#DABCE1] pr-10"
+                    />
+
+                    <button
+                      type="button"
+                      onClick={() => setMostrarSenha((prev) => !prev)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer"
+                    >
+                      {!mostrarSenha ? <Eye /> : <EyeClosed />}
+                    </button>
+                  </div>
+
                 </div>
               </form>
             </div>
@@ -148,16 +163,26 @@ export default function Home() {
                   >
                     4°: Confirme sua nova senha:
                   </label>
-                  <input
-                    type="password"
-                    id="email"
-                    name="email"
-                    placeholder="Senha"
-                    value={confirmarSenha}
-                    onChange={(e) => setConfirmarSenha(e.target.value)}
-                    required=""
-                    className={`bg-[#DABCE1]`}
-                  />
+                  <div className="relative">
+
+                    <input
+                      type={mostrarConfirmar ? "password" : "text"}
+                      id="confirmar"
+                      placeholder="Confirmar senha"
+                      value={confirmarSenha}
+                      onChange={(e) => setConfirmarSenha(e.target.value)}
+                      className="bg-[#DABCE1] pr-10"
+                    />
+
+                    <button
+                      type="button"
+                      onClick={() => setMostrarConfirmar((prev) => !prev)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer"
+                    >
+                      {!mostrarConfirmar ? <Eye /> : <EyeClosed />}
+                    </button>
+                  </div>
+
                 </div>
               </form>
             </div>
@@ -169,7 +194,7 @@ export default function Home() {
               className="group cursor-pointer transition-all duration-200 mt-5 rounded-full border border-transparent flex items-center justify-center gap-2 whitespace-nowrap bg-[#D6B9E2] text-[var(--color-verdao)] font-light hover:bg-[#db90e4] active:scale-95 px-8 py-3 text-[15px] sm:px-10 sm:text-[16px] md:px-14 md:text-[15px] lg:px-16 lg:text-[15px] xl:px-36"
               onClick={senhaNova}
             >
-              <span className="text-end">Fazer login</span>
+              <span className="text-end">Definir senha</span>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 16 16"

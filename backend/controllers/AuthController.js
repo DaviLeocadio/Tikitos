@@ -206,9 +206,18 @@ const loginController = async (req, res) => {
   }
   try {
     const usuario = await read("usuarios", `email = '${email}'`);
-
+    
     if (!usuario) {
       return res.status(404).json({ error: "Usuário não encontrado" });
+    }
+    
+    if(usuario.status === "inativo") {
+      return res.status(403).json({ error: "Usuário inativo. Contate o administrador." });
+    }
+
+    const filial = await read("empresas", `id_empresa = ${usuario.id_empresa} AND status = 'inativo'`);
+    if(filial) {
+      return res.status(403).json({ error: "A filial associada ao usuário está inativa. Contate o administrador." });
     }
 
     if (usuario.senha === "deve_mudar") {
