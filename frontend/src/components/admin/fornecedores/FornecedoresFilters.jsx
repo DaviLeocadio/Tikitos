@@ -8,7 +8,7 @@ const FornecedoresFilters = memo(function FornecedoresFilters({
   setGlobalFilter,
 }) {
   return (
-    <div className="bg-white rounded-xl border-3 border-dashed border-[#b478ab] p-5 space-y-4">
+    <div className="bg-[#92EF6C] rounded-xl border-3 border-dashed border-[#559637] p-5 space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         {/* Busca - Ocupa 3 colunas agora para aproveitar o espaço */}
         <div className="md:col-span-3">
@@ -21,7 +21,7 @@ const FornecedoresFilters = memo(function FornecedoresFilters({
               type="text"
               value={globalFilter}
               onChange={(e) => setGlobalFilter(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 rounded-lg border-2 border-[#b478ab] focus:outline-none focus:border-[#76196c]"
+              className="w-full bg-[#EBC7F5] text-[#76226D] pl-10 pr-4 py-2 rounded-lg border-2 border-[#b478ab] focus:outline-none focus:border-[#76196c]"
               placeholder="Nome da empresa, CNPJ, cidade ou email"
             />
           </div>
@@ -35,7 +35,7 @@ const FornecedoresFilters = memo(function FornecedoresFilters({
           <select
             value={statusFiltro}
             onChange={(e) => setStatusFiltro(e.target.value)}
-            className="w-full p-2 rounded-lg border-2 border-[#b478ab] focus:outline-none focus:border-[#76196c] bg-white"
+            className="w-full text-[#76226D] p-2 rounded-lg border-2 border-[#b478ab] focus:outline-none focus:border-[#76196c] bg-[#EBC7F5]"
           >
             <option value="todos">Todos</option>
             <option value="ativo">Ativos</option>

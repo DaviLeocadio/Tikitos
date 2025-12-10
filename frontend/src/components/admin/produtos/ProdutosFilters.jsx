@@ -11,19 +11,19 @@ const ProdutosFilters = memo(function ProdutosFilters({
   setGlobalFilter
 }) {
   return (
-    <div className="bg-white rounded-xl border-3 border-dashed border-[#b478ab] p-5 space-y-4">
+    <div className="bg-[#9BF377] rounded-xl border-3 border-dashed border-[#559637] p-5 space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
 
         {/* Busca */}
         <div className="md:col-span-2">
-          <label className="text-sm font-semibold text-[#76196c] block mb-2">Buscar produto</label>
+          <label className="text-sm font-semibold text-[#559637] block mb-2">Buscar produto</label>
           <div className="relative">
             <i className="bi bi-search absolute left-3 top-1/2 -translate-y-1/2 text-[#b478ab]"></i>
             <input
               type="text"
               value={globalFilter}
               onChange={(e) => setGlobalFilter(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 rounded-lg border-2 border-[#b478ab] focus:outline-none focus:border-[#76196c]"
+              className="w-full pl-10 pr-4 py-2 text-[#559637] bg-[#C5FFAD] rounded-lg border-2 border-[#b478ab] focus:outline-none focus:border-[#76196c]"
               placeholder="Nome, código ou descrição..."
             />
           </div>
@@ -31,11 +31,11 @@ const ProdutosFilters = memo(function ProdutosFilters({
 
         {/* Categoria */}
         <div>
-          <label className="text-sm font-semibold text-[#76196c] block mb-2">Categoria</label>
+          <label className="text-sm font-semibold text-[#559637] block mb-2">Categoria</label>
           <select
             value={categoriaFiltro}
             onChange={(e) => setCategoriaFiltro(e.target.value)}
-            className="w-full p-2 rounded-lg border-2 border-[#b478ab] focus:outline-none focus:border-[#76196c]"
+            className="w-full p-2 bg-[#C5FFAD] rounded-lg border-2 border-[#b478ab] focus:outline-none focus:border-[#76196c]"
           >
             <option value="todas">Todas</option>
             {categorias.map((c) => <option key={c}>{c}</option>)}
@@ -44,11 +44,11 @@ const ProdutosFilters = memo(function ProdutosFilters({
 
         {/* Status */}
         <div>
-          <label className="text-sm font-semibold text-[#76196c] block mb-2">Status</label>
+          <label className="text-sm font-semibold text-[#559637] block mb-2">Status</label>
           <select
             value={statusFiltro}
             onChange={(e) => setStatusFiltro(e.target.value)}
-            className="w-full p-2 rounded-lg border-2 border-[#b478ab] focus:outline-none focus:border-[#76196c]"
+            className="w-full bg-[#C5FFAD] p-2 rounded-lg border-2 border-[#b478ab] focus:outline-none focus:border-[#76196c]"
           >
             <option value="todos">Todos</option>
             <option value="ativo">Ativos</option>

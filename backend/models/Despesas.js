@@ -4,11 +4,21 @@ import {
   readAll,
   update,
   create,
+  readRaw,
 } from "../config/database.js";
 
 const listarDespesas = async (whereClause = null) => {
   try {
-    return await readAll("despesas", whereClause);
+    let query = `SELECT d.*, f.nome AS fornecedor\n      FROM despesas d\n      LEFT JOIN fornecedores f ON d.id_fornecedor = f.id_fornecedor`;
+
+    if (whereClause) {
+      // controller may pass a WHERE fragment that already contains ORDER BY
+      query += ` WHERE ${whereClause}`;
+    } else {
+      query += ` ORDER BY data_pag DESC`;
+    }
+
+    return await readRaw(query);
   } catch (err) {
     console.error("Erro ao listar despesas: ", err);
     throw err;
@@ -18,6 +28,24 @@ const listarDespesas = async (whereClause = null) => {
 const obterDespesaPorId = async (idDespesa) => {
   try {
     return await read("despesas", `id_despesa = ${idDespesa}`);
+  } catch (err) {
+    console.error("Erro ao obter despesa por ID: ", err);
+    throw err;
+  }
+};
+
+const despesasPagas = async () => {
+  try {
+    return await readAll("despesas", `status = 'pago'`);
+  } catch (err) {
+    console.error("Erro ao obter despesa por ID: ", err);
+    throw err;
+  }
+};
+
+const despesasPendentes = async () => {
+  try {
+    return await readAll("despesas", `status = 'pendente'`);
   } catch (err) {
     console.error("Erro ao obter despesa por ID: ", err);
     throw err;
@@ -56,5 +84,7 @@ export {
   obterDespesaPorId,
   criarDespesa,
   atualizarDespesa,
-  excluirDespesa
+  excluirDespesa,
+  despesasPagas,
+  despesasPendentes
 };

@@ -1,6 +1,6 @@
 "use client";
 
-export default function GetColumns({ setModalVendedor, setModalDesativar }) {
+export default function GetColumns({ setModalVendedor, setModalDesativar, setModalTransfer, setModalSenha }) {
   return [
     {
       accessorKey: "id_usuario",
@@ -75,13 +75,12 @@ export default function GetColumns({ setModalVendedor, setModalDesativar }) {
       ),
     },
     {
-      accessorKey: "perfil",
-      header: "Perfil",
+      accessorKey: "nome_empresa",
+      header: "Empresa",
       cell: ({ row }) => (
-
         <div className="">
-          <span className="px-2 py-1 text-[#76196c]  text-xs font-normal block">
-            {console.log(row.original.perfil)}
+          <span className="px-2 py-1 text-[#76196c] text-xs font-normal block">
+            {row.original.nome_empresa}
           </span>
         </div>
       ),
@@ -118,15 +117,23 @@ export default function GetColumns({ setModalVendedor, setModalDesativar }) {
 
         return (
           <div className="flex gap-2">
-            <button
-              onClick={() => setModalVendedor({ open: true, vendedor })}
+
+              <button
+              onClick={() => setModalVendedor({ open: true, vendedor})}
               className="px-3 py-1 bg-[#76196c] text-white rounded-lg text-sm font-semibold hover:bg-[#924187] transition cursor-pointer"
               title="Editar vendedor"
             >
               <i className="bi bi-person"></i>
             </button>
             <button
-              onClick={() => setModalDesativar({ open: true, vendedor })}
+              onClick={() => setModalTransfer && setModalTransfer({ open: true, funcionario: vendedor })}
+              className="px-3 py-1 bg-[#3b82f6] text-white rounded-lg text-sm font-semibold hover:bg-[#2563eb] transition cursor-pointer"
+              title="Transferir funcionário"
+            >
+              <i className="bi bi-arrow-left-right"></i>
+            </button>
+            <button
+              onClick={() => setModalDesativar({ open: true, vendedor})}
               className={`px-3 py-1 text-white rounded-lg text-sm font-semibold transition cursor-pointer ${vendedor.status === "ativo"
                   ? "bg-[#ff6b35] hover:bg-[#e55a2b]"
                   : "bg-[#569a33] hover:bg-[#4f6940]"
@@ -135,9 +142,17 @@ export default function GetColumns({ setModalVendedor, setModalDesativar }) {
             >
               <i className={`bi bi-power ${vendedor.status === "ativo" ? "" : ""}`}></i>
             </button>
+            <button
+              onClick={() => setModalSenha({ open: true, funcionario:vendedor})}
+              className={`px-3 py-1 text-white rounded-lg text-sm font-semibold transition cursor-pointer bg-red-600 hover:bg-red-700`}
+              title={"Resetar senha"}
+            >
+              <i className={`bi bi-unindent`}></i>
+            </button>
           </div>
         );
       },
     },
+   
   ];
 }

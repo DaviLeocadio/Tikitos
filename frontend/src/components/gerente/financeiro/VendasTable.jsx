@@ -83,9 +83,10 @@ export default memo(function VendasTable({ vendas, loading }) {
   ];
 
   return (
-    <div className="bg-white rounded-xl border-3 border-dashed border-[#569a33] overflow-hidden">
-      <div className="p-5 bg-[#e8f5e8] border-b-2 border-[#569a33]">
-        <h2 className="text-xl font-bold text-[#569a33]">Histórico de Vendas</h2>
+    <div className="bg-[#C5FFAD] rounded-xl border-2 border-[#569a33] overflow-hidden">
+
+      <div className="p-5 bg-[#569A33] border-b-2 border-[#569a33]">
+        <h2 className="text-xl font-bold text-[#92EF6C]">Histórico de Vendas</h2>
       </div>
 
       <div className="overflow-x-auto">
@@ -171,8 +172,8 @@ export default memo(function VendasTable({ vendas, loading }) {
       </div>
 
       {/* PAGINAÇÃO */}
-      <div className="flex items-center justify-between p-4 border-t border-[#569a33]/30">
-        <div className="text-sm text-[#4f6940]">
+      <div className="flex bg-[#569A33] items-center justify-between p-4 border-t border-[#569a33]/30">
+        <div className="text-sm text-[#92EF6C]">
           Mostrando {sorted.length > 0 ? pageIndex * pageSize + 1 : 0} a{" "}
           {Math.min((pageIndex + 1) * pageSize, sorted.length)} de{" "}
           {sorted.length} vendas
@@ -182,7 +183,7 @@ export default memo(function VendasTable({ vendas, loading }) {
           <button
             onClick={() => setPageIndex((p) => Math.max(0, p - 1))}
             disabled={pageIndex === 0}
-            className="border border-[#569a33] text-[#569a33] px-3 py-1 rounded hover:bg-[#e8f5e8] disabled:opacity-40"
+            className="border bg-[#92EF6C] border-[#92EF6C] text-[#4F6940] px-3 py-1 rounded hover:bg-[#92EF6C]"
           >
             Anterior
           </button>
@@ -190,7 +191,7 @@ export default memo(function VendasTable({ vendas, loading }) {
           <button
             onClick={() => setPageIndex((p) => Math.min(pageCount - 1, p + 1))}
             disabled={pageIndex >= pageCount - 1}
-            className="border border-[#569a33] text-[#569a33] px-3 py-1 rounded hover:bg-[#e8f5e8] disabled:opacity-40"
+            className="border bg-[#92EF6C] border-[#92EF6C] text-[#4F6940] px-3 py-1 rounded hover:bg-[#92EF6C]"
           >
             Próxima
           </button>

@@ -6,10 +6,12 @@ import {
   atualizarUsuario,
 } from "../models/Usuario.js";
 import { obterEmpresaPorId } from "../models/Empresa.js";
+import { listarFornecedor } from "../models/Fornecedor.js";
+import { listarProdutos } from "../models/Produto.js";
 
 const listarGerentesController = async (req, res) => {
   try {
-    const gerentes = await listarUsuarios("perfil = 'gerente'");
+    const gerentes = await listarUsuarios("u.perfil = 'gerente'");
 
     res
       .status(200)
@@ -177,10 +179,68 @@ const desativarGerenteController = async (req, res) => {
   }
 };
 
+const ativarGerenteController = async (req, res) => {
+  try {
+    const { gerenteId } = req.params;
+
+    const gerenteDesativado = atualizarUsuario(gerenteId, {
+      status: "ativo",
+    });
+
+    if (!gerenteDesativado)
+      return res.status(404).json({ error: "Gerente não encontrado" });
+
+    return res
+      .status(201)
+      .json({ mensagem: "Gerente com status ativo!", gerenteDesativado });
+  } catch (err) {
+    console.log("Erro ao ativar gerente: ", err);
+    return res
+      .status(500)
+      .json({ err: "Não foi possível ativar o gerente" });
+  }
+};
+
+const metaGerenteController = async (req, res) => {
+  try {
+    const { fornecedores, produtos, fornecedoresSup, todosFornecedores} = req.query;
+    let response = {};
+
+    if(fornecedores){
+        const listaFornecedores = await listarFornecedor(`status = 'ativo' AND tipo = 'mercadorias'`);
+        response.fornecedores = listaFornecedores;
+    }
+    if(fornecedoresSup){
+        const listaFornecedores = await listarFornecedor(`status = 'ativo' AND tipo = 'suprimentos'`);
+        response.fornecedoresSup = listaFornecedores;
+    }
+    if(todosFornecedores){
+        const listaFornecedores = await listarFornecedor(`status = 'ativo'`);
+        response.fornecedores = listaFornecedores;
+    }
+
+    if(produtos){
+        const listaProdutos = await listarProdutos(`status = 'ativo'`);
+        response.produtos = listaProdutos;
+    }
+
+    response.mensagem = "Dados de formulário obtidos com sucesso!";
+
+    return res.status(200).json(response)
+  } catch (error) {
+    console.error("Erro ao obter dados de formulario: ", error);
+    res.status(500).json({ mensagem: "Erro ao obter dados de formulario" });
+  }
+};
+
+
+
 export {
   listarGerentesController,
   obterGerentePorIdController,
   criarGerenteController,
   atualizarGerenteController,
   desativarGerenteController,
+  ativarGerenteController,
+  metaGerenteController
 };

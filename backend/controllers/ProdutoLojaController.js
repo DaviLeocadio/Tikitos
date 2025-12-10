@@ -9,6 +9,7 @@ import {
   atualizarProdutoLoja,
   deletarProdutoLoja,
   verificarEstoque,
+  obterProdutosEstoqueCritico,
 } from "../models/ProdutoLoja.js";
 import { formatarProdutos } from "../utils/formatarProdutos.js";
 import { mascaraDinheiro } from "../utils/formatadorNumero.js";
@@ -39,13 +40,13 @@ const atualizarProdutoLojaController = async (req, res) => {
 
     let produtoLojaData = {};
 
-    if (desconto) {
-      if (desconto < 0 || desconto > 100) {
+    if (desconto || desconto === 0) {
+      if (Number(desconto) < 0 || Number(desconto) > 100) {
         return res
           .status(400)
           .json({ error: "O desconto deve estar entre 0 e 100." });
       }
-      produtoLojaData.desconto = desconto;
+      produtoLojaData.desconto = Number(desconto);
     }
 
     if (estoque) {
@@ -75,39 +76,10 @@ const atualizarProdutoLojaController = async (req, res) => {
 const estoqueBaixoController = async (req, res) => {
   try {
     const idEmpresa = req.usuarioEmpresa;
-    const produtoLojaArray = await listarProdutosLoja(
-      `id_empresa = ${idEmpresa}`
-    );
+    
 
-    if (!produtoLojaArray || produtoLojaArray.length == 0) {
-      return res
-        .status(404)
-        .json({ error: "Nenhuma relação produto-loja encontrada na empresa" });
-    }
-
-    const estoqueMin = process.env.ESTOQUE_MINIMO;
-
-    const estoqueBaixo = produtoLojaArray.filter((p) => p.estoque < estoqueMin);
-    if (estoqueBaixo.length == 0)
-      return res.status(200).json({
-        mensagem: `Nenhum produto com estoque abaixo de ${estoqueMin} unidades`,
-        code: "ESTOQUE",
-      });
-
-    let produtosComEstoqueBaixo = [];
-
-    await Promise.all(
-      estoqueBaixo.map(async (e) => {
-        const produto = await obterProdutoPorId(e.id_produto);
-        produtosComEstoqueBaixo.push(produto);
-      })
-    );
-
-    const usuarioEmpresa = req.usuarioEmpresa;
-
-    produtosComEstoqueBaixo = await formatarProdutos(
-      produtosComEstoqueBaixo,
-      usuarioEmpresa
+    const produtosComEstoqueBaixo = await obterProdutosEstoqueCritico(
+      idEmpresa
     );
 
     return res.status(200).json({
@@ -178,6 +150,7 @@ const pedidoProdutoController = async (req, res) => {
     )} × ${quantidade} : ${mascaraDinheiro(valor)}`;
     const despesaData = {
       id_empresa: empresaId,
+      id_fornecedor: produto.id_fornecedor,
       data_pag: dataPagSQL,
       descricao,
       preco: valor,

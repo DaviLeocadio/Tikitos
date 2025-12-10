@@ -1,12 +1,12 @@
 "use client";
 
+import { X } from "lucide-react"; // <- importar o ícone de fechar
+
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
-  AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
@@ -33,7 +33,15 @@ export default function ModalInformacoesProduto({ produto }) {
         </TooltipContent>
       </Tooltip>
 
-      <AlertDialogContent className="bg-[#edd5f4]">
+      <AlertDialogContent className="bg-[#edd5f4] relative">
+        
+        {/* BOTÃO X FECHAR NO CANTO SUPERIOR */}
+        <AlertDialogCancel
+          className="absolute top-3 right-3 p-1 rounded-full hover:scale-90 transition shadow-none bg-transparent"
+        >
+          <X size={22} className="text-[#76196c] hover:text-[#9c26a0]" />
+        </AlertDialogCancel>
+
         <AlertDialogHeader className="items-center">
           <AlertDialogTitle className="flex flex-col justify-center items-center">
             <img className="h-25" src="/img/categorias/bonecos_categoria.png" />
@@ -44,19 +52,11 @@ export default function ModalInformacoesProduto({ produto }) {
               </h1>
             </div>
           </AlertDialogTitle>
+
           <AlertDialogDescription className="text-[15px] text-center">
             {produto?.descricao || "Aqui você pode mostrar dados adicionais sobre o produto."}
           </AlertDialogDescription>
         </AlertDialogHeader>
-
-        <AlertDialogFooter className="mt-2 sm:justify-center">
-          <AlertDialogCancel className="bg-[#65745A] rounded-[50px] mt-2 py-2 px-5 text-[#caf4b7] text-sm font-semibold">
-            Fechar
-          </AlertDialogCancel>
-          <button className="bg-[#65745A] rounded-[50px] mt-2 py-2 px-5 text-[#caf4b7] text-sm font-semibold">
-            Relatar erro
-          </button>
-        </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
   );

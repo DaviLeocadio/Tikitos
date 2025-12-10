@@ -1,6 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { SidebarTrigger } from "@/components/ui/sidebar";
+
+
 import {
   Dialog,
   DialogContent,
@@ -9,262 +12,262 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, Trash } from "lucide-react";
+import { CheckCircle, ChevronLeft, ChevronRight, Trash } from "lucide-react";
 import InputDataMask from "@/components/inputMasks/InputDataMask";
+import ModalAdicionarDespesa from "@/components/admin/financeiro/ModalAdicionarDespesa";
 
-// Modal Adicionar Despesa
-function ModalAdicionarDespesa({ open, onClose, onSalvar }) {
-  const [descricao, setDescricao] = useState("");
-  const [preco, setPreco] = useState("");
+// Formata números para moeda BRL: R$ XXX.XXX,XX
+function formatCurrency(value) {
+  if (value === null || value === undefined || value === "") return "R$ 0,00";
 
-  const [dataPag, setDataPag] = useState("");
-  const [status, setStatus] = useState("pendente");
-  const [loading, setLoading] = useState(false);
+  if (typeof value === "string" && value.includes("R$")) return value;
 
-  const handleSalvar = async () => {
-    if (!descricao || !preco) {
-      alert("Preencha descrição e valor!");
-      return;
+  let num = value;
+  if (typeof value === "string") {
+    const cleaned = value.replace(/\./g, "").replace(/,/g, ".").replace(/[^0-9.\-]/g, "");
+    num = parseFloat(cleaned);
+  } else {
+    num = parseFloat(value);
+  }
+
+  if (isNaN(num)) return "R$ 0,00";
+
+  return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(num);
+}
+
+// Componente de Paginação Reutilizável
+const Paginacao = ({ paginaAtual, totalPaginas, onMudarPagina, variant = "roxo" }) => {
+  const gerarPaginas = () => {
+    const paginas = [];
+    const maxPaginas = 5;
+
+    let inicio = Math.max(1, paginaAtual - Math.floor(maxPaginas / 2));
+    let fim = Math.min(totalPaginas, inicio + maxPaginas - 1);
+
+    if (fim - inicio < maxPaginas - 1) {
+      inicio = Math.max(1, fim - maxPaginas + 1);
     }
 
-    setLoading(true);
-    await onSalvar({
-      descricao,
-      preco: parseFloat(preco),
-      data_pag: dataPag,
-      status,
-    });
-    setLoading(false);
-    setDescricao("");
-    setPreco("");
-    setDataPag("");
-    setStatus("pendente");
-    onClose();
+    for (let i = inicio; i <= fim; i++) {
+      paginas.push(i);
+    }
+
+    return paginas;
   };
 
+  if (totalPaginas <= 1) return null;
+
+  const corAtiva = variant === "verde" ? "bg-[#569a33] text-white" : "bg-[#76196c] text-white";
+  const corInativa = variant === "verde"
+    ? "bg-white border-2 border-[#569a33] text-[#569a33] hover:bg-[#e8f5e8]"
+    : "bg-white border-2 border-[#76196c] text-[#76196c] hover:bg-[#f0e5f5]";
+  const corBotoes = variant === "verde"
+    ? "bg-white border-2 border-[#569a33] text-[#569a33] hover:bg-[#e8f5e8]"
+    : "bg-white border-2 border-[#76196c] text-[#76196c] hover:bg-[#f0e5f5]";
+
   return (
-    <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md bg-[#e8c5f1] border-3 border-[#924187] border-dashed rounded-3xl">
-        <DialogHeader>
-          <DialogTitle className="text-[#76196c] font-extrabold text-xl">
-            Adicionar Despesa
-          </DialogTitle>
-        </DialogHeader>
+    <div className="flex items-center justify-center gap-2 mt-4">
+      <button
+        onClick={() => onMudarPagina(paginaAtual - 1)}
+        disabled={paginaAtual === 1}
+        className={`p-2 rounded-lg ${corBotoes} disabled:opacity-50 disabled:cursor-not-allowed transition cursor-pointer`}
+      >
+        <ChevronLeft size={20} />
+      </button>
 
-        <div className="space-y-4">
-          <div className="grid grid-cols-3 gap-3">
-            <div className="col-span-2">
-              <label className="text-sm  text-[#8c3e82] font-semibold block mb-2">
-                Descrição:
-              </label>
-              <input
-                type="text"
-                value={descricao}
-                onChange={(e) => setDescricao(e.target.value)}
-                placeholder="Ex: Conta de energia"
-                className="w-full p-3 rounded-lg border-2 border-[#b478ab] text-[#76196c] font-semibold focus:outline-none focus:border-[#76196c]"
-              />
-            </div>
-            <div>
-              <label className="text-sm  text-[#8c3e82] font-semibold block mb-2">
-                Valor (R$):
-              </label>
-              <input
-                type="number"
-                step="0.01"
-                value={preco}
-                onChange={(e) => setPreco(e.target.value)}
-                placeholder="0.00"
-                className="w-full p-3 rounded-lg border-2 border-[#b478ab] text-[#76196c] font-bold focus:outline-none focus:border-[#76196c]"
-              />
-            </div>
-          </div>
+      {gerarPaginas().map((pagina) => (
+        <button
+          key={pagina}
+          onClick={() => onMudarPagina(pagina)}
+          className={`px-4 py-2 rounded-lg font-semibold transition cursor-pointer ${paginaAtual === pagina ? corAtiva : corInativa
+            }`}
+        >
+          {pagina}
+        </button>
+      ))}
 
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="text-sm text-[#8c3e82] font-semibold block mb-2">
-                Data de Pagamento:
-              </label>
-              <InputDataMask
-                type="text"
-                placeholder="25/12/1969"
-                value={dataPag}
-                onChange={(e) => setDataPag(e.target.value)}
-                className="w-full p-3 rounded-lg border-2 border-[#b478ab] text-[#76196c] font-bold focus:outline-none focus:border-[#76196c]"
-              />
-            </div>
-
-            <div>
-              <label className="text-sm text-[#8c3e82] font-semibold block mb-2">
-                Status:
-              </label>
-              <select
-                value={status}
-                onChange={(e) => setStatus(e.target.value)}
-                className="w-full p-3 rounded-lg border-2 border-[#b478ab] text-[#76196c] font-semibold focus:outline-none focus:border-[#76196c] cursor-pointer"
-              >
-                <option value="pendente">Pendente</option>
-                <option value="pago">Pago</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        <DialogFooter className="mt-4">
-          <div className="flex gap-2 w-full">
-            <Button
-              variant="secondary"
-              className="flex-1 bg-[#9bf377] text-[#4f6940] hover:bg-[#75ba51] font-bold cursor-pointer"
-              onClick={onClose}
-              disabled={loading}
-            >
-              Cancelar
-            </Button>
-            <Button
-              className="flex-1 bg-[#76196c] text-white hover:bg-[#924187] font-bold cursor-pointer"
-              onClick={handleSalvar}
-              disabled={loading}
-            >
-              {loading ? "Salvando..." : "Salvar"}
-            </Button>
-          </div>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+      <button
+        onClick={() => onMudarPagina(paginaAtual + 1)}
+        disabled={paginaAtual === totalPaginas}
+        className={`p-2 rounded-lg ${corBotoes} disabled:opacity-50 disabled:cursor-not-allowed transition cursor-pointer`}
+      >
+        <ChevronRight size={20} />
+      </button>
+    </div>
   );
-}
+};
 
 export default function AdminFinanceiro() {
   const [loading, setLoading] = useState(true);
+  const [dialogExcluir, setDialogExcluir] = useState({ open: false, id: null });
+  const [totalVendas, setTotalVendas] = useState(0);
   const [despesas, setDespesas] = useState([]);
   const [fluxoCaixa, setFluxoCaixa] = useState([]);
   const [resumo, setResumo] = useState(null);
   const [modalAberto, setModalAberto] = useState(false);
+  const [filterStartDate, setFilterStartDate] = useState("");
+  const [filterEndDate, setFilterEndDate] = useState("");
   const [filtroStatus, setFiltroStatus] = useState("todos");
-  const [dialogExcluir, setDialogExcluir] = useState({ open: false, id: null });
+  const [caixa, setCaixa] = useState([]);
+  const [despesasPendentes, setDespesasPendentes] = useState();
+  const [despesasPagas, setDespesasPagas] = useState();
   const [dialogMarcarPago, setDialogMarcarPago] = useState({
     open: false,
     despesa: null,
   });
 
+  // Estados de paginação
+  const [paginaDespesas, setPaginaDespesas] = useState(1);
+  const [paginaCaixa, setPaginaCaixa] = useState(1);
+  const itensPorPagina = 10;
+
+  const buildUrlWithFilters = (baseUrl) => {
+    const p = new URLSearchParams();
+    if (filterStartDate) p.append("dataInicio", filterStartDate);
+    if (filterEndDate) p.append("dataFim", filterEndDate);
+    return p.toString() ? `${baseUrl}?${p.toString()}` : baseUrl;
+  };
+
+  // Recarrega todos os dados do painel financeiro (despesas, caixa e totais)
+  const refreshAll = async () => {
+    setLoading(true);
+    try {
+      const urls = {
+        vendasTotais: buildUrlWithFilters("http://localhost:8080/admin/vendasTotais"),
+        despesasPendentes: buildUrlWithFilters("http://localhost:8080/admin/despesas-pendentes"),
+        despesasPagas: buildUrlWithFilters("http://localhost:8080/admin/despesas-pagas"),
+        despesasList: buildUrlWithFilters("http://localhost:8080/admin/despesas"),
+        caixaList: buildUrlWithFilters("http://localhost:8080/admin/caixa"),
+      };
+
+      const [resV, resPend, resPag, resDes, resCaixa] = await Promise.all([
+        fetch(urls.vendasTotais, { method: "GET", credentials: "include" }),
+        fetch(urls.despesasPendentes, { method: "GET", credentials: "include" }),
+        fetch(urls.despesasPagas, { method: "GET", credentials: "include" }),
+        fetch(urls.despesasList, { method: "GET", credentials: "include" }),
+        fetch(urls.caixaList, { method: "GET", credentials: "include" }),
+      ]);
+
+      if (resV.ok) {
+        const data = await resV.json();
+        setTotalVendas(data.valorTotal);
+      }
+
+      if (resPend.ok) {
+        const data = await resPend.json();
+        setDespesasPendentes(data.valorDespesas);
+      } else {
+        setDespesasPendentes(undefined);
+      }
+
+      if (resPag.ok) {
+        const data = await resPag.json();
+        setDespesasPagas(data.valorDespesas);
+      } else {
+        setDespesasPagas(undefined);
+      }
+
+      if (resDes.ok) {
+        const data = await resDes.json();
+        setDespesas(data.despesasListadas || []);
+      } else {
+        setDespesas([]);
+      }
+
+      if (resCaixa.ok) {
+        const data = await resCaixa.json();
+        setCaixa(data.caixaListado || []);
+      } else {
+        setCaixa([]);
+      }
+    } catch (err) {
+      console.error("Erro ao recarregar dados financeiros:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    buscarDados();
+    refreshAll();
+  }, [filterStartDate, filterEndDate]);
+
+  // inicializar filtros de data com últimos 30 dias
+  useEffect(() => {
+    const hoje = new Date();
+    const end = hoje.toISOString().split("T")[0];
+    const startDate = new Date(hoje);
+    startDate.setDate(startDate.getDate() - 30);
+    const start = startDate.toISOString().split("T")[0];
+    setFilterStartDate(start);
+    setFilterEndDate(end);
   }, []);
 
   useEffect(() => {
     calcularResumo();
   }, [despesas, fluxoCaixa]);
 
-  const buscarDados = async () => {
-    setLoading(true);
+  const pagarDespesa = async (idDespesa) => {
     try {
-      // Buscar despesas
-      const resDespesas = await fetch("http://localhost:8080/gerente/gastos", {
+      const response = await fetch(
+        `http://localhost:8080/admin/despesas/${idDespesa}`,
+        {
+          method: "PUT",
+          credentials: "include",
+        }
+      );
+
+      if (!response.ok) return;
+
+      // Recarregar todos os dados do financeiro após pagamento
+      await refreshAll();
+    } catch (err) {
+      console.error("Erro ao pagar despesa", err);
+    } finally {
+      setDialogMarcarPago({ open: false, despesa: null });
+    }
+  };
+
+  const confirmarExcluir = async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/admin/despesas/${dialogExcluir.id}`, {
+        method: "DELETE",
         credentials: "include",
       });
-      if (resDespesas.ok) {
-        const data = await resDespesas.json();
-        setDespesas(data.gastos || []);
+
+      if (!response.ok) {
+        console.error("Erro ao excluir despesa", response.status);
+        return;
       }
 
-      // Buscar fluxo de caixa
-      const resFluxo = await fetch("http://localhost:8080/gerente/caixa", {
-        credentials: "include",
-      });
-      if (resFluxo.ok) {
-        const data = await resFluxo.json();
-        setFluxoCaixa(data.caixaData || []);
-      }
-    } catch (error) {
-      console.error("Erro ao buscar dados:", error);
+      // Recarregar todos os dados do financeiro após exclusão
+      await refreshAll();
+    } catch (err) {
+      console.error("Erro ao excluir despesa", err);
     } finally {
-      setLoading(false);
+      setDialogExcluir({ open: false, id: null });
     }
   };
 
   const calcularResumo = () => {
-    const totalDespesas = despesas
+    const totalDespesass = despesas
       .filter((d) => d.status === "pago")
       .reduce((acc, d) => acc + parseFloat(d.preco), 0);
 
-    const despesasPendentes = despesas
+    const despesasPendentess = despesas
       .filter((d) => d.status === "pendente")
       .reduce((acc, d) => acc + parseFloat(d.preco), 0);
 
-    const totalVendas = fluxoCaixa.reduce(
+    const totalVendass = fluxoCaixa.reduce(
       (acc, f) => acc + parseFloat(f.valor_total || 0),
       0
     );
 
     setResumo({
-      totalDespesas,
-      despesasPendentes,
-      totalVendas,
-      saldo: totalVendas - totalDespesas,
+      totalDespesass,
+      despesasPendentess,
+      totalVendass,
+      saldo: totalVendass - totalDespesass,
     });
-  };
-
-  const handleAdicionarDespesa = async (despesaData) => {
-    try {
-      const response = await fetch("http://localhost:8080/gerente/gastos", {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(despesaData),
-      });
-
-      if (response.ok) {
-        await buscarDados();
-      }
-    } catch (error) {
-      console.error("Erro ao adicionar despesa:", error);
-      alert("Erro ao adicionar despesa!");
-    }
-  };
-
-  const handleExcluirDespesa = async (idDespesa) => {
-    try {
-      const response = await fetch(
-        `http://localhost:8080/gerente/gastos/${idDespesa}`,
-        {
-          method: "DELETE",
-          credentials: "include",
-        }
-      );
-
-      if (response.ok) {
-        await buscarDados();
-      }
-    } catch (error) {
-      console.error("Erro ao excluir despesa:", error);
-      alert("Erro ao excluir despesa!");
-    }
-    setDialogExcluir({ open: false, id: null });
-  };
-
-  const handleMarcarComoPago = async (despesa) => {
-    try {
-      const response = await fetch(
-        `http://localhost:8080/gerente/gastos/${despesa.id_despesa}`,
-        {
-          method: "PUT",
-          credentials: "include",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            status: "pago",
-            data_pag: new Date().toISOString().split("T")[0],
-          }),
-        }
-      );
-
-      if (response.ok) {
-        await buscarDados();
-      }
-    } catch (error) {
-      console.error("Erro ao atualizar despesa:", error);
-      alert("Erro ao atualizar despesa!");
-    }
-    setDialogMarcarPago({ open: false, despesa: null });
   };
 
   const despesasFiltradas = despesas.filter((d) => {
@@ -272,347 +275,460 @@ export default function AdminFinanceiro() {
     return d.status === filtroStatus;
   });
 
+  // Calcular paginação para despesas
+  const totalPaginasDespesas = Math.ceil(despesasFiltradas.length / itensPorPagina);
+  const indiceFinalDespesas = paginaDespesas * itensPorPagina;
+  const indiceInicialDespesas = indiceFinalDespesas - itensPorPagina;
+  const despesasPaginadas = despesasFiltradas.slice(indiceInicialDespesas, indiceFinalDespesas);
+
+  // Calcular paginação para caixa
+  const totalPaginasCaixa = Math.ceil(caixa.length / itensPorPagina);
+  const indiceFinalCaixa = paginaCaixa * itensPorPagina;
+  const indiceInicialCaixa = indiceFinalCaixa - itensPorPagina;
+  const caixaPaginado = caixa.slice(indiceInicialCaixa, indiceFinalCaixa);
+
+  // Reset página ao mudar filtro
+  useEffect(() => {
+    setPaginaDespesas(1);
+  }, [filtroStatus]);
+
   return (
-    <div className="min-h-screen bg-gradient-to-br [#e8f5e8] p-5 lg:p-8">
-      <div className="max-w-7xl mx-auto space-y-6">
-        {/* Header */}
-        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
-          <div>
-            <h1 className="text-3xl lg:text-4xl font-bold text-[#76196c]">
-              Financeiro
-            </h1>
-            <p className="text-lg text-[#8c3e82] mt-1">
-              Gestão de despesas e fluxo de caixa
-            </p>
-          </div>
+    <>
+      <div className="min-h-screen p-5 lg:p-8">
+        <div className="max-w-7xl mx-auto space-y-6">
 
-          <button
-            onClick={() => setModalAberto(true)}
-            className="bg-[#569a33] text-white px-6 py-3 rounded-xl font-bold hover:bg-[#4f6940] transition flex items-center gap-2 cursor-pointer"
-          >
-            <i className="bi bi-plus-circle text-xl"></i>
-            Nova Despesa
-          </button>
-        </div>
-
-        {/* Cards de Resumo */}
-        {resumo && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-            <div className="bg-white rounded-xl border-3 border-dashed border-[#569a33] p-6">
-              <div className="flex justify-between items-start">
-                <div>
-                  <p className="text-sm font-semibold text-gray-600 mb-1">
-                    Total Vendas
-                  </p>
-                  <p className="text-3xl font-bold text-[#569a33]">
-                    R$ {resumo.totalVendas.toFixed(2).replace(".", ",")}
-                  </p>
-                </div>
-                <i className="bi bi-arrow-up-circle text-3xl text-[#569a33]"></i>
-              </div>
+          {/* Header */}
+          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+            <div>
+              <h1 className="text-3xl lg:text-4xl font-bold text-[#76196c]">
+                <SidebarTrigger /> Financeiro
+              </h1>
+              <p className="text-lg text-[#8c3e82] mt-1">
+                Gestão de despesas e fluxo de caixa
+              </p>
             </div>
 
-            <div className="bg-white rounded-xl border-3 border-dashed border-[#ff6b6b] p-6">
-              <div className="flex justify-between items-start">
-                <div>
-                  <p className="text-sm font-semibold text-gray-600 mb-1">
-                    Despesas Pagas
-                  </p>
-                  <p className="text-3xl font-bold text-[#ff6b6b]">
-                    R$ {resumo.totalDespesas.toFixed(2).replace(".", ",")}
-                  </p>
-                </div>
-                <i className="bi bi-arrow-down-circle text-3xl text-[#ff6b6b]"></i>
+            <div className="flex gap-5 flex-wrap ">
+              {/* Filtros de período (início/fim) */}
+              <div className="flex items-center gap-3 justify-end">
+                <label className="text-sm text-[#76196c] font-semibold">De</label>
+                <input
+                  type="date"
+                  value={filterStartDate}
+                  onChange={(e) => setFilterStartDate(e.target.value)}
+                  className="p-2 rounded-lg border-2 border-[#b478ab]"
+                />
+                <label className="text-sm text-[#76196c] font-semibold">Até</label>
+                <input
+                  type="date"
+                  value={filterEndDate}
+                  onChange={(e) => setFilterEndDate(e.target.value)}
+                  className="p-2 rounded-lg border-2 border-[#b478ab]"
+                />
               </div>
-            </div>
 
-            <div className="bg-white rounded-xl border-3 border-dashed border-[#ff9800] p-6">
-              <div className="flex justify-between items-start">
-                <div>
-                  <p className="text-sm font-semibold text-gray-600 mb-1">
-                    A Pagar
-                  </p>
-                  <p className="text-3xl font-bold text-[#ff9800]">
-                    R$ {resumo.despesasPendentes.toFixed(2).replace(".", ",")}
-                  </p>
-                </div>
-                <i className="bi bi-clock-history text-3xl text-[#ff9800]"></i>
-              </div>
-            </div>
-
-            <div className="bg-white rounded-xl border-3 border-dashed border-[#76196c] p-6">
-              <div className="flex justify-between items-start">
-                <div>
-                  <p className="text-sm font-semibold text-gray-600 mb-1">
-                    Saldo
-                  </p>
-                  <p
-                    className={`text-3xl font-bold ${
-                      resumo.saldo >= 0 ? "text-[#569a33]" : "text-[#ff6b6b]"
-                    }`}
-                  >
-                    R$ {resumo.saldo.toFixed(2).replace(".", ",")}
-                  </p>
-                </div>
-                <i className="bi bi-wallet2 text-3xl text-[#76196c]"></i>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Tabela de Despesas */}
-        <div className="bg-white rounded-xl border-3 border-dashed border-[#b478ab] overflow-hidden">
-          <div className="p-5 bg-[#e8c5f1] border-b-2 border-[#b478ab]">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-              <h2 className="text-xl font-bold text-[#76196c]">Despesas</h2>
-
-              <div className="flex gap-2">
-                {["todos", "pago", "pendente"].map((status) => (
-                  <button
-                    key={status}
-                    onClick={() => setFiltroStatus(status)}
-                    className={`px-4 py-2 rounded-lg font-semibold text-sm transition cursor-pointer ${
-                      filtroStatus === status
-                        ? "bg-[#76196c] text-white"
-                        : "bg-white text-[#76196c] hover:bg-[#f0e5f5]"
-                    }`}
-                  >
-                    {status.charAt(0).toUpperCase() + status.slice(1)}
-                  </button>
-                ))}
-              </div>
+              <button
+                onClick={() => setModalAberto(true)}
+                className="bg-[#569a33] text-[#CAF4B7] px-6 py-3 rounded-xl font-bold hover:bg-[#4f6940] transition flex items-center gap-2 cursor-pointer"
+              >
+                <i className="bi bi-plus-circle text-xl"></i>
+                Nova Despesa
+              </button>
             </div>
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-[#f0e5f5]">
-                <tr>
-                  <th className="p-4 text-left text-[#76196c] font-bold">
-                    Descrição
-                  </th>
-                  <th className="p-4 text-left text-[#76196c] font-bold">
-                    Valor
-                  </th>
-                  <th className="p-4 text-left text-[#76196c] font-bold">
-                    Data Adicionado
-                  </th>
-                  <th className="p-4 text-left text-[#76196c] font-bold">
-                    Data Pagamento
-                  </th>
-                  <th className="p-4 text-left text-[#76196c] font-bold">
-                    Status
-                  </th>
-                  <th className="p-4 text-left text-[#76196c] font-bold">
-                    Ações
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {loading ? (
-                  <tr>
-                    <td colSpan="6" className="p-8 text-center">
-                      <div className="flex items-center justify-center gap-2">
-                        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#76196c]"></div>
-                        <span className="text-[#8c3e82]">Carregando...</span>
-                      </div>
-                    </td>
-                  </tr>
-                ) : despesasFiltradas.length === 0 ? (
-                  <tr>
-                    <td colSpan="6" className="p-8 text-center">
-                      <i className="bi bi-inbox text-4xl text-[#b478ab] opacity-50"></i>
-                      <p className="text-lg font-semibold text-[#8c3e82] mt-2">
-                        Nenhuma despesa encontrada
-                      </p>
-                    </td>
-                  </tr>
-                ) : (
-                  despesasFiltradas.map((despesa) => (
-                    <tr
-                      key={despesa.id_despesa}
-                      className="border-b border-[#b478ab]/30 hover:bg-[#f0e5f5]/30"
+          {/* Cards de Resumo */}
+          {resumo && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+              <div className="bg-verdefundo rounded-xl p-6">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <p className="text-sm font-semibold text-[#4F6940] mb-1">
+                      Total de vendas
+                    </p>
+                    <p className="text-3xl font-bold text-[#4F6940] ">
+                      {formatCurrency(totalVendas)}
+                    </p>
+                  </div>
+                  <i className="bi bi-arrow-up-circle text-3xl text-[#4F6940] "></i>
+                </div>
+              </div>
+
+              <div className="bg-roxo rounded-xl p-6">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <p className="text-sm font-semibold text-lilasclaro mb-1">
+                      Despesas pagas
+                    </p>
+                    <p className="text-3xl font-bold text-lilasclaro">
+                      {formatCurrency(despesasPagas)}
+                    </p>
+                  </div>
+                  <i className="bi bi-arrow-down-circle text-3xl text-lilasclaro"></i>
+                </div>
+              </div>
+
+              <div className="bg-[#559637] rounded-xl p-6">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <p className="text-sm font-semibold text-[#C5FFAD] mb-1">
+                      A Pagar
+                    </p>
+                    <p className="text-3xl font-bold text-[#C5FFAD]">
+                      {formatCurrency(despesasPendentes)}
+                    </p>
+                  </div>
+                  <i className="bi bi-clock-history text-3xl text-[#C5FFAD]"></i>
+                </div>
+              </div>
+
+              <div className="bg-[#C97FDA] rounded-xl p-6">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <p className="text-sm font-semibold text-[#76196C] mb-1">
+                      Saldo
+                    </p>
+                    <p
+                      className={`text-3xl font-bold ${resumo.saldo >= 0 ? "text-[#76196C]" : "text-[#76196C]"
+                        }`}
                     >
-                      <td className="p-4 font-semibold text-[#4f6940]">
-                        {despesa.descricao}
-                      </td>
-                      <td className="p-4 font-bold text-[#ff6b6b]">
-                        R${" "}
-                        {parseFloat(despesa.preco).toFixed(2).replace(".", ",")}
-                      </td>
-                      <td className="p-4 text-gray-600">
-                        {new Date(despesa.data_adicionado).toLocaleDateString(
-                          "pt-BR"
-                        )}
-                      </td>
-                      <td className="p-4 text-gray-600">
-                        {despesa.data_pag
-                          ? new Date(despesa.data_pag).toLocaleDateString(
-                              "pt-BR"
-                            )
-                          : "-"}
-                      </td>
-                      <td className="p-4">
-                        <span
-                          className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                            despesa.status === "pago"
-                              ? "bg-green-100 text-green-700"
-                              : "bg-orange-100 text-orange-700"
-                          }`}
-                        >
-                          {despesa.status === "pago" ? "Pago" : "Pendente"}
-                        </span>
-                      </td>
-                      <td className="p-4">
-                        <div className="flex gap-2">
-                          {despesa.status === "pendente" && (
-                            <button
-                              onClick={() =>
-                                setDialogMarcarPago({ open: true, despesa })
-                              }
-                              className="px-3 py-1 bg-[#569a33] text-white rounded-lg text-sm font-semibold hover:bg-[#4f6940] transition cursor-pointer"
-                              title="Marcar como pago"
-                            >
-                              <CheckCircle size={16} />
-                            </button>
-                          )}
-                          <button
-                            onClick={() =>
-                              setDialogExcluir({
-                                open: true,
-                                id: despesa.id_despesa,
-                              })
-                            }
-                            className="px-3 py-1 bg-[#ff6b6b] text-white rounded-lg text-sm font-semibold hover:bg-[#ff5252] transition cursor-pointer"
-                            title="Excluir"
-                          >
-                            <Trash size={16} />
-                          </button>
+                      {formatCurrency((Number(totalVendas) || 0) - (Number(despesasPagas) || 0))}
+
+                    </p>
+                  </div>
+                  <i className="bi bi-wallet2 text-3xl text-[#76196C]"></i>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Tabela de Despesas */}
+          <div className="rounded-xl border-3 border-dashed border-[#b478ab] overflow-hidden">
+            <div className="p-5 bg-[#e8c5f1] border-b-2 border-[#b478ab]">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <h2 className="text-xl font-bold text-[#76196c]">Despesas</h2>
+
+                <div className="flex gap-2">
+                  {["todos", "pago", "pendente"].map((status) => (
+                    <button
+                      key={status}
+                      onClick={() => setFiltroStatus(status)}
+                      className={`px-4 py-2 rounded-lg font-semibold text-sm transition cursor-pointer ${filtroStatus === status
+                        ? "bg-[#76196c] text-[#CAF4B7]"
+                        : "bg-[#D695E7] text-[#76196c] hover:bg-[#D695E7]/50"
+                        }`}
+                    >
+                      {status.charAt(0).toUpperCase() + status.slice(1)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-[#f0e5f5]">
+                  <tr>
+                    <th className="p-4 text-left text-[#76196c] font-bold">
+                      Descrição
+                    </th>
+                    <th className="p-4 text-left text-[#76196c] font-bold">
+                      Fornecedor
+                    </th>
+                    <th className="p-4 text-left text-[#76196c] font-bold">
+                      Valor
+                    </th>
+                    <th className="p-4 text-left text-[#76196c] font-bold">
+                      Data Adicionado
+                    </th>
+                    <th className="p-4 text-left text-[#76196c] font-bold">
+                      Data Pagamento
+                    </th>
+                    <th className="p-4 text-left text-[#76196c] font-bold">
+                      Status
+                    </th>
+                    <th className="p-4 text-left text-[#76196c] font-bold">
+                      Ações
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {loading ? (
+                    <tr>
+                      <td colSpan="6" className="p-8 text-center">
+                        <div className="flex items-center justify-center gap-2">
+                          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#76196c]"></div>
+                          <span className="text-[#8c3e82]">Carregando...</span>
                         </div>
                       </td>
                     </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
+                  ) : despesasFiltradas.length === 0 ? (
+                    <tr>
+                      <td colSpan="6" className="p-8 text-center">
+                        <i className="bi bi-inbox text-4xl text-[#b478ab] opacity-50"></i>
+                        <p className="text-lg font-semibold text-[#8c3e82] mt-2">
+                          Nenhuma despesa encontrada
+                        </p>
+                      </td>
+                    </tr>
+                  ) : (
+                    despesasPaginadas.map((despesa, index) => (
+                      <tr
+                        key={despesa.id_despesa}
+                        className={`border-b border-[#b478ab]/30 transition
+                        ${index % 2 === 0 ? "bg-[#C5FFAD]" : "bg-[#CAF4B7]"}
+                        hover:bg-[#75BA51]/60`}
+                      >
 
-        {/* Fluxo de Caixa Diário */}
-        <div className="bg-white rounded-xl border-3 border-dashed border-[#569a33] p-6">
-          <h2 className="text-xl font-bold text-[#569a33] mb-4">
-            Fluxo de Caixa Diário
-          </h2>
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-[#e8f5e8]">
-                <tr>
-                  <th className="p-3 text-left text-[#569a33] font-bold">
-                    Data
-                  </th>
-                  <th className="p-3 text-left text-[#569a33] font-bold">
-                    Total Caixas
-                  </th>
-                  <th className="p-3 text-left text-[#569a33] font-bold">
-                    Valor Total
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {fluxoCaixa.map((fluxo, index) => (
-                  <tr key={index} className="border-b border-[#569a33]/20">
-                    <td className="p-3 font-semibold text-[#4f6940]">
-                      {new Date(fluxo.data).toLocaleDateString("pt-BR")}
-                    </td>
-                    <td className="p-3 text-gray-600">{fluxo.caixas}</td>
-                    <td className="p-3 font-bold text-[#569a33]">
-                      R${" "}
-                      {parseFloat(fluxo.valor_total)
-                        .toFixed(2)
-                        .replace(".", ",")}
-                    </td>
+                        <td className="p-4 font-semibold text-[#4f6940]">
+                          {despesa.descricao}
+                        </td>
+                        <td className="p-4 text-[#4F6940]">
+                          {despesa.fornecedor || "--"}
+                        </td>
+                        <td className="p-4 font-bold text-[#4EA912]">
+                          {formatCurrency((parseFloat(despesa.preco)))}
+                        </td>
+                        <td className="p-4 text-[#4F6940]">
+                          {new Date(despesa.data_adicionado).toLocaleDateString(
+                            "pt-BR"
+                          )}
+                        </td>
+                        <td className="p-4 text-[#4F6940]">
+                          {despesa.data_pag
+                            ? new Date(despesa.data_pag).toLocaleDateString(
+                              "pt-BR"
+                            )
+                            : "-"}
+                        </td>
+                        <td className="p-4">
+                          <span
+                            className={`px-3 py-1 rounded-full text-xs font-semibold ${despesa.status === "pago"
+                              ? "bg-green-100 text-green-700"
+                              : "bg-orange-100 text-orange-700"
+                              }`}
+                          >
+                            {despesa.status === "pago" ? "Pago" : "Pendente"}
+                          </span>
+                        </td>
+                        <td className="p-4">
+                          <div className="flex gap-2">
+                            {despesa.status === "pendente" && (
+                              <button
+                                onClick={() =>
+                                  setDialogMarcarPago({ open: true, despesa })
+                                }
+                                className="px-3 py-1 bg-[#569a33] text-white rounded-lg text-sm font-semibold hover:bg-[#4f6940] transition cursor-pointer"
+                                title="Marcar como pago"
+                              >
+                                <CheckCircle size={16} />
+                              </button>
+                            )}
+
+                            <button
+                              onClick={() => setDialogExcluir({ open: true, id: despesa.id_despesa })}
+                              className="px-3 py-1 bg-[#ff6b6b] text-white rounded-lg text-sm font-semibold hover:bg-[#ff5252] transition cursor-pointer"
+                              title="Excluir"
+                            >
+                              <Trash size={16} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Paginação Despesas */}
+            {despesasFiltradas.length > 0 && (
+              <div className="p-4 bg-[#EBC7F5]/50 border-t border-[#b478ab]/30">
+                <div className="flex justify-between items-center">
+                  <p className="text-sm text-[#76196c] font-semibold">
+                    Mostrando {indiceInicialDespesas + 1} a{" "}
+                    {Math.min(indiceFinalDespesas, despesasFiltradas.length)} de{" "}
+                    {despesasFiltradas.length} despesas
+                  </p>
+                  <Paginacao
+                    paginaAtual={paginaDespesas}
+                    totalPaginas={totalPaginasDespesas}
+                    onMudarPagina={setPaginaDespesas}
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Fluxo de Caixa Diário */}
+          <div className="rounded-xl border-3 border-dashed border-[#569a33] overflow-hidden">
+            <div className="p-5 bg-[#9BF377] border-b-2 border-[#569a33]">
+              <h2 className="text-xl font-bold text-[#569a33]">
+                Fluxo de Caixa Diário
+              </h2>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-[#e8f5e8]">
+                  <tr>
+                    <th className="p-3 text-left text-[#569a33] font-bold">
+                      Data
+                    </th>
+                    <th className="p-3 text-left text-[#569a33] font-bold">
+                      Valor Final
+                    </th>
+                    <th className="p-3 text-left text-[#569a33] font-bold">
+                      Quantidade de Caixas
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {caixaPaginado.length === 0 ? (
+                    <tr>
+                      <td colSpan="4" className="p-8 text-center">
+                        <i className="bi bi-inbox text-4xl text-[#569a33] opacity-50"></i>
+                        <p className="text-lg font-semibold text-[#4f6940] mt-2">
+                          Nenhum registro de caixa encontrado
+                        </p>
+                      </td>
+                    </tr>
+                  ) : (
+                    caixaPaginado.map((fluxo, index) => (
+                      <tr
+                        key={index}
+                        className={`border-b border-[#569a33]/20 transition ${index % 2 === 0 ? "bg-[#EBC7F5]" : "bg-[#E5B8F1]"} hover:bg-[#D594E6]/70`}
+                      >
+                        <td className="p-3 font-semibold text-[#4f6940]">
+                          {fluxo.data
+                            ? new Date(fluxo.data).toLocaleDateString("pt-BR")
+                            : fluxo.abertura
+                              ? new Date(fluxo.abertura).toLocaleDateString("pt-BR")
+                              : "--"}
+                        </td>
+                        <td className="p-3 font-bold text-[#569a33]">
+                          {formatCurrency(parseFloat(fluxo.valor_total) || parseFloat(fluxo.valor_final) || 0)}
+                        </td>
+
+                        <td className="p-3">
+                          {(() => {
+                            const statusLower = (fluxo.status || "").toString().toLowerCase();
+                            const statusClass =
+                              statusLower === "fechado"
+                                ? "bg-red-100 text-red-700"
+                                : statusLower === "aberto"
+                                  ? "bg-green-100 text-green-700"
+                                  : "bg-slate-100 text-slate-700";
+                            return (
+                              <span className={`px-3 py-1 rounded-full text-xs font-semibold ${statusClass}`}>
+                                {fluxo.status || (fluxo.caixas ? `${fluxo.caixas} caixas` : "--")}
+                              </span>
+                            );
+                          })()}
+                        </td>
+
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Paginação Caixa */}
+            {caixa.length > 0 && (
+              <div className="p-4 bg-[#9BF377]/30 border-t border-[#569a33]/30">
+                <div className="flex justify-between items-center">
+                  <p className="text-sm text-[#569a33] font-semibold">
+                    Mostrando {indiceInicialCaixa + 1} a{" "}
+                    {Math.min(indiceFinalCaixa, caixa.length)} de{" "}
+                    {caixa.length} registros
+                  </p>
+                  <Paginacao
+                    paginaAtual={paginaCaixa}
+                    totalPaginas={totalPaginasCaixa}
+                    onMudarPagina={setPaginaCaixa}
+                    variant="verde"
+                  />
+                </div>
+              </div>
+            )}
           </div>
         </div>
+
+        {/* Modal */}
+        <ModalAdicionarDespesa
+          open={modalAberto}
+          onClose={() => setModalAberto(false)}
+        />
+
+        {/* Dialog Marcar como Pago */}
+        <Dialog
+          open={dialogMarcarPago.open}
+          onOpenChange={(open) => setDialogMarcarPago({ open, despesa: null })}
+        >
+          <DialogContent className="sm:max-w-md bg-white border-3 border-[#569a33] border-dashed rounded-3xl">
+            <DialogHeader>
+              <DialogTitle className="text-[#569a33] font-extrabold text-xl">
+                Marcar como Pago
+              </DialogTitle>
+            </DialogHeader>
+            <p className="text-[#4f6940] font-semibold py-4">
+              Deseja marcar esta despesa como paga? A data de pagamento será
+              definida como hoje.
+            </p>
+            <DialogFooter className="flex gap-2">
+              <Button
+                variant="secondary"
+                className="flex-1 bg-gray-200 text-gray-700 hover:bg-gray-300 font-bold cursor-pointer"
+                onClick={() =>
+                  setDialogMarcarPago({ open: false, despesa: null })
+                }
+              >
+                Cancelar
+              </Button>
+              <Button
+                className="flex-1 bg-[#569a33] text-white hover:bg-[#4f6940] font-bold cursor-pointer"
+                onClick={() => pagarDespesa(dialogMarcarPago.despesa.id_despesa)}
+              >
+                Confirmar
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Dialog Excluir */}
+        <Dialog
+          open={dialogExcluir.open}
+          onOpenChange={(open) => setDialogExcluir({ open, id: null })}
+        >
+          <DialogContent className="sm:max-w-md bg-[#F1B8E8] border-2 border-[#c61f1f] rounded-3xl">
+            <DialogHeader>
+              <DialogTitle className="text-[#c61f1f] font-extrabold text-xl">
+                Confirmar Exclusão
+              </DialogTitle>
+            </DialogHeader>
+            <p className="text-[#c61f1f] font-semibold py-4">
+              Tem certeza que deseja excluir esta despesa? Esta ação não pode ser
+              desfeita.
+            </p>
+            <DialogFooter className="flex gap-2">
+              <Button
+                variant="secondary"
+                className="flex-1 bg-[#C5FFAD] text-gray-700 hover:bg-[#C5FFAD] font-bold"
+                onClick={() => setDialogExcluir({ open: false, id: null })}
+              >
+                Cancelar
+              </Button>
+              <Button
+                className="flex-1 bg-[#c61f1f] text-[#F1B8E8] hover:bg-[#ff5252] font-bold"
+                onClick={confirmarExcluir}
+              >
+                Excluir
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
-
-      {/* Modal */}
-      <ModalAdicionarDespesa
-        open={modalAberto}
-        onClose={() => setModalAberto(false)}
-        onSalvar={handleAdicionarDespesa}
-      />
-
-      {/* Dialog Excluir */}
-      <Dialog
-        open={dialogExcluir.open}
-        onOpenChange={(open) => setDialogExcluir({ open, id: null })}
-      >
-        <DialogContent className="sm:max-w-md bg-white border-3 border-[#ff6b6b] border-dashed rounded-3xl">
-          <DialogHeader>
-            <DialogTitle className="text-[#ff6b6b] font-extrabold text-xl">
-              Confirmar Exclusão
-            </DialogTitle>
-          </DialogHeader>
-          <p className="text-[#4f6940] font-semibold py-4">
-            Tem certeza que deseja excluir esta despesa? Esta ação não pode ser
-            desfeita.
-          </p>
-          <DialogFooter className="flex gap-2">
-            <Button
-              variant="secondary"
-              className="flex-1 bg-gray-200 text-gray-700 hover:bg-gray-300 font-bold cursor-pointer"
-              onClick={() => setDialogExcluir({ open: false, id: null })}
-            >
-              Cancelar
-            </Button>
-            <Button
-              className="flex-1 bg-[#ff6b6b] text-white hover:bg-[#ff5252] font-bold cursor-pointer"
-              onClick={() => handleExcluirDespesa(dialogExcluir.id)}
-            >
-              Excluir
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Dialog Marcar como Pago */}
-      <Dialog
-        open={dialogMarcarPago.open}
-        onOpenChange={(open) => setDialogMarcarPago({ open, despesa: null })}
-      >
-        <DialogContent className="sm:max-w-md bg-white border-3 border-[#569a33] border-dashed rounded-3xl">
-          <DialogHeader>
-            <DialogTitle className="text-[#569a33] font-extrabold text-xl">
-              Marcar como Pago
-            </DialogTitle>
-          </DialogHeader>
-          <p className="text-[#4f6940] font-semibold py-4">
-            Deseja marcar esta despesa como paga? A data de pagamento será
-            definida como hoje.
-          </p>
-          <DialogFooter className="flex gap-2">
-            <Button
-              variant="secondary"
-              className="flex-1 bg-gray-200 text-gray-700 hover:bg-gray-300 font-bold cursor-pointer"
-              onClick={() =>
-                setDialogMarcarPago({ open: false, despesa: null })
-              }
-            >
-              Cancelar
-            </Button>
-            <Button
-              className="flex-1 bg-[#569a33] text-white hover:bg-[#4f6940] font-bold cursor-pointer"
-              onClick={() => handleMarcarComoPago(dialogMarcarPago.despesa)}
-            >
-              Confirmar
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </div>
+    </>
   );
 }

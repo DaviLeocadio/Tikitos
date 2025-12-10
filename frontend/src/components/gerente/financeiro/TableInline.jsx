@@ -16,7 +16,7 @@ export const TableBody = ({ className, ...props }) => (
 );
 
 export const TableRow = ({ className, ...props }) => (
-  <tr className={`border-b transition-colors hover:bg-muted/50 ${className}`} {...props} />
+  <tr className={`border-b transition-colors ${className}`} {...props} />
 );
 
 export const TableHead = ({ className, ...props }) => (

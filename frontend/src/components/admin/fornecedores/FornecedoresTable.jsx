@@ -65,12 +65,12 @@ const FornecedoresTable = memo(function FornecedoresTable({
   });
 
   return (
-    <div className="bg-white rounded-xl border-3 border-dashed border-[#b478ab] overflow-hidden">
+    <div className="bg-[#C5FFAD] rounded-xl border-3 border-dashed border-[#b478ab] overflow-hidden">
       <div className="overflow-x-auto">
         <Table>
           <TableHeader className="bg-[#e8c5f1]">
             {table.getHeaderGroups().map((hg) => (
-              <TableRow key={hg.id}>
+              <TableRow key={hg.id} className="hover:bg-transparent">
                 {hg.headers.map((h) => (
                   <TableHead key={h.id} className="text-[#76196c]">
                     {flexRender(h.column.columnDef.header, h.getContext())}
@@ -92,7 +92,13 @@ const FornecedoresTable = memo(function FornecedoresTable({
               </TableRow>
             ) : table.getRowModel().rows.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id} className="hover:bg-[#f0e5f5]/30">
+                <TableRow
+                  key={row.id}
+                  className={`${row.index % 2 === 0
+                      ? "bg-[#C5FFAD]"   // linha PAR
+                      : "bg-[#9BF377]"   // linha ÍMPAR
+                    } hover:!bg-[#75BA51]/50`}
+                >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -115,7 +121,7 @@ const FornecedoresTable = memo(function FornecedoresTable({
       </div>
 
       {/* Paginação */}
-      <div className="flex items-center justify-between p-4 border-t border-[#b478ab]/30">
+      <div className="bg-[#EBC7F5] flex items-center justify-between p-4 border-t border-[#b478ab]/30">
         <div className="text-sm text-[#8c3e82]">
           Mostrando {table.getRowModel().rows.length > 0 ? table.getState().pagination.pageIndex * table.getState().pagination.pageSize + 1 : 0} a{" "}
           {Math.min(

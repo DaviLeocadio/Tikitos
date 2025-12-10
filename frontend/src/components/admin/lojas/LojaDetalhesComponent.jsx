@@ -22,6 +22,7 @@ import {
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import EditarFilialDialog from "./EditarFilialDialog";
+import ModalDesativarFilial from "./ModalDesativarFilial";
 
 const TIKITOS_COLORS = {
   primary: "#76196c",
@@ -102,9 +103,8 @@ const FinanceMetric = ({
 }) => (
   <div className="flex items-center space-x-3 p-3 rounded-lg shadow-sm border border-gray-100">
     <div
-      className={`p-2 rounded-full flex-shrink-0 ${
-        isLarge ? "bg-opacity-20" : "bg-opacity-10"
-      }`}
+      className={`p-2 rounded-full flex-shrink-0 ${isLarge ? "bg-opacity-20" : "bg-opacity-10"
+        }`}
       style={{ backgroundColor: color + "30", color: color }}
     >
       <Icon size={isLarge ? 24 : 20} />
@@ -424,6 +424,8 @@ const LojaHeader = ({
   handleRefresh,
   lojaId,
   idGerente,
+  buscarDados,
+  loja,
 }) => {
   const statusColor =
     status === "ativo" ? TIKITOS_COLORS.success : "rgb(239 68 68)";
@@ -447,22 +449,27 @@ const LojaHeader = ({
           {status}
         </span>
       </div>
-      <div className="flex space-x-3">
+      <div className="flex flex-wrap gap-3">
         <button
           onClick={handleGoBack}
           className="flex items-center px-4 py-2 bg-gray-200 text-gray-700 font-medium rounded-lg shadow-sm hover:bg-gray-300 transition duration-150 text-sm"
         >
           <CornerUpLeft size={16} className="mr-2" /> Voltar
         </button>
-        {idGerente && (
+        <ModalDesativarFilial filial={loja} onSalvar={buscarDados} />
+
+        {!loja?.gerente &&
           <Link
             href={`/admin/lojas/cadastrar?step=2&id_empresa=${lojaId}`}
-            className="flex items-center px-4 py-2 bg-roxo text-white font-medium rounded-lg shadow-sm hover:bg- transition duration-150 text-sm "
+            className={`flex items-center px-4 py-2 bg-roxo text-white font-medium rounded-lg shadow-sm hover:bg- transition duration-150 text-sm `}
           >
             {" "}
             <User2Icon /> Atribuir Gerente{" "}
           </Link>
-        )}
+        }
+        {loja?.status == "ativo" &&
+          <EditarFilialDialog loja={loja} onUpdated={buscarDados} />
+        }
         <button
           onClick={handleRefresh}
           disabled={loading}
@@ -475,7 +482,6 @@ const LojaHeader = ({
           />{" "}
           Atualizar Dados
         </button>
-        <EditarFilialDialog loja={loja}/>
       </div>
     </header>
   );
@@ -523,6 +529,7 @@ export default function LojaDetalhesComponent() {
     },
     [API_URL, lojaId]
   );
+  const buscarDados = fetchLojaDetails;
 
   useEffect(() => {
     fetchLojaDetails();
@@ -568,7 +575,10 @@ export default function LojaDetalhesComponent() {
       );
 
     return (
-      <div className="flex flex-col gap-8">
+      <div
+        className={`flex flex-col gap-8 ${loja.status === "inativo" ? "opacity-30 pointer-events-none" : ""
+          }`}
+      >
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-1 space-y-8 flex">
             <LojaInfoCard loja={loja} />
@@ -613,6 +623,8 @@ export default function LojaDetalhesComponent() {
           handleRefresh={() => fetchLojaDetails(1)}
           lojaId={lojaId}
           idGerente={!loja?.gerente}
+          loja={loja}
+          buscarDados={buscarDados}
         />
         {renderContent}
       </div>

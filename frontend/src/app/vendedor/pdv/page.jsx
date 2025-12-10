@@ -37,6 +37,7 @@ export default function PDV() {
 
       if (response.ok) {
         const data = await response.json();
+        console.log(data)
         return setCookie("idCaixa", Number(data.novoCaixa));
       }
     };
@@ -68,23 +69,25 @@ export default function PDV() {
       }
     };
 
-    
     buscarProdutos();
   }, []);
 
   useEffect(() => {
-    setProdutos(listaProdutos.map((p) => ({ item: p, matches: [] })));
+    setProdutos(listaProdutos);
     const produtosAtivos = listaProdutos.filter((p) => p.status === "ativo");
-    const produtosInativos = listaProdutos.filter(
-      (p) => p.status === "inativo"
-    );
+    const produtosInativos = listaProdutos.filter((p) => p.status === "inativo");
+
     setProdutosInativos(produtosInativos);
     setProdutosAtivos(produtosAtivos);
   }, [listaProdutos]);
 
   useEffect(() => {
     if (!query || query.trim().length === 0) {
-      setProdutos(listaProdutos.map((p) => ({ item: p, matches: [] })));
+      setProdutos(listaProdutos);
+      const produtosAtivos = listaProdutos.filter((p) => p.status === "ativo");
+      const produtosInativos = listaProdutos.filter((p) => p.status === "inativo");
+      setProdutosInativos(produtosInativos);
+      setProdutosAtivos(produtosAtivos);
       return;
     }
     const fuse = new Fuse(listaProdutos, {
@@ -100,15 +103,11 @@ export default function PDV() {
     });
 
     const resultado = fuse.search(query);
-    setProdutos(
-      resultado.map((r) => ({
-        item: r.item,
-        matches: r.matches,
-      }))
-    );
+    const encontrados = resultado.map((r) => r.item);
+    setProdutos(encontrados);
 
-    const produtosAtivos = produtos.filter((p) => p.status === "ativo");
-    const produtosInativos = produtos.filter((p) => p.status === "inativo");
+    const produtosAtivos = encontrados.filter((p) => p.status === "ativo");
+    const produtosInativos = encontrados.filter((p) => p.status === "inativo");
     setProdutosInativos(produtosInativos);
     setProdutosAtivos(produtosAtivos);
   }, [query, listaProdutos]);
@@ -142,9 +141,9 @@ export default function PDV() {
     <>
       <CarrinhoSidebar />
       <div className="h-screen w-full flex flex-col">
-        <div className="h-9/10 2xl:h-11/12 w-full mt-5">
+        <div className="h-[88%] w-full mt-5">
           <div className="flex md:h-[100%] pt-0">
-            <div className="mx-5 w-full xl:w-4/5 2xl:w-3/4 h-[90%]">
+            <div className="mx-5 w-full xl:w-4/5 2xl:w-3/4">
               <div className="flex m-5 mt-0 gap-2 items-center">
                 <SidebarTrigger />
                 <InputWithAdornmentDemo
@@ -154,7 +153,7 @@ export default function PDV() {
               </div>
 
               <div className="grid gap-5 grid-cols-1 x-sm:grid-cols-1 sm:grid-cols-1 md:grid-cols-1">
-                <div className="grid gap-5 grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 overflow-y-scroll p-5 pt-0 ms-1 sm:h-[60vh] md:h-[74vh] wrap-anywhere">
+                <div className="grid gap-5 grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-2 2xl:grid-cols-2 3xl:grid-cols-3 overflow-y-scroll p-5 pt-0 ms-1 sm:h-[60vh] md:h-[570] wrap-anywhere">
                   {loading ? (
                     // Loading com Skeleton
                     <>

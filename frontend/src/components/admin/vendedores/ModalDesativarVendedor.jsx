@@ -20,8 +20,9 @@ export default function ModalDesativarVendedor({
 }) {
   const [loading, setLoading] = useState(false);
   const isInativo = vendedor?.status === "inativo";
-
+console.log(vendedor)
   const handleConfirmar = async () => {
+
     if (!vendedor?.id_usuario) {
       aparecerToast("Vendedor inválido!");
       return;
@@ -30,8 +31,8 @@ export default function ModalDesativarVendedor({
     setLoading(true);
     try {
       const endpoint = isInativo
-        ? `http://localhost:8080/admin/vendedores/${vendedor.id_usuario}/reativar`
-        : `http://localhost:8080/admin/vendedores/${vendedor.id_usuario}/desativar`;
+        ? `http://localhost:8080/admin/gerentes/${vendedor.id_usuario}/ativar`
+        : `http://localhost:8080/admin/gerentes/${vendedor.id_usuario}/desativar`;
 
       const method = isInativo ? "POST" : "DELETE";
 
@@ -44,20 +45,20 @@ export default function ModalDesativarVendedor({
       if (response.ok) {
         aparecerToast(
           isInativo
-            ? "Vendedor reativado com sucesso!"
-            : "Vendedor desativado com sucesso!"
+            ? "Integrante reativado com sucesso!"
+            : "Integrante desativado com sucesso!"
         );
         await onSalvar();
         onClose();
       } else {
         const error = await response.json();
         aparecerToast(
-          error.error || "Erro ao atualizar status do vendedor!"
+          error.error || "Erro ao atualizar status do integrante!"
         );
       }
     } catch (error) {
       console.error("Erro ao atualizar status:", error);
-      aparecerToast("Erro ao atualizar status do vendedor!");
+      aparecerToast("Erro ao atualizar status do integrante!");
     } finally {
       setLoading(false);
     }
@@ -91,19 +92,19 @@ export default function ModalDesativarVendedor({
               isInativo ? "text-[#4f6940]" : "text-[#ff6b35]"
             } font-extrabold text-2xl text-center`}
           >
-            {isInativo ? "Reativar Vendedor?" : "Desativar Vendedor?"}
+            {isInativo ? "Reativar Integrante?" : "Desativar Integrante?"}
           </AlertDialogTitle>
         </AlertDialogHeader>
 
         <div className="space-y-3">
-          <div className="bg-white rounded-lg p-4 border-2 border-dashed border-gray-300">
-            <p className="text-sm text-gray-600 font-semibold mb-2">
-              Vendedor:
+          <div className="rounded-lg p-4">
+            <p className="text-sm text-[#8C3E82] font-semibold mb-2">
+              Integrante:
             </p>
             <p className="text-lg font-bold text-[#76196c]">
               {vendedor?.nome}
             </p>
-            <p className="text-xs text-gray-500 mt-1">{vendedor?.email}</p>
+            <p className="text-xs text-[#9D4E92] mt-1">{vendedor?.email}</p>
           </div>
 
           <div
@@ -118,10 +119,10 @@ export default function ModalDesativarVendedor({
                 size={20}
                 className={isInativo ? "text-[#569a33]" : "text-[#ff6b35]"}
               />
-              <p className="text-sm font-semibold text-gray-700">
+              <p className="text-sm font-semibold text-[#FF6B35]">
                 {isInativo
-                  ? "O vendedor poderá fazer login e acessar suas vendas novamente."
-                  : "O vendedor não poderá fazer login. Suas informações serão mantidas."}
+                  ? "O integrante poderá fazer login e acessar suas vendas novamente."
+                  : "O integrante não poderá fazer login. Suas informações serão mantidas."}
               </p>
             </div>
           </div>

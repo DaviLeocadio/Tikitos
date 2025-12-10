@@ -66,7 +66,7 @@ export default function GetFornecedorColumns({ setModalFornecedor, onDelete }) {
              <i className="bi bi-envelope"></i> {row.original.email}
           </span>
           <span className="text-xs text-gray-500 font-medium flex items-center gap-1">
-             <i className="bi bi-telephone"></i> {row.original.telefone}
+             <i className="bi bi-telephone"></i> {row.original.telefone} - {row.original.telefone.length}
           </span>
         </div>
       ),

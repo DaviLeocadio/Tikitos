@@ -11,6 +11,8 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
 import { useSearchParams } from "next/navigation";
 import ModalEditarProduto from "@/components/admin/produtos/ModalEditarProduto";
 import ModalDesativarProduto from "@/components/admin/produtos/ModalDesativarProduto";
+import { PlusCircle } from "lucide-react";
+import Link from "next/link";
 
 export default function AdminProduto() {
   const [sorting, setSorting] = useState([]);
@@ -67,16 +69,25 @@ export default function AdminProduto() {
   }, [produtos, searchParams]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#DDF1D4] to-verdeclaro p-5 lg:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-[#DDF1D4] p-5 lg:p-8">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div>
-          <h1 className="text-3xl lg:text-4xl font-bold text-[#76196c]">
-            <SidebarTrigger /> Gerenciar Produtos
-          </h1>
+          <div className="flex justify-between">
+
+            <h1 className="text-3xl lg:text-4xl font-bold text-[#76196c]">
+              <SidebarTrigger /> Gerenciar Produtos
+            </h1>
+            <Link
+              href="/admin/produtos/cadastrar"
+              className="flex gap-2 px-3 py-2 rounded-lg bg-roxo hover:bg-roxoescuro text-[#92EF6C] transition hover:scale-97">
+              <PlusCircle /> Cadastrar Produto</Link>
+
+          </div>
           <p className="text-lg text-[#8c3e82] mt-1">
             {produtosFiltrados.length} produtos encontrados
           </p>
+
         </div>
 
         {/* Filtros */}
@@ -106,10 +117,7 @@ export default function AdminProduto() {
       <ModalEditarProduto
         produto={modalProduto.produto}
         open={modalProduto.open}
-        onClose={() => {
-          setModalProduto({ open: false, produto: null });
-          produtos;
-        }}
+        onClose={() => setModalProduto({ open: false, produto: null })}
         onSalvar={handleEditarProduto}
       />
 

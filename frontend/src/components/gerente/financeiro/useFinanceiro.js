@@ -75,10 +75,12 @@ export default function useFinanceiro() {
     const hoje = new Date();
     hoje.setHours(23, 59, 59, 999);
 
-    const { inicio } = calcularIntervalo(periodoAtual, dataAtual);
+    if (!dataAtual) return true;
 
-    if (inicio > hoje) {
-      aparecerToast("Não é possível visualizar períodos que começam no futuro!");
+    // Se a data-âncora estiver no futuro, bloqueia (não permitimos navegar para além de hoje)
+    const dataAncora = new Date(dataAtual);
+    if (dataAncora > hoje) {
+      aparecerToast("Não é possível visualizar períodos que terminam no futuro!");
       return false;
     }
 
@@ -237,12 +239,21 @@ export default function useFinanceiro() {
   const mudarPeriodo = (novoPeriodo) => {
     const params = new URLSearchParams(searchParams.toString());
     params.set("periodo", novoPeriodo);
-    params.set("dataInicio", new Date().toISOString());
+    const agora = new Date();
+    params.set("dataInicio", agora.toISOString());
     router.push(`?${params.toString()}`);
+
+    // Disparar busca imediata com o novo período ancorado em hoje
+    try {
+      buscarDados(novoPeriodo, agora);
+    } catch (err) {
+      console.error("Erro ao buscar dados após mudar periodo:", err);
+    }
   };
 
   const navegar = (direcao) => {
-    const nova = new Date(dataInicio);
+    const base = dataInicio ? new Date(dataInicio) : new Date();
+    const nova = new Date(base);
 
     switch (periodo) {
       case "semana":

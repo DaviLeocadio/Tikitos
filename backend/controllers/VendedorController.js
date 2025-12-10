@@ -16,11 +16,11 @@ dayjs.extend(customParseFormat);
 const listarVendedoresController = async (req, res) => {
   try {
     let vendedores = [];
-    let whereClause = `perfil = 'vendedor'`;
+    let whereClause = `u.perfil = 'vendedor'`;
 
     if (req.usuarioPerfil !== "admin") {
       const empresaId = req.usuarioEmpresa;
-      whereClause += ` AND id_empresa = ${empresaId}`;
+      whereClause += ` AND u.id_empresa = ${empresaId}`;
     }
     vendedores = await listarUsuarios(whereClause);
 
@@ -183,7 +183,7 @@ const desativarVendedorController = async (req, res) => {
   try {
     const { vendedorId } = req.params;
 
-    const vendedorDesativado = atualizarUsuario(vendedorId, {
+    const vendedorDesativado = await atualizarUsuario(vendedorId, {
       status: "inativo",
     });
     if (!vendedorDesativado)
@@ -204,7 +204,7 @@ const reativarVendedorController = async (req, res) => {
   try {
     const { vendedorId } = req.params;
 
-    const vendedorReativado = atualizarUsuario(vendedorId, {
+    const vendedorReativado = await atualizarUsuario(vendedorId, {
       status: "ativo",
     });
     if (!vendedorReativado)

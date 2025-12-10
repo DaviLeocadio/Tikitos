@@ -39,11 +39,11 @@ const FinanceiroFilters = memo(function FinanceiroFilters({
   };
 
   return (
-    <div className="bg-white rounded-xl border-3 border-dashed border-[#b478ab] p-5 space-y-4">
+    <div className="bg-[#92EF6C] rounded-4xl border-3 border-dashed border-[#569A33] p-5 space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
         {/* Seletor de Período */}
         <div>
-          <label className="text-sm font-semibold text-[#76196c] block mb-2">
+          <label className="text-sm font-semibold text-[#4F6940] block mb-2">
             Período
           </label>
           <div className="flex gap-2">
@@ -53,11 +53,11 @@ const FinanceiroFilters = memo(function FinanceiroFilters({
                 onClick={() => mudarPeriodo(p)}
                 className={`px-4 py-2 rounded-lg font-semibold text-sm transition cursor-pointer ${
                   periodo === p
-                    ? "bg-[#76196c] text-white"
-                    : "bg-gray-100 text-[#76196c] hover:bg-gray-200"
+                    ? "bg-[#76196c] text-[#9BF377]"
+                    : "bg-[#D695E7] text-[#76196c] hover:bg-[#E5B8F1]"
                 }`}
               >
-                {p === "dia" ? "Dia" : p.charAt(0).toUpperCase() + p.slice(1)}
+                {p === "dia" ? "Dia" : p === "mes" ? "Mês" : p.charAt(0).toUpperCase() + p.slice(1)}
               </button>
             ))}
           </div>
@@ -65,17 +65,17 @@ const FinanceiroFilters = memo(function FinanceiroFilters({
 
         {/* Intervalo de Datas */}
         <div>
-          <label className="text-sm font-semibold text-[#76196c] block mb-2">
+          <label className="text-sm font-semibold text-[#4F6940] block mb-2">
             Período Selecionado
           </label>
-          <div className="text-lg font-bold text-[#569a33]">
+          <div className="text-lg font-bold text-[#76226D]">
             {formatarData()}
           </div>
         </div>
 
         {/* Navegação de Datas */}
         <div>
-          <label className="text-sm font-semibold text-[#76196c] block mb-2">
+          <label className="text-sm font-semibold text-[#4F6940] block mb-2">
             Navegar
           </label>
           <div className="flex gap-2">

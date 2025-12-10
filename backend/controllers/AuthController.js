@@ -1,7 +1,11 @@
 import jwt from "jsonwebtoken";
-import { read, compare, create } from "../config/database.js";
+import { read, compare, create, update } from "../config/database.js";
 import { JWT_SECRET } from "../config/jwt.js";
-import { encontrarUsuario, definirSenha, ObterUsuarioMiddlewareModel } from "../models/AuthModel.js";
+import {
+  encontrarUsuario,
+  definirSenha,
+  ObterUsuarioMiddlewareModel,
+} from "../models/AuthModel.js";
 import { sendMail } from "../utils/mailer.js";
 import { generateHashedPassword } from "../utils/hashPassword.js";
 import { buscarToken, editarToken, registrarToken } from "../models/Token.js";
@@ -29,7 +33,7 @@ const generateCode = async (usuarioId, email) => {
   await sendMail(
     email,
     "Código de Acesso - Tikitos",
-    `Seu código de acesso é: ${token}. Use-o para definir sua senha.`
+    token
   );
 };
 
@@ -202,9 +206,27 @@ const loginController = async (req, res) => {
   }
   try {
     const usuario = await read("usuarios", `email = '${email}'`);
-
+    
     if (!usuario) {
       return res.status(404).json({ error: "Usuário não encontrado" });
+    }
+    
+    if(usuario.status === "inativo") {
+      return res.status(403).json({ error: "Usuário inativo. Contate o administrador." });
+    }
+
+    const filial = await read("empresas", `id_empresa = ${usuario.id_empresa} AND status = 'inativo'`);
+    if(filial) {
+      return res.status(403).json({ error: "A filial associada ao usuário está inativa. Contate o administrador." });
+    }
+
+    if (usuario.senha === "deve_mudar") {
+      return res
+        .status(403)
+        .json({
+          error: "Usuário deve definir uma nova senha",
+          code: "DEVE_MUDAR_SENHA",
+        });
     }
 
     const senhaCorreta = await compare(senha, usuario.senha);
@@ -283,10 +305,30 @@ const logoutController = async (req, res) => {
   }
 };
 
+const resetarSenhaController = async (req, res) => {
+  try {
+    const { usuarioId } = req.params;
+
+    const usuarioExistente = await read("usuarios", `id_usuario = ${usuarioId}`);
+    if (!usuarioExistente) {
+      return res.status(404).json({ error: "Usuário não encontrado" });
+    }
+
+    const usuarioAtualizado = await update("usuarios", { senha: "deve_mudar" }, `id_usuario = ${usuarioId}`); 
+
+    return res.status(200).json({ mensagem: "Senha resetada com sucesso", usuarioAtualizado });
+    
+  } catch (error) {
+    console.error("Erro ao resetar senha: ", error);
+    res.status(500).json({ error: "Erro ao resetar senha." });
+  }
+};
+
 export {
   loginController,
   logoutController,
   checkEmailController,
   definirSenhaController,
   verificarTokenController,
+  resetarSenhaController
 };

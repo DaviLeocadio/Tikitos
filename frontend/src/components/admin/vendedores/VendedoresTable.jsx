@@ -60,12 +60,12 @@ const VendedoresTable = memo(function VendedoresTable({
   });
 
   return (
-    <div className="bg-white rounded-xl border-3 border-dashed border-[#b478ab] overflow-hidden">
+    <div className="bg-[#f0e5f5] rounded-xl border-3 border-dashed border-[#b478ab] overflow-hidden">
       <div className="overflow-x-auto">
         <Table>
-          <TableHeader className="bg-[#e8c5f1]">
+          <TableHeader className="bg-[#B478AB]">
             {table.getHeaderGroups().map((hg) => (
-              <TableRow key={hg.id}>
+              <TableRow key={hg.id} className="hover:bg-transparent">
                 {hg.headers.map((h) => (
                   <TableHead key={h.id} className="text-[#76196c]">
                     {flexRender(h.column.columnDef.header, h.getContext())}
@@ -87,7 +87,14 @@ const VendedoresTable = memo(function VendedoresTable({
               </TableRow>
             ) : table.getRowModel().rows.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id} className="hover:bg-[#f0e5f5]/30">
+                <TableRow
+                  key={row.id}
+                  className={`${row.index % 2 === 0
+                      ? "bg-[#CAF4B7]"   // linha PAR - rosa/lilás bem claro
+                      : "bg-[#9BF377]"   // linha ÍMPAR - um tom um pouquinho mais forte
+                    } hover:!bg-[#75B851]/40`}
+                >
+
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -110,7 +117,7 @@ const VendedoresTable = memo(function VendedoresTable({
       </div>
 
       {/* Paginação */}
-      <div className="flex items-center justify-between p-4 border-t border-[#b478ab]/30">
+      <div className="flex items-center bg-[#B478AB]/60 justify-between p-4 border-t border-[#b478ab]/30">
         <div className="text-sm text-[#8c3e82]">
           Mostrando {table.getRowModel().rows.length > 0 ? table.getState().pagination.pageIndex * table.getState().pagination.pageSize + 1 : 0} a{" "}
           {Math.min(

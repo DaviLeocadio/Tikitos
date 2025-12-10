@@ -42,7 +42,7 @@ export default function MapaFiliais() {
 
   return (
     <div className="pe-7">
-      <div className="w-full flex flex-col items-center">
+      <div className="w-full flex flex-col items-center pb-5">
         <img
           src="/img/adm/titulo_nossas_filiais.png"
           className="max-w-[300px] md:max-w-[400px] drop-shadow-[10px_10px_0px_rgba(183,101,202,0.9)]"

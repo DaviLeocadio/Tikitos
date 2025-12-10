@@ -28,14 +28,14 @@ export default function PixContainer() {
   
   return (
     <>
-      <main className="flex gap-3">
+      <main className="flex gap-3 px-5 py-3 pt-2 pe-0">
         {/* Imagem QrCode */}
-        <div className="flex align-start justify-start">
-          <img src="/img/pagamento/qrcode_pagamento.png" alt="" />
+        <div className="flex align-start justify-start ">
+          <img className="max-w-[260px]" src="/img/pagamento/qrcode_pagamento.png" alt="" />
         </div>
 
         {/* Temporizador */}
-        <div className="">
+        <div className="pt-2">
           <h3 className="max-w-10 text-verdefolha font-bold">Expira Em:</h3>
           <i className="bi bi-clock text-rosinha font-bold text-[30px] mt-1"></i>
           <h4 className="max-w-10 text-roxo font-bold mt-1">{formatTime()}</h4>

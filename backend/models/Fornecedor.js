@@ -35,26 +35,36 @@ const criarFornecedor = async (fornecedorData) => {
 
 const atualizarFornecedor = async (idFornecedor, fornecedorData) => {
   try {
-    await update("fornecedores", fornecedorData, `id_fornecedor = ${idFornecedor}`);
+    return await update("fornecedores", fornecedorData, `id_fornecedor = ${idFornecedor}`);
   } catch (err) {
     console.error("Erro ao atualizar fornecedor: ", err);
     throw err;
   }
 };
 
-deletarFornecedor = async (idFornecedor) => {
+const deletarFornecedor = async (idFornecedor) => {
   try {
-    await deleteRecord("fornecedores", `id_fornecedor = ${idFornecedor}`);
+    return await deleteRecord("fornecedores", `id_fornecedor = ${idFornecedor}`);
   } catch (err) {
     console.error("Erro ao deletar fornecedor: ", err);
     throw err;
   }
 };
 
+const desativarFornecedor = async(idFornecedor) => {
+  try {
+    return await update('fornecedores', {status: 'inativo'}, `id_fornecedor = ${idFornecedor}`);
+  } catch (err) {
+    console.error("Erro ao desativar fornecedor: ", err);
+    throw err;
+  }
+}
+
 export {
   listarFornecedor,
   obterFornecedorPorId,
   criarFornecedor,
   atualizarFornecedor,
-  deletarFornecedor
+  deletarFornecedor,
+  desativarFornecedor
 };

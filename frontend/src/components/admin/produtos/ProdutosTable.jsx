@@ -20,15 +20,13 @@ const ProdutosTable = memo(function ProdutosTable({
   sorting,
   setSorting
 }) {
-  // Função customizada para filtrar por múltiplos campos
   const fuzzyFilter = (row, columnId, value) => {
     const searchText = value.toLowerCase();
-    
-    // Buscar em id_produto, nome e descricao
+
     const id = String(row.original.id_produto || "").toLowerCase();
     const nome = (row.original.nome || "").toLowerCase();
     const descricao = (row.original.descricao || "").toLowerCase();
-    
+
     return (
       id.includes(searchText) ||
       nome.includes(searchText) ||
@@ -57,16 +55,15 @@ const ProdutosTable = memo(function ProdutosTable({
     }
   });
 
-
   return (
-    <div className="bg-white rounded-xl border-3 border-dashed border-[#b478ab] overflow-hidden">
+    <div className="bg-[#EBC7F5] rounded-xl border-3 border-dashed border-[#b478ab] overflow-hidden">
       <div className="overflow-x-auto">
         <Table>
-          <TableHeader className="bg-[#e8c5f1]">
+          <TableHeader className="bg-[#76196C]">
             {table.getHeaderGroups().map((hg) => (
-              <TableRow key={hg.id}>
+              <TableRow key={hg.id} className="hover:bg-transparent">
                 {hg.headers.map((h) => (
-                  <TableHead key={h.id} className="text-[#76196c]">
+                  <TableHead key={h.id} className="text-[#92EF6C]">
                     {flexRender(h.column.columnDef.header, h.getContext())}
                   </TableHead>
                 ))}
@@ -86,7 +83,7 @@ const ProdutosTable = memo(function ProdutosTable({
               </TableRow>
             ) : table.getRowModel().rows.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id} className="hover:bg-[#f0e5f5]/30">
+                <TableRow key={row.id} className={`border-b-2 border-[#9D4E92] ${row.index % 2 === 0 ? "bg-[#EBC7F5]" : "bg-[#EFDEF4]"} hover:!bg-[#92EF6C] transition-all duration-300 ease-out`}>
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -108,8 +105,7 @@ const ProdutosTable = memo(function ProdutosTable({
         </Table>
       </div>
 
-      {/* Paginação */}
-      <div className="flex items-center justify-between p-4 border-t border-[#b478ab]/30">
+      <div className="flex items-center justify-between p-4 border-t border-[#b478ab]">
         <div className="text-sm text-[#8c3e82]">
           Mostrando {table.getRowModel().rows.length > 0 ? table.getState().pagination.pageIndex * table.getState().pagination.pageSize + 1 : 0} a{" "}
           {Math.min(

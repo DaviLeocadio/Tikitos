@@ -68,65 +68,78 @@ export default function GerenteProdutos() {
   }, [produtos]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#DDF1D4] to-verdeclaro p-5 lg:p-8">
-      <div className="max-w-7xl mx-auto space-y-6">
-        {/* Header */}
-        <div>
-          <SidebarTrigger />
-          <img
-            src="/img/gerenciar_produtos/gerenciar_produtos.png"
-            className="md:p-3 md:w-[60%] mx-auto md:mb-[7%]"
-          />
-          <div className="flex justify-end">
-            <p className="text-md text-[#9D4E92] font-semibold md:mb-[-30%] xs:text-center">
-              {produtosFiltrados.length} produtos encontrados
+    <>
+      <div className="min-h-screen p-5 lg:p-8">
+        <div className="max-w-7xl mx-auto space-y-6">
+
+
+          <div className="pb-2">
+            <h1 className="text-3xl lg:text-4xl font-bold text-[#76196c] mb-2 flex items-center gap-2">
+              <SidebarTrigger /> Gerenciar produtos
+            </h1>
+            <p className="text-lg text-[#569A33]">
+              Administração intuitiva e prática
             </p>
           </div>
+
+
+          {/* Header */}
+          <div>
+            <div className="flex justify-end">
+              <p className="text-md text-[#9D4E92] font-semibold md:mb-[-30%] xs:text-center flex gap-2">
+
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-search-check-icon lucide-search-check"><path d="m8 11 2 2 4-4"/><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+
+                {produtosFiltrados.length} produtos encontrados
+                
+              </p>
+            </div>
+          </div>
+
+          {/* Filtros */}
+          <ProdutosFilters
+            globalFilter={globalFilter}
+            setGlobalFilter={setGlobalFilter}
+            categoriaFiltro={categoriaFiltro}
+            setCategoriaFiltro={setCategoriaFiltro}
+            statusFiltro={statusFiltro}
+            setStatusFiltro={setStatusFiltro}
+            categorias={categorias}
+          />
+
+          {/* Tabela */}
+          <ProdutosTable
+            data={produtosFiltrados}
+            columns={columns}
+            loading={loading}
+            globalFilter={globalFilter}
+            setGlobalFilter={setGlobalFilter}
+            sorting={sorting}
+            setSorting={setSorting}
+          />
         </div>
 
-        {/* Filtros */}
-        <ProdutosFilters
-          globalFilter={globalFilter}
-          setGlobalFilter={setGlobalFilter}
-          categoriaFiltro={categoriaFiltro}
-          setCategoriaFiltro={setCategoriaFiltro}
-          statusFiltro={statusFiltro}
-          setStatusFiltro={setStatusFiltro}
-          categorias={categorias}
+        {/* Modals */}
+        <ModalEditarDesconto
+          produto={modalDesconto.produto}
+          open={modalDesconto.open}
+          onClose={() => {
+            setModalDesconto({ open: false, produto: null });
+            buscarProdutos();
+          }}
+          onSalvar={handleSalvarDesconto}
         />
 
-        {/* Tabela */}
-        <ProdutosTable
-          data={produtosFiltrados}
-          columns={columns}
-          loading={loading}
-          globalFilter={globalFilter}
-          setGlobalFilter={setGlobalFilter}
-          sorting={sorting}
-          setSorting={setSorting}
+        <ModalPedidoFornecedor
+          produto={modalPedido.produto}
+          open={modalPedido.open}
+          onClose={() => {
+            setModalPedido({ open: false, produto: null });
+            buscarProdutos();
+          }}
+          onSalvar={handleFazerPedido}
         />
       </div>
-
-      {/* Modals */}
-      <ModalEditarDesconto
-        produto={modalDesconto.produto}
-        open={modalDesconto.open}
-        onClose={() => {
-          setModalDesconto({ open: false, produto: null });
-          buscarProdutos();
-        }}
-        onSalvar={handleSalvarDesconto}
-      />
-
-      <ModalPedidoFornecedor
-        produto={modalPedido.produto}
-        open={modalPedido.open}
-        onClose={() => {
-          setModalPedido({ open: false, produto: null });
-          buscarProdutos();
-        }}
-        onSalvar={handleFazerPedido}
-      />
-    </div>
+    </>
   );
 }

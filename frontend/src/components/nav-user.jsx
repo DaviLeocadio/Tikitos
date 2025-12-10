@@ -41,14 +41,12 @@ export function NavUser() {
       (partes[0]?.charAt(0).toUpperCase() || "") +
       (partes[partes.length - 1]?.charAt(0).toUpperCase() || "");
 
-    const nomeExibido = `${
-      partes[0]?.charAt(0).toUpperCase() + partes[0]?.slice(1).toLowerCase()
-    } ${
-      partes[partes.length - 1]
+    const nomeExibido = `${partes[0]?.charAt(0).toUpperCase() + partes[0]?.slice(1).toLowerCase()
+      } ${partes[partes.length - 1]
         ? partes[partes.length - 1].charAt(0).toUpperCase() +
-          partes[partes.length - 1].slice(1).toLowerCase()
+        partes[partes.length - 1].slice(1).toLowerCase()
         : ""
-    }`;
+      }`;
 
     setUserName(nomeExibido);
     setUserIniciais(iniciais);
@@ -78,14 +76,29 @@ export function NavUser() {
     });
 
     if (response.ok) {
-      deleteCookie('nome')
-      deleteCookie('email')
-      deleteCookie('perfil')
-      deleteCookie('empresa')
+      deleteCookie("email");
+      deleteCookie("empresa");
+      deleteCookie("empresa_nome");
+      deleteCookie("expiresAt");
+      deleteCookie("nome");
+      deleteCookie("perfil");
+      deleteCookie("token");
+      
 
-      return window.location.href = '/'
+      return (window.location.href = "/");
     }
-  }
+  };
+
+  const fecharCaixa = async () => {
+    const response = await fetch("http://localhost:8080/vendedor/caixa/fechar", {
+      method: "PUT",
+      credentials: "include",
+    });
+
+    if (response.ok) {
+      deleteCookie("idCaixa");
+    }
+  };
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -119,7 +132,7 @@ export function NavUser() {
 
           <DropdownMenuContent
             onClick={handleDropdownClick}
-            className="w-(--radix-dropdown-menu-trigger-width) border-[#9D4E92] bg-[#9D4E92] text-[#75BA51] min-w-56 rounded-lg"
+            className=" border-[#9D4E92] bg-[#9D4E92] text-[#75BA51] min-w-56 rounded-lg"
             side={isMobile ? "bottom" : "right"}
             align="end"
             sideOffset={4}
@@ -141,9 +154,27 @@ export function NavUser() {
 
             <DropdownMenuSeparator className="bg-[#75BA51]" />
 
-            <DropdownMenuItem className="text-[#75BA51] focus:text-[#75BA51] focus:bg-[#F1B8E8] active:bg-[#F1B8E8] active:text-[#75BA51]">
-              <IconLogout className="text-[#75BA51]" />
-              <button type="button" onClick={sair}>Sair</button>
+            <DropdownMenuItem className="text-[#75BA51] p-0
+            hover:text-verdao hover:bg-[#F1B8E8]
+            focus:text-[#75BA51] focus:bg-[#F1B8E8]
+            active:bg-[#F1B8E8] active:text-[#75BA51]
+            ">
+              <button
+                type="button"
+                className="flex items-center gap-1 w-full h-full px-2 py-1
+                  hover:text-verdao 
+            focus:text-[#75BA51] 
+            active:text-[#75BA51]
+                "
+                onClick={async () => {
+                  await fecharCaixa();
+                  await sair();
+
+                }}
+              >
+                <IconLogout className="text-[#75BA51]" />
+                {" "} Sair
+              </button>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

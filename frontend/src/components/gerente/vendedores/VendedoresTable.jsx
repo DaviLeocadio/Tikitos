@@ -78,7 +78,7 @@ const VendedoresTable = memo(function VendedoresTable({
           <TableBody>
             {loading ? (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
+                <TableCell colSpan={columns.length} className="h-24 text-center bg-[#C5FFAD]">
                   <div className="flex items-center justify-center gap-2">
                     <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#76196c]"></div>
                     <span className="text-[#8c3e82]">Carregando vendedores...</span>
@@ -87,7 +87,7 @@ const VendedoresTable = memo(function VendedoresTable({
               </TableRow>
             ) : table.getRowModel().rows.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id} className="bg-[#C5FFAD] hover:bg-[#000]">
+                <TableRow key={row.id} className="bg-[#C5FFAD] hover:!bg-[#CAF4B7]">
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -97,9 +97,9 @@ const VendedoresTable = memo(function VendedoresTable({
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
+                <TableCell colSpan={columns.length} className="h-24 text-center bg-[#C5FFAD]">
                   <i className="bi bi-inbox text-4xl text-[#b478ab] opacity-50"></i>
-                  <p className="text-lg font-semibold text-[#8c3e82] mt-2">
+                  <p className="text-lg font-semibold text-[#8c3e82] mt-2 ">
                     Nenhum vendedor encontrado
                   </p>
                 </TableCell>
@@ -110,8 +110,8 @@ const VendedoresTable = memo(function VendedoresTable({
       </div>
 
       {/* Paginação */}
-      <div className=" flex items-center justify-between p-4 border-t border-[#b478ab]/30">
-        <div className="text-sm text-[#8c3e82]">
+      <div className="bg-[#D594E6] flex items-center justify-between p-4 border-t border-[#b478ab]">
+        <div className="text-sm text-[#559637]">
           Mostrando {table.getRowModel().rows.length > 0 ? table.getState().pagination.pageIndex * table.getState().pagination.pageSize + 1 : 0} a{" "}
           {Math.min(
             (table.getState().pagination.pageIndex + 1) * table.getState().pagination.pageSize,

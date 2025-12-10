@@ -1,28 +1,8 @@
 "use client"
 
 import * as React from "react"
-import {
-  IconCamera,
-  IconChartBar,
-  IconDashboard,
-  IconDatabase,
-  IconFileAi,
-  IconFileDescription,
-  IconFileWord,
-  IconFolder,
-  IconHelp,
-  IconInnerShadowTop,
-  IconListDetails,
-  IconReport,
-  IconSearch,
-  IconSettings,
-  IconUsers,
-} from "@tabler/icons-react"
-
 import Link from 'next/link';
-import { NavDocuments } from "@/components/nav-documents"
 import { NavMain } from "@/components/nav-main"
-import { NavSecondary } from "@/components/nav-secondary"
 import { NavUser } from "@/components/nav-user"
 import {
   Sidebar,
@@ -48,11 +28,6 @@ const data = {
       href: "/vendedor/pdv",
       icon: (props) => <BsReceiptCutoff className="size-7" {...props} />,
     },
-    // {
-    //   title: "Vendas",
-    //   href: "/vendedor/configuracoes",
-    //   icon: (props) => <BsClockHistory className="size-3" {...props} />,
-    // },
     {
       title: "Caixa",
       href: "/vendedor/caixa",
@@ -67,7 +42,7 @@ const data = {
       title: "Suporte",
       href: "/vendedor/suporte",
       icon: (props) => <BsQuestionCircle className="size-4" {...props} />,
-    } 
+    }
   ],
 }
 
@@ -79,9 +54,9 @@ export function AppSidebar({
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton asChild className="data-[slot=sidebar-menu-button]:!p-1.5">
+            <SidebarMenuButton asChild className="data-[slot=sidebar-menu-button]:!p-1.5 hover:bg-[#ffffff00] transition-all duration-300 ease-out cursor-pointer hover:scale-[0.97]">
               <Link href="/vendedor/pdv">
-                <img src="/img/logos/logo_ioio.png" alt="" className="max-h-full"/>
+                <img src="/img/logos/logo_ioio.png" alt="" className="max-h-full" />
                 <span className="text-base font-semibold text-[#76216D] hover:bg-[#ffffff00]">Tikitos</span>
               </Link>
             </SidebarMenuButton>

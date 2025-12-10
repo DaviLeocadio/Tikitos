@@ -5,32 +5,53 @@ import { getCookie } from "cookies-next/client";
 import Link from "next/link";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 
+// Formata números para moeda BRL: R$ XXX.XXX,XX
+function formatCurrency(value) {
+  if (value === null || value === undefined || value === "") return "R$ 0,00";
+
+  // If it's already a formatted string containing R$, return it
+  if (typeof value === "string" && value.includes("R$")) {
+    return value;
+  }
+
+  // Try to coerce to number if string like "1234.56" or "1234,56"
+  let num = value;
+  if (typeof value === "string") {
+    const cleaned = value.replace(/\./g, "").replace(/,/g, ".").replace(/[^0-9.\-]/g, "");
+    num = Number(cleaned);
+  } else {
+    num = Number(value);
+  }
+
+  if (isNaN(num)) return "R$ 0,00";
+
+  return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(num);
+}
+
 // Componente de Card de Métrica
-function MetricCard({ title, value, icon, color, trend, subValue }) {
+function MetricCard({ title, value, icon, color, trend, subValue, bg, text, text2 }) {
   return (
     <div
-      className={`bg-white rounded-xl border-3 border-dashed border-${color} p-6 shadow-sm hover:shadow-md transition-shadow`}
+      className={`bg-${bg} rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow`}
     >
       <div className="flex items-start justify-between">
         <div className="flex-1">
-          <p className="text-sm font-semibold text-gray-600 mb-1">{title}</p>
+          <p className={`text-sm font-semibold text-${text} mb-1`}>{title}</p>
           <p className={`text-3xl font-bold text-${color} mb-2`}>{value}</p>
-          
+
           {subValue && (
-            <p className="text-xs text-gray-500 font-medium mt-1">{subValue}</p>
+            <p className={`text-xs text-${text2} font-medium mt-1`}>{subValue}</p>
           )}
 
           {trend && (
             <div className="flex items-center gap-1 text-sm mt-1">
               <i
-                className={`bi bi-arrow-${trend.direction} text-${
-                  trend.direction === "up" ? "green" : "red"
-                }-600`}
+                className={`bi bi-arrow-${trend.direction} text-${trend.direction === "up" ? "green" : "red"
+                  }-600`}
               ></i>
               <span
-                className={`font-semibold text-${
-                  trend.direction === "up" ? "green" : "red"
-                }-600`}
+                className={`font-semibold text-${trend.direction === "up" ? "green" : "red"
+                  }-600`}
               >
                 {trend.percentage}%
               </span>
@@ -75,7 +96,7 @@ function QuickActionCard({ title, description, icon, href, color }) {
   return (
     <Link
       href={href}
-      className={`bg-white rounded-xl border-3 border-dashed border-${color} p-5 hover:scale-[1.02] transition-all duration-200 cursor-pointer group`}
+      className={`bg-[#DDF1D4] rounded-xl border-1 border-${color} p-5 cursor-pointer group transition-all duration-300 ease-out hover:scale-[0.97] hover:bg-[#c4eab2]`}
     >
       <div className="flex items-center gap-4">
         <div
@@ -85,9 +106,9 @@ function QuickActionCard({ title, description, icon, href, color }) {
         </div>
         <div className="flex-1">
           <h3 className={`font-bold text-lg text-${color} mb-1`}>{title}</h3>
-          <p className="text-sm text-gray-600">{description}</p>
+          <p className="text-sm text-[#4F6940]">{description}</p>
         </div>
-        <i className="bi bi-chevron-right text-xl text-gray-400 group-hover:text-gray-600"></i>
+        <i className="bi bi-chevron-right text-xl text-[#4F6940] group-hover:text-gray-600"></i>
       </div>
     </Link>
   );
@@ -145,7 +166,7 @@ export default function AdminDashboard() {
   }, [periodo]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#DDF1D4] to-verdeclaro p-5 lg:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-[#DDF0D4] p-5 lg:p-8">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
@@ -159,20 +180,25 @@ export default function AdminDashboard() {
           </div>
 
           {/* Filtro de período */}
-          <div className="flex gap-2 bg-white rounded-xl p-1 border-3 border-[#b478ab] border-dashed shadow-sm">
-            {["hoje", "semana", "mes", "ano"].map((p) => (
+          <div className="flex gap-2 bg-[#EBC7F5] rounded-xl p-1 border-3">
+            {[
+              { key: "hoje", label: "Hoje" },
+              { key: "semana", label: "Semana" },
+              { key: "mes", label: "Mês" },
+              { key: "ano", label: "Ano" },
+            ].map((item) => (
               <button
-                key={p}
-                onClick={() => setPeriodo(p)}
-                className={`px-4 py-2 rounded-lg font-semibold text-sm transition-all ${
-                  periodo === p
-                    ? "bg-[#76196c] text-white shadow-md"
-                    : "text-[#76196c] hover:bg-[#f0e5f5]"
-                }`}
+                key={item.key}
+                onClick={() => setPeriodo(item.key)}
+                className={`px-4 py-2 rounded-lg font-semibold text-sm transition-all ${periodo === item.key
+                  ? "bg-[#76196c]/70 text-[#C5FFAD]"
+                  : "text-[#76196c] hover:bg-[#C97FDA]/50"
+                  }`}
               >
-                {p.charAt(0).toUpperCase() + p.slice(1)}
+                {item.label}
               </button>
             ))}
+
           </div>
         </div>
 
@@ -196,70 +222,90 @@ export default function AdminDashboard() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
               <MetricCard
                 title="Faturamento da Rede"
-                value={dashboardData.vendas.total}
+                value={formatCurrency(dashboardData.vendas.total)}
                 subValue={`${dashboardData.vendas.totalTransacoes} transações`}
                 icon="graph-up-arrow"
-                color="[#569a33]"
+                color="[#9D4E92]"
+                bg="[#e8c5f1]"
+                text="[#9D4E92]"
+                text2="[#4F6940]"
                 trend={dashboardData.vendas.trend}
-              />
-              <MetricCard
-                title="Contas a Pagar (Total)"
-                // Usando o dado exclusivo do controller Admin
-                value={dashboardData.fluxoCaixa.contasPendentes || "R$ 0,00"} 
-                icon="wallet2"
-                color="[#ff6b6b]"
               />
               <MetricCard
                 title="Produtos Vendidos"
                 value={dashboardData.produtos.vendidos}
                 icon="box-seam"
-                color="[#76196c]"
+                color="[#4f6940]"
+                bg="[#9bf377]"
+                text="[#4f6940]"
               />
-               <MetricCard
+              <MetricCard
+                title="Contas a Pagar (Total)"
+                // Usando o dado exclusivo do controller Admin
+                value={formatCurrency(dashboardData.fluxoCaixa.contasPendentes)}
+                icon="wallet2"
+                color="[#9D4E92]"
+                bg="[#F1B8E8]"
+                text="[#9D4E92]"
+              />
+              <MetricCard
                 title="Equipe Ativa"
                 value={dashboardData.vendedores.ativos}
                 subValue="Vendedores na rede"
                 icon="people-fill"
-                color="[#4f6940]"
+                color="[#4F6940]"
+                bg="[#c5ffad]"
+                text="[#4F6940]"
+                text2="[#4F6940]"
               />
             </div>
 
             {/* Seção Exclusiva Admin: Ranking de Lojas */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              
+
               {/* Ranking das Lojas */}
-              <div className="lg:col-span-2 bg-white rounded-xl border-3 border-dashed border-[#76196c] p-6 shadow-sm">
+              <div className="lg:col-span-2 bg-[#C5FFAD] rounded-xl p-6 shadow-sm">
                 <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-xl font-bold text-[#76196c] flex items-center gap-2">
+                  <h3 className="text-xl font-bold text-[#76196c] flex items-center gap-3">
                     <i className="bi bi-shop text-2xl"></i> Desempenho por Filial
                   </h3>
-                  <Link href="/admin/relatorios" className="text-sm text-[#76196c] hover:underline font-medium">
-                    Ver relatório completo →
+                  <Link href="/admin/relatorios" className="text-sm text-[#76196c] hover:underline font-medium flex gap-2">
+                    Ver relatório completo
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2" strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="lucide lucide-arrow-right-icon lucide-arrow-right"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
                   </Link>
                 </div>
 
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead>
-                      <tr className="border-b border-gray-100 text-left">
-                        <th className="pb-3 text-sm font-semibold text-gray-500">Filial</th>
-                        <th className="pb-3 text-sm font-semibold text-gray-500 text-right">Vendas</th>
-                        <th className="pb-3 text-sm font-semibold text-gray-500 text-right">Faturamento</th>
-                        <th className="pb-3 text-sm font-semibold text-gray-500 text-center">Status</th>
+                      <tr className="border-b border-[#75BA51] text-left">
+                        <th className="pb-3 text-sm font-semibold text-[#4F6940]">Filial</th>
+                        <th className="pb-3 text-sm font-semibold text-[#4F6940] text-center">Vendas</th>
+                        <th className="pb-3 text-sm font-semibold text-[#4F6940] text-center">Faturamento</th>
+                        <th className="pb-3 text-sm font-semibold text-[#4F6940] text-center">Status</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-50">
+                    <tbody className="divide-y divide-[#75BA51]">
                       {dashboardData.rankingLojas && dashboardData.rankingLojas.length > 0 ? (
                         dashboardData.rankingLojas.map((loja, index) => (
                           <tr key={index} className="hover:bg-purple-50/50 transition-colors">
-                            <td className="py-3 font-medium text-gray-800 flex items-center gap-2">
-                              <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs text-white ${index === 0 ? 'bg-yellow-400' : index === 1 ? 'bg-gray-400' : index === 2 ? 'bg-orange-400' : 'bg-gray-200 text-gray-600'}`}>
+                            <td className="py-3 font-medium text-[#76196C] flex items-center gap-2">
+                              <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs text-[#CAF4B7] ${index === 0 ? 'bg-yellow-400' : index === 1 ? 'bg-gray-400' : index === 2 ? 'bg-orange-400' : 'bg-gray-200 text-[#76196C]'}`}>
                                 {index + 1}
                               </span>
                               {loja.nome}
                             </td>
-                            <td className="py-3 text-right text-gray-600">{loja.totalVendas}</td>
-                            <td className="py-3 text-right font-bold text-[#569a33]">{loja.valorTotal}</td>
+                            <td className="py-3 text-center text-[#76196C]">{loja.totalVendas}</td>
+                            <td className="py-3 text-center font-bold text-[#569a33]">{formatCurrency(loja.valorTotal)}</td>
                             <td className="py-3 text-center">
                               <span className="inline-block w-2 h-2 rounded-full bg-green-500"></span>
                             </td>
@@ -281,40 +327,40 @@ export default function AdminDashboard() {
               <div className="space-y-5">
                 {/* Melhor Vendedor da Rede */}
                 <div className="bg-gradient-to-br from-[#76196c] to-[#5a1252] rounded-xl p-6 text-white shadow-lg">
-                    <div className="flex items-start justify-between">
-                        <div>
-                            <p className="text-purple-200 text-sm font-medium mb-1">⭐ Destaque Global</p>
-                            <h4 className="text-2xl font-bold">{dashboardData.vendedores.melhorVendedor}</h4>
-                            <p className="text-sm opacity-90 mt-1">
-                              Responsável por <span className="font-bold">{dashboardData.vendedores.vendasMelhorVendedor} vendas</span>
-                            </p>
-                        </div>
-                        <i className="bi bi-trophy-fill text-3xl text-yellow-400"></i>
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <p className="text-purple-200 text-sm font-medium mb-1">⭐ Destaque Global</p>
+                      <h4 className="text-2xl font-bold text-[#C5FFAD]">{dashboardData.vendedores.melhorVendedor}</h4>
+                      <p className="text-sm opacity-90 mt-1">
+                        Responsável por <span className="font-bold">{dashboardData.vendedores.vendasMelhorVendedor} vendas</span>
+                      </p>
                     </div>
-                    <div className="mt-4 pt-4 border-t border-white/20 flex justify-between items-center">
-                        <span className="text-sm">Total gerado:</span>
-                        <span className="font-bold text-lg">R$ {dashboardData.vendedores.valorMelhorVendedor.toFixed(2).replace('.', ',')}</span>
-                    </div>
+                    <i className="bi bi-trophy-fill text-3xl text-yellow-400"></i>
+                  </div>
+                  <div className="mt-4 pt-4 border-t border-white/20 flex justify-between items-center">
+                    <span className="text-sm text-[#C5FFAD]">Total gerado:</span>
+                    <span className="font-bold text-lg text-[#4EA912]">{formatCurrency(dashboardData.vendedores.valorMelhorVendedor)}</span>
+                  </div>
                 </div>
 
                 {/* Alerta de Estoque */}
                 <div className={`rounded-xl border-2 p-5 ${dashboardData.produtos.baixoEstoque > 0 ? 'bg-orange-50 border-orange-200' : 'bg-green-50 border-green-200'}`}>
-                    <div className="flex items-center gap-3 mb-2">
-                        <i className={`bi ${dashboardData.produtos.baixoEstoque > 0 ? 'bi-exclamation-triangle-fill text-orange-500' : 'bi-check-circle-fill text-green-500'} text-xl`}></i>
-                        <h4 className={`font-bold ${dashboardData.produtos.baixoEstoque > 0 ? 'text-orange-800' : 'text-green-800'}`}>
-                           Controle de Estoque
-                        </h4>
-                    </div>
-                    <p className="text-sm text-gray-600 mb-3">
-                        {dashboardData.produtos.baixoEstoque > 0 
-                            ? `Existem ${dashboardData.produtos.baixoEstoque} produtos críticos na rede.` 
-                            : 'Todos os níveis de estoque estão saudáveis.'}
-                    </p>
-                    {dashboardData.produtos.baixoEstoque > 0 && (
+                  <div className="flex items-center gap-3 mb-2">
+                    <i className={`bi ${dashboardData.produtos.baixoEstoque > 0 ? 'bi-exclamation-triangle-fill text-orange-500' : 'bi-check-circle-fill text-green-500'} text-xl`}></i>
+                    <h4 className={`font-bold ${dashboardData.produtos.baixoEstoque > 0 ? 'text-orange-800' : 'text-green-800'}`}>
+                      Controle de Estoque
+                    </h4>
+                  </div>
+                  <p className="text-sm text-[#4F6940] mb-3">
+                    {dashboardData.produtos.baixoEstoque > 0
+                      ? `Existem ${dashboardData.produtos.baixoEstoque} produtos críticos na rede.`
+                      : 'Todos os níveis de estoque estão saudáveis.'}
+                  </p>
+                  {/* {dashboardData.produtos.baixoEstoque > 0 && (
                         <Link href="/admin/alertas" className="text-sm font-semibold text-orange-700 hover:text-orange-900 underline">
                             Resolver agora
                         </Link>
-                    )}
+                    )} */}
                 </div>
               </div>
 
@@ -322,64 +368,67 @@ export default function AdminDashboard() {
 
             {/* Ações Rápidas - Links ajustados para Admin */}
             <div>
-              <h2 className="text-2xl font-bold text-[#76196c] mb-4 mt-2">
-                Gestão Rápida
-              </h2>
+              <div className="flex gap-2 items-center mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-[#569A33] lucide lucide-settings-icon lucide-settings"><path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915" /><circle cx="12" cy="12" r="3" /></svg>
+                <h2 className="text-2xl font-bold text-[#76196c]">
+                  Gestão Rápida
+                </h2>
+              </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <QuickActionCard
                   title="Nova Loja"
                   description="Cadastrar filial"
                   icon="shop"
-                  href="/admin/lojas"
-                  color="[#76196c]"
+                  href="/admin/lojas/cadastrar"
+                  color="[#4F6940]"
                 />
                 <QuickActionCard
                   title="Produtos"
                   description="Catálogo global"
                   icon="box-seam"
                   href="/admin/produtos"
-                  color="[#569a33]"
+                  color="[#4F6940]"
                 />
                 <QuickActionCard
                   title="Financeiro"
                   description="Contas e Fluxo"
                   icon="cash-coin"
                   href="/admin/financeiro"
-                  color="[#4f6940]"
+                  color="[#4F6940]"
                 />
                 <QuickActionCard
                   title="Relatórios"
                   description="Análise completa"
                   icon="file-text"
                   href="/admin/relatorios"
-                  color="[#ff6b6b]"
+                  color="[#4F6940]"
                 />
               </div>
             </div>
 
             {/* Fluxo de Caixa Consolidado */}
-            <div className="bg-white rounded-xl border-3 border-dashed border-[#569a33] p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-xl font-bold text-[#569a33] flex items-center gap-2">
-                     <i className="bi bi-bank text-2xl"></i> Fluxo de Caixa Consolidado
-                  </h3>
-                  <span className="text-sm bg-green-100 text-green-700 px-3 py-1 rounded-full font-medium">Rede Inteira</span>
+            <div className="bg-[#edd5f2] rounded-xl border-3 border-dashed border-[#8F3D84] p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-xl font-bold text-[#8F3D84] flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-landmark-icon lucide-landmark"><path d="M10 18v-7" /><path d="M11.12 2.198a2 2 0 0 1 1.76.006l7.866 3.847c.476.233.31.949-.22.949H3.474c-.53 0-.695-.716-.22-.949z" /><path d="M14 18v-7" /><path d="M18 18v-7" /><path d="M3 22h18" /><path d="M6 18v-7" /></svg> Fluxo de Caixa Consolidado
+                </h3>
+                <span className="text-sm bg-[#C5FFAD] text-[#8F3D84] px-3 py-1 rounded-full font-medium">Rede Inteira</span>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="flex flex-col p-4 bg-[#98d378] rounded-xl">
+                  <span className="text-sm font-semibold text-[#4F6940] mb-1">Entradas (Vendas)</span>
+                  <span className="text-2xl font-bold text-[#4F6940]">{formatCurrency(dashboardData.fluxoCaixa.entradas)}</span>
                 </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="flex flex-col p-4 bg-green-50 rounded-xl border border-green-100">
-                    <span className="text-sm font-semibold text-gray-600 mb-1">Entradas (Vendas)</span>
-                    <span className="text-2xl font-bold text-green-600">{dashboardData.fluxoCaixa.entradas}</span>
-                  </div>
-                  <div className="flex flex-col p-4 bg-red-50 rounded-xl border border-red-100">
-                    <span className="text-sm font-semibold text-gray-600 mb-1">Saídas (Despesas)</span>
-                    <span className="text-2xl font-bold text-red-600">{dashboardData.fluxoCaixa.saidas}</span>
-                  </div>
-                  <div className="flex flex-col p-4 bg-[#f0fdf4] rounded-xl border-2 border-[#569a33]">
-                    <span className="text-sm font-bold text-gray-700 mb-1">Saldo Líquido</span>
-                    <span className="text-2xl font-black text-[#569a33]">{dashboardData.fluxoCaixa.saldo}</span>
-                  </div>
+                <div className="flex flex-col p-4 bg-[#F1B8E8] rounded-xl">
+                  <span className="text-sm font-semibold text-[#B21212] mb-1">Saídas (Despesas)</span>
+                  <span className="text-2xl font-bold text-[#B21212]">{formatCurrency(dashboardData.fluxoCaixa.saidas)}</span>
                 </div>
+                <div className="flex flex-col p-4 bg-[#D1A7CD] rounded-xl">
+                  <span className="text-sm font-semibold text-[#76196C] mb-1">Saldo Líquido</span>
+                  <span className="text-2xl font-bold text-[#76196C]">{formatCurrency(dashboardData.fluxoCaixa.saldo)}</span>
+                </div>
+              </div>
             </div>
 
           </>

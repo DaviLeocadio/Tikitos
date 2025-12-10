@@ -21,10 +21,10 @@ export default function Footer() {
                             <p className="font-bold text-[#8C3E82] mb-2">Vendas</p>
                             <ul className="text-[#4f6940] space-y-1">
                                 <li className="hover:scale-95 transition">
-                                    <Link href="">Produtos</Link>
+                                    <Link href="/vendedor/vendas">Produtos</Link>
                                 </li>
                                 <li className="hover:scale-95 transition">
-                                    <Link href="">Carrinho</Link>
+                                    <Link href="/vendedor/pdv">Carrinho</Link>
                                 </li>
                             </ul>
                         </div>
@@ -32,10 +32,10 @@ export default function Footer() {
                             <p className="font-bold text-[#8C3E82] mb-2">Controle</p>
                             <ul className="text-[#4f6940] space-y-1">
                                 <li className="hover:scale-95 transition">
-                                    <Link href="">Filtros</Link>
+                                    <Link href="/vendedor/pdv">Filtros</Link>
                                 </li>
                                 <li className="hover:scale-95 transition">
-                                    <Link href="">Fluxo de caixa</Link>
+                                    <Link href="/vendedor/caixa">Fluxo de caixa</Link>
                                 </li>
                             </ul>
                         </div>
@@ -46,22 +46,22 @@ export default function Footer() {
                             <p className="font-bold text-[#8C3E82] mb-2">Meu perfil</p>
                             <ul className="text-[#4f6940] space-y-1">
                                 <li className="hover:scale-95 transition">
-                                    <Link href="">Vendas</Link>
+                                    <Link href="/vendedor/vendas">Vendas</Link>
                                 </li>
                                 <li className="hover:scale-95 transition">
-                                    <Link href="">Desempenho</Link>
+                                    <Link href="/vendedor/vendas">Desempenho</Link>
                                 </li>
                                 <li className="hover:scale-95 transition">
-                                    <Link href="">Feedbacks</Link>
+                                    <Link href="/vendedor/suporte">Feedbacks</Link>
                                 </li>
                                 <li className="hover:scale-95 transition">
-                                    <Link href="">Solicitações</Link>
+                                    <Link href="/vendedor/suporte">Solicitações</Link>
                                 </li>
                                 <li className="hover:scale-95 transition">
-                                    <Link href="">Tarefas</Link>
+                                    <Link href="/vendedor/pdv">Tarefas</Link>
                                 </li>
                                 <li className="hover:scale-95 transition">
-                                    <Link href="">Comissão</Link>
+                                    <Link href="/vendedor/vendas">Comissão</Link>
                                 </li>
                             </ul>
                         </div>

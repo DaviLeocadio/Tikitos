@@ -12,12 +12,11 @@ import {
 import { Button } from "@/components/ui/button";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 
-
 export default function VendasPage() {
   const [vendas, setVendas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filtroData, setFiltroData] = useState("todos");
+  const [filtroData, setFiltroData] = useState("hoje");
 
   // Modais
   const [vendaDetalhes, setVendaDetalhes] = useState(null);
@@ -62,15 +61,33 @@ export default function VendasPage() {
         {
           method: "DELETE",
           credentials: "include",
+          headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+          },
         }
       );
 
       if (response.ok) {
-        setVendas(vendas.filter((v) => v.id !== vendaParaEstornar.id));
+        setVendas((prev) => prev.filter((v) => v.id !== vendaParaEstornar.id));
         setVendaParaEstornar(null);
+      } else {
+        // Tentar ler o body com mais detalhes para depuração
+        let body = null;
+        try {
+          body = await response.json();
+        } catch (e) {
+          body = await response.text();
+        }
+        console.error("Falha ao estornar venda:", response.status, body);
+        // Mostrar feedback simples ao usuário
+        alert(
+          `Não foi possível estornar a venda (status: ${response.status}). Verifique o console para mais detalhes.`
+        );
       }
     } catch (error) {
       console.error("Erro ao estornar venda:", error);
+      alert("Erro ao estornar venda: " + (error.message || error));
     }
   };
 
@@ -107,29 +124,25 @@ export default function VendasPage() {
   );
 
   const quantidadeVendas = vendasFiltradas.length;
-  const ticketMedio =
-    quantidadeVendas > 0 ? totalVendas / quantidadeVendas : 0;
+  const ticketMedio = quantidadeVendas > 0 ? totalVendas / quantidadeVendas : 0;
 
   return (
     <>
-
-      {/* MENU DA SIDEBAR */}
-      <div className="grid gap-5 grid-cols-1 md:grid-cols-1">
-        <div className="flex m-5 gap-2 items-center">
+      <div className="relative w-full p-[6%] pb-[0] pt-[2%]">
+        {/* BOTÃO SIDEBAR */}
+        <div className="absolute top-7 left-20 z-20">
           <SidebarTrigger />
         </div>
-      </div>
 
-      <div className="rounded-3xl overflow-hidden px-[45px] mb-10 sm:w-[100%] ">
+        {/* BANNER */}
         <img
-          src="/img/vendas/banner_vendas.png"
+          src="/img/vendas/banner_vendas3.png"
           className="w-full rounded-3xl"
         />
       </div>
 
       <div className="min-h-screen bg-[#DDF1D4] p-6">
-        <div className="max-w-6xl mx-auto space-y-6">
-
+        <div className="px-[4%] space-y-6">
           {/* Header */}
           {/* <div className="flex items-center justify-between">
           <h1 className="text-4xl font-black text-[#8c3e82] md:p-1 tracking-tight">
@@ -139,36 +152,51 @@ export default function VendasPage() {
 
           {/* Dashboard Cards */}
           <div className="grid grid-cols-1 items-center md:grid-cols-3 gap-4">
-            <div className="bg-[#E5B8F1] border-3 border-dashed border-[#75BA51] rounded-[50px] p-3">
-              <p className="text-sm text-center items-center font-semibold text-[#70B64C] ">Faturamento</p>
-              <h2 className="text-4xl text-center font-black items-center text-[#559637] md:text4xl sm:text-[25px] sm:p-2">
+            <div className="bg-[#EBC7F5] border-3 rounded-[50px] p-3">
+              <p className="text-sm text-center items-center font-semibold text-[#70B64C] ">
+                Faturamento
+              </p>
+              <h2 className="text-4xl text-center font-black items-center text-[#559637] md:text4xl sm:text-[25px] p-0">
                 R$ {totalVendas.toFixed(2).replace(".", ",")}
               </h2>
             </div>
 
-            <div className="bg-[#c5ffad] border-3 border-dashed border-[#8C3E82] rounded-[50px] p-3">
-              <p className="text-sm text-center font-semibold text-[#8c3e82]">Vendas</p>
-              <h2 className="text-4xl text-center font-black text-[#65745A]">
+            <div className="bg-[#F1B8E8] border-3 rounded-[50px] p-3">
+              <p className="text-sm text-center font-semibold text-[#65745A]">
+                Vendas
+              </p>
+              <h2 className="text-4xl text-center font-black text-[#65745A] p-0 md:text4xl sm:text-[25px]">
                 {quantidadeVendas}
               </h2>
             </div>
 
-            <div className="bg-[#92EF6C] border-3 border-dashed border-[#B478AB] rounded-[50px] p-3">
-              <p className="text-sm text-center font-semibold text-[#8c3e82]">Ticket Médio</p>
-              <h2 className="text-4xl text-center font-black text-[#924187] md:text4xl sm:text-[25px] sm:p-1.5">
+            <div className="bg-[#92EF6C] border-3 rounded-[50px] p-3">
+              <p className="text-sm text-center font-semibold text-[#8c3e82]">
+                Ticket Médio
+              </p>
+              <h2 className="text-4xl text-center font-black text-[#924187] md:text4xl sm:text-[25px] p-0">
                 R$ {ticketMedio.toFixed(2).replace(".", ",")}
               </h2>
             </div>
           </div>
 
           {/* Filtros */}
-          <div className="bg-[#4F6940] border-[3px] border-dashed border-[#92EF6C] rounded-[50px] p-6">
-            <h3 className="text-lg font-bold text-[#92EF6C]">Filtros de Busca</h3>
+          <div className="rounded-[50px]">
+            <div className="flex gap-2 items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4EA912" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sliders-horizontal-icon lucide-sliders-horizontal"><path d="M10 5H3"/><path d="M12 19H3"/><path d="M14 3v4"/><path d="M16 17v4"/><path d="M21 12h-9"/><path d="M21 19h-5"/><path d="M21 5h-7"/><path d="M8 10v4"/><path d="M8 12H3"/></svg>
+              <h3 className="text-lg font-bold text-[#8C4B88]">
+              Filtros de Busca
+            </h3>
+            <p className="text-xs text-[#4EA912] font-medium pt-1">
+              (Mostrando {vendasFiltradas.length} de {vendas.length} vendas)
+            </p>
+            </div>
+            
 
             <div className="flex flex-col md:flex-row gap-4 mt-4">
               <input
                 type="text"
-                placeholder="Buscar por ID da venda ou vendedor..."
+                placeholder="Buscar por ID da venda..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full px-4 py-3 bg-[#EBC7F5] border-[2px] border-[#C97FDA] rounded-[25px] text-[#9D4E92]"
@@ -179,16 +207,14 @@ export default function VendasPage() {
                 onChange={(e) => setFiltroData(e.target.value)}
                 className="w-full md:w-48 px-4 py-3 bg-[#EBC7F5] border-[2px] border-[#C97FDA] rounded-[25px] text-[#9D4E92]"
               >
-                <option value="todos" className="hover!:bg-red-500 rounded-xl">Todas as vendas</option>
+                <option value="todos" className="hover!:bg-red-500 rounded-xl">
+                  Todas as vendas
+                </option>
                 <option value="hoje">Hoje</option>
                 <option value="semana">Última semana</option>
                 <option value="mes">Último mês</option>
               </select>
             </div>
-
-            <p className="text-xs text-[#92EF6C] mt-3 font-medium">
-              Mostrando {vendasFiltradas.length} de {vendas.length} vendas
-            </p>
           </div>
 
           {/* Lista de Vendas */}
@@ -211,7 +237,6 @@ export default function VendasPage() {
                 </p>
               </div>
             ) : (
-
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
                 {vendasFiltradas.map((venda) => (
                   <div
@@ -225,13 +250,23 @@ export default function VendasPage() {
                         </span>
 
                         <p className="text-sm text-[#569A33] font-bold mt-2">
-                          Data: <span className="text-[#4F6940] font-medium "> {new Date(venda.data).toLocaleDateString("pt-BR")}</span>
+                          Data:{" "}
+                          <span className="text-[#4F6940] font-medium ">
+                            {" "}
+                            {new Date(venda.data).toLocaleDateString("pt-BR")}
+                          </span>
                         </p>
                         <p className="text-sm text-[#569A33] font-bold">
-                          Pagamento: <span className="text-[#4F6940] font-medium">{venda.tipo_pagamento}</span>
+                          Pagamento:{" "}
+                          <span className="text-[#4F6940] font-medium">
+                            {venda.tipo_pagamento}
+                          </span>
                         </p>
                         <p className="text-sm text-[#569A33] font-bold">
-                          Vendedor <span className="text-[#4F6940]">#{venda.vendedor_id}</span>
+                          Vendedor{" "}
+                          <span className="text-[#4F6940]">
+                            #{venda.vendedor_id}
+                          </span>
                         </p>
                       </div>
 
@@ -246,11 +281,9 @@ export default function VendasPage() {
                             .replace(".", ",")}
                         </p>
                       </div>
-
                     </div>
 
                     <div className="flex mt-3 gap-2">
-
                       {/* Ver Detalhes */}
                       <button
                         onClick={() => setVendaDetalhes(venda)}
@@ -267,7 +300,6 @@ export default function VendasPage() {
                         {/* vai fazer muito ainda?  ah até ia, mas vc vai dormir agora? manda zapzpa quando temrinadr não vai dormir agora? senão tudo bem eu paro aqui vou ficar acordadso parar um pouco tá bom então*/}
                         Estornar
                       </button>
-
                     </div>
                   </div>
                 ))}
@@ -276,7 +308,10 @@ export default function VendasPage() {
           </div>
 
           {/* Modal: Detalhes da Venda */}
-          <Dialog open={!!vendaDetalhes} onOpenChange={() => setVendaDetalhes(null)}>
+          <Dialog
+            open={!!vendaDetalhes}
+            onOpenChange={() => setVendaDetalhes(null)}
+          >
             <DialogContent className="bg-[#E5B8F1] border-[3px] border-dashed border-[#559637] rounded-[50px]">
               <DialogHeader>
                 <DialogTitle className="text-2xl font-black text-[#4EA912]">
@@ -287,13 +322,22 @@ export default function VendasPage() {
               {vendaDetalhes && (
                 <>
                   <p className="text-[#8c3e82] font-bold">
-                    Data: <span className="text-[#4F6940] font-semibold">{new Date(vendaDetalhes.data).toLocaleString("pt-BR")}</span>
+                    Data:{" "}
+                    <span className="text-[#4F6940] font-semibold">
+                      {new Date(vendaDetalhes.data).toLocaleString("pt-BR")}
+                    </span>
                   </p>
                   <p className="text-[#8c3e82] font-bold">
-                    Pagamento: <span className="text-[#4F6940] font-semibold">{vendaDetalhes.tipo_pagamento}</span>
+                    Pagamento:{" "}
+                    <span className="text-[#4F6940] font-semibold">
+                      {vendaDetalhes.tipo_pagamento}
+                    </span>
                   </p>
                   <p className="text-[#8c3e82] mb-4 font-bold">
-                    Vendedor <span className="text-[#4F6940]">#{vendaDetalhes.vendedor_id}</span>
+                    Vendedor{" "}
+                    <span className="text-[#4F6940]">
+                      #{vendaDetalhes.vendedor_id}
+                    </span>
                   </p>
 
                   <div className="bg-[#4EA912] text-[#DDF1D4] rounded-[25px] p-4">
@@ -321,7 +365,10 @@ export default function VendasPage() {
           </Dialog>
 
           {/* Modal: Confirmar Estorno */}
-          <Dialog open={!!vendaParaEstornar} onOpenChange={() => setVendaParaEstornar(null)}>
+          <Dialog
+            open={!!vendaParaEstornar}
+            onOpenChange={() => setVendaParaEstornar(null)}
+          >
             <DialogContent className="bg-[#E5B8F1] border-[3px] border-dashed border-[#B478AB] rounded-[50px]">
               <DialogHeader>
                 <DialogTitle className="text-2xl font-black text-[#8c3e82]">
@@ -353,7 +400,6 @@ export default function VendasPage() {
               </DialogFooter>
             </DialogContent>
           </Dialog>
-
         </div>
       </div>
     </>

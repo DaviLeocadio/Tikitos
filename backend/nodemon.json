@@ -3,7 +3,7 @@
   "ignore": ["node_modules", ".next", "public", "uploads"],
   "watch": ["app.js", "controllers", "models", "routes", "config", "utils"],
   "ext": "js,json",
-  "delay": "2500",
+  "delay": "5000",
   "legacyWatch": true,
   "env": {
     "NODE_ENV": "development"

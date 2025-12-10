@@ -12,7 +12,7 @@ export const formatarProdutos = async (produtos, usuarioEmpresa = null) => {
       let precoProduto = produto.preco;
       let precoComDesconto = null;
       let desconto = null;
-      let estoque = null;
+      let estoque = 0;
 
       if (usuarioEmpresa) {
         const produtoLoja = await obterProdutoLoja(

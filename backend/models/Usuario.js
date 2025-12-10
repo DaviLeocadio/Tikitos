@@ -4,12 +4,22 @@ import {
   readAll,
   update,
   create,
+  readRaw,
 } from "../config/database.js";
 import { mascaraCpf, mascaraTelefone } from "../utils/formatadorNumero.js";
 
 const listarUsuarios = async (whereClause = null) => {
   try {
-    const usuarios = await readAll("usuarios", whereClause);
+    const usuarios = await readRaw(`
+  SELECT 
+    u.*, 
+    e.nome AS nome_empresa
+  FROM usuarios u
+  LEFT JOIN empresas e 
+    ON e.id_empresa = u.id_empresa
+  WHERE ${whereClause}
+`);
+
     const usuariosFormatados = usuarios.map((usuario) => {
       return {
         ...usuario,
@@ -32,7 +42,7 @@ const listarUsuarios = async (whereClause = null) => {
 const obterUsuarioPorId = async (whereClause) => {
   try {
     const usuario = await read("usuarios", whereClause);
-    if(!usuario) return usuario
+    if (!usuario) return usuario;
     delete usuario.senha;
 
     return {
@@ -70,11 +80,17 @@ const obterGerentePorEmpresa = async (empresaId) => {
       "usuarios",
       `id_empresa = ${empresaId} AND perfil = 'gerente'`
     );
-    return (gerente ? true : false);
+    return gerente ? true : false;
   } catch (error) {
     console.error("Erro ao obter gerente por empresa: ", err);
     throw err;
   }
 };
 
-export { listarUsuarios, obterUsuarioPorId, criarUsuario, atualizarUsuario,obterGerentePorEmpresa };
+export {
+  listarUsuarios,
+  obterUsuarioPorId,
+  criarUsuario,
+  atualizarUsuario,
+  obterGerentePorEmpresa,
+};

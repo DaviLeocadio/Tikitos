@@ -23,9 +23,12 @@ const listarGastosController = async (req, res) => {
     let where = `id_empresa = ${idEmpresa}`;
     
     if (dataInicio && dataFim) {
-      // ✅ CORREÇÃO: Usar >= e < ao invés de BETWEEN
-      // Isso garante que pegue todo o intervalo corretamente
-      where += ` AND DATE(data_adicionado) >= '${dataInicio}' AND DATE(data_adicionado) < '${dataFim}'`;
+      // Comparar usando intervalo de timestamp (início inclusive, fim exclusivo).
+      // Recebemos `dataInicio` e `dataFim` como 'YYYY-MM-DD' (frontend envia fim como o dia seguinte),
+      // então comparamos a coluna datetime diretamente para evitar problemas de timezone ao usar DATE().
+      const inicioTimestamp = `${dataInicio} 00:00:00`;
+      const fimTimestamp = `${dataFim} 00:00:00`;
+      where += ` AND data_adicionado >= '${inicioTimestamp}' AND data_adicionado < '${fimTimestamp}'`;
     }
     
     // ✅ NOVO: Suporte a filtro de status
@@ -37,11 +40,11 @@ const listarGastosController = async (req, res) => {
     
     where += ` ORDER BY 
       CASE 
-        WHEN status = 'pendente' THEN 0
-        WHEN status = 'pago' THEN 1
+        WHEN d.status = 'pendente' THEN 0
+        WHEN d.status = 'pago' THEN 1
         ELSE 2
       END,
-      DATE(data_adicionado) DESC`;
+      DATE(d.data_adicionado) DESC`;
 
     const gastos = await listarDespesas(where);
     
@@ -57,24 +60,37 @@ const listarGastosController = async (req, res) => {
 // Adicionar novo gasto
 const adicionarGastoController = async (req, res) => {
   try {
-    const { data_pag, descricao, preco } = req.body;
-    if (!data_pag || !descricao || !preco)
+    const { data_pag, descricao, preco, status, id_fornecedor } = req.body;
+
+    if (!descricao || !preco)
       return res
-        .status(404)
-        .json({ error: "Parâmetros obrigatórios ausentes" });
+        .status(400)
+        .json({ error: "Parâmetros obrigatórios ausentes: descricao e preco" });
 
     const id_empresa = req.usuarioEmpresa;
 
-    const dataPag = dayjs(data_pag, "DD/MM/YYYY");
-
-    const dataPagSQL = dataPag.format("YYYY-MM-DD");
+    // Determina data_pag: se fornecida, tenta parsear; se não fornecida e status==='pago', usa hoje; caso contrário null
+    let dataPagSQL = null;
+    if (data_pag) {
+      const dataPag = dayjs(data_pag, "DD/MM/YYYY");
+      if (dataPag.isValid()) dataPagSQL = dataPag.format("YYYY-MM-DD");
+    } else if (status === "pago") {
+      dataPagSQL = dayjs().format("YYYY-MM-DD");
+    }
 
     const gastoData = {
       id_empresa,
-      data_pag: dataPagSQL,
       descricao,
       preco,
     };
+
+    if (dataPagSQL) gastoData.data_pag = dataPagSQL;
+    // Inclui status somente se fornecido (caso contrário DB usará o default 'pendente')
+    if (status) gastoData.status = status;
+    // Inclui id_fornecedor se passado
+    if (typeof id_fornecedor !== "undefined" && id_fornecedor !== null)
+      gastoData.id_fornecedor = id_fornecedor;
+
     const gastoCriado = await criarDespesa(gastoData);
     return res
       .status(200)

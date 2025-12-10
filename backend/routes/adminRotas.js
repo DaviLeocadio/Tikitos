@@ -1,4 +1,8 @@
 import express from "express";
+
+/* ===================== CONTROLLERS ===================== */
+
+/* ==== Filiais ==== */
 import {
   listarEmpresasController,
   obterEmpresaPorIdController,
@@ -8,15 +12,20 @@ import {
   estoqueFilialController,
   estoqueTodasFiliaisController,
   transferirFuncionarioController,
+  reativarFilialController,
+  metaFiliaisController,
 } from "../controllers/FilialController.js";
 
+/* ==== Gerentes ==== */
 import {
   atualizarGerenteController,
   criarGerenteController,
   desativarGerenteController,
   listarGerentesController,
+  ativarGerenteController,
 } from "../controllers/GerenteController.js";
 
+/* ==== Produtos ==== */
 import {
   listarProdutosController,
   obterProdutoPorIdController,
@@ -26,20 +35,33 @@ import {
   ativarProdutoController,
 } from "../controllers/ProdutoController.js";
 
+/* ==== Despesas ==== */
+import {
+  despesasPagasController,
+  despesasPendentesController,
+  criarDespesaController,
+  listarDespesasController,
+  pagarDespesaController,
+  deletarDespesaController,
+} from "../controllers/DespesasController.js";
+
+/* ==== Fornecedores ==== */
 import {
   criarFornecedorController,
   listarFornecedoresController,
   obterFornecedorPorIdController,
   atualizarFornecedorController,
-  desativarFornecedorController
+  deletarFornecedorController,
 } from "../controllers/FornecedorController.js";
 
+/* ==== Produto Loja ==== */
 import {
   atualizarProdutoLojaController,
   estoqueBaixoController,
-  pedidoProdutoController
+  pedidoProdutoController,
 } from "../controllers/ProdutoLojaController.js";
 
+/* ==== Vendedores ==== */
 import {
   listarVendedoresController,
   obterVendedorPorIdController,
@@ -48,142 +70,149 @@ import {
   desativarVendedorController,
 } from "../controllers/VendedorController.js";
 
+/* ==== Dashboard ==== */
 import { AdminDashboardController } from "../controllers/DashboardAdminController.js";
 
+/* ==== Vendas ==== */
+import { listarVendasController } from "../controllers/VendaController.js";
+
+/* ==== ADMIN (meta/admin) ==== */
+import { metaAdminController } from "../controllers/AdminController.js";
+
+/* ==== RELATÓRIOS (NOVOS) ==== */
 import {
-  gerarRelatorioFiliaisController,
-  relatorioVendasGeralController,
-} from "../controllers/RelatorioController.js";
+  // relatorioFiliais,          // Relatório 1 — Todas as filiais consolidadas
+  relatorioVendas,           // Relatório 2 — Vendas por filial / período
+  relatorioPorFilial,        // Relatório 3 — Relatório COMPLETO da filial
+  relatorioGeral,            // Relatório 4 — Master (de tudo)
+  relatorioProdutos,         // Relatório 5 — Produtos
+} from "../controllers/RelatorioAdminController.js";
+
+/* ==== VENDAS ==== */
+import {
+  obterVendaController
+} from "../controllers/VendaController.js"
+
+import{
+  listarCaixaController
+} from "../controllers/CaixaController.js"
+
+/* ===================== CONFIG UPLOAD ===================== */
 
 import multer from "multer";
 import path from "path";
-
 import { fileURLToPath } from "url";
+import { resetarSenhaController } from "../controllers/AuthController.js";
 
 const router = express.Router();
-
-/* ===================== ROTAS ADMINISTRATIVAS ===================== */
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, "../../frontend/public/img/empresas"));
+    cb(null, path.join(__dirname, "../uploads/produtos"));
   },
   filename: (req, file, cb) => {
-    const nomeArquivo = `${Date.now()}-${file.originalname}`;
-    cb(null, nomeArquivo);
+    cb(null, `${Date.now()}-${file.originalname}`);
   },
 });
 
-const upload = multer({ storage: storage });
+const upload = multer({ storage });
+
+/* ===================== ROTAS ADMINISTRATIVAS ===================== */
 
 /* ===== DASHBOARD ===== */
-router.get('/dashboard', AdminDashboardController)
+router.get("/dashboard", AdminDashboardController);
 
-/* ===== FILIAIS ===== */
+/* ===================== FILIAIS ===================== */
 
-// Listar todas as filiais
 router.get("/filiais", listarEmpresasController);
-
-// Obter uma filial específica
+router.get("/filiais/meta", metaFiliaisController);
 router.get("/filiais/:empresaId", obterEmpresaPorIdController);
-
-// Criar uma nova filial
 router.post("/filiais", criarEmpresaController);
-
-// Alterar informações de uma filial
 router.put("/filiais/:empresaId", atualizarEmpresaController);
+router.delete("/filiais/:empresaId/desativar", desativarFilialController);
+router.post("/filiais/:empresaId/reativar", reativarFilialController);
 
-// Desativar uma filial
-router.delete("/filiais/:empresaId", desativarFilialController);
+router.post(
+  "/filiais/:empresaId/transferir-funcionario",
+  transferirFuncionarioController
+);
 
-
-// Trasferir gerente
-router.post("/filiais/:empresaId/transferir-funcionario", transferirFuncionarioController);
-
-
-
-// Informações de estoque de uma filial
 router.get("/filiais/:empresaId/estoque", estoqueFilialController);
-
-// Informações de estoque de todas as filiais
 router.get("/estoque/filiais", estoqueTodasFiliaisController);
-
-// Lista de Usuários da filial
 
 /* ===================== VENDEDORES ===================== */
 
-// Listar todos os vendedores
 router.get("/vendedores", listarVendedoresController);
-
-// Obter um vendedor específico
 router.get("/vendedores/:vendedorId", obterVendedorPorIdController);
-
-// ⚠ Admin (matriz) não tem controle sobre criação ou edição de vendedor.
 
 /* ===================== GERENTES ===================== */
 
-// Listar todos os gerentes
 router.get("/gerentes", listarGerentesController);
-
-// Listar um gerente específico
 router.get("/gerentes/:gerenteId", obterVendedorPorIdController);
-
-// Adicionar um gerente a partir do id da filial
 router.post("/filiais/:idEmpresa/gerentes", criarGerenteController);
-
-// Alterar informações de um gerente
 router.put("/gerentes/:gerenteId", atualizarGerenteController);
-
-// Status do gerente inativo
 router.delete("/gerentes/:gerenteId/desativar", desativarGerenteController);
+router.post("/gerentes/:gerenteId/ativar", ativarGerenteController);
+
+/* ===================== DESPESAS ===================== */
+
+router.get("/despesas-pagas", despesasPagasController);
+router.get("/despesas-pendentes", despesasPendentesController);
+router.post("/despesas", criarDespesaController);
+router.get("/despesas", listarDespesasController);
+router.put("/despesas/:despesaId", pagarDespesaController)
+router.delete("/despesas/:despesaId", deletarDespesaController);
 
 /* ===================== PRODUTOS ===================== */
 
-// Listar todos os produtos disponíveis
 router.get("/produtos", listarProdutosController);
-
-// Listar um produto específico
 router.get("/produtos/:idProduto", obterProdutoPorIdController);
-
-// Adicionar um produto
 router.post("/produtos", upload.single("imagem"), criarProdutoController);
-
-// Alterar informações de um produto
-router.put(
-  "/produtos/:id",
-  upload.single("imagem"),
-  atualizarProdutoController
-);
-
-// Desativar um produto
+router.put("/produtos/:idProduto", upload.single("imagem"), atualizarProdutoController);
 router.delete("/produtos/:idProduto/desativar", desativarProdutoController);
-
-// Ativar um produto
 router.post("/produtos/:idProduto/ativar", ativarProdutoController);
 
 /* ===================== FORNECEDORES ===================== */
 
-// Adicionar um fornecedor
 router.post("/fornecedores", criarFornecedorController);
-
-// Listar fornecedores
 router.get("/fornecedores", listarFornecedoresController);
-
-// Editar fornecedor
+router.get("/fornecedores/:id", obterFornecedorPorIdController);
 router.put("/fornecedores/:id", atualizarFornecedorController);
+router.delete("/fornecedores/:id", deletarFornecedorController);
 
-// Desativar um fornecedor
-router.delete("/fornecedores/:id", desativarFornecedorController);
+/* ===================== VENDAS ===================== */
 
-/* ===================== FINANCEIRO ===================== */
+router.get("/vendas", listarVendasController);
+router.get("/vendasTotais", obterVendaController);
 
-// Relatório financeiro consolidado de todas as filiais
-router.get("/relatorios/financeiro", gerarRelatorioFiliaisController);
+/* ===================== CAIXA ===================== */
+router.get("/caixa", listarCaixaController);
 
-// Relatório geral de vendas (por período, filial, vendedor, etc.)
-router.get("/relatorios/vendas", relatorioVendasGeralController);
+/* ===================== RELATÓRIOS (ADMIN) ===================== */
+
+// 1 — Filiais consolidadas
+// router.get("/relatorios/filiais", relatorioFiliais);
+
+// 2 — Vendas geral / por filial
+router.get("/relatorios/vendas", relatorioVendas);
+
+// 3 — Relatório completo da filial
+router.get("/relatorios/filial", relatorioPorFilial);
+
+// 4 — Relatório master (financeiro + vendas + estoque)
+router.get("/relatorios/geral", relatorioGeral);
+
+// 5 — Relatório de produtos
+router.get("/relatorios/produtos", relatorioProdutos);
+
+/* ===================== META ADMIN ===================== */
+
+router.get("/meta", metaAdminController);
+
+
+router.put("/usuarios/:usuarioId/resetar-senha", resetarSenhaController);
 
 export default router;

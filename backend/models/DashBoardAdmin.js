@@ -32,7 +32,7 @@ export const AdminDashboardModel = {
     e.nome AS nome_loja,
     COUNT(v.id_venda) AS total_vendas,
     COALESCE(SUM(v.total), 0) AS valor_total
-FROM empresas e
+  FROM empresas e
 LEFT JOIN vendas v 
     ON v.id_empresa = e.id_empresa
     AND v.data_venda BETWEEN ? AND ?
@@ -101,10 +101,14 @@ ORDER BY valor_total DESC, total_vendas DESC;
   // Produtos com baixo estoque (consolidado)
   async getProdutosBaixoEstoque() {
     const sql = `
-      SELECT COUNT(*) as total
+      SELECT COUNT(*) AS total
       FROM produto_loja p
-      WHERE p.estoque <= ${process.env.ESTOQUE_MINIMO}
-    `;
+      INNER JOIN empresas e 
+      ON e.id_empresa = p.id_empresa
+      WHERE 
+      p.estoque < ${process.env.ESTOQUE_MINIMO}
+      AND e.status = 'ativo';
+`;
 
     const resultado = await readRaw(sql);
     return resultado[0]?.total || 0;
@@ -155,29 +159,45 @@ ORDER BY valor_total DESC, total_vendas DESC;
 
 // Funções auxiliares
 function calcularPeriodo(periodo) {
+  // Usa offsets em dias para evitar problemas com meses de tamanhos diferentes
   const hoje = new Date();
-  let dataInicio;
+  const dataFim = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate()); // hoje (00:00 local)
+
+  let dataInicio = new Date(dataFim);
 
   switch (periodo) {
     case "hoje":
-      dataInicio = new Date(hoje.setHours(0, 0, 0, 0));
+      // dataInicio já é hoje
       break;
     case "semana":
-      dataInicio = new Date(hoje.setDate(hoje.getDate() - 7));
-      break;
-    case "ano":
-      dataInicio = new Date(hoje.setFullYear(hoje.getFullYear() - 1));
+      dataInicio.setDate(dataInicio.getDate() - 7);
       break;
     case "mes":
+      // último 30 dias — mais previsível que reduzir 1 mês e correr risco de "estouro" de dia
+      dataInicio.setDate(dataInicio.getDate() - 30);
+      break;
+    case "ano":
+      dataInicio.setFullYear(dataInicio.getFullYear() - 1);
+      break;
     default:
-      dataInicio = new Date(hoje.setMonth(hoje.getMonth() - 1));
+      dataInicio.setDate(dataInicio.getDate() - 30);
   }
 
-  const dataFim = new Date();
+  const toISODate = (d) => {
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2, "0");
+    const dd = String(d.getDate()).padStart(2, "0");
+    return `${yyyy}-${mm}-${dd}`;
+  };
+
+  // Garantir ordem correta (dataInicio <= dataFim)
+  if (dataInicio > dataFim) {
+    dataInicio = new Date(dataFim);
+  }
 
   return {
-    dataInicio: dataInicio.toISOString().split("T")[0],
-    dataFim: dataFim.toISOString().split("T")[0],
+    dataInicio: toISODate(dataInicio),
+    dataFim: toISODate(dataFim),
   };
 }
 

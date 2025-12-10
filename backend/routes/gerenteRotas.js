@@ -25,7 +25,7 @@ import {
   obterResumoCaixaController,
 } from "../controllers/CaixaController.js";
 import { listarVendasGerenteController } from "../controllers/VendaController.js";
-import { gerarRelatorioGerenteController } from "../controllers/RelatorioController.js";
+// import { gerarRelatorioGerenteController } from "../controllers/RelatorioController.js";
 import {
   adicionarGastoController,
   atualizarGastoController,
@@ -33,6 +33,8 @@ import {
   listarGastosController,
 } from "../controllers/GastoController.js";
 import { dashboardGerenteController } from "../controllers/DashboardGerenteController.js";
+import { gerarRelatorioGerenteController } from "../controllers/RelatorioController.js";
+import { metaGerenteController } from "../controllers/GerenteController.js";
 
 const router = express.Router();
 
@@ -103,4 +105,5 @@ router.get("/relatorio", gerarRelatorioGerenteController);
 // Lista vendas da filial (filtros: data, vendedor, forma de pagamento)
 router.get("/vendas", listarVendasGerenteController);
 
+router.get("/meta", metaGerenteController)
 export default router;

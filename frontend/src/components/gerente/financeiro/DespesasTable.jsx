@@ -94,7 +94,7 @@ const DespesasTable = memo(function DespesasTable({
           const v = row.getValue ? row.getValue("preco") : row.preco;
           const n = v != null ? parseFloat(v) : null;
           return (
-            <div className="font-bold text-[#ff6b6b]">{n != null ? `R$ ${n.toFixed(2).replace('.', ',')}` : '-'}</div>
+            <div className="font-bold text-[#4EA912]">{n != null ? <span className="text-[#4EA912]">`R$ ${n.toFixed(2).replace('.', ',')}`</span> : '-'}</div>
           );
         },
       },
@@ -103,7 +103,7 @@ const DespesasTable = memo(function DespesasTable({
         header: "Data Adicionado",
         cell: ({ row }) => {
           const d = row.getValue ? row.getValue("data_adicionado") : row.data_adicionado;
-          return <div className="text-gray-600">{d ? new Date(d).toLocaleDateString('pt-BR') : '-'}</div>;
+          return <div className="text-[#76196C]">{d ? new Date(d).toLocaleDateString('pt-BR') : '-'}</div>;
         },
       },
       {
@@ -111,7 +111,7 @@ const DespesasTable = memo(function DespesasTable({
         header: "Data Pagamento",
         cell: ({ row }) => {
           const d = row.getValue ? row.getValue("data_pag") : row.data_pag;
-          return <div className="text-gray-600">{d ? new Date(d).toLocaleDateString('pt-BR') : '-'}</div>;
+          return <div className="text-[#76196C]">{d ? new Date(d).toLocaleDateString('pt-BR') : '-'}</div>;
         },
       },
       {
@@ -156,15 +156,16 @@ const DespesasTable = memo(function DespesasTable({
   };
 
   return (
-    <div className="bg-white rounded-xl border-3 border-dashed border-[#b478ab] overflow-hidden">
-      <div className="p-5 bg-[#e8c5f1] border-b-2 border-[#b478ab]">
+    <div className="bg-[#EBC7F5] rounded-xl border-2 border-[#76196C] overflow-hidden">
+      
+      <div className="p-5 bg-[#9D4E92] border-b-2 border-[#b478ab]">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <h2 className="text-xl font-bold text-[#76196c]">Despesas</h2>
+          <h2 className="text-xl font-bold text-[#F1B8E8]">Despesas</h2>
           <button
             onClick={() => {
               if (typeof setModalAberto === 'function') setModalAberto(true);
             }}
-            className="px-3 py-2 bg-[#76196c] text-white rounded-lg font-semibold hover:bg-[#924187] transition cursor-pointer"
+            className="px-3 py-2 bg-[#76196C] text-[#F1B8E8] rounded-lg font-semibold hover:bg-[#F1B8E8] hover:text-[#76196C] transition cursor-pointer"
           >
             Nova Despesa
           </button>
@@ -179,8 +180,8 @@ const DespesasTable = memo(function DespesasTable({
                 }}
                 className={`px-4 py-2 rounded-lg font-semibold text-sm transition cursor-pointer ${
                   filtroStatus === status
-                    ? "bg-[#76196c] text-white"
-                    : "bg-white text-[#76196c] hover:bg-[#f0e5f5]"
+                    ? "bg-[#76196c] text-[#EBC7F5]"
+                    : "bg-[#EBC7F5] text-[#76196C] hover:bg-[#C97FDA]"
                 }`}
               >
                 {status.charAt(0).toUpperCase() + status.slice(1)}
@@ -213,7 +214,7 @@ const DespesasTable = memo(function DespesasTable({
                         onKeyDown={(e) => {
                           if (e.key === 'Enter' || e.key === ' ') handleSort(col.accessorKey);
                         }}
-                        className="flex items-center gap-2 font-bold hover:text-[#924187] cursor-pointer"
+                        className="flex items-center gap-2 font-bold cursor-pointer"
                       >
                         {renderHeader(col)}
                         <i className={`bi bi-arrow-${sortKey === col.accessorKey && sortDir === 'asc' ? 'up' : 'down'}-short text-lg`} />
@@ -231,7 +232,7 @@ const DespesasTable = memo(function DespesasTable({
           <TableBody>
             {loading ? (
               <TableRow>
-                <TableCell colSpan={usedColumns.length} className="h-24 text-center">
+                <TableCell colSpan={usedColumns.length} className="h-24 text-center ">
                   <div className="flex items-center justify-center gap-2">
                     <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#76196c]"></div>
                     <span className="text-[#8c3e82]">Carregando despesas...</span>
@@ -267,8 +268,8 @@ const DespesasTable = memo(function DespesasTable({
       </div>
 
       {/* Paginação */}
-      <div className="flex items-center justify-between p-4 border-t border-[#b478ab]/30">
-        <div className="text-sm text-[#8c3e82]">
+      <div className="flex bg-[#9D4E92] items-center justify-between p-4 border-t border-[#b478ab]/30">
+        <div className="text-sm text-[#F1B8E8]">
           Mostrando {sorted.length > 0 ? pageIndex * pageSize + 1 : 0} a {Math.min((pageIndex + 1) * pageSize, sorted.length)} de {sorted.length} despesas
         </div>
         <div className="flex gap-2">

@@ -14,6 +14,8 @@ import adminRotas from "./routes/adminRotas.js"
 import authMiddleware from "./middlewares/authMiddleware.js";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import path from "path";
+import { fileURLToPath } from "url";
 import { metaController } from "./controllers/MetaController.js";
 
 //Configurações das permissões do cors
@@ -30,6 +32,11 @@ app.use((req, res, next) => {
 
 app.use(express.json());
 app.use(cookieParser());
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+app.use("/img/produtos", express.static(path.join(__dirname, "./uploads/produtos")));
+
 
 app.use("/auth", authRotas);
 

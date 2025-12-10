@@ -96,14 +96,14 @@ export default function ModalDesativarVendedor({
         </AlertDialogHeader>
 
         <div className="space-y-3">
-          <div className="bg-white rounded-lg p-4 border-2 border-dashed border-gray-300">
-            <p className="text-sm text-gray-600 font-semibold mb-2">
+          <div className=" rounded-lg p-4">
+            <p className="text-sm text-[#9D4E92] font-semibold mb-2">
               Vendedor:
             </p>
             <p className="text-lg font-bold text-[#76196c]">
               {vendedor?.nome}
             </p>
-            <p className="text-xs text-gray-500 mt-1">{vendedor?.email}</p>
+            <p className="text-xs text-[#9D4E92] mt-1">{vendedor?.email}</p>
           </div>
 
           <div
@@ -111,14 +111,14 @@ export default function ModalDesativarVendedor({
               isInativo
                 ? "bg-[#569a33]/10 border-[#569a33]"
                 : "bg-[#ff6b35]/10 border-[#ff6b35]"
-            } border-2 border-dashed rounded-lg p-3`}
+            } border-2 rounded-lg p-3`}
           >
             <div className="flex gap-2">
               <AlertCircle
                 size={20}
                 className={isInativo ? "text-[#569a33]" : "text-[#ff6b35]"}
               />
-              <p className="text-sm font-semibold text-gray-700">
+              <p className="text-sm font-semibold text-[#ff6b35]">
                 {isInativo
                   ? "O vendedor poderá fazer login e acessar suas vendas novamente."
                   : "O vendedor não poderá fazer login. Suas informações serão mantidas."}
@@ -132,7 +132,7 @@ export default function ModalDesativarVendedor({
             className={`${
               isInativo
                 ? "bg-white text-[#4f6940] hover:bg-gray-100 border-[#569a33]"
-                : "bg-white text-[#ff6b35] hover:bg-gray-100 border-[#ff6b35]"
+                : "bg-[#C5FFAD] text-[#559637] hover:bg-[#559637] hover:text-[#C5FFAD] border-[#92EF6C]"
             } border-2 font-bold cursor-pointer`}
             disabled={loading}
           >
@@ -141,8 +141,8 @@ export default function ModalDesativarVendedor({
           <AlertDialogAction
             className={`${
               isInativo
-                ? "bg-[#569a33] text-white hover:bg-[#4f6940]"
-                : "bg-[#ff6b35] text-white hover:bg-[#e55a2b]"
+                ? "bg-[#569a33] text-[#C5FFAD] hover:bg-[#4f6940]"
+                : "bg-[#ff6b35] text-[#C5FFAD] hover:bg-[#e55a2b]"
             } font-bold cursor-pointer`}
             onClick={handleConfirmar}
             disabled={loading}

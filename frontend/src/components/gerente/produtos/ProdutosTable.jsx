@@ -11,9 +11,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "./TableInline";
 
-const ProdutosTable = memo(function ProdutosTable({ 
-  data, 
-  columns, 
+const ProdutosTable = memo(function ProdutosTable({
+  data,
+  columns,
   loading,
   globalFilter,
   setGlobalFilter,
@@ -23,12 +23,12 @@ const ProdutosTable = memo(function ProdutosTable({
   // Função customizada para filtrar por múltiplos campos
   const fuzzyFilter = (row, columnId, value) => {
     const searchText = value.toLowerCase();
-    
+
     // Buscar em id_produto, nome e descricao
     const id = String(row.original.id_produto || "").toLowerCase();
     const nome = (row.original.nome || "").toLowerCase();
     const descricao = (row.original.descricao || "").toLowerCase();
-    
+
     return (
       id.includes(searchText) ||
       nome.includes(searchText) ||
@@ -85,7 +85,10 @@ const ProdutosTable = memo(function ProdutosTable({
               </TableRow>
             ) : table.getRowModel().rows.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id} className="border-b-2 border-[#9D4E92]">
+                <TableRow
+                  key={row.id}
+                  className={`border-b-2 border-[#9D4E92] ${row.index % 2 === 0 ? "bg-[#EBC7F5]" : "bg-[#EFDEF4]"} hover:!bg-[#92EF6C] transition-all duration-300 ease-out`}>
+
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}

@@ -19,6 +19,28 @@ async function getConnection() {
   return pool.getConnection();
 }
 
+async function beginTransaction() {
+  const connection = await getConnection();
+  await connection.beginTransaction();
+  return connection;
+}
+
+async function commitTransaction(connection) {
+  try {
+    await connection.commit();
+  } finally {
+    connection.release();
+  }
+}
+
+async function rollbackTransaction(connection) {
+  try {
+    await connection.rollback();
+  } finally {
+    connection.release();
+  }
+}
+
 //Função para ler todos os registros
 async function readAll(table, where = null) {
   const connection = await getConnection();
@@ -140,4 +162,4 @@ async function readRaw(sql, params = []) {
 }
 
 
-export { create, readAll, read, update, deleteRecord, compare, readRaw };
+export { create, readAll, read, update, deleteRecord, compare, readRaw, getConnection, beginTransaction, commitTransaction, rollbackTransaction };

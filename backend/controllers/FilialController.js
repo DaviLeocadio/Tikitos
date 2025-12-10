@@ -3,6 +3,8 @@ import {
   obterEmpresaPorId,
   criarEmpresa,
   atualizarEmpresa,
+  listarTodasEmpresas,
+  listarEmpresasSemGerente,
 } from "../models/Empresa.js";
 import {
   getLojaById,
@@ -17,12 +19,18 @@ import {
 import { readRaw } from "../config/database.js";
 import { listarProdutos } from "../models/Produto.js";
 import { criarProdutoLoja, obterProdutoLoja } from "../models/ProdutoLoja.js";
-import { atualizarUsuario, obterGerentePorEmpresa, obterUsuarioPorId } from "../models/Usuario.js";
+import {
+  atualizarUsuario,
+  obterGerentePorEmpresa,
+  obterUsuarioPorId,
+} from "../models/Usuario.js";
 
 const listarEmpresasController = async (req, res) => {
   try {
     // Buscar filiais
-    const filiais = await listarEmpresas("tipo = 'filial'");
+    const filiais = await listarTodasEmpresas(
+      "tipo = 'filial' ORDER BY CASE status WHEN 'ativo' THEN 1 ELSE 2 END"
+    );
 
     if (!filiais || filiais.length === 0)
       return res.status(404).json({ error: "Nenhuma empresa encontrada" });
@@ -222,43 +230,40 @@ const criarEmpresaController = async (req, res) => {
 const atualizarEmpresaController = async (req, res) => {
   try {
     const { empresaId } = req.params;
+    const { nome, endereco } = req.body;
 
-    const { nome, endereco, status } = req.body;
-
-    if (!nome || !status)
+    // Validação básica
+    if (!nome) {
       return res
-        .status(404)
-        .json({ error: "Parâmetros obrigatórios ausentes" });
-
-    const empresaData = {
-      nome: nome,
-      status: status,
-    };
-
-    if (endereco) {
-      const { logradouro, numero, complemento, bairro, cidade, uf, cep } =
-        endereco;
-
-      if (!logradouro || !numero || !bairro || !cidade || !uf || !cep)
-        return res
-          .status(404)
-          .json({ error: "Parâmetros do endereço faltando." });
-
-      const enderecoFormatado = `${logradouro}, ${numero}${
-        complemento ? `, ${complemento}` : ""
-      } - ${bairro}, ${cidade} - ${uf}, ${cep}`;
-
-      empresaData.push(enderecoFormatado);
+        .status(400)
+        .json({ error: "Parâmetros obrigatórios ausentes (nome)" });
     }
 
+    const empresaData = {
+      nome: nome.trim(),
+    };
+
+    // Endereço opcional, mas se vier, precisa ser string válida
+    if (endereco !== undefined) {
+      if (typeof endereco !== "string" || !endereco.trim()) {
+        return res
+          .status(400)
+          .json({ error: "Endereço inválido: deve ser uma string não vazia." });
+      }
+
+      empresaData.endereco = endereco.trim();
+    }
+
+    // Atualiza no banco
     const empresaAtualizada = await atualizarEmpresa(empresaId, empresaData);
 
-    return res
-      .status(201)
-      .json({ mensagem: "Empresa atualizada com sucesso", empresaAtualizada });
+    return res.status(200).json({
+      mensagem: "Empresa atualizada com sucesso.",
+      empresaAtualizada,
+    });
   } catch (error) {
     console.error("Erro ao atualizar empresa: ", error);
-    res.status(500).json({ error: "Erro ao atualizar empresa" });
+    return res.status(500).json({ error: "Erro ao atualizar empresa" });
   }
 };
 
@@ -266,16 +271,43 @@ const desativarFilialController = async (req, res) => {
   try {
     const { empresaId } = req.params;
 
-    const empresaDesativada = await atualizarEmpresa(empresaId, {
+    const empresaDesativada = atualizarEmpresa(empresaId, {
       status: "inativo",
     });
 
-    return res
-      .status(201)
-      .json({ mensagem: "Empresa desativada com sucesso!", empresaDesativada });
+    if (!empresaDesativada) {
+      return res.status(404).json({ error: "Filial não encontrada" });
+    }
+
+    return res.status(200).json({
+      mensagem: "Filial desativada com sucesso!",
+      empresaDesativada,
+    });
   } catch (error) {
     console.error("Erro ao desativar filial: ", error);
-    res.status(500).json({ error: "Erro ao desativar filial" });
+    return res.status(500).json({ error: "Erro ao desativar filial" });
+  }
+};
+
+const reativarFilialController = async (req, res) => {
+  try {
+    const { empresaId } = req.params;
+
+    const empresaReativada = atualizarEmpresa(empresaId, {
+      status: "ativo",
+    });
+
+    if (!empresaReativada) {
+      return res.status(404).json({ error: "Filial não encontrada" });
+    }
+
+    return res.status(200).json({
+      mensagem: "Filial reativada com sucesso!",
+      empresaReativada,
+    });
+  } catch (error) {
+    console.error("Erro ao reativar filial: ", error);
+    return res.status(500).json({ error: "Erro ao reativar filial" });
   }
 };
 
@@ -358,15 +390,16 @@ const transferirFuncionarioController = async (req, res) => {
 
     if (perfil && perfil !== "vendedor" && perfil !== "gerente")
       return res.status(400).json({ error: "Perfil inválido" });
-    
+
     const hasGerente = await obterGerentePorEmpresa(empresaId);
-    if(hasGerente && perfil === 'gerente') return res.status(409).json({error: 'A empresa já tem um gerente'})
-    
+    if (hasGerente && perfil === "gerente")
+      return res.status(409).json({ error: "A empresa já tem um gerente" });
+
     const usuarioData = {
       id_empresa: empresaId,
     };
     if (perfil) usuarioData.perfil = perfil;
-    
+
     const usuarioAtualizado = await atualizarUsuario(idUsuario, usuarioData);
 
     return res
@@ -378,13 +411,37 @@ const transferirFuncionarioController = async (req, res) => {
   }
 };
 
+const metaFiliaisController = async (req, res) => {
+  try {
+    const { perfil } = req.query;
+    if (perfil == "gerente") {
+      const filiais = await listarEmpresasSemGerente();
+      return res
+        .status(200)
+        .json({ mensagem: "Filiais listadas com sucesso", filiais });
+    } else if (perfil == "vendedor") {
+      const filiais = await listarEmpresas("tipo = 'filial'");
+      return res
+        .status(200)
+        .json({ mensagem: "Filiais listadas com sucesso", filiais });
+    } else {
+      return res.status(400).json({ error: "Perfil inválido" });
+    }
+  } catch (error) {
+    console.error("Erro ao obter meta das filiais: ", error);
+    res.status(500).json({ error: "Erro ao obter meta das filiais" });
+  }
+};
+
 export {
   listarEmpresasController,
   obterEmpresaPorIdController,
   criarEmpresaController,
   atualizarEmpresaController,
   desativarFilialController,
+  reativarFilialController,
   estoqueFilialController,
   estoqueTodasFiliaisController,
   transferirFuncionarioController,
+  metaFiliaisController,
 };

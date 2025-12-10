@@ -1,5 +1,7 @@
 "use client";
 
+import { aparecerToast } from "./toast";
+
 const CHAVE = "produtos";
 
 // Função segura para checar se está no browser
@@ -66,7 +68,7 @@ export function atualizarQuantidade(id_produto, novaQuantidade) {
   if (!produto) return;
 
   // Impedir quantidade maior que o estoque
-  if (novaQuantidade > produto.estoque) return;
+  if (novaQuantidade > produto.estoque) return aparecerToast(`Estoque máximo disponível de ${produto.nome}: ${produto.estoque}`);
 
   // Limite máximo opcional (caso queira manter o 10)
   if (novaQuantidade > 10) return;
@@ -100,7 +102,14 @@ export function limparCarrinho() {
 // Total
 export function calcularTotal() {
   const carrinho = obterCarrinho();
-  return carrinho.reduce((acc, item) => acc + item.preco * item.quantidade, 0);
+  return carrinho.reduce(
+    (acc, item) =>
+      acc +
+      (Number(item.desconto) === 0
+        ? item.preco * item.quantidade
+        : item.precoComDesconto * item.quantidade),
+    0
+  );
 }
 
 // Quantidade total

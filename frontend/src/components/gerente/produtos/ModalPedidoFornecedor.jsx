@@ -122,7 +122,7 @@ export default function ModalPedidoFornecedor({
   return (
     <>
       <Dialog open={open} onOpenChange={onClose}>
-        <DialogContent className="sm:max-w-lg bg-gradient-to-br from-[#c5ffad] to-[#e8f5e8] border-3 border-[#569a33] border-dashed rounded-3xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="custom-scroll sm:max-w-lg bg-gradient-to-br from-[#c5ffad] to-[#e8f5e8] border-3 border-[#569a33] border-dashed rounded-3xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-[#4f6940] font-extrabold text-2xl flex items-center gap-2">
               <Package className="text-[#569a33]" />
@@ -132,7 +132,7 @@ export default function ModalPedidoFornecedor({
 
           <div className="space-y-4">
             {/* Card Info do Produto */}
-            <div className="bg-white rounded-xl p-4 border-2 border-[#569a33] border-dashed">
+            <div className=" rounded-xl p-4">
               <div className="space-y-3">
                 <div>
                   <p className="text-xs text-gray-500 font-semibold uppercase tracking-wide">
