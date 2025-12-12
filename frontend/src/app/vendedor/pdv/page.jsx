@@ -143,7 +143,7 @@ export default function PDV() {
       <div className="h-screen w-full flex flex-col">
         <div className="h-[88%] w-full mt-5">
           <div className="flex md:h-[100%] pt-0">
-            <div className="mx-5 w-full xl:w-4/5 2xl:w-3/4">
+            <div className="mx-5 w-full xl:w-4/5 2xl:w-3/4 h-full">
               <div className="flex m-5 mt-0 gap-2 items-center">
                 <SidebarTrigger />
                 <InputWithAdornmentDemo
@@ -152,8 +152,8 @@ export default function PDV() {
                 ></InputWithAdornmentDemo>
               </div>
 
-              <div className="grid gap-5 grid-cols-1 x-sm:grid-cols-1 sm:grid-cols-1 md:grid-cols-1">
-                <div className="grid gap-5 grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-2 2xl:grid-cols-2 3xl:grid-cols-3 overflow-y-scroll p-5 pt-0 ms-1 sm:h-[60vh] md:h-[570] wrap-anywhere">
+              <div className="grid gap-5 grid-cols-1 x-sm:grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:h-[85%] xl:h-9/10 2xl:h-[95%]">
+                <div className="grid gap-5 grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-2 2xl:grid-cols-2 3xl:grid-cols-3 overflow-y-scroll p-5 pt-0 ms-1 h-full wrap-anywhere">
                   {loading ? (
                     // Loading com Skeleton
                     <>
@@ -193,7 +193,7 @@ export default function PDV() {
             <Carrinho />
           </div>
         </div>
-        <div className="h-1/9 2xl:h-1/12 px-10 pb-1 flex items-center w-ful">
+        <div className="h-1/9 2xl:h-1/12 px-10 pb-1 flex items-center w-full z-50">
           <AtalhosDiv></AtalhosDiv>
         </div>
       </div>

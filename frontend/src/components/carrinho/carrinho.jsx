@@ -92,7 +92,7 @@ export default function Carrinho({ isPagamento = false }) {
       {/* 🟣 CARRINHO */}
       <div className="flex col-span-5 bg-[#E5B8F1] border-[3px] border-dashed border-[#B478AB] rounded-[50px] text-[#8c3e82] text-sm font-semibold p-5 min-h-full">
 
-        <div className="flex w-full h-full flex-col gap-3">
+        <div className={`flex w-full h-full ${isPagamento ? "max-h-[480]" : ""} flex-col gap-3`}>
 
           {/* HEADER */}
           <div className="flex justify-between w-full px-3 h-1/12 2xl:h-1/15">
@@ -114,7 +114,7 @@ export default function Carrinho({ isPagamento = false }) {
             id="carrinho"
             className={`flex flex-col gap-3 overflow-y-scroll px-1 flex-1 overflow-hidden
             ${scroll ? "pe-6" : "pe-1"} 
-            ${isPagamento ? "max-h-[78vh]" : "h-[60vh]"}
+            ${isPagamento ? "max-h-[50vh]" : "h-[60vh]"}
           `}>
             {loading ? (
               <h3>Carregando...</h3>
