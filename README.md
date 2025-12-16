@@ -1,120 +1,111 @@
-# Tikitos – Sistema PDV + ERP
+Tikitos — Sistema PDV + ERP (Matriz & Filiais)
+📌 Sumário
 
-Tikitos é um sistema **PDV (Ponto de Venda) + ERP** desenvolvido como projeto final do último semestre do curso técnico de Desenvolvimento de Sistemas do **SENAI**.
+Visão Geral
 
-O projeto foi pensado para **empresas com estrutura de matriz e filiais**, resolvendo um problema comum em sistemas de gestão: permitir que cada filial opere seus próprios dados, enquanto a matriz tem acesso a informações consolidadas para análise e tomada de decisão.
+Funcionalidades Principais
 
----
+Tecnologias Utilizadas
 
-## 🎯 Objetivo do Projeto
+Estrutura do Sistema
 
-Desenvolver um sistema capaz de:
+Configuração do Ambiente (Setup)
 
-* Operar múltiplas filiais de forma independente
-* Consolidar dados de todas as filiais na matriz
-* Controlar níveis de acesso e permissões por tipo de usuário
-* Gerenciar vendas, estoque, caixa e relatórios
+Autores e Agradecimentos
 
-Tudo isso mantendo organização, segurança e coerência na estrutura do sistema.
+Visão Geral
 
----
+O Tikitos é um sistema PDV + ERP desenvolvido como projeto final do curso técnico de Desenvolvimento de Sistemas do SENAI, com foco em um cenário realista de empresas que operam com matriz e múltiplas filiais.
 
-## 🧩 Estrutura do Sistema
+A proposta do sistema não foi criar apenas uma interface “bonita”, mas sim resolver um problema clássico de gestão:
+garantir que cada filial opere seus próprios dados enquanto a matriz tenha uma visão consolidada e estratégica do negócio.
 
-O sistema é dividido em dois grandes níveis:
+Funcionalidades Principais
 
-### Matriz
+Operação de PDV por filial (vendas, caixa e estoque)
 
-* Visualização global de todas as filiais
-* Relatórios consolidados
-* Comparativos de desempenho entre lojas
-* Controle administrativo completo
+Gestão de produtos, usuários e funcionários
 
-### Filial
+Controle de permissões e níveis de acesso
 
-* Operação restrita aos próprios dados
-* Controle de vendas e caixa
-* Gestão de estoque local
-* Usuários com permissões específicas
+Separação de escopo entre filial e matriz
 
-Essa separação garante isolamento de dados sem perder a visão estratégica do negócio.
+Dashboard com visão global para usuários da matriz
 
----
+APIs REST com autenticação e autorização via JWT
 
-## 🔐 Controle de Usuários e Permissões
+Tecnologias Utilizadas
+<div align="left"> <img src="https://skillicons.dev/icons?i=js,nodejs,express,mysql,react,nextjs,tailwind,git,github" /> </div>
 
-O sistema possui autenticação e autorização baseadas em níveis de acesso:
+Stack principal:
 
-* Usuários de filial: acesso limitado à própria unidade
-* Usuários administrativos: acesso ampliado
-* Usuários de matriz: acesso global e consolidado
+JavaScript
 
-As permissões determinam quais rotas, dados e operações cada usuário pode executar.
+Node.js
 
----
+Express
 
-## 🛠️ Tecnologias Utilizadas
+MySQL
 
-### Back-end
+APIs REST
 
-* JavaScript
-* Node.js
-* Express
-* APIs REST
-* JWT (JSON Web Token)
-* MySQL
-* SQL
-* Modelagem de banco de dados
-* Arquitetura de back-end
+JWT (autenticação e permissões)
 
-### Front-end
+React
 
-* Next.js
-* React
-* Tailwind CSS
-* shadcn/ui
+Next.js
 
-### Ferramentas
+TailwindCSS
 
-* Git
-* GitHub
+shadcn/ui
 
----
+Git & GitHub
 
-## 👥 Organização do Time
+Estrutura do Sistema
 
-* **Front-end & Branding:** Nicoly, Júlia
-* **Back-end:** Bernardo Madureira, Davi, Wesley
-* **Gerência de Projeto:** Bernardo Madureira
+O sistema foi projetado com uma hierarquia clara de acesso.
 
----
+Usuários de filiais têm acesso apenas aos dados da própria loja, como vendas, estoque, caixa e funcionários.
+Usuários da matriz possuem acesso global, podendo visualizar dados consolidados, comparar filiais e acompanhar indicadores gerais do negócio.
 
-## 📦 Funcionalidades Principais
+O controle de permissões e o escopo dos dados não são detalhes de implementação, mas parte central da solução proposta.
 
-* Autenticação de usuários
-* Controle de permissões por nível
-* Cadastro e gerenciamento de produtos
-* Controle de estoque por filial
-* Registro de vendas (PDV)
-* Controle de caixa
-* Relatórios por filial e consolidados
+Configuração do Ambiente (Setup)
+1️⃣ Banco de Dados
+CREATE DATABASE tikitos;
+USE tikitos;
 
----
 
-## 🚀 Status do Projeto
+Importe o dump mais recente do banco de dados na base tikitos.
 
-✔️ Projeto finalizado para fins acadêmicos
+Caso necessário, ajuste as credenciais de conexão em:
 
-O sistema foi entregue funcional e coerente com os requisitos propostos, servindo como base para aprendizado em arquitetura, controle de permissões e sistemas empresariais.
+/backend/config/database.js
 
----
+2️⃣ Back-end
+cd backend
+npm install
+npm run dev
 
-## 📄 Observações
 
-Este projeto tem caráter educacional e foi desenvolvido como parte da formação técnica no SENAI, com foco em aprendizado prático e simulação de cenários reais do mercado.
+O comando npm run dev utiliza nodemon, permitindo atualização automática do servidor durante o desenvolvimento.
 
----
+3️⃣ Front-end
 
-## 🔗 Repositório
+Em um novo terminal:
 
-(Adicionar aqui links para back-end e/ou front-end, se separados)
+cd frontend
+npm install
+npm run dev
+
+
+Ou, para ambiente de produção:
+
+npm run build
+npm start
+
+Autores e Agradecimentos
+
+Projeto desenvolvido por alunos do curso técnico de Desenvolvimento de Sistemas do SENAI.
+
+Agradecimento especial aos professores William e Rodrigo, pelo suporte técnico e orientação ao longo de todo o curso.
