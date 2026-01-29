@@ -93,18 +93,15 @@ Crie um banco de dados MySQL e execute o script de migração (disponível em `/
 ```
 cd backend
 npm install
-# Configure o .env conforme o modelo abaixo
+# Configure o .env conforme o modelo `env.example`
 npm run dev 
 ```
 
 ### 3\. Frontend
 
-
-
 ```
 cd frontend
 npm install
-# Configure o .env conforme o modelo `env.example`
 npm run dev
 ```
 
